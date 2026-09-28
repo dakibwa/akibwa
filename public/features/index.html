@@ -34,7 +34,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-xdYrKAx9Fq6zmGT3G0E9KsXzbAh7Xt4NKRQKYWkr8UA=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-IXDTtwoRm3Dcf8WuwTYQ2ki4+9WZvsvcJCUszQW7AaE=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- The approved concept quartet: aeroplane, smaller heart, leaf and lightning.
      Render web icons from assets/marketing/features-app-mark.svg with
      tools/render-web-icons.mjs; keep the tab SVG embedded for offline copies. -->
@@ -3163,7 +3163,7 @@ function netSpec(i, rules){
 }
 
 const SALT_V38=((from,rows)=>Object.fromEntries(rows.split(';').map((row,n)=>[new Date(Date.parse(from+'T00:00:00Z')+n*864e5).toISOString().slice(0,10),row.split(',').map(salt=>parseInt(salt,36)||0)])))("2026-09-26","6,,12,b,47,1a,6k,g8,8x,7o");
-const SALT_V39=((from,rows)=>Object.fromEntries(rows.split(';').map((row,n)=>[new Date(Date.parse(from+'T00:00:00Z')+n*864e5).toISOString().slice(0,10),row.split(',').map(salt=>parseInt(salt,36)||0)])))("2026-09-26","1e,1,1,,4b,q,3ig,7xj,4hm,aq;t,j,3v,4,g,o7,35,1d,8sq,12;8f,11,13,bx,59r,n,4w9,1sg,1sq,6n8;78,wc,1p,15,20,30,2l1,2b,5w,4c;c6,hf,z,9,6p,39,3,1h,bb,3q");
+const SALT_V39=((from,rows)=>Object.fromEntries(rows.split(';').map((row,n)=>[new Date(Date.parse(from+'T00:00:00Z')+n*864e5).toISOString().slice(0,10),row.split(',').map(salt=>parseInt(salt,36)||0)])))("2026-09-26","1e,1,1,,4b,q,3ig,7xj,4hm,aq;t,j,3v,4,g,o7,35,1d,8sq,12;8f,11,13,bx,59r,n,4w9,1sg,1sq,6n8;78,wc,1p,55j,20,7j,4v0,d1,zy,7d2;c6,hf,4wx,f,6p,48,c2,1yg,12b,w9");
 function graceFor(s){
   if(!s) return 0;
   const load=(s.shared||0)+(s.pinned||0)+Math.max(0,(s.threads||0)-3);
@@ -5834,17 +5834,30 @@ function mosaicSlots(style,T,L,rnd,lens,rules=GEN_RULES,netIndex=-1){
   let cells=mosaicCells(style,T,rnd,rules);const s=[],g=[],keys=[],chords=[],used=new Set();
   const turn=Math.floor(rnd()*T);
   const lengths=Array.from({length:T},(_,k)=>lens?lens[(k+turn)%lens.length]:L);
+  let bendThread=null;
+  if(designedDaily(rules.outlineDay,rules.catalogueRevision)&&netIndex>=2&&ingredientSpec(netIndex,rules).bend){
+    const eligible=lengths.flatMap((n,k)=>n>=4?[k]:[]);
+    if(!eligible.length)return {s:[],g:[]};
+    const shortest=Math.min(...eligible.map(k=>lengths[k])),pool=eligible.filter(k=>lengths[k]<=shortest+1);
+    bendThread=pool[Math.floor(rnd()*pool.length)];
+    const raw=T===3?[[0,0,.31,1],[.31,0,.38,1],[.69,0,.31,1]]
+      :T===4?[[0,0,.31,1],[.31,0,.38,1],[.69,0,.31,.5],[.69,.5,.31,.5]]
+      :[[0,0,.31,.5],[.31,0,.38,1],[.69,0,.31,.5],[0,.5,.31,.5],[.69,.5,.31,.5]];
+    const flip=rnd()<.5;
+    cells=raw.map(([x,y,w,h],i)=>({x:PADX+(flip?1-x-w:x)*(BW-2*PADX),y:PADY+y*(BH-2*PADY),w:w*(BW-2*PADX),h:h*(BH-2*PADY),bend:i===1}));
+  }
   if(T===3&&lengths.some(n=>n>=8)){
     const x=PADX,y=PADY,w=BW-2*PADX,h=BH-2*PADY,left=rnd()<.5;
     const raw=[[0,0,.64,1],[.66,0,.34,.48],[.66,.52,.34,.48]];
     cells=raw.map(([cx,cy,cw,ch])=>({x:x+(left?cx:1-cx-cw)*w,y:y+cy*h,w:cw*w,h:ch*h}));
   }
-  const order=lengths.map((n,k)=>({n,k,tie:rnd()})).sort((a,b)=>b.n-a.n||a.tie-b.tie);
+  const order=lengths.map((n,k)=>({n,k,tie:rnd()})).sort((a,b)=>(b.k===bendThread)-(a.k===bendThread)||b.n-a.n||a.tie-b.tie);
   const available=cells.map((cell,i)=>({...cell,i,tie:rnd()}));
   for(const {n,k} of order){
     available.sort((a,b)=>Math.min(b.w,b.h)-Math.min(a.w,a.h)||a.tie-b.tie);
     let chosen=null;
     for(const cell of available){
+      if(bendThread!=null&&!!cell.bend!==(k===bendThread))continue;
       const rare=rules.outlineDay?rareOutlineForDay(rules.outlineDay,rules):null;
       const forcedRare=rare?.length===n?rare.key:null;
       const pool=Object.keys(figures).filter(key=>figures[key].n===n&&!used.has(key)&&(!forcedRare||key===forcedRare));
@@ -5886,7 +5899,7 @@ function mosaicSlots(style,T,L,rnd,lens,rules=GEN_RULES,netIndex=-1){
     keys[k]=chosen.key;chords[k]=chosen.chord;used.add(chosen.key);
     available.splice(available.indexOf(chosen.cell),1);
   }
-  return {s,g,keys,chords};
+  return {s,g,keys,chords,...(bendThread!=null?{bendThread}:{})};
 }
 const FAMILIES={
   mosaicPanels:{minT:2,minL:3,cyc:3,slots:(T,L,tut,rnd,lens,rules,index)=>mosaicSlots('panels',T,L,rnd,lens,rules,index)},
@@ -6039,9 +6052,10 @@ function famThreadEdges(plan,k,bend=null,at=null,stride=1){
 }
 function famDesignBrief(idx){
   return {role:['warm-up','first challenge','explore','develop','breather','combine','build','build','peak','finish'][idx],
-    composition:idx<2?70:50,readability:idx<2?82:70,
-    depth:[1,3,3,3,2,3,4,5,5,4][idx],
-    minMoves:[2,3,3,3,2,3,4,5,5,4][idx],maxMoves:idx===0?2:PRACTICAL_RANGE[idx][1]};
+    composition:idx<2?70:0,readability:idx<2?82:70,
+    depth:[1,3,3,4,3,5,6,7,7,6][idx],
+    minMoves:[2,3,3,4,3,5,6,7,7,6][idx],floor:[1,2,2,3,2,3,4,4,5,4][idx],
+    maxMoves:idx===0?2:PRACTICAL_RANGE[idx][1]};
 }
 function famInk(plan,active=null,stride=1){
   const edges=plan.order.flatMap((_,k)=>active&&!active[k]?[]:famThreadEdges(plan,k,null,null,stride).map(e=>({...e,k})));
@@ -6098,22 +6112,28 @@ function famDecisionDepth(plan,practical){
   };
   for(const move of practical.log){
     const [kind,id,x,y]=move,n=p.nodes.find(n=>n.id===id);if(!n)continue;
+    let bendChoice=null,stage=null;
     if(kind===1){
       const owners=p.order.filter(o=>o.includes(n)),other=owners[1];if(!other)continue;
       const half={...n,id:1000+id,x:move[4],y:move[5],merged:false};
       other[other.indexOf(n)]=half;p.nodes.push(half);n.merged=false;n.x=x;n.y=y;
     }else{
       if(n.bend){
-        const stage={...p,nodes:p.nodes.filter(n=>p.order.some((o,k)=>active[k]&&o.includes(n))),
+        stage={...p,nodes:p.nodes.filter(n=>p.order.some((o,k)=>active[k]&&o.includes(n))),
           order:p.order.map((o,k)=>active[k]?o:[]),chords:p.chords?.map((c,k)=>active[k]?c:null),curved:p.curved?.filter(k=>active[k])};
-        const choice=famBendDecision(stage,[],false,true);
-        if(choice.pass&&!famNaturalBendEscapes(stage).length)bends.push(...choice.bends.map(b=>({...b,afterMoves})));
+        const choice=famCurveCoupling(stage);
+        if(choice.pass&&!famNaturalBendEscapes(stage).length)bendChoice=choice;
       }
       opening??=origin();n.x=x;n.y=y;drags++;
       p.order.forEach((o,k)=>{if(active[k]&&o.includes(n))worked.add(k)});
     }
     const per=famInk(p,active).per,released=[];
     for(let k=0;k<active.length;k++)if(active[k]&&!per[k]&&!p.order[k].some(n=>n.merged))released.push(k);
+    if(bendChoice)for(const b of bendChoice.bends){
+      const after=famCurveField(stage,b.thread).state(n);
+      if((b.opening&~after.mask)&&(b.opening&after.mask)&&!famCurveFolded(after.mine))
+        bends.push({...b,afterMoves,retained:after.mask});
+    }
     if(kind===0){
       if(!released.length)preparations++;
       else{
@@ -6155,14 +6175,58 @@ function famNaturalBendEscapes(plan,stride=1){
   }
   return escapes;
 }
+function famCurveFolded(mine){
+  return mine.some((a,i)=>mine.some((b,j)=>j>i&&
+    !(a.s!=null&&b.s!=null?b.s-a.s<2:[a.a,a.b].some(p=>[b.a,b.b].some(q=>p.x===q.x&&p.y===q.y)))&&segX(a.a,a.b,b.a,b.b)));
+}
+function famCurveField(plan,k,stride=1){
+  const fixed=plan.order.map((_,k)=>famThreadEdges(plan,k,null,null,stride));
+  const o=plan.order[k],bend=o.find(n=>n.bend);
+  if(!bend)return null;
+  const weights=curveSamples(o.map(n=>({x:n===bend?1:0,y:0})));
+  const moving=fixed[k].map(e=>e.s!=null&&Math.max(Math.abs(weights[e.s*stride].x),Math.abs(weights[(e.s+1)*stride].x))>=.2);
+  const state=at=>{
+    const mine=famThreadEdges(plan,k,bend,at,stride);let mask=0;
+    for(let j=0;j<fixed.length;j++)if(j!==k&&mine.some((a,i)=>moving[i]&&fixed[j].some(b=>segX(a.a,a.b,b.a,b.b))))mask|=1<<j;
+    return {mask,mine};
+  };
+  return {bend,state};
+}
+function famCurveCoupling(plan,draft=false){
+  const stride=draft?4:1,rows=draft?4:6,cols=draft?6:10,bends=[];
+  for(const k of plan.curved||[]){
+    const field=famCurveField(plan,k,stride);if(!field)continue;
+    const {bend,state}=field;
+    const opening=state(bend).mask,partners=plan.order.reduce((n,_,j)=>n+!!(opening&(1<<j)),0);
+    const regions=new Map();let legal=0,detached=0;
+    for(let row=0;row<=rows;row++)for(let col=0;col<=cols;col++){
+      const at={x:PADX+18+(BW-2*PADX-36)*col/cols,y:PADY+18+(BH-2*PADY-36)*row/rows};
+      if(plan.nodes.some(n=>n!==bend&&Math.hypot(at.x-n.x,at.y-n.y)<MIN_SEP))continue;
+      legal++;const s=state(at);
+      if(s.mask&&(s.mask&opening)===opening)continue;
+      if(famCurveFolded(s.mine))continue;
+      if(!s.mask){detached++;continue}
+      const r=regions.get(s.mask)||{mask:s.mask,count:0,...at};r.count++;regions.set(s.mask,r);
+    }
+    const useful=[...regions.values()].filter(r=>r.count>=(draft?1:2));
+    const a=useful.find(a=>useful.some(b=>(a.mask&~b.mask)&&(b.mask&~a.mask)));
+    const b=a&&useful.find(b=>(a.mask&~b.mask)&&(b.mask&~a.mask));
+    const pass=partners>=2&&legal>0&&detached*6<=legal&&!!a&&!!b;
+    bends.push({thread:k,partners,opening,legal,detached,pass,potential:Math.min(2,useful.length),
+      choices:a&&b?[a,b]:[]});
+  }
+  return {pass:bends.length===(plan.curved?.length||0)&&bends.every(b=>b.pass),bends};
+}
 function famDesignCheck(plan,idx,practical){
-  const brief=famDesignBrief(idx),visual=famVisualQualities(plan),decision=practical?famDecisionDepth(plan,practical):null,bendEscapes=famNaturalBendEscapes(plan),failures=[];
+  const brief=famDesignBrief(idx),visual=famVisualQualities(plan),decision=practical?famDecisionDepth(plan,practical):null,bendEscapes=famNaturalBendEscapes(plan),coupling=famCurveCoupling(plan),floor=famFloor(plan),failures=[];
   if(visual.composition<brief.composition)failures.push('composition lacks a coherent silhouette');
   if(visual.readability<brief.readability||visual.shallow>.2||visual.crowded>.35||visual.obscured>.35)failures.push('crossings or controls are hard to read');
   if(bendEscapes.length)failures.push('bend clears by an obvious straightening move');
+  if(!coupling.pass)failures.push('bend does not trade constraints between live threads');
+  if(floor<brief.floor)failures.push('too few independent crossing constraints for this daily slot');
   if(decision&&decision.bendChoices<(plan.curved?.length||0))failures.push('curve has no meaningful placement in the verified route');
   if(decision&&(decision.score<brief.depth||practical.moves<brief.minMoves||practical.moves>brief.maxMoves||idx===1&&(decision.threadsWorked<2||!decision.preparations)))failures.push('decision depth does not fit the daily slot');
-  return {brief,...visual,decision,bendEscapes,failures};
+  return {brief,...visual,decision,bendEscapes,coupling,floor,failures};
 }
 function famParticipation(plan){
   const edges=plan.order.map((_,k)=>famThreadEdges(plan,k)),partners=edges.map(()=>0);
@@ -6247,12 +6311,13 @@ function famBendDecision(plan,route=[],draft=false,detail=false){
   }
   return {pass:true,bends};
 }
-function authorBends(plan,count,rnd,compact=false,minNodes=3){
+function authorBends(plan,count,rnd,compact=false,minNodes=3,central=false){
   const cands=[],bendable=k=>{
     const o=plan.order[k],chord=plan.chords&&plan.chords[k];
     return o.slice(1,-1).filter((n,j)=>!chord||!chord.includes(j+1));
   };
   plan.order.forEach((o,k)=>{
+    if(plan.bendThread!=null&&k!==plan.bendThread)return;
     if(o.length<minNodes||o.some(n=>n.merged||n.pinned||n.t.length>1))return;
     if(bendable(k).length)cands.push(k);
   });
@@ -6260,7 +6325,11 @@ function authorBends(plan,count,rnd,compact=false,minNodes=3){
   plan.curved=[];
   for(let c=0;c<count;c++){
     const size=Math.min(...cands.map(k=>plan.order[k].length));
-    const pool=compact?cands.filter(k=>plan.order[k].length===size):cands;
+    let pool=compact?cands.filter(k=>plan.order[k].length===size):cands;
+    if(central){
+      const centre=k=>{const o=plan.order[k];return Math.hypot(o.reduce((s,n)=>s+n.hx,0)/o.length/BW-.5,o.reduce((s,n)=>s+n.hy,0)/o.length/BH-.5)+.04*(o.length-size)};
+      const best=Math.min(...cands.map(centre));pool=cands.filter(k=>centre(k)<=best+.06);
+    }
     const k=pool[Math.floor(rnd()*pool.length)],o=plan.order[k];cands.splice(cands.indexOf(k),1);
     const inner=bendable(k),away=inner.filter(n=>n.hx==null||Math.hypot(n.x-n.hx,n.y-n.hy)>18);
     const bend=(away.length?away:inner)[Math.floor(rnd()*(away.length||inner.length))];
@@ -6273,13 +6342,23 @@ function authorBends(plan,count,rnd,compact=false,minNodes=3){
   }
   return true;
 }
-function famCurveStep(plan,rnd){
+function famCurveStep(plan,rnd,engaged=false){
   const k=plan.curved[Math.floor(rnd()*plan.curved.length)],o=plan.order[k],bend=o.find(n=>n.bend),i=o.indexOf(bend),a=o[i-1],b=o[i+1];
   const movable=plan.nodes.filter(n=>!n.pinned&&!n.merged&&!n.bend&&!o.includes(n));
   if(!movable.length||!a||!b)return null;
-  const n=movable[Math.floor(rnd()*movable.length)],t=.2+.6*rnd(),dx=b.x-a.x,dy=b.y-a.y,l=Math.hypot(dx,dy)||1;
+  let n=movable[Math.floor(rnd()*movable.length)],t=.2+.6*rnd(),dx=b.x-a.x,dy=b.y-a.y,l=Math.hypot(dx,dy)||1;
   const offset=(rnd()<.5?-1:1)*MIN_SEP*(1.2+1.2*rnd());
-  const x=clampX(a.x+t*dx-dy/l*offset),y=clampY(a.y+t*dy+dx/l*offset);
+  let x=clampX(a.x+t*dx-dy/l*offset),y=clampY(a.y+t*dy+dx/l*offset);
+  if(engaged){
+    if(rnd()<.3){
+      n=bend;x=clampX(movable.reduce((s,m)=>s+m.x,0)/movable.length+(rnd()-.5)*BW*.35);
+      y=clampY(movable.reduce((s,m)=>s+m.y,0)/movable.length+(rnd()-.5)*BH*.35);
+    }else{
+      const ink=curveSamples(o),j=i*16+(rnd()<.5?-1:1)*(4+Math.floor(rnd()*8)),p=ink[j];
+      dx=ink[j+1].x-ink[j-1].x;dy=ink[j+1].y-ink[j-1].y;l=Math.hypot(dx,dy)||1;
+      x=clampX(p.x-dy/l*offset);y=clampY(p.y+dx/l*offset);
+    }
+  }
   if(plan.nodes.some(m=>m!==n&&Math.hypot(x-m.x,y-m.y)<MIN_SEP))return null;
   const step={pick:[n],px:[n.x],py:[n.y]};n.x=x;n.y=y;n.moved=true;return step;
 }
@@ -6318,7 +6397,7 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd,idx,lens,mechanic){
   if(!F || T<F.minT || L<F.minL) return null;
   const xCap=netSpec(idx,GEN_RULES).maxX;
   const brief=designedDaily(GEN_RULES.outlineDay,GEN_RULES.catalogueRevision)?famDesignBrief(idx):null;
-  const {s,g,keys:clues,chords:clueChords}=F.slots(T,L,tut,rnd,lens,GEN_RULES,idx);
+  const {s,g,keys:clues,chords:clueChords,bendThread}=F.slots(T,L,tut,rnd,lens,GEN_RULES,idx);
   if(lens) rnd();
   const nodes=[], order=[];
   for(let k=0;k<T;k++){
@@ -6346,6 +6425,7 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd,idx,lens,mechanic){
   const pairs=[];
   for(let a=0;a<nodes.length;a++)for(let b=a+1;b<nodes.length;b++){
     if(nodes[a].t[0]===nodes[b].t[0]) continue;      // one thread cannot superpose with itself
+    if(bendThread!=null&&(nodes[a].t[0]===bendThread||nodes[b].t[0]===bendThread))continue;
     pairs.push([Math.hypot(nodes[a].hx-nodes[b].hx, nodes[a].hy-nodes[b].hy), nodes[a], nodes[b]]);
   }
   const tight=pairs.length?Math.min(...pairs.map(p=>p[0])):0;
@@ -6372,28 +6452,29 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd,idx,lens,mechanic){
 
   for(let p=0;p<pinned;p++){
     const k=p%T;
-    let cands=order[k].filter(n=>!n.pinned && !n.merged);
-    if(!cands.length && GEN_RULES.pinFill) cands=live.filter(n=>!n.pinned && !n.merged);
+    let cands=k===bendThread?[]:order[k].filter(n=>!n.pinned && !n.merged);
+    if(!cands.length && GEN_RULES.pinFill) cands=live.filter(n=>!n.pinned && !n.merged&&(bendThread==null||n.t[0]!==bendThread));
     if(!cands.length) continue;
     cands[Math.floor(rnd()*cands.length)].pinned=true;
   }
 
   live.forEach(n=>n.moved=false);
   const plan={fam, nodes:live, order, chords, clues, d:0, merges, minSep, par:0, x:0,
-              mechanic:mechanic||null};
+              mechanic:mechanic||null,...(bendThread!=null?{bendThread}:{})};
 
 
   const earlyBend=mechanic?.bend&&needsDecisions(GEN_RULES.outlineDay,GEN_RULES.catalogueRevision);
   const coverage=earlyBend&&idx>=5&&(idx<9||brief);
-  if(earlyBend&&!authorBends(plan,mechanic.bend,rnd,coverage,brief?4:3))return null;
+  if(earlyBend&&!authorBends(plan,mechanic.bend,rnd,coverage,brief?4:3,!!brief))return null;
   const floorTarget=brief?Math.max(1,brief.minMoves-1)+plan.merges:0;
   const price=()=>famCost(plan)+(brief?8*Math.min(floorTarget,famFloor(plan)):coverage?8*famFloor(plan):0);
   if(brief)want+=8*floorTarget;
   else if(coverage)want+=8*(PRACTICAL_RANGE[idx][0]-2);
   const qualityOf=()=>{
     if(!brief)return famReadability(plan).score;
-    const q=famVisualQualities(plan,4),bend=earlyBend?famBendDecision(plan,[],true,true):null;
-    return .55*q.composition+.45*q.readability-40*famNaturalBendEscapes(plan,4).length+(bend?30*(bend.pass?2:bend.potential||0):0);
+    const q=famVisualQualities(plan,4),bend=earlyBend?famCurveCoupling(plan,true):null;
+    return (idx<2?.55*q.composition+.45*q.readability:q.readability)-40*famNaturalBendEscapes(plan,4).length
+      +(bend?40*(bend.pass?3:Math.max(0,...bend.bends.map(b=>b.potential))):0);
   };
   const rank=(cost,quality)=>12*Math.min(cost,want)+quality;
   if(GEN_RULES.weave==='pattern' && T>=3){
@@ -6428,7 +6509,7 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd,idx,lens,mechanic){
   let quality=qualityOf();
   for(let miss=0,tries=0; (plan.par<want||brief&&tries<32) && miss<(brief?32:26) && tries<(brief?48:Infinity); tries++){
     const guided=brief&&earlyBend&&tries%3===0;
-    const st=guided?famCurveStep(plan,rnd):famStep(live, F.cyc||3, !!F.local, rnd);
+    const st=guided?famCurveStep(plan,rnd,true):famStep(live, F.cyc||3, !!F.local, rnd);
     if(!st){if(guided)continue;break}
     const priced=price(), x=famX(plan);
     const nextQuality=qualityOf();
@@ -6614,9 +6695,10 @@ function famOptimisedScore(plan,practical){
     const log=[],moves=famPractical(plan,log,best.moves-1,variant);
     if(moves>0&&moves<best.moves)best={...construction,moves,log};
   }
-  for(let first=0;best.moves<=3&&first<plan.nodes.length&&best.moves>practical.lower;first++){
+  const shortCurve=designedDaily(GEN_RULES.outlineDay,GEN_RULES.catalogueRevision)&&plan.curved?.length&&best.moves<=5;
+  for(let first=0;(best.moves<=3||shortCurve)&&first<plan.nodes.length&&best.moves>practical.lower;first++){
     if(plan.nodes[first].pinned)continue;
-    for(const variant of [0,1]){
+    for(const variant of best.moves<=3?(shortCurve?[0,1,4,5]:[0,1]):[4,5]){
       const log=[],moves=famPractical(plan,log,best.moves-1,variant,first);
       if(moves>0&&moves<best.moves)best={...construction,moves,log};
     }
