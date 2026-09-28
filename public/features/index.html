@@ -34,7 +34,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-39wgrOZ/xspyRpM7ZjT3ZSuIfuEEelx7butBzC6AJWk=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-j9yNpEXAP8ptKsSyxXcUKqruwHanL7fE0dBzMWfAkBM=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- The approved concept quartet: aeroplane, smaller heart, leaf and lightning.
      Render web icons from assets/marketing/features-app-mark.svg with
      tools/render-web-icons.mjs; keep the tab SVG embedded for offline copies. -->
@@ -8348,20 +8348,23 @@ function walkHeld(from,goal,others,box,gap,budget,side){
     if(d<1e-6)return {x:goal.x,y:goal.y,arrived:true,side:0};
     const h=Math.min(2,d,budget-spent);
     let q=spacedPoint(p,{x:p.x+(goal.x-p.x)/d*h,y:p.y+(goal.y-p.y)/d*h},others,box,gap);
-    if(Math.hypot(q.x-p.x,q.y-p.y)<h*.3){
+    const touching=others.filter(n=>Math.hypot(p.x-n.x,p.y-n.y)<=(n.gap??gap)+.5);
+    const clear=clearWay(p,goal,touching,gap);
+    if(side&&!clear||Math.hypot(q.x-p.x,q.y-p.y)<h*.3){
       let best=null,score=Infinity;
-      for(const n of others){
-        const r=Math.hypot(p.x-n.x,p.y-n.y);if(r>(n.gap??gap)+.5||r<1)continue;
-        const a=Math.atan2(p.y-n.y,p.x-n.x),first=side||Math.sign((p.x-n.x)*(goal.y-n.y)-(p.y-n.y)*(goal.x-n.x))||1;
-        for(const s of [first,-first]){
+      for(const s of side?[side,-side]:[1,-1]){
+        for(const n of touching){
+          const r=Math.hypot(p.x-n.x,p.y-n.y);if(r<1)continue;
+          const a=Math.atan2(p.y-n.y,p.x-n.x);
           const c=spacedPoint(p,{x:n.x+Math.cos(a+s*h/r)*r,y:n.y+Math.sin(a+s*h/r)*r},others,box,gap);
-          const left=Math.hypot(goal.x-c.x,goal.y-c.y)+(s===first?0:h*.2);
+          const left=Math.hypot(goal.x-c.x,goal.y-c.y);
           if(Math.hypot(c.x-p.x,c.y-p.y)>=h*.05&&left<score){best={x:c.x,y:c.y,s};score=left}
         }
+        if(side&&best)break;
       }
-      if(!best||score>d+h*.2)return {...p,arrived:false,stuck:true,side};
+      if(!best)return {...p,arrived:false,stuck:true,side};
       q=best;side=best.s;
-    }
+    }else if(clear)side=0;
     spent+=Math.hypot(q.x-p.x,q.y-p.y);p={x:q.x,y:q.y};
   }
   return {...p,arrived:false,side};
@@ -8404,6 +8407,7 @@ function stepDrag(now,instant){
   h.box=[PADX*kx,PADY*ky,(BW-PADX)*kx,(BH-PADY)*ky];h.gap=space({});
   stepHold(h,{x:n.aim.x*kx,y:n.aim.y*ky},h.others,h.box,h.gap,now,instant);
   n.x0=h.bx=h.x/kx;n.y0=h.by=h.y/ky;
+  if(Math.hypot(n.x0-dragStart.x,n.y0-dragStart.y)>6)dragMoved=true;
   return n.x0!==x||n.y0!==y;
 }
 function neighboursOf(n){
@@ -8531,7 +8535,6 @@ $('netsvg').addEventListener('pointermove',e=>{
     }
   }
   dragLast.x=dragN.x0; dragLast.y=dragN.y0;
-  if(Math.hypot(dragN.x0-dragStart.x,dragN.y0-dragStart.y)>6)dragMoved=true;
   if(physRAF&&!document.hidden){
     const res=countCross();
     setTension(res.total,initialCross); renderThreads(); physDirty=true;
