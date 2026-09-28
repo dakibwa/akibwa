@@ -34,7 +34,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-BClZP4nTawnSt5YxxjRwU2YXN0pNkcxlKL4ysfWn7L8=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-yiEkUwdaK3hjDEq0EpwSreuUz0ELy/elJwWZnSJyWMA=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- The approved concept quartet: aeroplane, smaller heart, leaf and lightning.
      Render web icons from assets/marketing/features-app-mark.svg with
      tools/render-web-icons.mjs; keep the tab SVG embedded for offline copies. -->
@@ -2933,6 +2933,8 @@ function figureBadge(key){
 
 const DECISIONS_FROM='2026-09-28';
 const needsDecisions=(day,revision)=>day>=DECISIONS_FROM&&Number(revision)>=39;
+const DESIGN_FROM='2026-09-29';
+const designedDaily=(day,revision)=>day>=DESIGN_FROM&&Number(revision)>=39;
 const exactOptimised=(day,revision)=>needsDecisions(day,revision);
 const DAILY_GEN={v:39,from:BEND_LAUNCH,par:'family',layout:'families',
     split:'vertical',merge:'widen',pinFill:true,parMode:'greedy',parSlack:3,
@@ -3164,7 +3166,7 @@ function netSpec(i, rules){
 }
 
 const SALT_V38=((from,rows)=>Object.fromEntries(rows.split(';').map((row,n)=>[new Date(Date.parse(from+'T00:00:00Z')+n*864e5).toISOString().slice(0,10),row.split(',').map(salt=>parseInt(salt,36)||0)])))("2026-09-26","6,,12,b,47,1a,6k,g8,8x,7o");
-const SALT_V39=((from,rows)=>Object.fromEntries(rows.split(';').map((row,n)=>[new Date(Date.parse(from+'T00:00:00Z')+n*864e5).toISOString().slice(0,10),row.split(',').map(salt=>parseInt(salt,36)||0)])))("2026-09-26","1e,1,1,,4b,q,3ig,7xj,4hm,aq;t,j,3v,4,g,o7,35,1d,8sq,12;8f,11,13,bx,59r,n,4w9,1sg,1sq,6n8;5s,7,1p,1dc,h,230,1oc,2m,3fq,1qz");
+const SALT_V39=((from,rows)=>Object.fromEntries(rows.split(';').map((row,n)=>[new Date(Date.parse(from+'T00:00:00Z')+n*864e5).toISOString().slice(0,10),row.split(',').map(salt=>parseInt(salt,36)||0)])))("2026-09-26","1e,1,1,,4b,q,3ig,7xj,4hm,aq;t,j,3v,4,g,o7,35,1d,8sq,12;8f,11,13,bx,59r,n,4w9,1sg,1sq,6n8;78,wc,1p,15,20,30,2l1,2b,5w,4c;c6,hf,z,9,6p,39,3,1h,bb,3q");
 function graceFor(s){
   if(!s) return 0;
   const load=(s.shared||0)+(s.pinned||0)+Math.max(0,(s.threads||0)-3);
@@ -6031,12 +6033,139 @@ function famWeb(plan,idx){
   const poster=famPoster(plan,idx,netSpec(idx,GEN_RULES).maxX).posterScore/5;
   return poster+4*near+4*cells.size/12+4*read.crossingRegions/12-3*read.shallowRate-3*read.crowdedRate-4*Math.max(0,long-.6);
 }
-function famThreadEdges(plan,k,bend=null,at=null){
+function famThreadEdges(plan,k,bend=null,at=null,stride=1){
   const nodes=plan.order[k],o=nodes.map(n=>n===bend?at:n),curved=plan.curved?.includes(k);
-  const p=curved?curveSamples(o):o;
+  const raw=curved?curveSamples(o):o,p=curved&&stride>1?raw.filter((_,i)=>i%stride===0||i===raw.length-1):raw;
   const out=p.slice(1).map((b,i)=>({a:p[i],b,s:i,nodes:curved?nodes:[nodes[i],nodes[i+1]]}));
   if(plan.chords?.[k]){const [a,b]=plan.chords[k];out.push({a:o[a],b:o[b],nodes:[nodes[a],nodes[b]]})}
   return out;
+}
+function famDesignBrief(idx){
+  return {role:['warm-up','first challenge','explore','develop','breather','combine','build','build','peak','finish'][idx],
+    composition:idx<2?70:50,readability:idx<2?82:70,
+    depth:[1,3,3,3,2,3,4,5,5,4][idx],
+    minMoves:[2,3,3,3,2,3,4,5,5,4][idx],maxMoves:idx===0?2:PRACTICAL_RANGE[idx][1]};
+}
+function famInk(plan,active=null,stride=1){
+  const edges=plan.order.flatMap((_,k)=>active&&!active[k]?[]:famThreadEdges(plan,k,null,null,stride).map(e=>({...e,k})));
+  const hits=[],per=plan.order.map(()=>0);
+  for(let i=0;i<edges.length;i++)for(let j=i+1;j<edges.length;j++){
+    const a=edges[i],b=edges[j],same=a.k===b.k;
+    if(same&&a.s!=null&&b.s!=null&&Math.abs(a.s-b.s)<2)continue;
+    if(a.nodes.length===2&&b.nodes.length===2&&a.nodes.some(n=>b.nodes.includes(n)))continue;
+    if(same&&[a.a,a.b].some(p=>[b.a,b.b].some(q=>p.x===q.x&&p.y===q.y)))continue;
+    const p=segX(a.a,a.b,b.a,b.b);if(!p)continue;
+    const ax=a.b.x-a.a.x,ay=a.b.y-a.a.y,bx=b.b.x-b.a.x,by=b.b.y-b.a.y;
+    hits.push({...p,sine:Math.abs(ax*by-ay*bx)/(Math.hypot(ax,ay)*Math.hypot(bx,by)),a:a.k,b:b.k});
+    per[a.k]++;per[b.k]++;
+  }
+  return {edges,hits,per};
+}
+function famVisualQualities(plan,stride=1){
+  const {edges,hits}=famInk(plan,null,stride),mean=a=>a.reduce((s,v)=>s+v,0)/Math.max(1,a.length);
+  const lengths=[],coherence=[],fullness=[];
+  for(let k=0;k<plan.order.length;k++){
+    const ink=edges.filter(e=>e.k===k);let length=0,c=0,s=0;
+    for(const e of ink){const dx=e.b.x-e.a.x,dy=e.b.y-e.a.y,l=Math.hypot(dx,dy),a=4*Math.atan2(dy,dx);length+=l;c+=l*Math.cos(a);s+=l*Math.sin(a)}
+    lengths.push(length);coherence.push(Math.hypot(c,s)/Math.max(1,length));
+    const pts=ink.flatMap(e=>[e.a,e.b]).sort((a,b)=>a.x-b.x||a.y-b.y);
+    const turn=(a,b,c)=>(b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x),h=[];
+    for(const p of pts){while(h.length>1&&turn(h.at(-2),h.at(-1),p)<=0)h.pop();h.push(p)}
+    const lo=h.length;
+    for(let i=pts.length-2;i>=0;i--){const p=pts[i];while(h.length>lo&&turn(h.at(-2),h.at(-1),p)<=0)h.pop();h.push(p)}
+    h.pop();let area=0,perimeter=0;
+    h.forEach((a,i)=>{const b=h[(i+1)%h.length];area+=a.x*b.y-a.y*b.x;perimeter+=Math.hypot(a.x-b.x,a.y-b.y)});
+    fullness.push(Math.sqrt(Math.min(1,2*Math.PI*Math.abs(area)/Math.max(1,perimeter*perimeter))));
+  }
+  const balance=Math.min(...lengths)/Math.max(1,...lengths);
+  const composition=100*(.45*mean(coherence)+.4*mean(fullness)+.15*balance);
+  const shallow=hits.filter(p=>p.sine<.25).length/Math.max(1,hits.length);
+  const crowded=hits.filter((p,i)=>hits.some((q,j)=>i!==j&&Math.hypot(p.x-q.x,p.y-q.y)<22)).length/Math.max(1,hits.length);
+  const obscured=plan.nodes.filter(n=>edges.some(e=>{
+    if(e.nodes.includes(n))return false;
+    const dx=e.b.x-e.a.x,dy=e.b.y-e.a.y,d=dx*dx+dy*dy;
+    const u=Math.max(0,Math.min(1,((n.x-e.a.x)*dx+(n.y-e.a.y)*dy)/(d||1)));
+    return Math.hypot(n.x-e.a.x-u*dx,n.y-e.a.y-u*dy)<18;
+  })).length/Math.max(1,plan.nodes.length);
+  const readability=Math.max(0,100*(1-.7*shallow-.5*crowded-.35*obscured));
+  return {composition,readability,coherence:mean(coherence),fullness:mean(fullness),balance,shallow,crowded,obscured};
+}
+function famDecisionDepth(plan,practical){
+  const nodes=plan.nodes.map((n,i)=>({...n,id:i})),lookup=new Map(plan.nodes.map((n,i)=>[n,nodes[i]]));
+  const p={...plan,nodes,order:plan.order.map(o=>o.map(n=>lookup.get(n)))};
+  const active=p.order.map(()=>true),worked=new Set(),bends=[];let preparations=0,dependentReleases=0,drags=0,afterMoves=0;
+  let opening=null;
+  const origin=()=>{
+    const ns=p.nodes.map(n=>({...n})),map=new Map(p.nodes.map((n,i)=>[n,ns[i]]));
+    return {...p,nodes:ns,order:p.order.map(o=>o.map(n=>map.get(n))),active:active.slice()};
+  };
+  for(const move of practical.log){
+    const [kind,id,x,y]=move,n=p.nodes.find(n=>n.id===id);if(!n)continue;
+    if(kind===1){
+      const owners=p.order.filter(o=>o.includes(n)),other=owners[1];if(!other)continue;
+      const half={...n,id:1000+id,x:move[4],y:move[5],merged:false};
+      other[other.indexOf(n)]=half;p.nodes.push(half);n.merged=false;n.x=x;n.y=y;
+    }else{
+      if(n.bend){
+        const stage={...p,nodes:p.nodes.filter(n=>p.order.some((o,k)=>active[k]&&o.includes(n))),
+          order:p.order.map((o,k)=>active[k]?o:[]),chords:p.chords?.map((c,k)=>active[k]?c:null),curved:p.curved?.filter(k=>active[k])};
+        const choice=famBendDecision(stage,[],false,true);
+        if(choice.pass&&!famNaturalBendEscapes(stage).length)bends.push(...choice.bends.map(b=>({...b,afterMoves})));
+      }
+      opening??=origin();n.x=x;n.y=y;drags++;
+      p.order.forEach((o,k)=>{if(active[k]&&o.includes(n))worked.add(k)});
+    }
+    const per=famInk(p,active).per,released=[];
+    for(let k=0;k<active.length;k++)if(active[k]&&!per[k]&&!p.order[k].some(n=>n.merged))released.push(k);
+    if(kind===0){
+      if(!released.length)preparations++;
+      else{
+        const q=opening.nodes.find(n=>n.id===id);
+        if(q){const ox=q.x,oy=q.y;q.x=x;q.y=y;const before=famInk(opening,opening.active).per;q.x=ox;q.y=oy;
+          if(released.some(k=>before[k]>0))dependentReleases++}
+      }
+    }
+    released.forEach(k=>active[k]=false);
+    afterMoves++;
+  }
+  const bendChoices=new Set(bends.map(b=>b.thread)).size;
+  return {score:preparations+dependentReleases+bendChoices,preparations,dependentReleases,bendChoices,drags,threadsWorked:worked.size,bends};
+}
+function famNaturalBendEscapes(plan,stride=1){
+  const escapes=[],fixed=plan.curved?.length?plan.order.map((_,k)=>famThreadEdges(plan,k,null,null,stride)):[];
+  for(const k of plan.curved||[]){
+    const o=plan.order[k],bend=o.find(n=>n.bend),i=o.indexOf(bend),a=o[i-1],b=o[i+1];
+    if(!bend||!a||!b)continue;
+    const dx=b.x-a.x,dy=b.y-a.y,d=dx*dx+dy*dy;
+    const t=Math.max(.2,Math.min(.8,((bend.x-a.x)*dx+(bend.y-a.y)*dy)/(d||1)));
+    const targets=[{x:(a.x+b.x)/2,y:(a.y+b.y)/2},{x:a.x+t*dx,y:a.y+t*dy}];
+    const others=fixed.flatMap((es,j)=>j===k?[]:es);
+    const clear=at=>{
+      if(at.x<PADX||at.x>BW-PADX||at.y<PADY||at.y>BH-PADY||plan.nodes.some(n=>n!==bend&&Math.hypot(n.x-at.x,n.y-at.y)<MIN_SEP))return false;
+      const mine=famThreadEdges(plan,k,bend,at,stride);
+      return !mine.some((e,i)=>others.some(f=>segX(e.a,e.b,f.a,f.b))||mine.some((f,j)=>j>i&&
+        !(e.s!=null&&f.s!=null?f.s-e.s<2:[e.a,e.b].some(p=>[f.a,f.b].some(q=>p.x===q.x&&p.y===q.y)))&&segX(e.a,e.b,f.a,f.b)));
+    };
+    let escape=null;
+    for(const target of targets){
+      for(const f of [.5,.75,1]){
+        const at={x:bend.x+(target.x-bend.x)*f,y:bend.y+(target.y-bend.y)*f};
+        if([[0,0],[6,0],[-6,0],[0,6],[0,-6]].every(([x,y])=>clear({x:at.x+x,y:at.y+y}))){escape={thread:k,node:plan.nodes.indexOf(bend),...at};break}
+      }
+      if(escape)break;
+    }
+    if(escape)escapes.push(escape);
+  }
+  return escapes;
+}
+function famDesignCheck(plan,idx,practical){
+  const brief=famDesignBrief(idx),visual=famVisualQualities(plan),decision=practical?famDecisionDepth(plan,practical):null,bendEscapes=famNaturalBendEscapes(plan),failures=[];
+  if(visual.composition<brief.composition)failures.push('composition lacks a coherent silhouette');
+  if(visual.readability<brief.readability||visual.shallow>.2||visual.crowded>.35||visual.obscured>.35)failures.push('crossings or controls are hard to read');
+  if(bendEscapes.length)failures.push('bend clears by an obvious straightening move');
+  if(decision&&decision.bendChoices<(plan.curved?.length||0))failures.push('curve has no meaningful placement in the verified route');
+  if(decision&&(decision.score<brief.depth||practical.moves<brief.minMoves||practical.moves>brief.maxMoves||idx===1&&(decision.threadsWorked<2||!decision.preparations)))failures.push('decision depth does not fit the daily slot');
+  return {brief,...visual,decision,bendEscapes,failures};
 }
 function famParticipation(plan){
   const edges=plan.order.map((_,k)=>famThreadEdges(plan,k)),partners=edges.map(()=>0);
@@ -6072,25 +6201,33 @@ function famStraightDecision(plan){
   }
   return {pass:true,probes};
 }
-function famBendDecision(plan,route=[]){
-  const curved=new Set(plan.curved||[]),bends=[];
-  const fixed=plan.order.map((_,k)=>famThreadEdges(plan,k));
+function famBendDecision(plan,route=[],draft=false,detail=false){
+  const curved=new Set(plan.curved||[]),bends=[],stride=draft?4:1,rows=draft?4:6,cols=draft?6:10;
+  const fixed=plan.order.map((_,k)=>famThreadEdges(plan,k,null,null,stride));
   for(const k of curved){
     const bend=plan.order[k].find(n=>n.bend);
     if(!bend||bend.pinned)return {pass:false,bends,reason:'bend cannot move'};
+    let edgeId=0;
+    const masks=detail?fixed.map((es,j)=>{const ids=new Map();return es.map((e,i)=>{
+      if(j===k)return 0;const part=plan.curved?.includes(j)?e.s==null?'chord':Math.floor(e.s*stride/16):i;
+      if(!ids.has(part))ids.set(part,1<<edgeId++);return ids.get(part);
+    })}):null;
     const state=(at,usefulMask=0)=>{
-      const mine=famThreadEdges(plan,k,bend,at);let mask=0;
-      for(let j=0;j<fixed.length;j++)if(j!==k&&mine.some(a=>fixed[j].some(b=>segX(a.a,a.b,b.a,b.b))))mask|=1<<j;
+      const mine=famThreadEdges(plan,k,bend,at,stride);let mask=0,partnerMask=0;
+      for(let j=0;j<fixed.length;j++)if(j!==k){
+        if(detail)fixed[j].forEach((b,i)=>{if(mine.some(a=>segX(a.a,a.b,b.a,b.b))){mask|=masks[j][i];partnerMask|=1<<j}});
+        else if(mine.some(a=>fixed[j].some(b=>segX(a.a,a.b,b.a,b.b))))mask|=1<<j;
+      }
       const folded=(!mask||(mask&usefulMask)!==usefulMask)&&mine.some((a,i)=>mine.some((b,j)=>j>i&&
         !(a.s!=null&&b.s!=null?b.s-a.s<2:[a.a,a.b].some(p=>[b.a,b.b].some(q=>p.x===q.x&&p.y===q.y)))&&
         segX(a.a,a.b,b.a,b.b)));
-      return {mask,folded};
+      return {mask,folded,partnerMask};
     };
-    const opening=state(bend),partners=plan.order.reduce((n,_,j)=>n+!!(opening.mask&(1<<j)),0);
-    if(partners<2)return {pass:false,bends,reason:'bend meets only one thread'};
+    const opening=state(bend),partners=plan.order.reduce((n,_,j)=>n+!!((detail?opening.partnerMask:opening.mask)&(1<<j)),0);
+    if(partners<(detail&&!draft?1:2))return {pass:false,bends,reason:detail?'bend has too few crossing partners':'bend meets only one thread'};
     const regions=new Map();let legal=0,clear=0;
-    for(let row=0;row<7;row++)for(let col=0;col<11;col++){
-      const at={x:PADX+18+(BW-2*PADX-36)*col/10,y:PADY+18+(BH-2*PADY-36)*row/6};
+    for(let row=0;row<=rows;row++)for(let col=0;col<=cols;col++){
+      const at={x:PADX+18+(BW-2*PADX-36)*col/cols,y:PADY+18+(BH-2*PADY-36)*row/rows};
       if(plan.nodes.some(n=>n!==bend&&Math.hypot(at.x-n.x,at.y-n.y)<MIN_SEP))continue;
       legal++;const s=state(at,opening.mask);if(s.folded)continue;
       if(!s.mask)clear++;
@@ -6103,23 +6240,23 @@ function famBendDecision(plan,route=[]){
     const canClear=clear>0||extra.some(at=>Number.isFinite(at.x)&&Number.isFinite(at.y)&&
       !plan.nodes.some(n=>n!==bend&&Math.hypot(at.x-n.x,at.y-n.y)<MIN_SEP)&&
       ((s)=>!s.mask&&!s.folded)(state(at)));
-    const useful=[...regions.values()].filter(r=>r.count>=2);
+    const useful=[...regions.values()].filter(r=>r.count>=(draft?1:2));
     const a=useful.find(a=>useful.some(b=>(a.mask&~b.mask)&&(b.mask&~a.mask)));
     const b=a&&useful.find(b=>(a.mask&~b.mask)&&(b.mask&~a.mask));
     if(!legal||clear*6>legal)return {pass:false,bends,reason:'bend has a broad empty escape'};
-    if(!a||!b)return {pass:false,bends,reason:'bend has no competing placements'};
-    bends.push({thread:k,partners,legal,clear,mode:canClear?'placement':'sequence',
+    if(!a||!b)return {pass:false,bends,reason:'bend has no competing placements',...(draft?{potential:useful.length?1:0}:{})};
+    bends.push({thread:k,partners,legal,clear,mode:canClear?'placement':'sequence',...(detail?{conflicts:'edges'}:{}),
       choices:[a,b].map(r=>({mask:r.mask,x:r.at.x,y:r.at.y}))});
   }
   return {pass:true,bends};
 }
-function authorBends(plan,count,rnd,compact=false){
+function authorBends(plan,count,rnd,compact=false,minNodes=3){
   const cands=[],bendable=k=>{
     const o=plan.order[k],chord=plan.chords&&plan.chords[k];
     return o.slice(1,-1).filter((n,j)=>!chord||!chord.includes(j+1));
   };
   plan.order.forEach((o,k)=>{
-    if(o.length<3||o.some(n=>n.merged||n.pinned||n.t.length>1))return;
+    if(o.length<minNodes||o.some(n=>n.merged||n.pinned||n.t.length>1))return;
     if(bendable(k).length)cands.push(k);
   });
   if(cands.length<count)return false;
@@ -6138,6 +6275,16 @@ function authorBends(plan,count,rnd,compact=false){
     bend.bend=true;plan.curved.push(k);
   }
   return true;
+}
+function famCurveStep(plan,rnd){
+  const k=plan.curved[Math.floor(rnd()*plan.curved.length)],o=plan.order[k],bend=o.find(n=>n.bend),i=o.indexOf(bend),a=o[i-1],b=o[i+1];
+  const movable=plan.nodes.filter(n=>!n.pinned&&!n.merged&&!n.bend&&!o.includes(n));
+  if(!movable.length||!a||!b)return null;
+  const n=movable[Math.floor(rnd()*movable.length)],t=.2+.6*rnd(),dx=b.x-a.x,dy=b.y-a.y,l=Math.hypot(dx,dy)||1;
+  const offset=(rnd()<.5?-1:1)*MIN_SEP*(1.2+1.2*rnd());
+  const x=clampX(a.x+t*dx-dy/l*offset),y=clampY(a.y+t*dy+dx/l*offset);
+  if(plan.nodes.some(m=>m!==n&&Math.hypot(x-m.x,y-m.y)<MIN_SEP))return null;
+  const step={pick:[n],px:[n.x],py:[n.y]};n.x=x;n.y=y;n.moved=true;return step;
 }
 function famSpread(plan,idx){
   const limits=netSpec(idx,GEN_RULES),spaceFailure=f=>f==='large empty patch'||f==='threads leave a broad empty area'||f==='threads miss a board region';
@@ -6173,6 +6320,7 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd,idx,lens,mechanic){
   const F=FAMILIES[fam];
   if(!F || T<F.minT || L<F.minL) return null;
   const xCap=netSpec(idx,GEN_RULES).maxX;
+  const brief=designedDaily(GEN_RULES.outlineDay,GEN_RULES.catalogueRevision)?famDesignBrief(idx):null;
   const {s,g,keys:clues,chords:clueChords}=F.slots(T,L,tut,rnd,lens,GEN_RULES,idx);
   if(lens) rnd();
   const nodes=[], order=[];
@@ -6239,10 +6387,18 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd,idx,lens,mechanic){
 
 
   const earlyBend=mechanic?.bend&&needsDecisions(GEN_RULES.outlineDay,GEN_RULES.catalogueRevision);
-  const coverage=earlyBend&&idx>=5&&idx<9;
-  if(earlyBend&&!authorBends(plan,mechanic.bend,rnd,coverage))return null;
-  const price=()=>famCost(plan)+(coverage?8*famFloor(plan):0);
-  if(coverage)want+=8*(PRACTICAL_RANGE[idx][0]-2);
+  const coverage=earlyBend&&idx>=5&&(idx<9||brief);
+  if(earlyBend&&!authorBends(plan,mechanic.bend,rnd,coverage,brief?4:3))return null;
+  const floorTarget=brief?Math.max(1,brief.minMoves-1)+plan.merges:0;
+  const price=()=>famCost(plan)+(brief?8*Math.min(floorTarget,famFloor(plan)):coverage?8*famFloor(plan):0);
+  if(brief)want+=8*floorTarget;
+  else if(coverage)want+=8*(PRACTICAL_RANGE[idx][0]-2);
+  const qualityOf=()=>{
+    if(!brief)return famReadability(plan).score;
+    const q=famVisualQualities(plan,4),bend=earlyBend?famBendDecision(plan,[],true,true):null;
+    return .55*q.composition+.45*q.readability-40*famNaturalBendEscapes(plan,4).length+(bend?30*(bend.pass?2:bend.potential||0):0);
+  };
+  const rank=(cost,quality)=>12*Math.min(cost,want)+quality;
   if(GEN_RULES.weave==='pattern' && T>=3){
     const home=live.map(n=>({n, x:n.x, y:n.y}));
     const restore=()=>home.forEach(h=>{h.n.x=h.x; h.n.y=h.y});
@@ -6255,15 +6411,15 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd,idx,lens,mechanic){
         famWeave(order, name, amp);
         const priced=price(), x=famX(plan);
         if(x>xCap) continue;
-        const quality=famReadability(plan).score;
-        if(!best || priced>best.par || (priced===best.par && quality>best.quality))
+        const quality=qualityOf();
+        if(!best || (brief?rank(priced,quality)>rank(best.par,best.quality):priced>best.par || (priced===best.par && quality>best.quality)))
           best={name,amp,par:priced,x,quality};
       }
     }
     restore();
     if(best){
       const bare=price();
-      if(best.par>bare || (best.par===bare && best.quality>famReadability(plan).score)){
+      if(brief?rank(best.par,best.quality)>rank(bare,qualityOf()):best.par>bare || (best.par===bare && best.quality>qualityOf())){
         famWeave(order, best.name, best.amp);
         plan.weave=best.name; plan.amp=best.amp;
         plan.d=live.filter(n=>Math.hypot(n.x-n.hx,n.y-n.hy)>.5).length;
@@ -6272,13 +6428,14 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd,idx,lens,mechanic){
   }
 
   plan.par=price();plan.x=famX(plan);
-  let quality=famReadability(plan).score;
-  for(let miss=0; plan.par<want && miss<26; ){
-    const st=famStep(live, F.cyc||3, !!F.local, rnd);
-    if(!st) break;
+  let quality=qualityOf();
+  for(let miss=0,tries=0; (plan.par<want||brief&&tries<32) && miss<(brief?32:26) && tries<(brief?48:Infinity); tries++){
+    const guided=brief&&earlyBend&&tries%3===0;
+    const st=guided?famCurveStep(plan,rnd):famStep(live, F.cyc||3, !!F.local, rnd);
+    if(!st){if(guided)continue;break}
     const priced=price(), x=famX(plan);
-    const nextQuality=famReadability(plan).score;
-    if((priced>plan.par || (priced===plan.par && nextQuality>quality)) && x<=xCap){
+    const nextQuality=qualityOf();
+    if((brief?rank(priced,nextQuality)>rank(plan.par,quality):priced>plan.par || (priced===plan.par && nextQuality>quality)) && x<=xCap){
       if(priced>plan.par) miss=0;
       plan.par=priced;plan.x=x;plan.d+=st.pick.length;quality=nextQuality;
     } else {
@@ -6287,7 +6444,7 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd,idx,lens,mechanic){
     }
   }
   if(mechanic?.bend&&!earlyBend&&!authorBends(plan,mechanic.bend,rnd))return null;
-  if(earlyBend)plan.par=famCost(plan);
+  if(earlyBend||brief)plan.par=famCost(plan);
   famSpread(plan,idx);
   plan.route=plan.par;
   plan.par=Math.max(3, plan.par + (GEN_RULES.parSlack||0));
@@ -6920,13 +7077,14 @@ function buildNet(force){
           const poster=famPoster(spec.plan,idx,spec.maxX);if(poster.failures.length)continue;
           const composition=famReadability(spec.plan);if(!composition.clear)continue;
           spec.plan.composition=composition;
-          if(needsDecisions(GEN_RULES.outlineDay,GEN_RULES.catalogueRevision)&&spec.plan.curved?.length&&!famBendDecision(spec.plan).pass)continue;
+          if(designedDaily(GEN_RULES.outlineDay,GEN_RULES.catalogueRevision)&&famDesignCheck(spec.plan,idx).failures.length)continue;
+          if(needsDecisions(GEN_RULES.outlineDay,GEN_RULES.catalogueRevision)&&!designedDaily(GEN_RULES.outlineDay,GEN_RULES.catalogueRevision)&&spec.plan.curved?.length&&!famBendDecision(spec.plan).pass)continue;
           if(needsDecisions(GEN_RULES.outlineDay,GEN_RULES.catalogueRevision)){
             const decision=famStraightDecision(spec.plan);if(!decision.pass)continue;
             spec.plan.straightDecision=decision;
           }
           const practical=famPracticalTargets(spec.plan,idx);if(!practical)continue;
-          if(needsDecisions(GEN_RULES.outlineDay,GEN_RULES.catalogueRevision)&&spec.plan.curved?.length){
+          if(needsDecisions(GEN_RULES.outlineDay,GEN_RULES.catalogueRevision)&&!designedDaily(GEN_RULES.outlineDay,GEN_RULES.catalogueRevision)&&spec.plan.curved?.length){
             const decision=famBendDecision(spec.plan,practical.log);if(!decision.pass)continue;
             spec.plan.decision=decision;
           }
@@ -6938,6 +7096,11 @@ function buildNet(force){
           if(score.moves<Math.max(2,PRACTICAL_RANGE[idx][0]-2))continue;
             spec.plan.practical=score;
             spec.plan.route=score.moves;spec.plan.free=score.moves;spec.plan.par=score.clean;
+          }
+          if(designedDaily(GEN_RULES.outlineDay,GEN_RULES.catalogueRevision)){
+            const design=famDesignCheck(spec.plan,idx,spec.plan.practical);if(design.failures.length)continue;
+            spec.plan.design=design;
+            spec.plan.decision={pass:true,bends:design.decision.bends};
           }
           initialCross=Math.max(c0.total,1);
           spec.par=spec.plan.par;
