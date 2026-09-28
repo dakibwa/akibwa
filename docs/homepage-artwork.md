@@ -12,21 +12,14 @@
   the same release's cover from the Cover Art Archive or Apple Music, kept
   only when it matches the committed sleeve (one paler scan was accepted by
   eye). `data/music-art.json` records each source.
-- The hole top right is inline SVG: a hollow ring in ink with a faint shade
-  inside its top edge (Dan, 25 September 2026). It replaced the sky wheel's sun
-  and moon the same day.
-- The cast's `a`, `k` and `i` are Codex drawings Dan chose on 25 September
-  2026 (an orange `a` with small eyes, a periwinkle `k`, a raspberry `i`, each
-  with a paler tail), traced into cubic outlines in
-  `components/paper/cast-paths.js` on one scale: every main stroke 30 units
-  thick, feet on one baseline. The trace unmixed each pixel between its two
-  nearest colours for sub-pixel edges and fitted curves that keep the real
-  corners (the `k`'s crotches, the `a`'s crease). The cast draws each over a
-  darker edge, with its own eyes; colours are in `app/globals.css`.
-- The five things (a hand of sleeves, the Features tile, browser windows, paper
-  plane, folded map) and the hole are inline SVG in
-  `components/paper/things.jsx` and `paper-home.jsx`, so they scale and draw in
-  without image requests.
+- The sole mascot is the orange `a` from the Codex drawing Dan chose on
+  25 September 2026, traced into `components/paper/cast-paths.js`. Its body,
+  apricot tail, darker paper edge and eyes keep the accepted proportions.
+  It rests beside the introduction. Dan removed the extra `k` and `i` and
+  the circular entrance on 28 September 2026.
+- The five things (a hand of sleeves, the Features tile, browser windows,
+  paper plane and folded map) are inline SVG in `components/paper/things.jsx`,
+  so they scale and draw in without image requests.
 - The taste sleeves are cartoons drawn from the real covers in
   `public/album-art/`: Taking Tiger Mountain's rows of small orange-haired
   portraits round the large one and its red dragon on grey; Person Pitch's
@@ -57,7 +50,7 @@
   Inês's: Castle Bank's mark beside a pencil drawing of an office building
   with orange conduit running into an open distribution board, and a salon
   client whose hair streams into ribbons, roses and butterflies.
-- `public/share-card-paper.jpg` is the front page's first screen at rest.
+- `public/share-card-a.jpg` is the front page's first screen at rest.
 
 ## Akibwa identity
 

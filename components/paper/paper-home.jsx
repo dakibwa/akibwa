@@ -153,7 +153,6 @@ export function PaperHome({ music, websites }) {
           <p className="front-lede">Building in the age of AI.</p>
           <Contact />
         </div>
-        <Hole />
         <Cast onVisit={setVisited} />
         <div className="front-stage">
           <ul className="things" aria-label="Five things">
@@ -245,27 +244,5 @@ function Room({ id, children }) {
       </h2>
       {children}
     </section>
-  );
-}
-
-// A round opening in the sheet, where the sun and moon used to be: a hollow
-// ring in ink with a little shade inside its top edge. The cast comes out of
-// it (Dan, 25 September 2026).
-function Hole() {
-  return (
-    <svg className="hole" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
-      <defs>
-        <clipPath id="hole-cut">
-          <circle cx="60" cy="60" r="50" />
-        </clipPath>
-        <filter id="hole-soft" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="2.4" />
-        </filter>
-      </defs>
-      <g clipPath="url(#hole-cut)">
-        <circle cx="60" cy="66" r="55" fill="none" stroke="#2a2420" strokeOpacity=".22" strokeWidth="10" filter="url(#hole-soft)" />
-      </g>
-      <circle className="hole-rim" cx="60" cy="60" r="50" />
-    </svg>
   );
 }

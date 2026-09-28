@@ -297,9 +297,8 @@ const checkPublicLanding = async () => {
   check(JSON.stringify(state.contactLabels) === JSON.stringify(["Instagram — @dakibwa", "X — @dakibwa", "Email Akibwa"]), "the bar keeps three distinct contact controls");
   check(state.googlebot.includes("noimageindex") && state.googlebot.includes("max-snippet:120"), `Google receives the restricted preview policy [${state.googlebot}]`);
   check(await evaluate(`getComputedStyle(document.body).userSelect === "none"`), "the page's text is not selectable");
-  check(await evaluate(`Boolean(document.querySelector(".front .hole")) && !document.querySelector(".sky-wheel")`), "a hole is cut where the sun and moon were");
+  check(await evaluate(`!document.querySelector(".front .hole, .sky-wheel")`), "the front page has no portal or sky wheel");
   check(await waitFor(`document.querySelector(".name")?.dataset.name === "akibwa"`, 6500), "the name changes from Daniel to Akibwa on the original timing");
-  check(await evaluate(`document.documentElement.dataset.sky === "night"`), "Akibwa is marked for the cast");
   await sleep(1700);
 
   for (const width of [320, 390, 560, 800, 1024, 1440, 1920]) {
@@ -399,8 +398,7 @@ const checkPublicLanding = async () => {
 
   section("mascot");
   await goto("/");
-  check(await waitFor(`document.querySelector(".mascot.is-a")?.classList.contains("is-in-hole")`, 3000), "the a starts in the hole");
-  check(await waitFor(`(() => { const cast = [...document.querySelectorAll(".mascot")]; return cast.length === 3 && cast.every((el) => el.classList.contains("is-placed") && !el.classList.contains("is-in-hole")); })()`, 16000), "k and i peek up into the hole and climb out after the a");
+  check(await waitFor(`(() => { const cast = [...document.querySelectorAll(".mascot")]; return cast.length === 1 && cast[0].classList.contains("is-a") && cast[0].classList.contains("is-placed"); })()`, 3000), "the sole a appears directly on the paper");
   await sleep(1200);
   const mascot = await evaluate(`(() => { const el = document.querySelector(".mascot"); const box = el.getBoundingClientRect(); return { placed: el.classList.contains("is-placed"), x: box.left + box.width / 2, y: box.top + box.height / 2, w: box.width }; })()`);
   check(mascot.placed && mascot.w > 40, "the mascot is on the front page");

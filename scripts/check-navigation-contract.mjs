@@ -74,13 +74,13 @@ requireText(names, "prefers-reduced-motion", "the name change must respect reduc
 requireText(names, "visibilitychange", "the name change must pause in hidden tabs");
 requireText(names, "I’m Daniel. Online as Akibwa.", "the heading must carry both names for assistive technology");
 requireText(home, "Building in the age of AI.", "the front page must preserve Dan's proposition");
-requireText(names, "dataset.sky", "the name change must mark Daniel and Akibwa for the cast to follow");
-// A hole where the sun and moon were, and a, k and i coming out of it (Dan, 25 September 2026).
-requireText(home, "<Hole />", "the front page must cut the hole the cast comes out of");
-requireText(home, "<Cast onVisit={setVisited} />", "the front page must carry the cast");
+// One Akibwa a, already on the paper, with no portal (Dan, 28 September 2026).
+forbidText(home, "<Hole", "the mascot must not have a separate portal");
+requireText(home, "<Cast onVisit={setVisited} />", "the front page must carry the mascot");
 const cast = read("components/paper/cast.jsx");
-for (const letter of ['id: "a"', 'id: "k"', 'id: "i"']) requireText(cast, letter, `the cast must include ${letter}`);
-requireText(cast, "prefers-reduced-motion", "the cast must keep still under reduced motion");
+requireText(cast, 'id: "a"', "the mascot must remain the Akibwa a");
+for (const letter of ['id: "k"', 'id: "i"']) forbidText(cast, letter, "the a is the sole mascot");
+requireText(cast, "prefers-reduced-motion", "the mascot must keep still under reduced motion");
 requireRuleText("\nbody {", ["user-select: none"]);
 
 // Five things, five rooms; the trek's frames its journey (Dan, 25 September 2026).

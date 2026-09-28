@@ -399,29 +399,11 @@ html:not(.js) .paper:has(.room:target) .bar .contact {
   font-variation-settings: "opsz" 36;
 }
 
-/* Top right, level with the top of the name: the hole the cast comes from. */
-.hole {
-  position: absolute;
-  top: clamp(28px, 9vh, 104px);
-  right: calc(var(--gutter) + 1vw);
-  width: clamp(76px, 9vw, 136px);
-  height: auto;
-  overflow: visible;
-}
-
-.hole-rim {
-  fill: none;
-  stroke: var(--ink);
-  stroke-width: 5;
-}
-
 @keyframes turn {
   to { transform: rotate(360deg); }
 }
 
-/* The cast lives on the front sheet: placed by script at their feet, dancing
-   and hopping about. The a is the mark's own proportions a size up; k and i
-   are drawn on its scale, each as wide as its own drawing (--span). */
+/* The sole Akibwa a rests on the paper, with its original proportions. */
 .mascot {
   position: absolute;
   z-index: 3;
@@ -438,7 +420,7 @@ html:not(.js) .paper:has(.room:target) .bar .contact {
   visibility: visible;
 }
 
-/* The one being carried is held above the others. */
+/* A carried mascot sits above the illustrations. */
 .mascot.is-held {
   z-index: 4;
   cursor: grabbing;
@@ -460,8 +442,7 @@ html:not(.js) .paper:has(.room:target) .bar .contact {
   opacity: 0.14;
 }
 
-.mascot.is-held .mascot-shadow,
-.mascot.is-in-hole .mascot-shadow {
+.mascot.is-held .mascot-shadow {
   opacity: 0;
 }
 
@@ -471,20 +452,6 @@ html:not(.js) .paper:has(.room:target) .bar .contact {
   --letter-edge: #c9531f;
   --letter-tail: #fedeae;
   --letter-tail-edge: #d6aa76;
-}
-
-.mascot.is-k {
-  --letter: #7d7afb;
-  --letter-edge: #524ec4;
-  --letter-tail: #e2d6fe;
-  --letter-tail-edge: #aa9cd6;
-}
-
-.mascot.is-i {
-  --letter: #eb5772;
-  --letter-edge: #b83450;
-  --letter-tail: #facfc2;
-  --letter-tail-edge: #d69e8e;
 }
 
 .cast-body {
@@ -2278,14 +2245,9 @@ button.music-face {
     font-size: clamp(48px, 15vw, 72px);
   }
 
-  .hole {
-    top: clamp(20px, 5vh, 48px);
-    width: 64px;
-  }
-
-  /* On a phone the cast is small enough to stand three abreast by the links. */
+  /* A single character beside the contact links, clear of the words. */
   .mascot {
-    width: calc(var(--span, 1) * 56px);
+    width: calc(var(--span, 1) * 72px);
   }
 
   /* The list follows the intro rather than waiting at the foot of the screen. */
