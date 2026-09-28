@@ -34,7 +34,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-ic76TG8mw5d+r4FtpnAs3PDaKhYVu5yFwTpTkdNqLGA=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-BClZP4nTawnSt5YxxjRwU2YXN0pNkcxlKL4ysfWn7L8=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- The approved concept quartet: aeroplane, smaller heart, leaf and lightning.
      Render web icons from assets/marketing/features-app-mark.svg with
      tools/render-web-icons.mjs; keep the tab SVG embedded for offline copies. -->
@@ -892,22 +892,24 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
     grid-column:1/-1;position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:var(--sheet-gap);
     margin:0 0 7px;padding:11px 0;border-block:1px solid var(--rule);background:var(--surface)}
   .showcase-note{margin:0 0 0 clamp(4px,1vw,12px);font-size:12px;line-height:1.5;color:var(--ink-soft)}
-  .showcase-upgrade{padding:2px 0;min-height:24px;border:0;background:none;font-family:inherit;text-align:left;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
-  .showcase-upgrade:is(:hover,:focus-visible){color:var(--ink)}
+  .showcase-upgrade{display:grid;gap:2px;padding:2px 0;border:0;background:none;font:inherit;text-align:left;color:var(--ink);cursor:pointer}
+  .showcase-upgrade b{font-size:13px}
+  .showcase-upsell{display:flex;align-items:center;gap:5px;font-size:11px;letter-spacing:.04em;color:var(--ink-soft)}
+  .showcase-upsell svg{width:11px}
+  .showcase-upgrade:is(:hover,:focus-visible) .showcase-upsell{color:var(--ink)}
   .showcase-upgrade:focus-visible{outline:2px solid var(--sig-hellblau);outline-offset:3px}
   .showcase-slot{position:relative;display:grid;place-items:center;flex:none;
     width:calc(var(--showcase-size) - 3px);height:var(--showcase-size);
     padding:0;border:0;background:var(--surface);color:var(--ink-soft);font:inherit;appearance:none;-webkit-appearance:none}
   .showcase-slot::before{content:'';position:absolute;inset:0;border:1px solid var(--rule);pointer-events:none;transition:border-color .18s,box-shadow .18s,inset .18s}
-  button.empty::before{border-style:dashed;border-color:color-mix(in srgb,var(--ink-soft) 55%,transparent)}
+  .showcase-slot.empty::before{border-style:dashed;border-color:color-mix(in srgb,var(--ink-soft) 55%,transparent)}
   .dragging .empty::before{border-color:var(--ink-soft)}
   .showcase-slot[data-remove-stamp]::before{border-color:var(--silver)}
   .showcase-slot svg.smark{width:62%}
   .showcase-slot[data-remove-stamp]:is(:hover,:focus-visible){background:var(--door-plate);color:#0E1214}
   .showcase-slot[data-remove-stamp]:is(:hover,:focus-visible):not(.drop-target,[aria-pressed="true"])::before{border-color:#0E1214}
   .showcase-slot:is(.drop-target,[aria-pressed="true"])::before{inset:-4px;border:1px solid var(--ink);box-shadow:0 0 0 1px var(--paper)}
-  .showcase-slot.locked{background:color-mix(in srgb,var(--surface) 96%,var(--ink))}
-  .showcase-slot.locked svg{width:17px;height:17px;opacity:.65}
+  .showcase-slot.locked svg{opacity:.28}
   .showcase-slot.locked:is(.drop-target,.denied)::before{border-color:var(--sig-orange)}
   .showcase-slot.locked.denied{background:color-mix(in srgb,var(--surface) 90%,var(--sig-orange))}
   .showcase-slot:is(.landing,.showcase-source)>svg{visibility:hidden}
@@ -1474,6 +1476,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
     .field .tlabel2{font-size:28px;stroke-width:9}
   }
   @media (max-width:480px){
+    .showcase-more{display:none}
     .hud-head.has-showcase{grid-template-columns:minmax(0,1fr) auto}
     .has-showcase .mark{display:none}
     .has-showcase .board-showcase{grid-column:1;justify-self:start;gap:4px;padding-right:0;border-right:0}
@@ -3683,10 +3686,10 @@ function canShowcaseStamps(){return !!POLICY.premium}
 function showcaseSlots(){return showcaseKeys.map(k=>k&&figureBadge(k)?k:null)}
 function earnedShowcaseKeys(){return showcaseSlots().filter(Boolean)}
 const stampPlate=key=>FIGURES[key]||FIGURES_RETIRED[key]||FEATURES[key];
-function showcaseMark(key){
+function showcaseMark(key,decorative=false){
   const d=stampPlate(key);if(!d)return '';
   const glyph=STAMPS[key]?STAMPS[key].art:`<g fill="currentColor">${d.p}</g>`;
-  return `<svg class="smark" viewBox="0 0 96 96" role="img" aria-label="${key}">${glyph}</svg>`;
+  return `<svg class="smark" viewBox="0 0 96 96" ${decorative?'aria-hidden="true"':`role="img" aria-label="${key}"`}>${glyph}</svg>`;
 }
 function showcasePlate(key){
   const d=stampPlate(key);if(!d)return '';
@@ -3706,16 +3709,18 @@ function collectionStamp(k){
 function showcasePanel(){
   const enabled=canShowcaseStamps(),keys=enabled?showcaseSlots():[null,null,null,null];
   if(!enabled)showcaseTarget=null;
-  const lock='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M7.5 10V7a4.5 4.5 0 0 1 9 0v3"/><rect x="5" y="10" width="14" height="11" rx="1"/><path d="M12 14v3"/></svg>';
+  const lock='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7.5 10V7a4.5 4.5 0 0 1 9 0v3"/><rect x="5" y="10" width="14" height="11" rx="1"/></svg>';
+  const ghosts=enabled?[]:collectionStamps().filter(s=>s.badge).slice(0,4).map(s=>s.key);
   return `<section class="collection-showcase" id="showcasepanel" aria-label="${enabled?'your concept showcase':'premium concept showcase'}">
     ${keys.map((key,i)=>{
-      if(!enabled)return `<span class="showcase-slot empty locked" data-showcase-slot="${i}" role="img" aria-label="premium showcase slot locked">${lock}</span>`;
+      if(!enabled)return `<span class="showcase-slot empty locked" data-showcase-slot="${i}" role="img" aria-label="premium showcase slot locked">${ghosts[i]?showcaseMark(ghosts[i],true):''}</span>`;
       return `<button type="button" class="showcase-slot${key?'':' empty'}" data-showcase-slot="${i}"${key?` data-remove-stamp="${key}"`:''}
         aria-label="${key||'empty'}, showcase slot ${i+1} of 4" aria-pressed="false"
         aria-description="${key?'drag or use left and right arrows to move. double-click, double-tap or press Delete to remove. ':''}select this slot, then an earned concept to pin it."
         aria-keyshortcuts="${key?'ArrowLeft ArrowRight Delete Backspace ':''}Enter Space"${key?` style="--door-plate:var(${stampPlate(key).c})"`:''}>${key?showcaseMark(key):''}</button>`;
     }).join('')}
-    ${enabled?'<p class="showcase-note" id="showcasenote">pin four concepts</p>':'<button type="button" class="showcase-note showcase-upgrade" id="showcaseupgrade" aria-label="pin four concepts · discover premium">pin four concepts</button>'}
+    ${enabled?'<p class="showcase-note" id="showcasenote">pin four concepts</p>'
+      :`<button type="button" class="showcase-note showcase-upgrade" id="showcaseupgrade" aria-label="pin four to your game · discover premium"><b>pin four to your game</b><span class="showcase-upsell">${lock}premium<span class="showcase-more"> · discover</span> ›</span></button>`}
     <span class="showcase-status" id="showcasestatus" role="status"></span>
   </section>`;
 }
@@ -3824,11 +3829,10 @@ function returnShowcaseDrag(drag,animate){
 function denyShowcaseDrop(slot){
   if(!slot?.isConnected)return;
   slot.classList.add('denied');
-  const icon=slot.querySelector('svg');
   const frames=reduceMotion
     ? [{opacity:1},{opacity:.65}]
     : [0,-3,3,-2,2,0].map((x,i)=>({transform:`translateX(${x}px)`,opacity:i===5?.65:1}));
-  const animation=icon.animate(frames,{duration:reduceMotion?240:420,easing:cssv('--ease-out')});
+  const animation=slot.animate(frames,{duration:reduceMotion?240:420,easing:cssv('--ease-out')});
   let done=false;
   const denial={finish(){
     if(done)return;done=true;
