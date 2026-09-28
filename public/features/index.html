@@ -1545,7 +1545,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
     .opening-name{font-size:34px}
     .opening-stamps,.menu-heading .opening-stamps{--menu-stamp-size:26px;gap:4px}
     .view-profile .pane-head{padding-bottom:0;border-bottom:0}
-    :is(.view-home,.view-welcome) .intro-art{grid-row:1;aspect-ratio:auto}
+    :is(.view-home,.view-welcome) .intro-art{position:absolute;inset:0;grid-row:1/2;grid-column:1/-1;aspect-ratio:auto}
     :is(.view-home,.view-welcome) .menu-content{grid-template-rows:auto minmax(0,1fr)}
     :is(.view-home,.view-welcome) .opening{grid-row:1;position:relative;display:grid;align-content:center;
       min-height:var(--menu-head-height);padding:var(--menu-head-pad);
