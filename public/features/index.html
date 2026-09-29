@@ -34,7 +34,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-w8tzUqkUwG27Cydu/eN4ctSv62PfZyqeELwaU3qRXjw=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-z1ksCQggr7qafk8fUgEFF0AlPLTd4JnlxLJUZZEDbHE=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- The approved concept quartet: aeroplane, smaller heart, leaf and lightning.
      Render web icons from assets/marketing/features-app-mark.svg with
      tools/render-web-icons.mjs; keep the tab SVG embedded for offline copies. -->
@@ -490,6 +490,11 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   @keyframes boardin{from{opacity:0;transform:translateX(14px)}}
   .field.swap-out > svg{animation:boardout .19s var(--ease-in) both}
   .field.swap-in > svg{animation:boardin .3s var(--ease-out) both}
+  #netbuilding{display:none;position:absolute;inset:50% 0 auto;text-align:center;font-size:11px;letter-spacing:.08em;color:var(--ink-soft);pointer-events:none}
+  #netbuilding::before{content:'';display:inline-block;width:6px;height:6px;margin-right:10px;background:currentColor;animation:network .7s ease-in-out infinite alternate;will-change:transform}
+  @keyframes network{to{transform:translateY(-6px)}}
+  .field.building > svg{visibility:hidden}
+  .field.building #netbuilding{display:block}
 
 
   .hud-body{flex:1 1 auto;min-height:0;display:flex;overflow:clip}
@@ -1022,6 +1027,10 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   .acct-identity-heading{display:flex;align-items:baseline;justify-content:space-between;gap:8px 14px;flex-wrap:wrap}
   .acct-identity-actions{display:flex;align-items:baseline;gap:14px;flex-shrink:0}
   .acct-identity-actions .acctlink{margin:0;font-size:10px;letter-spacing:0;white-space:nowrap}
+  #acctout2,#acctdel,#acctrestore{position:relative}
+  #acctout2::after,#acctdel::after,#acctrestore::after,.day-close::after{content:'';position:absolute;inset:-23px 0 -6px}
+  #acctout2::after{left:-9px}
+  #acctrestore::after{inset:-6px 0 -26px}
   .acct-prefs{flex:none;padding-top:var(--section-gap);border-top:1px solid var(--rule)}
   .acct-prefs[hidden]{display:none}
   .acct-prefs+.acct-sec{padding-top:var(--section-gap);border-top:1px solid var(--rule)}
@@ -1121,6 +1130,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   .day-content{padding:var(--panel-y) var(--panel-x)}
   .day-heading{position:relative;padding-right:38px}
   .day-heading .day-close{position:absolute;right:-4px;top:-6px;min-width:34px;width:34px;padding:0}
+  .day-close::after{inset:-7px}
   .day-heading p{margin:0 0 var(--text-gap);font-size:11px;color:var(--ink-soft)}
   .day-result .day-heading h2{font-size:36px;font-weight:800;letter-spacing:-.05em;line-height:1.05}
   .day-result .track{margin:var(--section-gap) 0 0;height:9px;gap:3px;background:none}
@@ -1663,6 +1673,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
     .field .mnode.landed,.field .mnode.settling{animation:none}
     .welcome-row{animation:none;transform:none;will-change:auto}
     .field.swap-out > svg,.field.swap-in > svg{animation:none;opacity:1;transform:none}
+    #netbuilding::before{animation:none}
     .freerun,.clearsweep{display:none}
     .field .mnode.grabbed{transition:none}
     .descentbtn.running svg{animation:none;background:rgba(18,161,154,.2)}
@@ -1910,6 +1921,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   <div class="hud-body">
   <div class="play" id="play">
   <div class="field" id="field">
+    <span id="netbuilding" role="status">preparing net</span>
     <svg id="netsvg" viewBox="0 0 1040 580" preserveAspectRatio="none" aria-label="the tangle"></svg>
 
     <div class="coach" id="coach">
@@ -9930,7 +9942,7 @@ function boardCleared(){
   setTimeout(()=>f.classList.add('cleared'),240);
   setTimeout(()=>g.remove(),960);
 }
-let swapT=null, swapSkip=null;
+let swapT=null, swapSkip=null, swapBuild=0;
 function nextNet(){
   if(!canAccessRun()) return openMenu('home');
   if(tutorialBridge){ cancelTutorialBridge(); tutorialBridge=null }
@@ -9939,20 +9951,31 @@ function nextNet(){
   cancelHold();
   const f=$('field');
   if(swapSkip) swapSkip();
+  const turn=++swapBuild;
+  f.classList.remove('building');
   const land=()=>{
     if(!swapSkip) return;
     removeEventListener('pointerdown',swapSkip,true);
     removeEventListener('keydown',swapSkip,true);
     swapSkip=null; clearTimeout(swapT);
     f.classList.remove('swap-out','swap-in','cleared','dimthreads');
-    buildNet(true); renderAll();
-    if(kb) members.find(grabbable)?.g.focus({preventScroll:true});
-    if(!reduceMotion){
-      f.classList.add('swap-in');
-      swapT=setTimeout(()=>f.classList.remove('swap-in'),320);
-    }
-    if(!inTutorial())
-      $('msg').textContent='net '+(R().netIndex+1)+' · '+spec.threads+' features, '+countCross().total+' conflicts';
+    const run=R(),net=run.netIndex;
+    f.classList.add('building');f.setAttribute('aria-busy','true');
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      if(turn!==swapBuild)return;
+      try{
+        if(endlessActive||R()!==run||run.netIndex!==net)return;
+        buildNet(true); renderAll();
+        f.classList.remove('building');
+        if(kb&&!menuShown()) members.find(grabbable)?.g.focus({preventScroll:true});
+        if(!reduceMotion){
+          f.classList.add('swap-in');
+          swapT=setTimeout(()=>f.classList.remove('swap-in'),320);
+        }
+        if(!inTutorial())
+          $('msg').textContent='net '+(R().netIndex+1)+' · '+spec.threads+' features, '+countCross().total+' conflicts';
+      }finally{f.classList.remove('building');f.removeAttribute('aria-busy')}
+    }));
   };
   swapSkip=land;
   if(reduceMotion){ land(); return }
@@ -11154,7 +11177,7 @@ function renderIntro(){
   }
   {
     const fresh=!store.tutorialDone;
-    const streak=+store.meta.streak||0;
+    const streak=[today(),dayAdd(today(),-1)].includes(store.meta.lastPlayDay)?+store.meta.streak||0:0;
     const runSay=`<b>${streak}</b><span>day${streak===1?'':'s'}<span class="stat-qualifier"> running</span></span>`;
     const rows=dayRows();
     const perfect=rows.reduce((a,r)=>a+(typeof r.tiers==='string'
