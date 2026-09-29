@@ -34,7 +34,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-L42WSyu4ia6JcNxYYHLlWEYFTLfqroJwHopdUCP53R8=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-w8tzUqkUwG27Cydu/eN4ctSv62PfZyqeELwaU3qRXjw=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- The approved concept quartet: aeroplane, smaller heart, leaf and lightning.
      Render web icons from assets/marketing/features-app-mark.svg with
      tools/render-web-icons.mjs; keep the tab SVG embedded for offline copies. -->
@@ -833,7 +833,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   .legal-body li{margin:0 0 6px}
   .legal-body .meta{color:var(--ink-soft);font-size:11px}
   .legal-body a{color:inherit;text-underline-offset:3px}
-  .signveil > .bulletin{max-width:min(440px,calc(100% - 32px));width:100%}
+  .signveil > .bulletin{max-width:min(440px,calc(100% - 32px));width:100%;overflow:hidden auto}
   #signcard .bstrip{height:5px}
   #signcard .bhead{align-items:flex-start}
   .signclose{flex:none;width:44px;height:44px;margin:-12px -12px 0 0;border:0;background:none;color:var(--ink);font:inherit;font-size:26px;line-height:1;cursor:pointer}
@@ -1074,6 +1074,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
 
   .pay-body{padding:0 0 4px;overflow-y:auto;min-height:220px}
   .acct-ask{font-size:13px;color:var(--ink);line-height:1.45}
+  .acct-sec .acct-ask,.acct-step-line{overflow-wrap:anywhere}
   .acct-step{display:grid;gap:6px;justify-items:start;margin-bottom:6px}
   .acct-back{font-size:11px;letter-spacing:.06em;color:var(--ink-soft);text-decoration:none;padding:2px 0;transition:color var(--t-ui)}
   .acct-back::before{content:'‹ '}
@@ -1666,7 +1667,8 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
     .field .mnode.grabbed{transition:none}
     .descentbtn.running svg{animation:none;background:rgba(18,161,154,.2)}
     .themeglyph{transition:none}
-    .veil,.veil.show,.veil > *,.veil.show > *{transform:none;transition-property:opacity,visibility}
+    .veil,.veil.show{transform:none;transition-property:opacity,visibility}
+    .veil > *,.veil.show > *{transform:none;transition-property:opacity}
     .say,.say.on{transform:none;
       transition-property:opacity,visibility}
     .say .rowin{animation:none}
@@ -1740,13 +1742,25 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   .endless-dots i.next::before{box-shadow:inset 0 0 0 2.5px var(--ink)}
   .endless-dots .next .climb-n{color:var(--ink)}
   .climb-stamp{display:block;width:100%;height:auto;transition:transform .3s cubic-bezier(.2,.8,.2,1)}
-  .climb-n{font-size:clamp(9px,3.1cqmin,13px);font-weight:600;color:var(--ink-soft);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .climb-n{font-family:"Univers 75 Black","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size:clamp(9px,3.1cqmin,13px);font-weight:800;color:var(--ink-soft);font-variant-numeric:tabular-nums;letter-spacing:-.06em}
+  .endless-climb.locked{grid-template-rows:minmax(0,1fr) auto}
+  .endless-dots.locked i{cursor:default}
+  .climb-lock{position:absolute;right:-2px;bottom:-2px;display:grid;place-items:center;
+    width:clamp(10px,3.3cqmin,14px);aspect-ratio:1;padding:1px;background:var(--surface);color:var(--ink-soft);border-radius:2px;pointer-events:none}
+  .climb-lock svg{display:block;width:100%;height:100%}
+  .climb-access{display:flex;justify-content:center}
+  .climb-upgrade{display:flex;align-items:center;gap:5px;min-height:28px;padding:6px 8px;border:0;background:none;
+    font:inherit;font-size:11px;letter-spacing:.04em;color:var(--ink-soft);cursor:pointer}
+  .climb-upgrade svg{width:11px;height:11px}
+  .climb-upgrade:is(:hover,:focus-visible){color:var(--ink)}
+  .climb-upgrade:focus-visible{outline:2px solid var(--sig-hellblau);outline-offset:3px}
 
   @media(hover:hover) and (pointer:fine){
     .climb-n{transition:color .18s}
-    .endless-dots i:not(.on):hover::before{background:var(--climb-colour);box-shadow:inset 0 0 0 1.5px #0E1214;transition-duration:.16s}
-    .endless-dots i:hover .climb-n{color:#0E1214}
-    .endless-dots i.on:hover .climb-stamp{transform:scale(1.08)}
+    .endless-dots:not(.locked) i:not(.on):hover::before{background:var(--climb-colour);box-shadow:inset 0 0 0 1.5px #0E1214;transition-duration:.16s}
+    .endless-dots:not(.locked) i:hover .climb-n{color:#0E1214}
+    .endless-dots:not(.locked) i.on:hover .climb-stamp{transform:scale(1.08)}
   }
   .endless-menu-actions{flex-shrink:0;display:flex;flex-direction:column}
   .endless-menu-actions .intro-start{margin:0;min-height:44px}
@@ -1807,7 +1821,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
     #introcard.view-endless:has(.menu-play-stacked) .paneendless>.opening{min-height:44px;padding-top:4px;padding-bottom:4px}
   }
   @media(prefers-reduced-motion:reduce){
-    .endless-thread,.endless-dots i,.endless-dots i::before,.endless-dots i:not(.on):hover::before,.climb-n,.climb-stamp{transition:none}
+    .endless-thread,.endless-dots i,.endless-dots i::before,.endless-dots:not(.locked) i:not(.on):hover::before,.climb-n,.climb-stamp{transition:none}
   }
 </style>
 </head>
@@ -2044,7 +2058,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   <section class="bulletin" id="askbulletin" role="alertdialog" aria-modal="true"></section>
 </div>
 
-<div class="toast" id="toast">copied</div>
+<div class="toast" id="toast" role="status" aria-live="polite">copied</div>
 
 <script>
 
@@ -3405,6 +3419,7 @@ const POLICY = {
   get unlimited(){ return this.runsPerDay===Infinity }
 };
 let store={};
+let seenSave=null;try{seenSave=localStorage.getItem(KEY)}catch(e){}
 let endlessActive=false;
 try{
   const raw=JSON.parse(localStorage.getItem(KEY)||'{}');
@@ -3425,10 +3440,13 @@ store=migrateBoardState(store);
 const heldRun=store.run, heldParked=store.parked;
 store=pruneDailyHistory(pruneRetiredRecords(store));
 const retiredRunPruned=store.run!==heldRun || store.parked!==heldParked;
-if(!store.collection || typeof store.collection!=='object')
-  store.collection={badges:{},playedDays:[],pairs:{}};
-if(!store.meta) store.meta={streak:0,bestDepth:0,lastPlayDay:null};
-if(!store.collection.pairs) store.collection.pairs={};   // added after first ship
+function tidyRecord(){
+  const c=store.collection=savedObject(store.collection)?store.collection:{};
+  for(const k of ['badges','pairs']) if(!savedObject(c[k])) c[k]={};
+  if(!Array.isArray(c.playedDays)) c.playedDays=[];
+  if(!savedObject(store.meta)) store.meta={streak:0,bestDepth:0,lastPlayDay:null};
+}
+tidyRecord();
 const LAUNCH=BOARD_LAUNCH;
 const dayAdd=(iso,n)=>new Date(new Date(iso+'T00:00:00Z').getTime()+n*864e5).toISOString().slice(0,10);
 function newRun(mode,day){
@@ -3459,12 +3477,13 @@ if(!store.run || (store.tutorialDone && !store.run.archive && store.run.day!==to
 if(store.runsToday==null) store.runsToday=0;
 if(store.run && store.run.turns==null) store.run.turns=Math.max(0,50-(store.run.movesLeft??50));
 if(store.run && !store.run.startedAt) store.run.startedAt=new Date().toISOString();
-if(store.run){
-  const r=store.run;
+function tidyRun(r){
   for(const k of ['turns','netIndex','netMoves']) if(!Number.isFinite(r[k])) r[k]=0;
   for(const k of ['cleared','freed','splitNodes']) if(!Array.isArray(r[k])) r[k]=[];
   if(!r.positions || typeof r.positions!=='object') r.positions={};
+  return r;
 }
+for(const r of [store.run,store.parked]) if(r) tidyRun(r);
 function canStartAnotherRun(){
   return POLICY.unlimited || ((store.runsToday||0) < POLICY.runsPerDay
     && !dayRows().some(r=>r.d===today()));
@@ -3494,7 +3513,33 @@ function resumeParked(){
 function canResume(){
   return !!store.parked && canAccessRun(store.parked);
 }
-function save(){try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}syncSoon()}
+function put(){
+  let raw;try{raw=localStorage.getItem(KEY)}catch(e){}
+  if(raw&&raw!==seenSave){ setTimeout(follow); return false }
+  try{const s=JSON.stringify(store);localStorage.setItem(KEY,s);seenSave=s}catch(e){}
+  return true;
+}
+function save(){ if(put()) syncSoon() }
+function follow(){
+  try{
+    const raw=localStorage.getItem(KEY);
+    if(!raw||raw===seenSave) return false;
+    seenSave=raw;
+    const s=pruneDailyHistory(pruneRetiredRecords(migrateBoardState(JSON.parse(raw))));
+    if(![s.run,s.collection,s.meta].every(savedObject)||Number(s.boardEdition)>BOARD_EDITION) return false;
+    const same=JSON.stringify(s.run)===JSON.stringify(store.run);
+    if(same) s.run=store.run;
+    store=s;
+    if(!same){ builtFor=-1; resetDescent(); renderAll() }
+    entitlementChanged();
+    return true;
+  }catch(e){ return false }
+}
+addEventListener('storage',e=>{
+  if(e.key!==KEY) return;
+  if(!e.newValue) location.reload();
+  else if(!document.hidden) follow();
+});
 const R=()=>store.run;
 const $=id=>document.getElementById(id);
 
@@ -3518,21 +3563,22 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 
 function outbound(){ const {signedInOnce,askedDaily,...rest}=store; return JSON.stringify({...rest,clientCatalogue:CATALOGUE_REVISION,clientArchive:ARCHIVE_STANDARD}) }
 
+const NO_ANSWER='could not reach sign in · try again shortly';
 async function apiCall(path,opts){
   if(!API) throw new Error('no api');
-  const r=await fetch(API+path,{credentials:'same-origin',...opts,
-    headers:{'X-Features-Pricing':'2',...opts?.headers}});
-  const body=await r.json().catch(()=>null);
-  if(!r.ok){
-    const failure=body?.error;
-    const err=new Error(typeof failure==='string'?failure:
-      typeof failure?.message==='string'?failure.message:'http '+r.status);
-    err.status=r.status;
-    if(typeof failure?.code==='string')err.code=failure.code;
-    else if(typeof body?.code==='string')err.code=body.code;
-    throw err;
-  }
-  return body;
+  let r,body;
+  try{
+    r=await fetch(API+path,{credentials:'same-origin',...opts,signal:AbortSignal.timeout?.(15000),
+      headers:{'X-Features-Pricing':'2',...opts?.headers}});
+    body=await r.json().catch(()=>null);
+  }catch(e){}
+  if(r?.ok&&body?.constructor===Object) return body;
+  const failure=body?.error, say=typeof failure==='string'?failure:failure?.message;
+  const err=new Error(r?.status<500&&typeof say==='string'&&say||NO_ANSWER);
+  err.status=r?.status;
+  if(typeof failure?.code==='string')err.code=failure.code;
+  else if(typeof body?.code==='string')err.code=body.code;
+  throw err;
 }
 
 const AUTH_GLYPH=`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8">`
@@ -3698,6 +3744,12 @@ function openMenu(v){
   paint();
   if(changing) softEnter($('menucontent'));
 }
+const focusKey=e=>e.id||e.dataset.day||e.dataset.stamp||e.dataset.showcaseSlot;
+function paintPane(root,html){
+  const held=root.contains(document.activeElement)&&focusKey(document.activeElement);
+  root.innerHTML=html;
+  if(held)[...root.querySelectorAll('button,[tabindex]')].find(e=>focusKey(e)===held)?.focus({preventScroll:true});
+}
 function renderMenu(){
   if(menuView!=='coll'){showcaseTarget=null;cancelShowcaseDrag();finishShowcaseFlights()}
   if(menuView!=='coll') closeStampView(false);
@@ -3781,10 +3833,12 @@ function collectionStamp(k){
   const f=FIGURES[k]||FIGURES_RETIRED[k];
   return `<svg class="rfeat" viewBox="0 0 96 96" role="img" aria-label="${k}"><rect class="fcell-plate" width="96" height="96" fill="var(${f.c})"/>${figEmblem(k,{ink:EMBLEM_INK,fit:figureBadge(k)?.fit})}</svg>`;
 }
+function premiumLock(){
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7.5 10V7a4.5 4.5 0 0 1 9 0v3"/><rect x="5" y="10" width="14" height="11" rx="1"/></svg>';
+}
 function showcasePanel(){
   const enabled=canShowcaseStamps(),keys=enabled?showcaseSlots():[null,null,null,null];
   if(!enabled)showcaseTarget=null;
-  const lock='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7.5 10V7a4.5 4.5 0 0 1 9 0v3"/><rect x="5" y="10" width="14" height="11" rx="1"/></svg>';
   const ghosts=enabled?[]:collectionStamps().filter(s=>s.badge).slice(0,4).map(s=>s.key);
   return `<section class="collection-showcase" id="showcasepanel" aria-label="${enabled?'your concept showcase':'premium concept showcase'}">
     ${keys.map((key,i)=>{
@@ -3795,7 +3849,7 @@ function showcasePanel(){
         aria-keyshortcuts="${key?'ArrowLeft ArrowRight Delete Backspace ':''}Enter Space"${key?` style="--door-plate:var(${stampPlate(key).c})"`:''}>${key?showcaseMark(key):''}</button>`;
     }).join('')}
     ${enabled?'<p class="showcase-note" id="showcasenote">pin four concepts</p>'
-      :`<button type="button" class="showcase-note showcase-upgrade" id="showcaseupgrade" aria-label="pin four to your game · discover premium"><b>pin four<span class="showcase-more"> to your game</span></b><span class="showcase-upsell">${lock}premium<span class="showcase-more"> · discover</span> ›</span></button>`}
+      :`<button type="button" class="showcase-note showcase-upgrade" id="showcaseupgrade" aria-label="pin four to your game · discover premium"><b>pin four<span class="showcase-more"> to your game</span></b><span class="showcase-upsell">${premiumLock()}premium<span class="showcase-more"> · discover</span> ›</span></button>`}
     <span class="showcase-status" id="showcasestatus" role="status"></span>
   </section>`;
 }
@@ -4108,7 +4162,7 @@ function renderCollection(){
   const stamps=collectionStamps(),have=stamps.filter(s=>s.badge).length;
   const pane=$('panecoll');
   const keepScroll=pane.querySelector('.collection-sheet')?.scrollTop||0;
-  pane.innerHTML=`<div class="collection-sheet"><div class="panehd collhd menu-heading">
+  paintPane(pane,`<div class="collection-sheet"><div class="panehd collhd menu-heading">
       ${paneHeading('concepts',['fish','butterfly','mushroom','pear'],'','coll')}
       <div class="collection-summary intro-sub"><span>concepts collected ·</span>
       <div class="collcount" role="status" aria-label="${have} of ${stamps.length} concepts collected">
@@ -4122,7 +4176,7 @@ function renderCollection(){
         : `<button type="button" class="fcell none" data-stamp="${k}" aria-label="an undiscovered concept">`
           +`<svg viewBox="0 0 96 96" role="img" aria-label="an undiscovered concept" style="--emblem:var(--surface)">`
           +`<g opacity=".38">`+figEmblem(k,{ink:'var(--silver)'})+`</g></svg></button>`;
-    }).join('')+'</div>';
+    }).join('')+'</div>');
   pane.querySelector('.collection-sheet').scrollTop=keepScroll;
   syncShowcasePicker();
   pane.onclick=e=>{
@@ -4360,7 +4414,12 @@ async function landedSignedIn(me,epoch=menuEpoch){
   if(acctOpen()) renderAcct();
 }
 async function doSignOut(){
-  try{ await apiCall('/signout',{method:'POST'}) }catch(e){}
+  try{ await apiCall('/signout',{method:'POST'}) }catch(e){
+    acctErr='could not sign out · try again when connected';
+    if(acctOpen()) renderAcct(); else toast(acctErr);
+    return;
+  }
+  closeAccount();
   account={signedIn:false};
   acctEmail='';
   syncSay='';
@@ -4382,7 +4441,7 @@ async function syncNow(){
   if(!API||!account||!account.signedIn) return;
   if(syncing){ syncQueued=true; return }
   clearTimeout(syncTimer); syncDue=0;
-  syncing=true; syncSay='saving';
+  syncing=true;
   if(acctOpen()) renderAcct();
   const sent=JSON.stringify(store.collection);
   try{
@@ -4394,10 +4453,12 @@ async function syncNow(){
     if(JSON.stringify(store.collection)!==sent){ syncQueued=true }
     else if(j&&j.state){ adoptState(j.state); syncSay='saved'; syncedCollection=JSON.stringify(store.collection) }
   }catch(e){
-    syncSay = e.status===409 ? 'refresh to update' : e.status===401 ? '' : 'offline';
+    const bad=e.status===409?'refresh to update':e.status>=500?'sync is down for now · it will try again'
+      :e.status>=400&&e.status!==401?e.message:'';
+    if(bad&&bad!==syncSay) toast(bad);
+    syncSay=bad||(e.status===401?'':'offline');
     if(e.status===401){ account={signedIn:false}; fillIntroAuth() }
-  }
-  syncing=false;
+  }finally{ syncing=false }
   if(acctOpen()) renderAcct();
   if(syncQueued){ syncQueued=false; syncSoon() }
 }
@@ -4406,20 +4467,21 @@ function sanitizeCollection(c){
   if(!c||typeof c!=='object'||!c.badges||typeof c.badges!=='object') return c;
   for(const b of Object.values(c.badges)){
     if(!b||typeof b!=='object') continue;
-    if(!(b.tier in TIERRANK)) b.tier='done';
-    if(b.fit!=null && !(b.fit in FITRANK)) delete b.fit;
+    if(!Object.hasOwn(TIERRANK,b.tier)) b.tier='done';
+    if(b.fit!=null && !Object.hasOwn(FITRANK,b.fit)) delete b.fit;
   }
   return c;
 }
 function adoptState(merged){
-  if(!merged||typeof merged!=='object') return;
+  if(!savedObject(merged)) return;
   const hadPremium=!!store.premium;
   if(Number(merged.boardEdition)>BOARD_EDITION){ syncSay='refresh to update'; return }
   merged=pruneDailyHistory(pruneRetiredRecords(migrateBoardState(merged)));
   const mine=R(), theirs=merged.run;
   store.boardEdition=BOARD_EDITION;
-  store.collection=sanitizeCollection(merged.collection)||store.collection;
-  store.meta=merged.meta||store.meta;
+  if(savedObject(merged.collection)) store.collection=sanitizeCollection(merged.collection);
+  if(savedObject(merged.meta)) store.meta=merged.meta;
+  tidyRecord();
   store.premium=!!merged.premium;
   if(merged.runsDay===store.runsDay) store.runsToday=Math.max(store.runsToday||0,merged.runsToday||0);
 
@@ -4432,14 +4494,14 @@ function adoptState(merged){
       cancelTutorialBridge(); tutorialBridge=null; tutSpotClear();
       store.tutorialDone=true; store.introSeen=true; coachSig=''; coachQueuedSig='';
     }
-    store.run=theirs;
-    if(merged.parked) store.parked=merged.parked;
+    store.run=tidyRun(theirs);
+    if(merged.parked) store.parked=tidyRun(merged.parked);
     if('tutorialParked' in merged) store.tutorialParked=merged.tutorialParked;
-    try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}
+    put();
     builtFor=-1; resetDescent(); renderAll();
     toast('your set is where you left it · net '+((theirs.cleared||[]).length+1));
   } else {
-    try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}
+    put();
     renderHud();
   }
   if(hadPremium!==!!store.premium) entitlementChanged();
@@ -4472,18 +4534,19 @@ async function wakeAccount(){
       if(back==='ok') afterSignIn(epoch);
     } else {
       delete store.signedInOnce;
-      try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}
+      put();
     }
   }
+  if(back==='ok'&&!account.signedIn) toast('that sign-in did not go through · nothing was lost');
   fillIntroAuth();
   if(acctOpen()) renderAcct();
 }
 
-let acctMode='sign', acctEmail='', acctErr='', acctBusy=false, acctArmed=false;
+let acctMode='sign', acctEmail='', acctErr='', acctBusy=false;
 
 function openAccount(mode){
   if(!mode) mode=(account&&account.signedIn)?'manage':'sign';
-  acctMode=mode; acctErr=''; acctArmed=false;
+  acctMode=mode; acctErr='';
   acctEmail=(account&&account.signedIn&&account.email)||acctEmail||'';
   openMenu('profile');
 }
@@ -4491,7 +4554,7 @@ const closeAccount=()=>{ if(menuShown()&&menuView==='profile') openMenu('home') 
 function signOpen(){return $('signveil').classList.contains('show')}
 function acctOpen(){return menuShown()&&(menuView==='profile'||signOpen())}
 function openSignIn(){
-  acctMode='sign';acctErr='';acctArmed=false;
+  acctMode='sign';acctErr='';
   $('signslot').append($('acctbody'));
   $('signcard').querySelector('.bstrip').innerHTML=FLAGSTRIP;
   $('introcard').inert=true;
@@ -4560,14 +4623,19 @@ function acctBtn(id,label,solid){
   return `<button class="wbtn${solid?' solid':''}" id="${id}"${acctBusy?' disabled':''}>${label}</button>`;
 }
 
-let acctReading='';
+let acctReading='',acctHeld='';
 function renderAcct(){
   const next=[acctMode,acctErr,acctBusy,!!(account&&account.signedIn),signIns?.length].join('|');
+  if($('acctbody').contains(document.activeElement)) acctHeld=document.activeElement.id;
   paintAcct();
   if(signOpen())$('signtitle').textContent=acctStep||(acctMode==='signup'?'create account':'sign in');
   if(menuView==='profile')placeMenuPlay();
   if(next!==acctReading&&menuShown()&&menuView==='profile'&&!menuTransition) softEnter($('acctbody'));
   acctReading=next;
+  if(!acctBusy){
+    if(document.activeElement===document.body) $(acctHeld)?.focus({preventScroll:true});
+    acctHeld='';
+  }
 }
 let acctStep='';
 function acctStepHead(back,backId,name,line){
@@ -4582,7 +4650,7 @@ function paintAcct(){
   title.textContent='profile';acctStep='';
   const prefs=$('acctprefs');
   if(body.contains(prefs))body.after(prefs);
-  const err=acctErr?`<div class="acct-err">${esc(acctErr)}</div>`:'';
+  const err=acctErr?`<div class="acct-err" role="alert">${esc(acctErr)}</div>`:'';
   const signedIn=!!(account&&account.signedIn);
   body.classList.toggle('acct-door',!signedIn);
   const profileSub=$('panehead').querySelector('.intro-sub');
@@ -4743,12 +4811,9 @@ function paintAcct(){
     +`<div class="acct-sec">`
       +`<div class="acct-identity-heading"><div class="acct-lab">signed in as</div>
         <div class="acct-identity-actions"><a href="#" class="acctlink" id="acctout2">sign out</a>
-        <a href="#" class="acctlink" id="acctdel">${acctArmed?'confirm delete':'delete account'}</a></div></div>`
+        <a href="#" class="acctlink" id="acctdel">delete account</a></div></div>`
       +`<div class="acct-ask">${idLine}</div>`
       +(identityNote?`<div class="acct-note">${identityNote}</div>`:'')
-    +(acctArmed?`<div class="acct-note">this erases the record held for you. this browser keeps its own copy, so nothing on this device is lost.`
-       +(POLICY.premium?' the full version goes with the account and cannot be restored afterwards.':'')
-       +`</div>`:'')
     +`</div>`
     +`<div class="acct-sec">`
       +(canDaily
@@ -4776,8 +4841,13 @@ function paintAcct(){
     if(menuShown()&&menuView==='pay')beginUnlock();
   };
   if($('acctdaily'))$('acctdaily').onchange=saveAccount;
-  $('acctout2').onclick=e=>{e.preventDefault();closeAccount();doSignOut()};
-  $('acctdel').onclick=e=>{e.preventDefault(); if(!acctArmed){acctArmed=true;renderAcct()} else deleteAccount()};
+  $('acctout2').onclick=e=>{e.preventDefault();doSignOut()};
+  $('acctdel').onclick=async e=>{
+    e.preventDefault();
+    if(await ask({title:'delete account?',yes:'delete',no:'keep it',danger:true,
+      note:'this erases the record held for you. this browser keeps its own copy, so nothing on this device is lost.'
+        +(POLICY.premium?' the full version goes with the account and cannot be restored afterwards.':'')})) deleteAccount();
+  };
   if($('acctsetpassword')) $('acctsetpassword').onclick=e=>{
     e.preventDefault();acctEmail=mail;acctMode='reset';acctErr='';renderAcct();
   };
@@ -4886,7 +4956,11 @@ async function saveAccount(){
     await saveProfile(patch);
     acctBusy=false;
     acctErr=''; renderAcct();
-  }catch(e){ acctBusy=false; acctErr=e.message; renderAcct() }
+  }catch(e){
+    acctBusy=false; acctErr=e.message;
+    if(e.status===401){account={signedIn:false};acctMode='sign';fillIntroAuth()}
+    renderAcct();
+  }
   if(restoreFocus)$('acctdaily')?.focus({preventScroll:true});
 }
 
@@ -4894,10 +4968,10 @@ async function deleteAccount(){
   if(acctBusy) return;
   acctBusy=true; renderAcct();
   try{ await apiCall('/account',{method:'DELETE'}) }catch(e){
-    acctBusy=false;acctArmed=false;acctErr='could not delete the account · try again when connected';
+    acctBusy=false;acctErr='could not delete the account · try again when connected';
     renderAcct();return;
   }
-  acctBusy=false; acctArmed=false;
+  acctBusy=false;
   account={signedIn:false}; acctEmail=''; syncSay='';
   delete store.signedInOnce; delete store.askedDaily;
   POLICY.premium=false; save();
@@ -4930,7 +5004,7 @@ let till=null;
 
 async function api(path,body){
   if(!API) return null;
-  const o={headers:{'X-Features-Pricing':'2'},credentials:'same-origin'};
+  const o={headers:{'X-Features-Pricing':'2'},credentials:'same-origin',signal:AbortSignal.timeout?.(15000)};
   if(acct.token) o.headers['Authorization']='Bearer '+acct.token;
   if(body!==undefined){
     o.method='POST'; o.headers['Content-Type']='application/json'; o.body=JSON.stringify(body);
@@ -4941,7 +5015,7 @@ async function api(path,body){
   try{ data=await res.json() }catch(e){}
   if(res.status===401 && acct.token){ acct.token=null; saveAcct() }
   return res.ok || (res.status===409 && data?.error?.code==='price_changed')
-    ? (data||{}) : {error:(data&&data.error)||{code:'http_'+res.status}};
+    ? data : {error:(data&&data.error)||{code:'http_'+res.status}};
 }
 
 function applyEntitlement(r){
@@ -4985,12 +5059,14 @@ function entitlementChanged(){
   renderHud();
 }
 let pricePromise=null;
-function ensurePrice(){
-  if((priceInfo&&!nativePlatform()) || !API) return Promise.resolve();
+let priceAt=0;
+function ensurePrice(fresh){
+  if((priceInfo&&!nativePlatform()) || !API || !fresh&&Date.now()<priceAt) return Promise.resolve();
   if(pricePromise) return pricePromise;
   pricePromise=(async()=>{
-    const moved=applyEntitlement(await api('me'));
-    if(priceInfo || moved) entitlementChanged();
+    const me=await api('me');
+    if(me&&!me.error) priceAt=Date.now()+3e5;
+    if(applyEntitlement(me) || priceInfo) entitlementChanged();
   })().finally(()=>{pricePromise=null});
   return pricePromise;
 }
@@ -5021,7 +5097,7 @@ function priceFoot(){
 
 let upgradeDay=null;
 const UPGRADE_RETURN='features-upgrade-return';
-const releasedDay=day=>day===today();
+const releasedDay=day=>day===today()&&day>=LAUNCH;
 function takeUpgradeReturn(){
   try{
     const day=sessionStorage.getItem(UPGRADE_RETURN);
@@ -5037,7 +5113,7 @@ function openUpgrade(day=null){
   upgradeDay=day==='endless'?'endless':releasedDay(day)?day:null;
   if(POLICY.premium) return renderUpgrade();
   if(stripeCheckout) closeCheckout();
-  const loading=ensurePrice();
+  const loading=ensurePrice(1);
   renderUpgrade();
   openMenu('pay');
   const epoch=menuEpoch;
@@ -5148,7 +5224,7 @@ async function beginUnlock(){
     tillSaid(words?`the price is now ${words} · choose unlock again`:'purchases are currently unavailable',!!words);
     return true;
   };
-  if(API) await ensurePrice();
+  if(API) await ensurePrice(1);
   if(!current()) return;
   if(POLICY.premium) return tillSaid('you already own the full version',false);
   if(API && !DEV && till===false)
@@ -5302,12 +5378,12 @@ async function restoreUnlock(){
   if(!API) return toast('restoring needs the game served over the web');
   const code=prompt('unlock code from the device you bought it on');
   if(code==null) return;
-  const r=await api('unlock/restore',{code:code});
-  if(!r) return toast('could not reach the till · try again shortly');
-  if(r.error) return toast(
-      r.error.code==='device_limit' ? 'that code is open on as many devices as it opens'
-    : r.error.code==='rate_limited' ? 'too many tries · wait an hour'
-    : 'that code does not open anything');
+  const r=await api('unlock/restore',{code:code}), why=r?.error?.code;
+  if(r?.full!==true) return toast(
+      why==='device_limit' ? 'that code is open on as many devices as it opens'
+    : why==='rate_limited' ? 'too many tries · wait an hour'
+    : why==='no_such_code' ? 'that code does not open anything'
+    : 'could not reach the till · try again shortly');
   applyEntitlement(r); entitlementChanged();
   toast('full version restored');
 }
@@ -5320,13 +5396,14 @@ async function readUnlockReturn(){
     q.delete('unlock'); q.delete('cs');
     const rest=q.toString();
     try{history.replaceState(null,'',location.pathname+(rest?'?'+rest:'')+location.hash)}catch(e){}
-    if(state!=='done'){ try{localStorage.removeItem(PENDING_CS)}catch(e){} return toast('nothing was charged') }
-    try{ if(cs) localStorage.setItem(PENDING_CS,cs) }catch(e){}
+    if(state!=='done') return toast('nothing was charged');
+    if(!/^cs_\w{1,250}$/.test(cs)) cs=null;
+    try{ if(cs&&!localStorage.getItem(PENDING_CS)) localStorage.setItem(PENDING_CS,cs) }catch(e){}
   }else{
     try{ cs=localStorage.getItem(PENDING_CS) }catch(e){ cs=null }
     if(!cs) return;
   }
-  const done=()=>{ try{localStorage.removeItem(PENDING_CS)}catch(e){} };
+  const done=()=>{ try{ if(localStorage.getItem(PENDING_CS)===cs) localStorage.removeItem(PENDING_CS) }catch(e){} };
   const r=cs ? await api('unlock/confirm',{session_id:cs}) : null;
   if(r && !r.error && r.full){
     done();
@@ -5336,7 +5413,8 @@ async function readUnlockReturn(){
   }
   if(r && r.pending) return toast('payment still clearing · it opens when it does');
   if(r && r.mismatch){ done(); return toast('paid · restore it here with your unlock code') }
-  if(state) toast('could not confirm just now · it will retry when you come back');
+  if(/^(unknown_session|bad_request)$/.test(r?.error?.code)) return done();
+  if(state&&cs) toast('could not confirm just now · it will retry when you come back');
 }
 
 function themeNow(){
@@ -7185,7 +7263,12 @@ function publishPlateInset(){
 
 
 function buildNet(force){
-  const idx=R().netIndex;
+  const held=R();
+  if(!(Number.isInteger(held.netIndex)&&held.netIndex>=0&&held.netIndex<POLICY.dailyNets)){
+    Object.assign(held,{netIndex:held.netIndex>=POLICY.dailyNets?POLICY.dailyNets-1:0,netMoves:0,positions:{},freed:[],minted:{},splitNodes:[],log:[]});
+    save();
+  }
+  const idx=held.netIndex;
   if(builtFor===idx && !force) return;
   builtFor=idx; lastT=''; peakCross=1; scaleMemo=0;
   dragN=null; dragId=null; dragNbrs=[]; $('field').classList.remove('dragging');
@@ -7538,6 +7621,7 @@ function splitPlace(idx, ox, oy, probe, legal=null){
   return best?{a:best.a, b:best.b}:null;
 }
 function paintNode(n){
+  const held=n.g&&document.activeElement===n.g;
   if(n.g) n.g.remove();
   n.g=svgAdd('g',{class:'node'},gMembers);
   n.ax=n.x0; n.ay=n.y0;
@@ -7561,6 +7645,7 @@ function paintNode(n){
   n.g.classList.toggle('live', live);
   n.g.appendChild(n.threadId);
   placeNode(n);
+  if(held) n.g.focus({preventScroll:true});
 }
 function positionThreadId(n){
   if(!n.threadId)return;
@@ -8409,6 +8494,7 @@ function freeThread(t,silent){
     if(t.figDrawn){settleIntoShape(t,true);repositionLabel(t)}
     t.nodes.forEach(n=>{ if(n.pinned && n.threads.every(th=>th.freed)){ n.pinned=false; paintNode(n) } });
   }
+  relabel(t.nodes);
 }
 
 function mintedThread(t){
@@ -8548,9 +8634,13 @@ function markReach({r,w},n={}){
   if(n.pinned)return (MARK.pinSq*MARK.r*f+w*.45)*Math.SQRT2;
   return n.merged?Math.max(ring,(MARK.rHalo+MARK.wHalo/2)*f):ring;
 }
+function far(x,y){
+  const {sx,sy}=boardMapping();
+  return dragId==='kbd'?Math.hypot(x-dragStart.x,y-dragStart.y)>6:Math.hypot((x-dragStart.x)*sx,(y-dragStart.y)*sy)>8;
+}
 function moveDragTo(x,y,instant){
   if(!dragN)return;
-  if(Math.hypot(x-dragStart.x,y-dragStart.y)>6)dragIntent=true;
+  if(far(x,y))dragIntent=true;
   dragN.aim={x,y};stepDrag(performance.now(),instant);
 }
 function stepDrag(now,instant){
@@ -8562,7 +8652,7 @@ function stepDrag(now,instant){
   h.box=[PADX*kx,PADY*ky,(BW-PADX)*kx,(BH-PADY)*ky];h.gap=space({});
   stepHold(h,{x:n.aim.x*kx,y:n.aim.y*ky},h.others,h.box,h.gap,now,instant);
   n.x0=h.bx=h.x/kx;n.y0=h.by=h.y/ky;
-  if(Math.hypot(n.x0-dragStart.x,n.y0-dragStart.y)>6)dragMoved=true;
+  if(far(n.x0,n.y0))dragMoved=true;
   return n.x0!==x||n.y0!==y;
 }
 function neighboursOf(n){
@@ -8624,6 +8714,12 @@ function nodeSay(n){
   const crossing = x===1 ? '1 conflict' : x+' conflicts';
   return `${what} · ${keys.join(' and ')} · ${crossing}`;
 }
+function relabel(list=members){
+  list.forEach(n=>{
+    const s=n.g&&nodeSay(n);
+    if(s&&s!==n.g.getAttribute('aria-label'))n.g.setAttribute('aria-label',s);
+  });
+}
 const NODE_HIT_PX=26, PIN_HIT_PX=34;
 function nearestNode(x,y,ok,screenRadius=NODE_HIT_PX){
   const {sx,sy,unit}=boardMapping();
@@ -8635,8 +8731,10 @@ function pinnedAt(x,y){
   return nearestNode(x,y,n=>n.pinned&&!n.threads.every(t=>t.freed),PIN_HIT_PX);
 }
 $('netsvg').addEventListener('pointerdown',e=>{
+  if(e.button!==0)return;
   if(!canAccessRun()) return openMenu('home');
   if(R().over)return;
+  if(dragId==='kbd')endDrag();
   if(dragN)return;
   if(swallowNextDown){swallowNextDown=false; return}
   bumpIdle();
@@ -8676,6 +8774,7 @@ $('netsvg').addEventListener('pointermove',hoverNode);
 $('netsvg').addEventListener('pointerleave',()=>$('field').classList.remove('overnode','overpin'));
 $('netsvg').addEventListener('pointermove',e=>{
   if(!dragN || e.pointerId!==dragId)return;
+  if(e.pointerType==='mouse'&&!e.buttons)return cancelDrag();
   const p=svgPt(e);
   dragN.tw=null;
   moveDragTo(p.x+dragOff.x,p.y+dragOff.y);
@@ -8748,6 +8847,7 @@ function afterMove(r){
   const blocked=threads.filter(t=>!t.freed&&t.crossings===0&&t.nodes.some(n=>n.merged));
   const freeing=threads.filter(t=>!t.freed&&canFree(t));
   freeing.forEach(t=>markFreed(t,false));
+  relabel();
   save(); refresh(); renderHud();
   if(inTutorial()&&r.tutorialEdition===6){
     if(freeing.length&&!threads.every(t=>t.freed))tutHoldForResolve();
@@ -8757,7 +8857,9 @@ function afterMove(r){
   else if(blocked.length) announce(blocked[0].key+' · fused · tap to split');
 }
 $('netsvg').addEventListener('pointerup',endDrag);
-$('netsvg').addEventListener('pointercancel',endDrag);
+const dropDrag=e=>{if(e.pointerId===dragId)cancelDrag()};
+$('netsvg').addEventListener('pointercancel',dropDrag);
+$('netsvg').addEventListener('lostpointercapture',dropDrag);
 
 const KEYSTEP=8, KEYSTEP_BIG=40;
 function keyGrab(n){
@@ -8777,7 +8879,6 @@ function keyNudge(n,dx,dy){
   if(portrait)[dx,dy]=[dy,-dx];
   moveDragTo(n.x0+dx,n.y0+dy,true);
   n.xv=n.x0; n.yv=n.y0;
-  if(Math.hypot(n.x0-dragStart.x,n.y0-dragStart.y)>6) dragMoved=true;
   dragLast={x:n.x0,y:n.y0};
   refresh();
   n.g.setAttribute('aria-label',nodeSay(n));
@@ -8798,6 +8899,7 @@ function keyCancel(){
   announce('put back · nothing spent');
 }
 $('netsvg').addEventListener('keydown',e=>{
+  if(e.altKey||e.ctrlKey||e.metaKey) return;
   if(document.querySelector('#introveil.show,#runveil.show,#askveil.show')) return;
   if(!canAccessRun()) return openMenu('home');
   const g=e.target.closest && e.target.closest('g.node');
@@ -8954,6 +9056,7 @@ function descentTick(){
   r.positions[best.n.idx]=[savedCoord(best.n.x0),savedCoord(best.n.y0)];
   countCross();
   threads.filter(t=>!t.freed&&canFree(t)).forEach(t=>markFreed(t,false));
+  relabel();
   save(); refresh(); renderHud();
   if(threads.every(t=>t.freed)){
     if(settlingNode){settlingNode.el.classList.remove('settling');settlingNode=null}
@@ -8982,7 +9085,7 @@ function dayRollover(){
   }
 }
 setInterval(dayRollover,60000);
-document.addEventListener('visibilitychange',()=>{ if(!document.hidden) dayRollover() });
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ follow(); dayRollover() } });
 let buildTag=null, buildStale=false, pageLeaving=false, freshAsk=null, freshAt=0;
 addEventListener('pagehide',()=>{pageLeaving=true});
 addEventListener('pageshow',()=>{pageLeaving=false});
@@ -9177,7 +9280,9 @@ function showLessonRead(n,tier){
   showVeil('netveil');
   $('contbtn').onclick=finishTutorialBridge;
   requestAnimationFrame(()=>requestAnimationFrame(()=>presentCompletedBoard(true)));
-  const btn=$('contbtn');
+  focusCard($('contbtn'));
+}
+function focusCard(btn){
   (function hold(n){
     if(!btn.isConnected)return;
     btn.focus({preventScroll:true});
@@ -9186,6 +9291,7 @@ function showLessonRead(n,tier){
 }
 addEventListener('pointerdown',()=>document.documentElement.classList.add('pointing'),true);
 addEventListener('keydown',()=>document.documentElement.classList.remove('pointing'),true);
+const keyed=()=>!document.querySelector('.pointing')&&!!document.activeElement?.closest('#netsvg,#netveil');
 const LESSON_READS={
   drag:['concepts','<b>untangled lines reveal concepts.</b>'],
   frozen:['frozen','<b>frozen neurons will not move.</b>'],
@@ -9699,7 +9805,7 @@ function recordDay(){
     pd.push({d,depth:0,back:isArchive(),catalogueRevision:catalogueRevision(R().catalogueRevision)});
     if(!isArchive()){
       const y=dayAdd(d,-1);
-      store.meta.streak = (store.meta.lastPlayDay===y)?(store.meta.streak||0)+1:1;
+      store.meta.streak = (store.meta.lastPlayDay===y)?(+store.meta.streak||0)+1:1;
       store.meta.lastPlayDay=d;
     }
     save();
@@ -9828,6 +9934,7 @@ let swapT=null, swapSkip=null;
 function nextNet(){
   if(!canAccessRun()) return openMenu('home');
   if(tutorialBridge){ cancelTutorialBridge(); tutorialBridge=null }
+  const kb=keyed();
   hideVeils();
   cancelHold();
   const f=$('field');
@@ -9839,6 +9946,7 @@ function nextNet(){
     swapSkip=null; clearTimeout(swapT);
     f.classList.remove('swap-out','swap-in','cleared','dimthreads');
     buildNet(true); renderAll();
+    if(kb) members.find(grabbable)?.g.focus({preventScroll:true});
     if(!reduceMotion){
       f.classList.add('swap-in');
       swapT=setTimeout(()=>f.classList.remove('swap-in'),320);
@@ -9898,6 +10006,7 @@ function showNetCleared(feats,tier,read){
   showVeil('netveil');
   requestAnimationFrame(()=>requestAnimationFrame(()=>presentCompletedBoard(true)));
   $('contbtn').onclick=leaveNetCard;
+  requestAnimationFrame(()=>keyed()&&focusCard($('contbtn')));
 }
 function runOverOffer(depth){
   if(POLICY.premium || depth<POLICY.dailyNets) return '';
@@ -10268,6 +10377,7 @@ function replayWords(){
   return `another run at today's set is the full version${price?' · '+price:''}`;
 }
 function shutWords(iso){
+  if(iso<LAUNCH) return 'the date on this device is too early · check it';
   return spentDay(iso) ? replayWords() : "only today's set is open";
 }
 
@@ -10277,7 +10387,7 @@ function openDay(iso){
   if(canAccessRun() && R().day===iso && !R().over){ closeMenu(); return }
   if(!canPlayDay(iso)){
     if(releasedDay(iso)) return openUpgrade(iso);
-    announce(shutWords(iso));return toast(shutWords(iso));
+    return toast(shutWords(iso));
   }
   const leaving=R();
   const parkedHere = store.parked && store.parked.day===iso
@@ -11044,7 +11154,7 @@ function renderIntro(){
   }
   {
     const fresh=!store.tutorialDone;
-    const streak=store.meta.streak||0;
+    const streak=+store.meta.streak||0;
     const runSay=`<b>${streak}</b><span>day${streak===1?'':'s'}<span class="stat-qualifier"> running</span></span>`;
     const rows=dayRows();
     const perfect=rows.reduce((a,r)=>a+(typeof r.tiers==='string'
@@ -11068,7 +11178,7 @@ function renderIntro(){
     });
     const earlier=POLICY.premium?'<p class="wbmore">earlier days return soon</p>'
       :'<button class="wbmore" type="button" id="wbmore">earlier days return with premium<span aria-hidden="true"> ›</span></button>';
-    const week=days[0]+(days.length>1?earlier:'')+days.slice(1).join('');
+    const week=(days[0]||`<p class="wbmore">${shutWords(today())}</p>`)+(days.length>1?earlier:'')+days.slice(1).join('');
     const firstDay = !fresh && !rows.length;
     const head=`<p class="intro-sub home-menu-intro">untangle ten<span class="home-intro-detail"> · the same for everyone</span></p>`;
     const keepScroll=(()=>{ const w=b.querySelector('.wbweek'); return w?w.scrollTop:0 })();
@@ -11081,7 +11191,7 @@ function renderIntro(){
       :started ? 'resume your game'
       :current.archive ? 'start this set'
       :firstDay ? '<span class="daily-start-long">start your first ten</span><span class="daily-start-short">begin</span>' : "start today's run";
-    b.innerHTML=head
+    paintPane(b,head
       +`<div class="wbstats home-stats">
         <div>${runSay}</div>
         <div><b>${perfect}</b><span>optimised<span class="stat-qualifier"> nets</span></span></div>
@@ -11089,7 +11199,7 @@ function renderIntro(){
       </div>
       <div class="wbweek">${week}</div>
       <button class="intro-start" id="introstart">${startLabel}</button>`
-;
+);
     const press=d=>{
       if(canPlayDay(d)){ store.introSeen=true; store.lastIntroDay=today(); save();
         stopMenuMotion(); $('introveil').classList.remove('show'); syncMenuCover(); return openDay(d) }
@@ -13365,7 +13475,8 @@ function packRun(run){
 function restoreRun(raw){
   if(!raw||raw.version!==RUN_VERSION||typeof raw.seed!=='string'||raw.seed.length<1||raw.seed.length>160
     ||typeof raw.revision!=='string'||raw.revision.length>80||typeof raw.startedAt!=='string'
-    ||!count(raw.level)||raw.level<1||!count(raw.cleared))throw new Error('Invalid endless run.');
+    ||!count(raw.level)||raw.level<1||!count(raw.cleared)
+    ||(raw.revision===ENDLESS_REVISION&&raw.level>RUN_LIMIT))throw new Error('Invalid endless run.');
   current(raw.revision);validateBoard(raw.board);
   const state=replay(raw.board,raw.log,true);
   const cleared=state.cleared?raw.level:raw.level-1;
@@ -13516,19 +13627,21 @@ function climbStamp(i){
   return `<svg class="climb-stamp" viewBox="0 0 96 96"><rect width="96" height="96" fill="var(${plate})"/>${art}</svg>`;
 }
 function endlessClimb(cleared,failed=false,best=endlessPreviousBest??endlessBest){
+  const locked=!canPlayEndless();
   const record=best?`${endlessPreviousBest===null?'best':'previous best'} ${best}`:'';
-  const next=!failed&&cleared<Endless.RUN_LIMIT?cleared+1:null,reach=next??cleared;
+  const next=!locked&&!failed&&cleared<Endless.RUN_LIMIT?cleared+1:null,reach=next??cleared;
   const at=climbPlaces(Math.min(cleared,Endless.RUN_LIMIT)),colour=i=>`var(${THREADPAL[Math.floor(i/5)%THREADPAL.length]})`;
   const way=at.slice(1).map(([x2,y2],i)=>`<line x1="${at[i][0]}" y1="${at[i][1]}" x2="${x2}" y2="${y2}" stroke="${colour(i)}"${i+2>reach?' class="ahead"':''}/>`).join('');
-  return `<figure class="endless-climb" role="img" aria-label="${cleared} levels cleared in this run. ${record?record+'. ':''}${next?'Next: level '+next+'. ':''}Levels 1–${Endless.RUN_LIMIT}.">
-    <div class="endless-grid-space"><div class="endless-dots" aria-hidden="true"><svg class="climb-way" viewBox="0 0 5 5" preserveAspectRatio="none">${way}</svg>${at.map(([x,y],i)=>{
+  return `<figure class="endless-climb${locked?' locked':''}">
+    <div class="endless-grid-space" role="img" aria-label="${locked?'Premium required to play. ':''}${cleared} levels cleared in this run. ${record?record+'. ':''}${next?'Next: level '+next+'. ':''}Levels 1–${Endless.RUN_LIMIT}."><div class="endless-dots${locked?' locked':''}" aria-hidden="true"><svg class="climb-way" viewBox="0 0 5 5" preserveAspectRatio="none">${way}</svg>${at.map(([x,y],i)=>{
       const n=i+1,ahead=n>cleared&&n<=best;
-      return `<i data-level="${n}" style="--x:${x};--y:${y};--climb-colour:${colour(i)}" class="${n<=cleared?'on':n===next?'next':''}${ahead?' best':''}">${n<=cleared?climbStamp(i):`<span class="climb-n">${n}</span>`}</i>`;
-    }).join('')}</div></div></figure>`;
+      return `<i data-level="${n}" style="--x:${x};--y:${y};--climb-colour:${colour(i)}" class="${n<=cleared?'on':n===next?'next':''}${ahead?' best':''}">${n<=cleared?climbStamp(i):`<span class="climb-n">${n}</span>`}${locked?`<span class="climb-lock">${premiumLock()}</span>`:''}</i>`;
+    }).join('')}</div></div>${locked?`<figcaption class="climb-access"><button type="button" class="climb-upgrade" id="climbupgrade" aria-label="unlock iterate · discover premium">${premiumLock()}premium ›</button></figcaption>`:''}</figure>`;
 }
 let climbShown=null;
 function wireClimb(sheet,cleared){
   if(!sheet)return;
+  if(!canPlayEndless()){climbShown=cleared;return}
   const cells=[...sheet.querySelectorAll('i[data-level]')],lines=[...sheet.querySelectorAll('.climb-way line')];
   const home=climbPlaces(Math.min(cleared,Endless.RUN_LIMIT)),pos=home.map(p=>[...p]),vel=home.map(()=>[0,0]);
   let held=-1,grip=null,raf=0,tick=0,last=0,k=260,d=17;
@@ -13580,7 +13693,7 @@ function renderEndlessMenu(){
   const level=continuing?r.level+1:r?.level||1;
   const primary=!canPlayEndless()?'unlock premium':!r?'begin':ended?'restart':'resume';
   const notice=endlessRecovery||(!endlessStorage?'storage unavailable · this run stays in this tab':'');
-  $('paneendless').innerHTML=`<div class="endless-menu-art">${endlessPlate()}</div>
+  paintPane($('paneendless'),`<div class="endless-menu-art">${endlessPlate()}</div>
     <header class="opening">
       <div class="opening-composition"><h2 class="opening-name" id="endlessmenutitle">iterate</h2>
         ${openingStamps(['infinity','battery','stairs','flag'])}
@@ -13604,7 +13717,7 @@ function renderEndlessMenu(){
       </div>
       ${notice?`<p class="endless-menu-save" role="status">${notice}</p>`:''}
     </div>
-  </div>`;
+  </div>`);
   $('endlessentry').onclick=()=>{
     if(!requireEndless())return;
     if(ended){startEndlessRun();return}
@@ -13613,6 +13726,7 @@ function renderEndlessMenu(){
   };
   if($('endlessnew'))$('endlessnew').onclick=restartEndlessRun;
   if($('endlesslast'))$('endlesslast').onclick=enterEndless;
+  if($('climbupgrade'))$('climbupgrade').onclick=()=>requireEndless();
   wireClimb($('paneendless').querySelector('.endless-dots'),r?.cleared||0);
   placeMenuPlay();
   fitMenuIntros();
@@ -14178,7 +14292,7 @@ $('endlesssvg').addEventListener('pointerup',e=>{
 $('endlesssvg').addEventListener('pointercancel',cancelEndlessInput);
 $('endlesssvg').addEventListener('lostpointercapture',()=>{if(endlessDrag)cancelEndlessInput()});
 $('endlesssvg').addEventListener('keydown',e=>{
-  const el=e.target.closest('[data-endless-node]');if(!el||endlessBlocked()||endlessDrag)return;
+  const el=e.target.closest('[data-endless-node]');if(!el||e.altKey||e.ctrlKey||e.metaKey||endlessBlocked()||endlessDrag)return;
   const id=Number(el.dataset.endlessNode),n=endlessRun.state.nodes[id];
   if(!n||endlessRun.state.freed[n.thread])return;
   if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){
@@ -14232,6 +14346,7 @@ if(endlessActive)buildEndlessView();
 else if(endlessRun?.state.cleared){identifyEndless();collectEndless()}
 if(DEV)window.__endless=()=>({active:endlessActive,best:endlessBest,run:endlessRun?Endless.packRun(endlessRun):null});
 
+sanitizeCollection(store.collection);
 renderAll();
 publishPlateInset();
 addEventListener('load',publishPlateInset);
