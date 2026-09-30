@@ -231,8 +231,10 @@ if (!Object.values(musicMeta.years).every((year) => Number.isInteger(year) && ye
   const grid = packSquares(small, 16, { aspect: 2.4, range: [0.08, 0.9], tries: 40, spread: 8 });
   if (!grid) fail("a small search must produce a packing");
   for (const width of [360, 820, 1900]) {
-    const { height, tiles } = tilesFor(grid, width, 360);
-    if (tiles.length !== small.length || tiles.some((tile) => tile.w > 360 || tile.w !== tile.h || tile.w <= 0 || tile.x + tile.w > width || tile.y + tile.h > height)) fail(`small search tiles must stay square, readable and inside ${width}px`);
+    const { height, tiles } = tilesFor(grid, width, 180);
+    if (tiles.length !== small.length || tiles.some((tile) => tile.w > 180 || tile.w !== tile.h || tile.w <= 0 || tile.x + tile.w > width || tile.y + tile.h > height)) fail(`small search tiles must stay square, compact and inside ${width}px`);
+    const row = rowOfSquares(sammySongs.length, width, 180);
+    if (row.height > 180 || row.tiles.some((tile) => tile.w > 180 || tile.x + tile.w > width)) fail(`a handful of search results must stay compact at ${width}px`);
   }
   const empty = rowOfSquares(0, 1900);
   if (empty.height || empty.tiles.length) fail("an empty search must not leave a blank map before its message");

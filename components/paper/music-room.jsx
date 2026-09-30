@@ -117,6 +117,7 @@ function listenLinks(found, artist, title) {
 
 // How far a sleeve grows under the pointer, at least.
 const POP = 136;
+const SEARCH_SIDE = 180;
 
 // Paper tints for the songs, one to an artist.
 const TINTS = ["#f6efdd", "#f1dcd4", "#dfe8ef", "#e3ead6", "#f4e3b8", "#e8dff0", "#f0d9c2", "#d9e6e0"];
@@ -542,8 +543,9 @@ export function MusicRoom({ initial, active }) {
     return packFor(view, entries.map((entry) => entry.weight), target, phone, adjust, entries);
   }, [view, entries, target, phone, row]);
   const layout = useMemo(() => {
-    if (row) return { width, ...rowOfSquares(entries.length, width) };
-    return grid ? { width, ...tilesFor(grid, width, query.trim() ? 360 : Infinity) } : { width, height: 0, tiles: [] };
+    const maxSide = query.trim() ? SEARCH_SIDE : undefined;
+    if (row) return { width, ...rowOfSquares(entries.length, width, maxSide) };
+    return grid ? { width, ...tilesFor(grid, width, maxSide) } : { width, height: 0, tiles: [] };
   }, [row, grid, entries.length, width, query]);
   const count = useProgressive(entries);
   const shownAt = useGlide(list, layout, view, count);
