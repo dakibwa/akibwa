@@ -1555,7 +1555,7 @@ button.card-face:disabled {
 .music-years-pill {
   position: absolute;
   top: 50%;
-  left: calc(var(--at) * (100% - var(--pill)));
+  left: 0;
   width: var(--pill);
   padding: 8px 0;
   border: 1.5px solid var(--ink);
@@ -1566,12 +1566,13 @@ button.card-face:disabled {
   font-family: var(--serif);
   font-size: 17px;
   font-weight: 560;
+  font-variant-numeric: tabular-nums;
   line-height: 1;
   text-align: center;
   white-space: nowrap;
   pointer-events: none;
-  transform: translateY(-50%);
-  transition: left 260ms var(--ease-pop);
+  transform: translate(calc(var(--at) * var(--travel, 0px)), -50%);
+  transition: transform 160ms var(--ease-out);
 }
 
 .music-years input:focus-visible ~ .music-years-pill {

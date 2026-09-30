@@ -77,10 +77,20 @@ function useYearLists(albums, songs, years) {
  * one control. All time is the right-hand end, where it starts.
  */
 function YearLine({ years, value, onChange }) {
+  const rail = useRef(null);
+  useLayoutEffect(() => {
+    const element = rail.current;
+    const pill = element.querySelector(".music-years-pill");
+    const measure = () => element.style.setProperty("--travel", `${Math.max(0, element.clientWidth - pill.offsetWidth)}px`);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
   const stops = years.length;
   const index = value === null ? stops : years.indexOf(value);
   return (
-    <label className="music-years" style={{ "--at": index / stops }}>
+    <label className="music-years" ref={rail} style={{ "--at": index / stops }}>
       <input
         type="range"
         min={0}
