@@ -100,7 +100,7 @@ export function indexItems(items, { meta, yearOf, extraText = () => "" }) {
     for (const other of facts.related ?? []) link(fold(name), fold(other));
     for (const part of credits(name)) if (fold(part) !== fold(name)) link(fold(name), fold(part));
   }
-  return items.map((item) => {
+  const entries = items.map((item) => {
     const own = fold(item.artist);
     const circle = new Set([own, ...credits(item.artist).map(fold), ...(circles.get(own) ?? [])]);
     const genres = new Set();
@@ -117,6 +117,10 @@ export function indexItems(items, { meta, yearOf, extraText = () => "" }) {
       text: fold(`${item.title} ${item.artist} ${extraText(item)}`)
     };
   });
+  // The same credited artists resolve the query in both albums and songs,
+  // including an artist who has songs but no album in the top albums.
+  const names = [...Object.keys(artists), ...items.map((item) => item.artist)];
+  return { entries, credited: [...new Set(names.flatMap((name) => [fold(name), ...credits(name).map(fold)]))] };
 }
 
 // Every word starts a word of the text.
@@ -145,7 +149,15 @@ const wordsIn = (entry, { words }) => words.every((word) => ` ${entry.text} ${en
 export function search(index, query) {
   const parsed = parseQuery(query);
   if (!parsed.eras.length && !parsed.words.length) return null;
-  const dated = index.filter((entry) => inEra(entry, parsed.eras));
+  const dated = index.entries.filter((entry) => inEra(entry, parsed.eras));
+  // Resolve a partial artist name to the artists actually credited here
+  // before expanding their circles. "sammy" means Sammy Virji, rather than
+  // every band with a different Sammy in it. A member's name still works
+  // when there is no matching credited artist.
+  if (parsed.words.length && !parsed.words.every((word) => GENRE_WORDS[word])) {
+    const artists = new Set(index.credited.filter((name) => ` ${name}`.includes(` ${parsed.phrase}`)));
+    if (artists.size) return dated.filter((entry) => entry.circle.some((name) => artists.has(name))).map((entry) => entry.item);
+  }
   const named = dated.filter((entry) => namedBy(entry, parsed));
   return (named.length ? named : dated.filter((entry) => wordsIn(entry, parsed))).map((entry) => entry.item);
 }

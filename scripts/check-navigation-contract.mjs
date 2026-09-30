@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { websites } from "../data/websites.mjs";
 import { unpackRanking } from "../components/paper/music-ranking.mjs";
-import { albumSides, albumWeights, drawnOrder, layoutSquares, GAP } from "../components/paper/music-map.mjs";
+import { albumSides, albumWeights, drawnOrder, layoutSquares, packSquares, rowOfSquares, tilesFor, GAP } from "../components/paper/music-map.mjs";
 import { indexItems, search } from "../components/paper/music-search.mjs";
 
 /* Build-time contract for the paper homepage: one sheet with five things —
@@ -214,6 +214,28 @@ if (!Object.values(musicMeta.years).every((year) => Number.isInteger(year) && ye
   if (!artistsFor("panda bear").has("Animal Collective")) fail("searching Panda Bear must find Animal Collective");
   const seventies = search(index, "70s") ?? [];
   if (!seventies.length || seventies.some((album) => { const year = Number(album.year) || musicMeta.years[album.id]; return year < 1970 || year > 1979; })) fail("searching an era must keep to its years");
+  const songs = unpackRanking(ranking).songs;
+  const songIndex = indexItems(songs, { meta: musicMeta, yearOf: (song) => musicMeta.years[song.art] ?? null });
+  const sammySongs = songs.filter((song) => song.artist === "Sammy Virji");
+  for (const query of ["sammy", "sammy virji"]) {
+    const found = search(songIndex, query) ?? [];
+    if (!found.length || found.length !== sammySongs.length || found.some((song) => song.artist !== "Sammy Virji")) fail(`${query} must find Sammy Virji's songs without another Sammy's band`);
+  }
+  if (search(index, "sammy")?.length) fail("an artist without a top album must not find a different member's band in albums");
+  const member = search(songIndex, "sammy robinson") ?? [];
+  if (!member.length || member.some((song) => song.artist !== "Yard Act")) fail("a band member's name must still find their band");
+  if (search(songIndex, "sammy 70s")?.length) fail("a credited artist excluded by an era must not fall back to a different member's band");
+  if (!search(songIndex, "dream job")?.some((song) => song.title === "Dream Job")) fail("song titles must remain searchable");
+  if (!search(songIndex, "ambient")?.some((song) => song.artist === "Brian Eno")) fail("genres must remain searchable");
+  const small = search(songIndex, "yard act").map((song) => song.minutes).sort((a, b) => b - a);
+  const grid = packSquares(small, 16, { aspect: 2.4, range: [0.08, 0.9], tries: 40, spread: 8 });
+  if (!grid) fail("a small search must produce a packing");
+  for (const width of [360, 820, 1900]) {
+    const { height, tiles } = tilesFor(grid, width, 360);
+    if (tiles.length !== small.length || tiles.some((tile) => tile.w > 360 || tile.w !== tile.h || tile.w <= 0 || tile.x + tile.w > width || tile.y + tile.h > height)) fail(`small search tiles must stay square, readable and inside ${width}px`);
+  }
+  const empty = rowOfSquares(0, 1900);
+  if (empty.height || empty.tiles.length) fail("an empty search must not leave a blank map before its message");
 }
 
 // Retired pages are deleted, not hidden. The site is one page; old links 301

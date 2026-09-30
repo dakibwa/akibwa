@@ -135,6 +135,7 @@ export function fillGrid(sides, columns, height) {
 
 // A few side by side, the same size, when there are too few to pack.
 export function rowOfSquares(count, width, most = 360) {
+  if (!count || width <= 0) return { height: 0, tiles: [] };
   const side = Math.floor(Math.min(most, (width - GAP * (count - 1)) / count));
   return { height: side, tiles: Array.from({ length: count }, (_, index) => ({ x: index * (side + GAP), y: 0, w: side, h: side })) };
 }
@@ -204,8 +205,10 @@ export function layoutSquares(values, width, plan) {
   return grid ? tilesFor(grid, width) : { height: 0, tiles: [] };
 }
 
-// A packing in whole pixels at `width`.
-export function tilesFor(grid, width) {
-  const unit = width / grid.columns;
-  return { height: Math.round(grid.height * unit), tiles: toTiles(grid.cells, width, grid.columns) };
+// A packing in whole pixels within `width`. Search results may stay compact
+// rather than stretching a handful of squares across a wide screen.
+export function tilesFor(grid, width, maxSide = Infinity) {
+  const packedWidth = Math.min(width, (grid.columns * maxSide) / Math.max(...grid.cells.map(({ s }) => s)));
+  const unit = packedWidth / grid.columns;
+  return { height: Math.round(grid.height * unit), tiles: toTiles(grid.cells, packedWidth, grid.columns) };
 }

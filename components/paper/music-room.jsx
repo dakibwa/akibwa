@@ -543,8 +543,8 @@ export function MusicRoom({ initial, active }) {
   }, [view, entries, target, phone, row]);
   const layout = useMemo(() => {
     if (row) return { width, ...rowOfSquares(entries.length, width) };
-    return grid ? { width, ...tilesFor(grid, width) } : { width, height: 0, tiles: [] };
-  }, [row, grid, entries.length, width]);
+    return grid ? { width, ...tilesFor(grid, width, query.trim() ? 360 : Infinity) } : { width, height: 0, tiles: [] };
+  }, [row, grid, entries.length, width, query]);
   const count = useProgressive(entries);
   const shownAt = useGlide(list, layout, view, count);
 
