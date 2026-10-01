@@ -34,7 +34,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-mNy8aWhFn0KP6bxxkYgOolJHaCrLER4VCDcwkW8f3A0=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-P6EJf9D8JbJ/7k9vCShRaTpg4Zb1/e2UShcKqAgpxxM=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- The approved concept quartet: aeroplane, smaller heart, leaf and lightning.
      Render web icons from assets/marketing/features-app-mark.svg with
      tools/render-web-icons.mjs; keep the tab SVG embedded for offline copies. -->
@@ -103,6 +103,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
     --ink-soft:#9AA6AC;
     --rule:#272F35;
     --silver:#5A676E;
+    --day-locked:.8;
     --ray-off:#1C2226;
     --surface:#161B1F;
     --surface-2:#12171A;
@@ -133,6 +134,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
     --ink-soft:#5B656B;
     --rule:#D5D1C7;
     --silver:#6E7880;
+    --day-locked:.62;
     --ray-off:#DCD8CE;
     --surface:#FBFAF6;
     --surface-2:#F2EFE8;
@@ -914,10 +916,12 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   .fcell.none{border:1px solid var(--rule);border-bottom-width:3px;color:var(--silver)}
   .fcell.none:is(:hover,:focus-visible,:active){background:color-mix(in srgb,var(--surface) 94%,var(--ink))}
   .panehd.collhd{margin-bottom:0}
+  .collhd .collection-summary{white-space:nowrap;overflow:hidden;padding-bottom:calc(var(--section-gap) - var(--sheet-gap))}
+  .collection-summary.short .collection-intro-detail{display:none}
   .collection-showcase{--showcase-size:calc(1.45 * (clamp(23px,2.4vw,36px) + var(--menu-small)))}
   .collection-showcase{
     grid-column:1/-1;position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:var(--sheet-gap);
-    margin:0 0 7px;padding:11px 0;border-bottom:1px solid var(--rule);background:var(--surface)}
+    margin:0 0 7px;padding:11px 0;border-block:1px solid var(--rule);background:var(--surface)}
   .showcase-note{margin:0 0 0 clamp(4px,1vw,12px);font-size:12px;line-height:1.5;color:var(--ink-soft)}
   .showcase-upgrade{display:grid;gap:2px;padding:2px 0;border:0;background:none;font:inherit;text-align:left;color:var(--ink);cursor:pointer}
   .showcase-upgrade b{font-size:13px}
@@ -1333,7 +1337,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   #menudoors{grid-column:1/-1;grid-row:3}
   #introcard:is(.view-profile,.view-pay,.view-rules,.view-coll) :is(#introbody,.opening){display:none}
   .panehd{grid-column:1/-1;margin:0 0 2px}
-  .collcount{display:flex;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .collcount{white-space:nowrap;font-variant-numeric:tabular-nums}
   .menusheet{--heading-gap:8px;max-width:none;width:100%;height:calc(100dvh - 42px - env(safe-area-inset-bottom,0px));container-type:inline-size}
   .intro-strip{height:7px;display:flex;grid-column:1/-1;flex:0 0 auto}
   .intro-strip i{flex:1}
@@ -1419,7 +1423,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   @media(max-height:480px) and (orientation:landscape){.welcome-panel{width:min(100% - 112px,500px)}}
   @media(max-height:360px){.welcome-row:nth-child(3){display:none}}
   .intro-body{padding:var(--panel-y) var(--panel-x);display:flex;flex-direction:column;min-height:0;overflow-y:auto}
-  .intro-sub{font-size:var(--menu-small);color:var(--ink-soft);letter-spacing:.12em;margin:var(--heading-gap) 0 0;line-height:1.45;text-transform:lowercase}
+  .intro-sub{flex-shrink:0;font-size:var(--menu-small);color:var(--ink-soft);letter-spacing:.12em;margin:var(--heading-gap) 0 0;line-height:1.45;text-transform:lowercase}
   .intro-sub[hidden]{display:none}
   .panerules .intro-sub{white-space:nowrap}
   .rladder{margin-top:15px}
@@ -1427,31 +1431,8 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   .rladder .track > i{transition:none}
   .rlnames{display:grid;grid-template-columns:repeat(4,1fr);margin-top:7px;text-align:center}
   .rlnames > i{font-style:normal;font-size:12.5px;font-weight:700;color:var(--ink);text-transform:lowercase}
-  .wbstats{display:grid;grid-template-columns:repeat(3,auto);justify-content:space-between;gap:6px;margin:var(--section-gap) 0 0;
-    padding:14px 0;border-block:1px solid var(--rule);container-type:inline-size}
-  .wbstats>div{display:flex;align-items:center;gap:7px;min-width:0;white-space:nowrap}
-  .wbstats b{font-family:"Univers 75 Black","Helvetica Neue",Helvetica,Arial,sans-serif;font-size:16px;
-    font-weight:800;line-height:1.2;letter-spacing:-.025em;font-variant-numeric:tabular-nums;color:var(--ink);flex:none}
-  .stat-copy{display:flex;align-items:baseline;gap:5px;font-size:12px;color:var(--ink-soft);line-height:1.3}
-  .stat-icon{display:grid;place-items:center;flex:none;box-sizing:border-box;width:28px;height:28px;
-    border:1px solid var(--silver);color:var(--ink-soft)}
-  .stat-icon svg{display:block;width:62%;height:62%}
+  .home-menu-intro{padding-bottom:var(--section-gap);border-bottom:1px solid var(--rule)}
   .wbwhen{font-size:var(--menu-small);letter-spacing:.14em;color:var(--ink-soft);text-transform:lowercase}
-  @container (max-width:650px){.wbstats .stat-qualifier{display:none}}
-  @container (max-width:520px){
-    .home-stats>div{gap:5px}
-    .home-stats .stat-icon{width:22px;height:22px}
-    .home-stats .stat-copy{font-size:11px;gap:4px}
-    .home-stats .stat-label{white-space:normal;max-width:5em}
-  }
-  @container (max-width:360px){
-    .wbstats{column-gap:2px}
-    .wbstats>div{gap:4px}
-    .wbstats b{font-size:13px}
-    .wbstats .stat-copy{font-size:11px;gap:3px}
-    .wbstats .stat-icon{width:20px;height:20px}
-  }
-  @container (max-width:300px){.home-stats>div:last-child .stat-copy{flex-direction:column;align-items:flex-start;gap:0}}
   .wbwhen{flex:0 0 auto}
   .wbweek{margin-top:var(--content-gap);display:grid;gap:6px;align-content:start;
     flex:1 1 auto;min-height:96px;overflow-y:auto;overscroll-behavior:contain;
@@ -1470,49 +1451,52 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   .wbday.shut .wbtier{background:var(--rule)}
   .wbday.shut .wbwhen{color:var(--ink-soft)}
   .wbday.shut .track{opacity:.45}
-  .wbday[data-day]{cursor:pointer;background-clip:content-box;
-    transition:background var(--t-ui)}
-  .wbday[data-day]:hover,
-  .wbday[data-day]:focus-visible{background:var(--surface-2)}
-  .wbday[data-day]:hover .wbwhen,
-  .wbday[data-day]:focus-visible .wbwhen{color:var(--ink)}
-  .wbday[data-day]:hover .wbtier,
-  .wbday[data-day]:focus-visible .wbtier{width:9px}
-  .wbday[data-day]:active{background:var(--stamp-edge)}
+  .wbday[data-day]{cursor:pointer}
+  .wbday[data-day]:is(:hover,:focus-visible) .wbwhen{color:var(--ink)}
+  .wbday[data-day]:is(:hover,:focus-visible) .wbtier{width:9px}
   .wbday[data-day]:focus-visible{outline:1px solid var(--ink);outline-offset:-1px}
-  .wbday .wbtier{transition:width var(--t-ui)}
+  .wbday .wbtier{transition:width var(--t-ui),opacity var(--t-ui)}
+  .wbday[data-day]:active .day-thread>i::after{scale:.86}
+  .wbday[data-day]{--wake:color-mix(in srgb,var(--rule) 62%,var(--silver))}
+  .wbday[data-day]:is(:hover,:focus-visible) .day-thread>i:not(.on)::after{border-color:var(--wake)}
+  .wbday[data-day]:is(:hover,:focus-visible) .day-thread>i:not(.on):not(:first-child)::before{background:var(--wake)}
+  .day-thread>i:not(.on)::before{transition:background var(--t-ui)}
+  .wbday.locked:not(.shut) .wbtier{opacity:calc(var(--day-locked) - .07)}
+  .wbday.locked:not(.shut) .track{opacity:var(--day-locked)}
+  .wbday.locked .track{transition:opacity var(--t-ui)}
+  .wbday.locked[data-day]:is(:hover,:focus-visible) :is(.track,.wbtier){opacity:.85}
   .wbweek .track.dtrack{--day-neuron:clamp(16px,2.4dvh,22px);width:auto;min-width:0;margin:0;
     height:var(--day-neuron);background:none}
-  .track.day-thread{position:relative;isolation:isolate;display:grid;grid-template-columns:repeat(10,minmax(0,1fr))}
-  .day-thread::before,.day-thread>i.on:not(:first-child)::before{content:"";position:absolute;top:calc(50% - 1px);height:2px;z-index:-1}
-  .day-thread::before{left:5%;right:5%;background:var(--rule)}
+  .track.day-thread{position:relative;isolation:isolate;display:grid;grid-template-columns:repeat(10,minmax(0,1fr));overflow:visible}
   .track.day-thread>i{position:relative;display:grid;place-items:center;font-style:normal;background:none;box-shadow:none;transition:none}
-  .day-thread>i.on:not(:first-child)::before{right:50%;width:100%;background:var(--fill);transition:background .45s var(--ease-out)}
+  .day-thread>i:not(:first-child)::before{content:"";position:absolute;top:calc(50% - 1px);right:50%;width:100%;height:2px;z-index:-1;
+    background:var(--rule);transform-origin:100% 50%;
+    transform:translate(var(--px,0px),var(--py,0px)) rotate(var(--sa,0rad)) scaleX(var(--ss,1))}
+  .day-thread>i.on:not(:first-child)::before{background:var(--fill);transition:background .45s var(--ease-out)}
   .day-thread>i::after{content:"";display:grid;place-items:center;box-sizing:border-box;width:min(100%,var(--day-neuron));aspect-ratio:1;
     border:2px solid var(--fill,var(--rule));border-radius:50%;background:var(--fill,var(--surface));
-    transition:background .45s var(--ease-out),border-color .45s var(--ease-out)}
+    translate:var(--px,0px) var(--py,0px);
+    transition:background .45s var(--ease-out),border-color .45s var(--ease-out),scale var(--t-press) var(--ease-out)}
   [data-thread-numbers="true"] .track.day-thread i[data-thread-id]::after{display:grid;line-height:1}
   [data-thread-numbers="true"] .day-thread i:not(.on)::after{color:var(--ink-soft)}
   [data-result-patterns="true"] .track.day-thread [data-grade]{background-image:none}
   [data-result-patterns="true"] .day-thread [data-grade]::after{background-image:var(--grade-pattern);background-size:8px 8px}
   [data-thread-numbers="true"][data-result-patterns="true"] .day-thread i.on::after{
     text-shadow:1px 0 var(--fill),-1px 0 var(--fill),0 1px var(--fill),0 -1px var(--fill)}
-  @media(prefers-reduced-motion:reduce){.day-thread>i::before,.day-thread>i::after{transition:none!important}}
+  @media(prefers-reduced-motion:reduce){.day-thread>i::before,.day-thread>i::after,.wbmore-go{transition:none!important}}
   .wbweek{grid-auto-rows:max-content}
   .wbmore{margin:0;padding:4px 0 4px 15px;background:none;border:0;font:inherit;font-size:var(--menu-small);
     letter-spacing:.06em;text-align:left;color:var(--ink-soft)}
-  button.wbmore{cursor:pointer;color:var(--ink)}
-  .wbarchive{display:flex;align-items:center;gap:10px;width:100%;padding:10px 0 10px 15px;letter-spacing:0}
-  .archive-stamp{display:grid;place-items:center;flex:none;width:36px;height:36px;box-sizing:border-box;
-    border:1px dashed color-mix(in srgb,var(--ink-soft) 55%,transparent);color:var(--ink-soft)}
-  .archive-stamp svg{width:62%;height:62%;opacity:.28}
-  .archive-copy{display:grid;gap:3px}
-  .archive-copy b{font-size:13px;font-weight:700;color:var(--ink);line-height:1.3}
-  .archive-note{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ink-soft);line-height:1.3}
-  .archive-note svg{width:11px;height:11px;flex:none}
-  .wbarchive:is(:hover,:focus-visible) .archive-note{color:var(--ink)}
+  .wbarchive{display:flex;align-items:center;gap:6px;width:100%;min-height:28px;padding:6px 0 6px 15px;
+    line-height:1.3;white-space:nowrap;transition:color var(--t-ui)}
+  .wbarchive::after{content:"";flex:1 1 0;min-width:12px;height:1px;margin-left:6px;background:var(--rule)}
+  .wbarchive svg{width:11px;height:11px;flex:none}
+  .wbarchive>span{overflow:hidden;text-overflow:ellipsis}
+  .wbmore-go{flex:none;display:inline-block;transition:translate var(--t-ui) var(--ease-out)}
+  button.wbarchive{cursor:pointer}
+  :is(button.wbarchive:is(:hover,:focus-visible),.wbweek:has(.wbday.locked[data-day]:is(:hover,:focus-visible)) button.wbarchive){color:var(--ink)}
+  :is(button.wbarchive:is(:hover,:focus-visible),.wbweek:has(.wbday.locked[data-day]:is(:hover,:focus-visible)) button.wbarchive) .wbmore-go{translate:2px 0}
   button.wbarchive:focus-visible{outline:1px solid var(--ink);outline-offset:-1px}
-  .wbarchive.owned .archive-stamp{border-style:solid;border-color:var(--rule)}
   .track.dtrack > i{transition:none}
   .track.dtrack:not(.day-thread) > i:not(.on){background:var(--rule)}
 
@@ -3753,14 +3737,14 @@ function placeMenuPlay(){
 }
 addEventListener('resize',()=>{placeMenuPlay();renderMenuArt()});
 function fitMenuIntros(){
-  for(const line of document.querySelectorAll('.home-menu-intro,.endless-menu-intro,.discover-menu-intro')){
+  for(const line of document.querySelectorAll('.home-menu-intro,.endless-menu-intro,.discover-menu-intro,.collection-summary')){
     if(!line.getClientRects().length)continue;
     line.classList.remove('short');
     line.classList.toggle('short',line.scrollWidth>line.clientWidth+1);
   }
 }
 const menuIntroObserver=new ResizeObserver(fitMenuIntros);
-['introbody','paneendless','paybody'].forEach(id=>menuIntroObserver.observe($(id)));
+['introbody','paneendless','paybody','panecoll'].forEach(id=>menuIntroObserver.observe($(id)));
 let openingPlayed=false,welcomePaused=false;
 const OPENING_SEEN_KEY='features-opening-v1';
 const WELCOME_PAUSE_KEY='features-welcome-paused-v1';
@@ -4242,21 +4226,12 @@ function knownStampCounts(){
 function renderCollection(){
   cancelShowcaseDrag();finishShowcaseFlights();showcaseLastTap=null;
   const stamps=collectionStamps(),have=stamps.filter(s=>s.badge).length;
-  const optimised=stamps.filter(s=>s.badge?.tier==='perfect').length,mastered=stamps.filter(s=>s.badge?.tier==='flawless').length;
   const pane=$('panecoll');
   const keepScroll=pane.querySelector('.collection-sheet')?.scrollTop||0;
   paintPane(pane,`<div class="collection-sheet"><div class="panehd collhd menu-heading">
       ${paneHeading('concepts',['fish','butterfly','mushroom','pear'],'','coll')}
-      <p class="intro-sub">find familiar shapes · keep your discoveries</p>
-      <div class="wbstats collection-summary">
-      <div>${statMark('leaf')}<span class="stat-copy"><b class="collcount" role="status" aria-label="${have} of ${stamps.length} concepts collected">
-        <span class="collcount-have" aria-hidden="true">${have}</span>
-        <span aria-hidden="true">/</span>
-        <span class="collcount-total" aria-hidden="true">${stamps.length}</span>
-      </b><span>collected</span></span></div>
-      <div aria-label="${optimised} optimised concepts">${statMark('crown')}<span class="stat-copy"><b>${optimised}</b><span>optimised</span></span></div>
-      <div aria-label="${mastered} mastered concepts">${statMark('flag')}<span class="stat-copy"><b>${mastered}</b><span>mastered</span></span></div>
-      </div></div>`+showcasePanel()
+      <p class="intro-sub collection-summary"><span class="collection-intro-detail">find familiar shapes · </span><span class="collcount" role="status" aria-label="${have} of ${stamps.length} concepts collected"><span class="collcount-have" aria-hidden="true">${have}</span><span aria-hidden="true">/</span><span class="collcount-total" aria-hidden="true">${stamps.length}</span></span> collected</p>
+      </div>`+showcasePanel()
     +stamps.map(({key:k,colour,badge:b,count})=>{
       return b
         ? `<button type="button" class="fcell" data-grade="${gradeKey(b.tier)}" data-stamp="${k}" style="--tc:var(${tierCol(b.tier)});--stamp-plate:${colour}" aria-label="${k}, ${esc(tierSay(b.tier))}, at least ${count} collection${count===1?'':'s'}"><svg class="rfeat" viewBox="0 0 96 96" role="img" aria-label="${k}"><rect class="fcell-plate" width="96" height="96" fill="${colour}"/>${figEmblem(k,{ink:EMBLEM_INK,fit:b.fit})}</svg></button>`
@@ -4265,6 +4240,7 @@ function renderCollection(){
           +`<g opacity=".38">`+figEmblem(k,{ink:'var(--silver)'})+`</g></svg></button>`;
     }).join('')+untangleRewardGallery()+'</div>');
   pane.querySelector('.collection-sheet').scrollTop=keepScroll;
+  fitMenuIntros();
   syncShowcasePicker();
   pane.onclick=e=>{
     if(Date.now()<showcaseClickUntil){e.preventDefault();return}
@@ -10261,10 +10237,6 @@ function dayRows(){
   });
   return [...out.values()];
 }
-function completedDailyDays(){
-  return new Set((store.collection.playedDays||[]).filter(row=>row && typeof row==='object'
-    && typeof row.d==='string' && Number(row.depth)>=POLICY.dailyNets).map(row=>row.d)).size;
-}
 const isShut=({d,row})=>!row && !canPlayDay(d);
 const TIEROF={p:'perfect', c:'clean', d:'done'};
 const FLAW_PERFECT=3;
@@ -10298,6 +10270,70 @@ function menuDays(){
   for(let i=0,d=today(); i<MENU_CAP && d>=LAUNCH && d>=MENU_FROM; i++,d=dayAdd(d,-1))
     out.push({d,row:by.get(d)||null});
   return out;
+}
+function wireDayPull(list){
+  if(!list)return;
+  const PROPS=['--px','--py','--sa','--ss'],live=new Map();
+  let aim=null,raf=0,timer=0,last=0;
+  const measure=st=>{
+    const box=st.track.getBoundingClientRect(),disc=parseFloat(getComputedStyle(st.cells[0],'::after').width)||0;
+    st.box=box;st.w=box.width/st.cells.length;
+    st.room=Math.max(0,(st.row.clientHeight-disc)/2-1.5);
+  };
+  const follow=row=>{
+    let st=live.get(row);
+    if(!st){
+      const track=row.querySelector('.day-thread'),cells=track?[...track.children]:[];
+      if(!cells.length)return null;
+      st={row,track,cells,pos:cells.map(()=>[0,0]),vel:cells.map(()=>[0,0])};live.set(row,st);
+    }
+    measure(st);return st;
+  };
+  const goal=(st,i)=>{
+    if(aim?.row!==st.row)return [0,0];
+    const dx=aim.x-(i+.5)*st.w,dy=aim.y,g=Math.exp(-((dx/(1.25*st.w))**2));
+    if(g<.02)return [0,0];
+    const length=Math.hypot(dx,dy),k=length?Math.min(.25,4/length):0;
+    return [dx*k*g,Math.max(-st.room,Math.min(st.room,(dy*k-3.2)*g))];
+  };
+  const paint=st=>st.cells.forEach((cell,i)=>{
+    const [x,y]=st.pos[i],s=cell.style;
+    s.setProperty('--px',x.toFixed(2)+'px');s.setProperty('--py',y.toFixed(2)+'px');
+    if(!i)return;
+    const dx=st.w+x-st.pos[i-1][0],dy=y-st.pos[i-1][1];
+    s.setProperty('--sa',Math.atan2(dy,dx).toFixed(4)+'rad');s.setProperty('--ss',(Math.hypot(dx,dy)/st.w).toFixed(4));
+  });
+  const rest=st=>{st.cells.forEach(cell=>PROPS.forEach(p=>cell.style.removeProperty(p)));live.delete(st.row)};
+  const step=now=>{
+    raf=0;clearTimeout(timer);
+    const dt=Math.min(.034,last?(now-last)/1000:.016);last=now;let moving=false;
+    for(const st of [...live.values()]){
+      if(!st.row.isConnected||reduceMotion){rest(st);continue}
+      let settled=true;
+      st.pos.forEach((p,i)=>{
+        const h=goal(st,i),v=st.vel[i];
+        for(const a of [0,1]){v[a]+=(-220*(p[a]-h[a])-23*v[a])*dt;p[a]+=v[a]*dt}
+        if(Math.hypot(p[0]-h[0],p[1]-h[1])>.02||Math.hypot(v[0],v[1])>.05)settled=false;
+        else{p[0]=h[0];p[1]=h[1];v[0]=v[1]=0}
+      });
+      if(settled&&aim?.row!==st.row){rest(st);continue}
+      paint(st);if(!settled)moving=true;
+    }
+    if(moving)run();else last=0;
+  };
+  const run=()=>{
+    if(raf)return;
+    const go=now=>{cancelAnimationFrame(raf);clearTimeout(timer);raf=0;step(typeof now==='number'?now:performance.now())};
+    raf=requestAnimationFrame(go);timer=setTimeout(go,40);
+  };
+  const release=()=>{if(aim){aim=null;run()}};
+  list.onpointermove=e=>{
+    if(e.pointerType!=='mouse'||reduceMotion)return release();
+    const row=e.target.closest?.('.wbday[data-day]:not(.locked)'),st=row&&follow(row);
+    if(!st)return release();
+    aim={row,x:e.clientX-st.box.left,y:e.clientY-st.box.top-st.box.height/2};run();
+  };
+  list.onpointerleave=list.onscroll=release;
 }
 function tierWords(tiers,sep){
   const g=rungsOf(tiers);
@@ -11225,9 +11261,6 @@ function openingStamp(k){
   const art=k==='infinity'?`<path d="${INFINITY_MARK}" transform="translate(12 12) scale(3)" fill="none" stroke="${EMBLEM_INK}" stroke-width="3.4"/>`:figEmblem(k,{ink:EMBLEM_INK});
   return `<div class="opening-stamp"><svg viewBox="0 0 96 96"><rect width="96" height="96" fill="var(${stampColour(k)})"/><g class="opening-ink">${art}</g></svg></div>`;
 }
-function statMark(key){
-  return `<span class="stat-icon" aria-hidden="true">${showcaseMark(key,true)}</span>`;
-}
 function openingStamps(keys){
   return `<div class="opening-stamps" aria-hidden="true">${keys.map(openingStamp).join('')}</div>`;
 }
@@ -11365,11 +11398,8 @@ function renderIntro(){
   }
   {
     const fresh=!store.tutorialDone;
-    const streak=[today(),dayAdd(today(),-1)].includes(store.meta.lastPlayDay)?+store.meta.streak||0:0;
-    const runSay=`<b>${streak}</b><span class="stat-label">day${streak===1?'':'s'} running</span>`;
+    const streak=[today(),dayAdd(today(),-1)].includes(store.meta.lastPlayDay)?Math.max(0,Math.floor(+store.meta.streak))||0:0;
     const rows=dayRows();
-    const completed=completedDailyDays();
-    const stamps=collectionStamps(),earned=stamps.filter(stamp=>stamp.badge),collected=earned.length;
     const days=menuDays().map(({d,row})=>{
       const played=!!(row && typeof row.tiers==='string' && row.tiers);
       const isNow=d===today();
@@ -11377,7 +11407,8 @@ function renderIntro(){
       const shut=isShut({d,row});
       const offer=!isNow&&!POLICY.premium,press=releasedDay(d)||offer;
       const say=offer?'premium':!press?'':played?(can?'play again':'premium · play again'):'play';
-      return `<div class="wbday${isNow?' now':''}${played?'':' none'}${shut?' shut':''}"`
+      const locked=!isNow&&!canPlayDay(d);
+      return `<div class="wbday${isNow?' now':''}${played?'':' none'}${shut?' shut':''}${locked?' locked':''}"`
         +(press?` role="button" tabindex="0" data-day="${d}"`:'')
         +` aria-label="${dayLabel(d)}${isNow?' · today':''} · ${played?tierWords(row.tiers):(shut?'not open':'not played')}`
         +`${say?' · '+say:''}">`
@@ -11386,13 +11417,12 @@ function renderIntro(){
         +rungTrack(played?row.tiers:'',true,true)
         +`</div>`;
     });
-    const archivePreview=`<span class="archive-stamp" aria-hidden="true">${showcaseMark('clock',true)}</span>`;
     const earlier=POLICY.premium
-      ?`<div class="wbmore wbarchive owned">${archivePreview}<span class="archive-copy"><b>earlier days</b><span class="archive-note">archive returning soon</span></span></div>`
-      :`<button class="wbmore wbarchive" type="button" id="wbmore" aria-label="earlier days · premium archive returning soon · discover">${archivePreview}<span class="archive-copy"><b>earlier days</b><span class="archive-note">${premiumLock()}premium · returning soon<span aria-hidden="true"> ›</span></span></span></button>`;
+      ?`<p class="wbmore wbarchive owned"><span>earlier days · archive returning soon</span></p>`
+      :`<button class="wbmore wbarchive" type="button" id="wbmore" aria-label="earlier days return with premium · discover">${premiumLock()}<span>earlier days return with premium</span><span class="wbmore-go" aria-hidden="true">›</span></button>`;
     const week=(days[0]||`<p class="wbmore">${shutWords(today())}</p>`)+(days.length>1?earlier:'')+days.slice(1).join('');
     const firstDay = !fresh && !rows.length;
-    const head=`<p class="intro-sub home-menu-intro">untangle ten<span class="home-intro-detail"> · the same for everyone</span></p>`;
+    const head=`<p class="intro-sub home-menu-intro">untangle ten<span class="home-intro-detail"> · ${streak?`<span class="home-streak">${streak}</span> day${streak===1?'':'s'} running`:'the same for everyone'}</span></p>`;
     const keepScroll=(()=>{ const w=b.querySelector('.wbweek'); return w?w.scrollTop:0 })();
     const current=R();
     const started=current.turns>0 || current.netMoves>0 || current.netIndex>0
@@ -11404,12 +11434,7 @@ function renderIntro(){
       :current.archive ? 'start this set'
       :firstDay ? '<span class="daily-start-long">start your first ten</span><span class="daily-start-short">begin</span>' : "start today's run";
     paintPane(b,head
-      +`<div class="wbstats home-stats">
-        <div data-stat="completed" aria-label="${completed} total completed day${completed===1?'':'s'}">${statMark('flag')}<span class="stat-copy"><b>${completed}</b><span class="stat-label">day${completed===1?'':'s'} completed</span></span></div>
-        <div data-stat="running" aria-label="${streak} day${streak===1?'':'s'} running">${statMark('clock')}<span class="stat-copy">${runSay}</span></div>
-        <div aria-label="${collected} of ${stamps.length} concepts collected">${statMark('leaf')}<span class="stat-copy"><b>${collected}/${stamps.length}</b><span>concepts</span></span></div>
-      </div>
-      <div class="wbweek">${week}</div>
+      +`<div class="wbweek">${week}</div>
       <button class="intro-start" id="introstart">${startLabel}</button>`
 );
     const press=d=>{
@@ -11428,6 +11453,7 @@ function renderIntro(){
       const row=e.target.closest('[data-day]');
       if(row){ e.preventDefault(); press(row.dataset.day) }
     };
+    wireDayPull($('introbody').querySelector('.wbweek'));
     ensurePrice();
   }
   if($('introstart')) $('introstart').onclick=()=>{
