@@ -34,7 +34,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-i5YPMFqMt3KNJIMTM4Hebnc14SrwQxUHdjTJsnbZT74=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-zXDGa9GUBAafedt9ZvIF6VaAnKymEl+nhoz+EkL2ODo=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- The approved concept quartet: aeroplane, smaller heart, leaf and lightning.
      Render web icons from assets/marketing/features-app-mark.svg with
      tools/render-web-icons.mjs; keep the tab SVG embedded for offline copies. -->
@@ -1453,7 +1453,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   .wbday.locked .day-thread.denied>i::after{border-color:var(--sig-orange)}
   .wbweek .track.dtrack{--day-neuron:clamp(14px,2dvh,18px);width:auto;min-width:0;margin:0;
     height:var(--day-neuron);background:none}
-  .track.day-thread{position:relative;isolation:isolate;display:grid;grid-template-columns:repeat(10,minmax(0,1fr));overflow:visible}
+  .track.day-thread{position:relative;isolation:isolate;display:grid;grid-template-columns:repeat(var(--nets,10),minmax(0,1fr));overflow:visible}
   .track.day-thread>i{position:relative;display:grid;place-items:center;font-style:normal;background:none;box-shadow:none;transition:none}
   .day-thread>i:not(:first-child)::before{content:"";position:absolute;top:calc(50% - 1px);right:50%;width:100%;height:2px;z-index:-1;
     background:var(--rule);transform-origin:100% 50%;
@@ -3452,6 +3452,14 @@ const DISCOVERY_KEY='features-discovery-counts-v1';
 function today(){const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)}
 
 const DEV = /^(localhost|127\.0\.0\.1|\[::1\]|.*\.local)$/.test(location.hostname);
+const NET_WORDS={8:'eight',10:'ten'};
+const DAILY_LENGTHS=[];
+const netsForDay=day=>{
+  let nets=POLICY.dailyNets;
+  for(const [from,count] of DAILY_LENGTHS)if(typeof day==='string'&&day>=from)nets=count;
+  return nets;
+};
+const netsWord=day=>NET_WORDS[netsForDay(day)]||String(netsForDay(day));
 const POLICY = {
   dailyNets: 10,
   get runsPerDay(){ return (DEV || this.premium) ? Infinity : 1 },
@@ -3535,7 +3543,7 @@ function startAnotherRun(){
   newRun();
   builtFor=-1; resetDescent(); save();
   hideVeils(); renderAll();
-  toast('fresh run · today\'s ten again');
+  toast(`fresh run · today's ${netsWord(R().day)} again`);
   return true;
 }
 function resumeRun(){
@@ -4348,7 +4356,7 @@ function renderRulesPane(){
     ['pinned','stays fixed','frozen'],['bend','drag to bend','flexed'],['crossing','clear it','conflict']];
   $('panerules').innerHTML=`<div class="panehd menu-heading">
         ${paneHeading('learn',['turtle','pencil','spanner','magnet'],'','rules')}
-        <div class="intro-sub">10 nets &middot; clear conflicts &middot; reveal features</div>
+        <div class="intro-sub">${netsForDay(today())} nets &middot; clear conflicts &middot; reveal features</div>
         <div class="rules-scoring">${rungLadder()}</div></div>
       <div class="rkey" role="region" aria-label="game symbols">
         ${symbols.map(([kind,verb,name])=>`<div class="rkey-row rkey-part">${rmark(kind,kind==='crossing'?['--orange','--hellblau']:[],true)}<span class="rkey-copy"><b>${name}</b><span>${verb}</span></span></div>`).join('')}
@@ -7304,9 +7312,9 @@ function publishPlateInset(){
 
 
 function buildNet(force){
-  const held=R();
-  if(!(Number.isInteger(held.netIndex)&&held.netIndex>=0&&held.netIndex<POLICY.dailyNets)){
-    Object.assign(held,{netIndex:held.netIndex>=POLICY.dailyNets?POLICY.dailyNets-1:0,netMoves:0,positions:{},freed:[],minted:{},splitNodes:[],log:[]});
+  const held=R(),heldNets=netsForDay(held.day);
+  if(!(Number.isInteger(held.netIndex)&&held.netIndex>=0&&held.netIndex<heldNets)){
+    Object.assign(held,{netIndex:held.netIndex>=heldNets?heldNets-1:0,netMoves:0,positions:{},freed:[],minted:{},splitNodes:[],log:[]});
     save();
   }
   const idx=held.netIndex;
@@ -9907,8 +9915,8 @@ function stampToday(depth,feats,tier){
   const turns=cl.reduce((a,c)=>a+(c.moves||0),0);
   const par=cl.reduce((a,c)=>a+(c.par||0),0);
   const had=row.depth||0;
-  const keyNow=rungCount(cl.map(c=>c.tier), POLICY.dailyNets).key;
-  const keyHad=rungsOf(row.tiers) ? rungsOf(row.tiers).key : -1;
+  const keyNow=rungCount(cl.map(c=>c.tier), netsForDay(R().day)).key;
+  const keyHad=rungsOf(row.tiers,R().day) ? rungsOf(row.tiers,R().day).key : -1;
   const better = keyNow!==keyHad ? keyNow>keyHad
                : (row.turns==null || turns-par < row.turns-row.par);
   const tiers=cl.map(c=>String(c.tier||'')[0]||'').join('');
@@ -9942,7 +9950,7 @@ function clearNet(){
                   catalogueRevision:catalogueRevision(r.catalogueRevision),
                   log:(r.logGap||r.log.length!==r.netMoves)?null:r.log});
   if(!wasTutorial)recordDailyDiscovery(r,r.cleared[r.cleared.length-1]);
-  const setDone = !wasTutorial && r.cleared.length>=POLICY.dailyNets;
+  const setDone = !wasTutorial && r.cleared.length>=netsForDay(r.day);
   const finalTutorial=wasTutorial && r.cleared.length>=TUTNETS.length;
   if(setDone && flawlessTally(r.cleared.filter(c=>c.tier==='perfect').length,
                               r.cleared.filter(c=>c.tier!=='done').length,
@@ -10105,8 +10113,8 @@ function showNetCleared(feats,tier,read){
   $('contbtn').onclick=leaveNetCard;
   requestAnimationFrame(()=>keyed()&&focusCard($('contbtn')));
 }
-function runOverOffer(depth){
-  if(POLICY.premium || depth<POLICY.dailyNets) return '';
+function runOverOffer(depth,day){
+  if(POLICY.premium || depth<netsForDay(day)) return '';
   ensurePrice();
   if(!canBuy()) return '';
   const price=priceWords();
@@ -10117,11 +10125,11 @@ function showRunOver(){
   if(menuShown()){heldRunOver=R();return}
   heldRunOver=null;
   const r=R(),depth=r.cleared.length,parked=!!store.parked&&canAccessRun(store.parked);
-  const firstComplete=firstPlay&&!inTutorialRun()&&r.over&&depth>=POLICY.dailyNets;
+  const nets=netsForDay(r.day),firstComplete=firstPlay&&!inTutorialRun()&&r.over&&depth>=nets;
   const signup=firstComplete&&API&&!store.signedInOnce&&!account?.signedIn;
   if(firstComplete&&!signup) setFirstPlay(false);
   if($('runveil').parentElement!==document.body)document.body.append($('runveil'));
-  const stamps=runShareStamps(r,Infinity),tiers=runShareTiers(r),offer=signup?'':runOverOffer(depth);
+  const stamps=runShareStamps(r,Infinity),tiers=runShareTiers(r),offer=signup?'':runOverOffer(depth,r.day);
   const actions=signup?`<p class="acct-ask">keep your discoveries by making an account.</p>
       <button class="wbtn solid" id="firstsignup">create an account</button>
     <button class="wbtn" id="sharebtn">${SHARE_LABEL}</button>`
@@ -10132,10 +10140,10 @@ function showRunOver(){
   $('runbulletin').classList.add('day-result');
   $('runbulletin').classList.remove('sharing');
   $('runbulletin').innerHTML=`<div class="day-content">
-    <div class="day-heading"><p>${esc(dayLabel(r.day))}</p><h2>${depth>=POLICY.dailyNets?'day complete':'your day so far'}</h2>
+    <div class="day-heading"><p>${esc(dayLabel(r.day))}</p><h2>${depth>=nets?'day complete':'your day so far'}</h2>
       <button class="help day-close" id="recordbtn2" aria-label="back to the menu">${CLOSE_GLYPH}</button></div>
-    ${dayFingerprint(tiers)}
-    ${isFlawless(tiers)?'<p class="day-award">mastered day</p>':''}
+    ${dayFingerprint(tiers,r.day)}
+    ${isFlawless(tiers,r.day)?'<p class="day-award">mastered day</p>':''}
     ${stamps.length?`<div class="day-stamps" aria-label="discoveries from this day">${stamps.map(({key,tier,large})=>`<span role="img" aria-label="${esc(key+' concept · '+tierSay(tier))}">${featureStamp(key,tier,false,undefined,large)}</span>`).join('')}</div>`:''}
     <textarea class="shareout" id="shareout" readonly rows="3" aria-label="the day, to copy" hidden></textarea>
     </div><div class="bactions day-actions">${actions}${offer}
@@ -10266,24 +10274,25 @@ const TIEROF={p:'perfect', c:'clean', d:'done'};
 const FLAW_PERFECT=3;
 const flawlessTally=(perfect,good,of)=>
   of>=POLICY.dailyNets && good>=of && perfect>=FLAW_PERFECT;
-const isFlawless=tiers=>{
-  if(typeof tiers!=='string' || tiers.length<POLICY.dailyNets) return false;
-  const t=[...tiers.slice(0,POLICY.dailyNets)].map(ch=>TIEROF[ch]||'done');
+const isFlawless=(tiers,day)=>{
+  const nets=netsForDay(day);
+  if(typeof tiers!=='string' || tiers.length<nets) return false;
+  const t=[...tiers.slice(0,nets)].map(ch=>TIEROF[ch]||'done');
   return flawlessTally(t.filter(x=>x==='perfect').length,
                        t.filter(x=>x!=='done').length, t.length);
 };
-function rungTrack(tiers,row,thread=false){
-  const s=typeof tiers==='string'?tiers:'';
-  const flawless=isFlawless(s);
+function rungTrack(tiers,row,thread=false,day){
+  const s=typeof tiers==='string'?tiers:'',nets=netsForDay(day);
+  const flawless=isFlawless(s,day);
   let out='';
-  for(let i=0;i<POLICY.dailyNets;i++){
+  for(let i=0;i<nets;i++){
     const t=TIEROF[s[i]];
     const number=thread?` data-thread-id="${i+1}"`:'';
     out += t ? `<i${number} class="on" data-grade="${flawless?'flawless':t}" style="--fill:var(${flawless?TIERCOL.flawless:TIERCOL[t]})"></i>` : `<i${number}></i>`;
   }
   const flaw = flawless ? ' flawless' : '';
-  if(row) return `<span class="track dtrack${thread?' day-thread':''}${flaw}" aria-hidden="true">${out}</span>`;
-  const said=tierWords(s,' · ');
+  if(row) return `<span class="track dtrack${thread?' day-thread':''}${flaw}" style="--nets:${nets}" aria-hidden="true">${out}</span>`;
+  const said=tierWords(s,' · ',day);
   return `<span class="track${flaw}" role="img" aria-label="${said||'no nets cleared'}">${out}</span>`;
 }
 const MENU_CAP=730;
@@ -10366,8 +10375,8 @@ function wireDayPull(list,rows='.wbday:is([data-day],.locked)'){
   };
   list.onpointerleave=list.onscroll=release;
 }
-function tierWords(tiers,sep){
-  const g=rungsOf(tiers);
+function tierWords(tiers,sep,day){
+  const g=rungsOf(tiers,day);
   return g?rungWords(g,sep):'';
 }
 function rungWords(g,sep){
@@ -10379,41 +10388,42 @@ function rungCount(list,of){
   const n={perfect:0, clean:0, done:0};
   list.forEach(t=>{ const k=RUNGOF[t]; if(k) n[k]++ });
   const good=n.perfect+n.clean;
-  return {...n, of, good, key:good*(POLICY.dailyNets+1)+n.perfect};
+  return {...n, of, good, key:good*(of+1)+n.perfect};
 }
 const SHARE_LABEL='share';
 const SHARE_DESIGNS={daily:'daily fingerprint',weekly:'weekly weave',postcard:'stamp postcard'};
-const runShareTiers=r=>r.cleared.slice(0,POLICY.dailyNets)
+const runShareTiers=r=>r.cleared.slice(0,netsForDay(r.day))
   .map(c=>(RUNGOF[c.tier]||'?')[0]).join('');
-function dayFingerprint(tiers){
-  const scores=String(tiers||'').slice(0,POLICY.dailyNets);
+function dayFingerprint(tiers,day){
+  const nets=netsForDay(day),scores=String(tiers||'').slice(0,nets);
   let arcs='',neurons='';
-  for(let i=0;i<POLICY.dailyNets;i++){
-    const angle=-Math.PI/2+i*Math.PI/5,grade=TIEROF[scores[i]];
+  for(let i=0;i<nets;i++){
+    const angle=-Math.PI/2+i*2*Math.PI/nets,grade=TIEROF[scores[i]];
     const point=a=>[50+42*Math.cos(a),50+42*Math.sin(a)].map(n=>n.toFixed(3));
     const fill=grade?`--fill:var(${TIERCOL[grade]});`:'',p=point(angle);
-    arcs+=`<path style="${fill}" d="M${point(angle-Math.PI/10)}A42 42 0 0 1 ${point(angle+Math.PI/10)}"/>`;
+    arcs+=`<path style="${fill}" d="M${point(angle-Math.PI/nets)}A42 42 0 0 1 ${point(angle+Math.PI/nets)}"/>`;
     neurons+=`<i data-thread-id="${i+1}"${grade?` class="on" data-grade="${grade}"`:''} style="${fill}left:${p[0]}%;top:${p[1]}%"></i>`;
   }
   const count=[...scores].filter(t=>TIEROF[t]).length;
-  return `<div class="day-fingerprint" role="img" aria-label="${count} of ${POLICY.dailyNets} untangled${tierWords(scores)?' · '+tierWords(scores):''}"><svg class="day-loop" viewBox="0 0 100 100" aria-hidden="true">${arcs}</svg>${neurons}<div class="day-result-reading" aria-hidden="true"><strong>${count}/${POLICY.dailyNets}</strong><span>untangled</span></div></div>`;
+  const words=tierWords(scores,undefined,day);
+  return `<div class="day-fingerprint" role="img" aria-label="${count} of ${nets} untangled${words?' · '+words:''}"><svg class="day-loop" viewBox="0 0 100 100" aria-hidden="true">${arcs}</svg>${neurons}<div class="day-result-reading" aria-hidden="true"><strong>${count}/${nets}</strong><span>untangled</span></div></div>`;
 }
 const shareText=day=>'features · '+dayLabel(day)+'\nhttps://features.games/';
 function runShareDays(run){
   const saved=new Map(dayRows().map(row=>[row.d,row]));
   return Array.from({length:7},(_,i)=>{
     const d=dayAdd(run.day,i-6),row=saved.get(d);
-    return {d,tiers:d===run.day?runShareTiers(run):String(row?.tiers||'').slice(0,POLICY.dailyNets),
+    return {d,tiers:d===run.day?runShareTiers(run):String(row?.tiers||'').slice(0,netsForDay(d)),
       depth:d===run.day?run.cleared.length:Number(row?.depth)||0};
   });
 }
 function runShareDiscoveries(run){
-  return new Set(run.cleared.slice(0,POLICY.dailyNets).flatMap(net=>net.feats||[])
+  return new Set(run.cleared.slice(0,netsForDay(run.day)).flatMap(net=>net.feats||[])
     .filter(key=>Object.hasOwn(STAMPS,key)&&(FIGURES[key]||FIGURES_RETIRED[key]))).size;
 }
 function runShareStamps(run,limit=6){
-  const found=new Map(),flawless=isFlawless(runShareTiers(run));
-  for(const net of run.cleared.slice(0,POLICY.dailyNets)){
+  const found=new Map(),flawless=isFlawless(runShareTiers(run),run.day);
+  for(const net of run.cleared.slice(0,netsForDay(run.day))){
     for(const key of net.feats||[]){
       if(!Object.hasOwn(STAMPS,key)||!(FIGURES[key]||FIGURES_RETIRED[key]))continue;
       const tier=flawless?'flawless':RUNGOF[net.tier];
@@ -10454,7 +10464,7 @@ async function prepareShareStamps(run){
   prepared.ghost=await load(markSVG('leaf'));return prepared;
 }
 function dayShareCanvas(day,tiers,stamps=[],design='daily',details={}){
-  const s=String(tiers||'').slice(0,POLICY.dailyNets),flawless=isFlawless(s);
+  const nets=netsForDay(day),s=String(tiers||'').slice(0,nets),flawless=isFlawless(s,day);
   const shown=stamps.slice(0,6),discoveries=details.discoveries??shown.length;
   const rows=details.rows||Array.from({length:7},(_,i)=>({d:dayAdd(day,i-6),tiers:i===6?s:'',depth:i===6?s.length:0}));
   const canvas=document.createElement('canvas');canvas.width=1200;canvas.height=1392;
@@ -10474,9 +10484,9 @@ function dayShareCanvas(day,tiers,stamps=[],design='daily',details={}){
     c.strokeStyle=colour(t);c.lineWidth=4;c.stroke();
     if(t){c.save();c.clip();drawGradePattern(c,t,x-r,y-r,r*2,r*2);c.restore()}
   };
-  const thread=(scores,y,x,end,r=17)=>{
-    const step=(end-x)/(POLICY.dailyNets-1);
-    const grades=Array.from({length:POLICY.dailyNets},(_,i)=>TIEROF[scores[i]]);
+  const thread=(scores,y,x,end,r=17,count=nets)=>{
+    const step=(end-x)/(count-1);
+    const grades=Array.from({length:count},(_,i)=>TIEROF[scores[i]]);
     line(x,y,end,y,null);
     grades.forEach((grade,i)=>{if(i&&grade)line(x+(i-1)*step,y,x+i*step,y,grade)});
     grades.forEach((grade,i)=>neuron(x+i*step,y,r,grade));
@@ -10494,15 +10504,15 @@ function dayShareCanvas(day,tiers,stamps=[],design='daily',details={}){
   const cleared=[...s].filter(t=>TIEROF[t]).length;
   if(design==='weekly'){
     rows.forEach((row,j)=>{
-      const y=365+j*104,scores=String(row.tiers||'').slice(0,POLICY.dailyNets);
+      const count=netsForDay(row.d),y=365+j*104,scores=String(row.tiers||'').slice(0,count);
       text(dayLabel(row.d).split(' ').slice(0,2).join(' '),78,y+10,31,500,muted);
-      thread(scores,y,280,975);
+      thread(scores,y,280,975,17,count);
       const recorded=[...scores].filter(t=>TIEROF[t]).length;
-      text(recorded?recorded+'/10':'—',1122,y+10,29,500,muted,'right');
+      text(recorded?recorded+'/'+count:'—',1122,y+10,29,500,muted,'right');
     });
     text('empty thread · no recorded grades',78,1140,28,500,muted);
-    reading(rows.filter(row=>row.depth>=POLICY.dailyNets||[...String(row.tiers||'')].filter(t=>TIEROF[t]).length>=POLICY.dailyNets).length,'days complete',78);
-    reading(rows.filter(row=>isFlawless(row.tiers||'')).length,'mastered',1122,'right');
+    reading(rows.filter(row=>{const count=netsForDay(row.d);return row.depth>=count||[...String(row.tiers||'').slice(0,count)].filter(t=>TIEROF[t]).length>=count}).length,'days complete',78);
+    reading(rows.filter(row=>isFlawless(row.tiers||'',row.d)).length,'mastered',1122,'right');
   }else if(design==='postcard'){
     const columns=shown.length>4?3:2,size=columns===2?280:232,gap=46;
     const x=(1200-columns*size-(columns-1)*gap)/2,y=columns===2?340:402,height=size*STAMP_HEIGHT/96;
@@ -10518,22 +10528,22 @@ function dayShareCanvas(day,tiers,stamps=[],design='daily',details={}){
     }
     thread(s,1120,128,1072,17);
     reading(discoveries,discoveries===1?'concept':'concepts',78);
-    reading(cleared+'/10','untangled',1122,'right');
+    reading(cleared+'/'+nets,'untangled',1122,'right');
   }else{
-    for(let i=0;i<POLICY.dailyNets;i++){
-      const angle=-Math.PI/2+i*Math.PI/5,grade=TIEROF[s[i]];
-      c.beginPath();c.arc(600,700,330,angle-Math.PI/10,angle+Math.PI/10);
+    for(let i=0;i<nets;i++){
+      const angle=-Math.PI/2+i*2*Math.PI/nets,grade=TIEROF[s[i]];
+      c.beginPath();c.arc(600,700,330,angle-Math.PI/nets,angle+Math.PI/nets);
       c.strokeStyle=colour(grade);c.lineWidth=12;c.stroke();
     }
-    for(let i=0;i<POLICY.dailyNets;i++){
-      const angle=-Math.PI/2+i*Math.PI/5,t=TIEROF[s[i]];
+    for(let i=0;i<nets;i++){
+      const angle=-Math.PI/2+i*2*Math.PI/nets,t=TIEROF[s[i]];
       neuron(600+330*Math.cos(angle),700+330*Math.sin(angle),38,t);
     }
     if(shown[0]?.mark)c.drawImage(shown[0].mark,500,566,200,200);
-    text(cleared+'/10',600,857,62,800,ink,'center');
+    text(cleared+'/'+nets,600,857,62,800,ink,'center');
     text('untangled',600,906,34,500,muted,'center');
     if(flawless)text('mastered day',600,974,28,500,muted,'center');
-    reading(cleared+'/10','untangled',78);
+    reading(cleared+'/'+nets,'untangled',78);
     reading(discoveries,discoveries===1?'concept':'concepts',1122,'right');
   }
   line(78,1200,1122,1200,null,3);text('features.games',78,1340,29,500,muted);
@@ -10570,14 +10580,15 @@ function shareOptions(button,run){
   const draw=()=>{
     const design=button._shareDesign,tiers=runShareTiers(run),rows=runShareDays(run),discoveries=runShareDiscoveries(run);
     box.querySelectorAll('[data-share-design]').forEach(option=>option.setAttribute('aria-pressed',String(option.dataset.shareDesign===design)));
-    const label=design==='weekly'?rows.map(row=>dayLabel(row.d)+': '+([...row.tiers].some(t=>TIEROF[t])?[...row.tiers].filter(t=>TIEROF[t]).length+' of 10 untangled; '+tierWords(row.tiers)+(isFlawless(row.tiers)?', mastered':''):'no recorded grades')).join('; ')
-      :run.cleared.length+' of 10 untangled; '+discoveries+' concepts discovered; '+tierWords(tiers)+(isFlawless(tiers)?'; mastered day':'');
+    const nets=netsForDay(run.day);
+    const label=design==='weekly'?rows.map(row=>dayLabel(row.d)+': '+([...row.tiers].some(t=>TIEROF[t])?[...row.tiers].filter(t=>TIEROF[t]).length+' of '+netsForDay(row.d)+' untangled; '+tierWords(row.tiers,undefined,row.d)+(isFlawless(row.tiers,row.d)?', mastered':''):'no recorded grades')).join('; ')
+      :run.cleared.length+' of '+nets+' untangled; '+discoveries+' concepts discovered; '+tierWords(tiers,undefined,run.day)+(isFlawless(tiers,run.day)?'; mastered day':'');
     const preview=box.querySelector('.share-preview');
     try{
       const canvas=dayShareCanvas(run.day,tiers,button._shareStamps||[],design,{rows,discoveries});
       canvas.setAttribute('role','img');canvas.setAttribute('aria-label',SHARE_DESIGNS[design]+': '+label);
       preview.replaceChildren(canvas);
-      box.querySelector('.share-summary').textContent=design==='weekly'?'seven days · empty threads have no recorded grades':run.cleared.length+'/10 untangled · '+discoveries+' '+(discoveries===1?'concept':'concepts')+(design==='postcard'&&discoveries<4?' · dotted mounts are unearned':'');
+      box.querySelector('.share-summary').textContent=design==='weekly'?'seven days · empty threads have no recorded grades':run.cleared.length+'/'+nets+' untangled · '+discoveries+' '+(discoveries===1?'concept':'concepts')+(design==='postcard'&&discoveries<4?' · dotted mounts are unearned':'');
     }catch{preview.textContent='image unavailable';box.querySelector('.share-summary').textContent='you can still share the link'}
   };
   box._close=close;button._shareRedraw=draw;draw();$('runbulletin').classList.add('sharing');
@@ -10652,12 +10663,12 @@ async function copyText(t){
     return !!ok;
   }catch(e){ return false }
 }
-const rungsOf=tiers=>(typeof tiers==='string' && tiers)
-  ? rungCount([...tiers.slice(0,POLICY.dailyNets)].map(ch=>TIEROF[ch]), POLICY.dailyNets)
+const rungsOf=(tiers,day)=>(typeof tiers==='string' && tiers)
+  ? rungCount([...tiers.slice(0,netsForDay(day))].map(ch=>TIEROF[ch]), netsForDay(day))
   : null;
 
 function replayWords(){
-  if(!canBuy()) return 'a new set of ten arrives every day';
+  if(!canBuy()) return `a new set of ${netsWord(today())} arrives every day`;
   const price=priceWords();
   return `another run at today's set is the full version${price?' · '+price:''}`;
 }
@@ -10679,7 +10690,7 @@ function openDay(iso){
                   && !store.parked.over ? store.parked : null;
   if(parkedHere) store.parked=null;
   if(leaving && !leaving.over
-     && leaving.day!==iso && leaving.cleared.length<POLICY.dailyNets) store.parked=leaving;
+     && leaving.day!==iso && leaving.cleared.length<netsForDay(leaving.day)) store.parked=leaving;
   if(parkedHere) store.run=parkedHere;
   else {
     newRun('daily',iso);
@@ -10882,7 +10893,7 @@ function renderHud(){
   const {optimum,par}=netTargets();
   const tier=liveTier();
 
-  const D=POLICY.dailyNets, tut=inTutorialRun();
+  const D=netsForDay(r.day), tut=inTutorialRun();
   const cells=r.cleared;
   const strip=$('setmeter');
   const setRun=`${tut?'lesson':'daily'}|${r.day}|${r.startedAt||''}`;
@@ -11481,11 +11492,11 @@ function renderIntro(){
       const locked=!isNow&&!canPlayDay(d);
       return `<div class="wbday${isNow?' now':''}${played?'':' none'}${shut?' shut':''}${locked?' locked':''}"`
         +(press?` role="button" tabindex="0" data-day="${d}"`:'')
-        +` aria-label="${dayLabel(d)}${isNow?' · today':''} · ${played?tierWords(row.tiers):(shut?'not open':'not played')}`
+        +` aria-label="${dayLabel(d)}${isNow?' · today':''} · ${played?tierWords(row.tiers,undefined,d):(shut?'not open':'not played')}`
         +`${say?' · '+say:''}">`
         +`<i class="wbtier" style="${shut?'':'--tc:'+daySpine(d)}" aria-hidden="true"></i>`
         +`<span class="wbwhen">${isNow?'today':dayLabelShort(d)}${locked?`<span class="wblock">${premiumLock()}</span>`:''}</span>`
-        +rungTrack(played?row.tiers:'',true,true)
+        +rungTrack(played?row.tiers:'',true,true,d)
         +`</div>`;
     });
     const earlier=POLICY.premium
@@ -11493,7 +11504,7 @@ function renderIntro(){
       :`<button class="wbmore wbarchive" type="button" id="wbmore" aria-label="earlier days return with premium · discover">${premiumLock()}<span>earlier days return with premium</span>${CHEVRON}</button>`;
     const week=(days[0]||`<p class="wbmore">${shutWords(today())}</p>`)+(days.length>1?earlier:'')+days.slice(1).join('');
     const firstDay = !fresh && !rows.length;
-    const head=`<p class="intro-sub home-menu-intro">untangle ten<span class="home-intro-detail"> · ${streak?`<span class="home-streak">${streak}</span> day${streak===1?'':'s'} running`:'the same for everyone'}</span></p>`;
+    const head=`<p class="intro-sub home-menu-intro">untangle ${netsWord(today())}<span class="home-intro-detail"> · ${streak?`<span class="home-streak">${streak}</span> day${streak===1?'':'s'} running`:'the same for everyone'}</span></p>`;
     const keepScroll=(()=>{ const w=b.querySelector('.wbweek'); return w?w.scrollTop:0 })();
     const current=R();
     const started=current.turns>0 || current.netMoves>0 || current.netIndex>0
@@ -11503,7 +11514,7 @@ function renderIntro(){
       :current.over ? 'view your result'
       :started ? 'resume your game'
       :current.archive ? 'start this set'
-      :firstDay ? '<span class="daily-start-long">start your first ten</span><span class="daily-start-short">begin</span>' : "start today's run";
+      :firstDay ? `<span class="daily-start-long">start your first ${netsWord(today())}</span><span class="daily-start-short">begin</span>` : "start today's run";
     paintPane(b,head
       +`<div class="wbweek">${week}</div>
       <button class="intro-start" id="introstart">${startLabel}</button>`
