@@ -34,7 +34,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-P6EJf9D8JbJ/7k9vCShRaTpg4Zb1/e2UShcKqAgpxxM=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-Rc2Esw5Sxsns3NLd+d2icznkL+nXPFI81/AWZacyIlw=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- The approved concept quartet: aeroplane, smaller heart, leaf and lightning.
      Render web icons from assets/marketing/features-app-mark.svg with
      tools/render-web-icons.mjs; keep the tab SVG embedded for offline copies. -->
@@ -1464,7 +1464,11 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   .wbday.locked:not(.shut) .wbtier{opacity:calc(var(--day-locked) - .07)}
   .wbday.locked:not(.shut) .track{opacity:var(--day-locked)}
   .wbday.locked .track{transition:opacity var(--t-ui)}
-  .wbday.locked[data-day]:is(:hover,:focus-visible) :is(.track,.wbtier){opacity:.85}
+  .wbday.locked:is(:hover,:focus-visible) :is(.track,.wbtier){opacity:.85}
+  .wblock{display:inline-block;width:.85em;height:.85em;margin-left:.45em;vertical-align:-.05em;color:var(--silver)}
+  .wblock>svg{display:block;width:100%;height:100%}
+  .wbday.locked:hover .wblock{color:var(--ink-soft)}
+  .wbday.locked:not([data-day]) .day-thread.denied>i::after{border-color:var(--sig-orange)}
   .wbweek .track.dtrack{--day-neuron:clamp(16px,2.4dvh,22px);width:auto;min-width:0;margin:0;
     height:var(--day-neuron);background:none}
   .track.day-thread{position:relative;isolation:isolate;display:grid;grid-template-columns:repeat(10,minmax(0,1fr));overflow:visible}
@@ -1776,64 +1780,40 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   .endless-menu-body{container:iterate-body / inline-size;grid-column:2;grid-row:2;padding-top:var(--menu-body-inset);min-width:0}
   .endless-menu-intro{margin:var(--heading-gap) 0 0;white-space:nowrap;overflow:hidden}
   .endless-menu-intro.short .endless-intro-detail{display:none}
-  .endless-overview{margin:var(--section-gap) 0 var(--content-gap)}
+  .endless-menu-intro{padding-bottom:var(--section-gap);border-bottom:1px solid var(--rule)}
+  .endless-overview{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  .endless-menu-body>.endless-climb{margin-top:var(--content-gap)}
   .endless-discovery{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px 16px;padding:12px 0;border-block:1px solid var(--rule)}
   .endless-discovery-copy{display:grid;gap:4px;font-size:11px;line-height:1.3;color:var(--ink-soft)}
   .endless-discovery-copy b{font-size:12px;font-weight:600;color:var(--ink)}
-  .endless-discovery-stamps{display:flex;align-items:center;gap:6px;min-width:0}
-  .endless-discovery-stamp{display:grid;place-items:center;width:clamp(24px,5.2cqw,34px);aspect-ratio:1;border:1px dashed var(--silver);color:var(--silver)}
-  .endless-discovery-stamp.next{border-color:var(--ink-soft);color:var(--ink-soft)}
-  .endless-discovery-stamp.earned{border-style:solid;border-color:var(--silver);color:var(--ink-soft)}
-  .endless-discovery-stamp svg{width:72%;height:72%;opacity:.55}
-  .endless-discovery-stamp:is(.next,.earned) svg{opacity:1}
-  .endless-climb{--climb-floor:270px;flex:1;min-height:var(--climb-floor);min-width:0;margin:0 0 var(--text-gap);display:grid;grid-template-rows:minmax(0,1fr)}
-  .endless-grid-space{min-height:0;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:repeat(2,minmax(124px,1fr));gap:10px}
-  .climb-group{grid-column:span 2;margin:0;min-width:0;min-height:0;display:flex;flex-direction:column;border:1px solid var(--grid);background:var(--surface)}
-  .climb-group-head{display:flex;justify-content:space-between;gap:5px;padding:6px 8px;font-size:10px;line-height:1.2;letter-spacing:.06em;color:var(--ink-soft);font-variant-numeric:tabular-nums}
-  .climb-group.active{border-color:var(--silver)}
+  .endless-climb{flex:none;min-width:0;margin:0 0 var(--text-gap);display:grid}
+  .endless-grid-space{display:flex;flex-direction:column-reverse;justify-content:flex-end;gap:6px}
+  .climb-group{--goal:clamp(26px,3vw,34px);display:grid;grid-template-columns:7px calc(var(--menu-small)*3.8) minmax(0,25rem) var(--goal);justify-content:start;align-items:center;gap:8px 10px;
+    min-height:max(var(--goal),clamp(28px,2.8vw,42px));margin:0;min-width:0}
+  .climb-spine{align-self:stretch;background:var(--climb-colour)}
+  .climb-group-head{display:flex;flex-direction:column;font-size:var(--menu-small);letter-spacing:.14em;line-height:1.2;color:var(--ink-soft);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .climb-group-head span+span{font-size:10px;letter-spacing:.06em}
   .climb-group.active .climb-group-head{color:var(--ink)}
-  .climb-group.ahead .endless-dots{opacity:.65}
-  .endless-dots{--climb-pad:12px;position:relative;flex:1;min-height:92px;width:100%;container-type:size;touch-action:pan-y;
-    background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:20px 20px}
-  .endless-dots.complete{display:grid;place-items:center;background-image:none}
-  .climb-way{position:absolute;inset:var(--climb-pad);width:calc(100% - 2 * var(--climb-pad));height:calc(100% - 2 * var(--climb-pad));overflow:visible;pointer-events:none}
-  .climb-way path{fill:none;stroke-width:clamp(3px,3cqmin,var(--climb-thread));stroke-linecap:round;vector-effect:non-scaling-stroke}
-  .climb-way path.cleared{opacity:.72}
-  .climb-crosses{position:absolute;inset:0;pointer-events:none}
-  .endless-dots .climb-cross{position:absolute;left:calc(var(--climb-pad) + (var(--x) - .3) / 4.4 * (100% - 2 * var(--climb-pad)));top:calc(var(--climb-pad) + (var(--y) - .3) / 4.4 * (100% - 2 * var(--climb-pad)));translate:-50% -50%;width:clamp(5px,5cqmin,7px);aspect-ratio:1}
-  .climb-cross svg{display:block;width:100%;height:100%}
-  .endless-dots i{position:absolute;left:calc(var(--climb-pad) + (var(--x) - .3) / 4.4 * (100% - 2 * var(--climb-pad)));top:calc(var(--climb-pad) + (var(--y) - .3) / 4.4 * (100% - 2 * var(--climb-pad)));translate:-50% -50%;width:clamp(19px,17cqmin,26px);aspect-ratio:1;isolation:isolate;display:grid;place-items:center;line-height:1;font-style:normal;touch-action:none;cursor:grab}
-  .endless-dots i.held{z-index:1;cursor:grabbing}
-  .climb-neuron{grid-area:1/1;width:100%;height:100%;overflow:visible;pointer-events:none}
-  .climb-neuron .mnode{transition:stroke .16s}
-  .climb-n,.climb-padlock{grid-area:1/1;z-index:1}
-  .endless-dots i.on .mnode,.endless-dots i.best .mnode{fill:color-mix(in srgb,var(--climb-colour) 16%,var(--node-fill))}
-  .endless-dots i.next .mnode{stroke:var(--ink)}
-  .climb-n{font-size:clamp(9px,10cqmin,11px);font-weight:400;color:var(--ink-soft);font-variant-numeric:tabular-nums}
-  .endless-dots .next .climb-n{color:var(--ink)}
-  .climb-reward{display:grid;justify-items:center;gap:5px;color:var(--ink-soft);font-size:10px;line-height:1.2;letter-spacing:.04em}
-  .climb-reward-mark{display:grid;place-items:center;width:clamp(42px,56cqmin,62px);aspect-ratio:1;border:1px solid var(--silver);background:var(--surface)}
-  .climb-reward svg{display:block;width:70%;height:70%}
-  .climb-resolve{position:absolute;inset:0;pointer-events:none}
-  .endless-dots.resolving{background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px)}
-  .endless-dots.resolving .climb-reward{visibility:hidden}
-  .climb-release{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
-  .endless-climb.locked{min-height:calc(var(--climb-floor) + 28px);grid-template-rows:minmax(0,1fr) auto}
+  .climb-group.ahead :is(.climb-spine,.endless-dots,.climb-goal){opacity:var(--day-locked)}
+  .endless-dots{position:relative;min-width:0}
+  .track.climb-thread{--day-neuron:clamp(16px,2.4dvh,22px);grid-template-columns:repeat(5,minmax(0,1fr));width:auto;min-width:0;height:var(--day-neuron);margin:0 calc(var(--day-neuron)*.625 - 12.5%);background:none}
+  .climb-thread>i:not(.on)::after{border-color:color-mix(in srgb,var(--climb-colour) 42%,var(--rule))}
+  .climb-thread>i.best:not(.on)::after{background:color-mix(in srgb,var(--climb-colour) 16%,var(--surface))}
+  .climb-thread>i.next::after{border-color:var(--ink)}
   .endless-dots.locked i{cursor:default}
-  .endless-dots i.denied .mnode{stroke:var(--sig-orange);fill:color-mix(in srgb,var(--surface) 90%,var(--sig-orange))}
-  .endless-dots i.denied .climb-padlock{color:var(--ink)}
-  .climb-padlock{display:block;width:max(44%,9px);aspect-ratio:1;color:var(--ink-soft)}
-  .climb-padlock svg{display:block;width:100%;height:100%}
-  .climb-access{display:flex;justify-content:center}
+  .endless-dots i.denied::after{border-color:var(--sig-orange);background:color-mix(in srgb,var(--surface) 90%,var(--sig-orange))}
+  .climb-goal{display:grid;place-items:center;width:var(--goal);aspect-ratio:1;box-sizing:border-box;border:1px dashed var(--silver);color:var(--silver);background:var(--surface)}
+  .climb-goal>svg{display:block;width:70%;height:70%;opacity:.5}
+  .climb-goal.earned{border-style:solid}
+  .climb-reward{display:grid;place-items:center;width:100%;height:100%;color:var(--ink-soft)}
+  .climb-reward svg{display:block;width:70%;height:70%}
+  .climb-group.resolving .climb-reward{visibility:hidden}
+  .climb-release{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+  .climb-access{display:flex;justify-content:center;margin-top:6px}
   .climb-upgrade{display:flex;align-items:center;gap:5px;min-height:28px;padding:6px 8px;border:0;background:none;font:inherit;font-size:11px;letter-spacing:.04em;color:var(--ink-soft);cursor:pointer}
   .climb-upgrade svg{width:11px;height:11px}
   .climb-upgrade:is(:hover,:focus-visible){color:var(--ink)}
   .climb-upgrade:focus-visible{outline:2px solid var(--sig-hellblau);outline-offset:3px}
-  @media(hover:hover) and (pointer:fine){.endless-dots:not(.locked) i:hover .mnode{stroke:var(--ink)}}
-  @container iterate-body (max-width:600px){
-    .endless-climb{--climb-floor:368px}
-    .endless-grid-space{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(3,minmax(116px,1fr))}
-  }
   .untangle-reward-heading{grid-column:1/-1;display:flex;align-items:baseline;gap:8px;margin:10px 0 2px;padding-top:12px;border-top:1px solid var(--rule);font-size:11px;color:var(--ink-soft)}
   .untangle-reward-heading b{font-size:13px;color:var(--ink)}
   .endless-menu-actions{flex-shrink:0;display:flex;flex-direction:column}
@@ -1878,7 +1858,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
     #introcard.view-endless:has(.menu-play-stacked) .paneendless>.opening{min-height:44px;padding-top:4px;padding-bottom:4px}
   }
   @media(prefers-reduced-motion:reduce){
-    .endless-thread,.endless-dots i,.climb-neuron .mnode,.climb-n{transition:none}
+    .endless-thread{transition:none}
   }
 </style>
 </head>
@@ -4620,7 +4600,7 @@ function openSignIn(){
   $('introcard').inert=true;
   $('signveil').classList.add('show');
   renderAcct();
-  setTimeout(()=>$('signcard').querySelector('input,.acct-google')?.focus({preventScroll:true}),40);
+  setTimeout(()=>{if(!$('signcard').contains(document.activeElement))$('signcard').querySelector('input,.acct-google')?.focus({preventScroll:true})},40);
 }
 function closeSignIn(){
   if(!signOpen()) return;
@@ -10271,7 +10251,14 @@ function menuDays(){
     out.push({d,row:by.get(d)||null});
   return out;
 }
-function wireDayPull(list){
+function denyPress(el){
+  if(el.classList.contains('denied'))return;
+  el.classList.add('denied');
+  const a=el.animate(reduceMotion?[{opacity:1},{opacity:.65}]:[0,-3,3,-2,2,0].map(x=>({transform:`translateX(${x}px)`})),
+    {duration:reduceMotion?240:420,easing:cssv('--ease-out')});
+  const end=()=>{a.cancel();el.classList.remove('denied')};a.finished.then(end,end);
+}
+function wireDayPull(list,rows='.wbday:is([data-day],.locked)'){
   if(!list)return;
   const PROPS=['--px','--py','--sa','--ss'],live=new Map();
   let aim=null,raf=0,timer=0,last=0;
@@ -10328,8 +10315,8 @@ function wireDayPull(list){
   };
   const release=()=>{if(aim){aim=null;run()}};
   list.onpointermove=e=>{
-    if(e.pointerType!=='mouse'||reduceMotion)return release();
-    const row=e.target.closest?.('.wbday[data-day]:not(.locked)'),st=row&&follow(row);
+    if(e.pointerType!=='mouse'||reduceMotion||RMQ?.matches)return release();
+    const row=e.target.closest?.(rows),st=row&&list.contains(row)&&follow(row);
     if(!st)return release();
     aim={row,x:e.clientX-st.box.left,y:e.clientY-st.box.top-st.box.height/2};run();
   };
@@ -11413,7 +11400,7 @@ function renderIntro(){
         +` aria-label="${dayLabel(d)}${isNow?' · today':''} · ${played?tierWords(row.tiers):(shut?'not open':'not played')}`
         +`${say?' · '+say:''}">`
         +`<i class="wbtier" style="${shut?'':'--tc:'+daySpine(d)}" aria-hidden="true"></i>`
-        +`<span class="wbwhen">${isNow?'today':dayLabelShort(d)}</span>`
+        +`<span class="wbwhen">${isNow?'today':dayLabelShort(d)}${locked?`<span class="wblock">${premiumLock()}</span>`:''}</span>`
         +rungTrack(played?row.tiers:'',true,true)
         +`</div>`;
     });
@@ -11446,7 +11433,9 @@ function renderIntro(){
     $('introbody').querySelector('.wbweek').scrollTop=keepScroll;
     $('introbody').querySelector('.wbweek').onclick=e=>{
       const row=e.target.closest('[data-day]');
-      if(row) press(row.dataset.day);
+      if(row) return press(row.dataset.day);
+      const shut=e.target.closest('.wbday.locked');
+      if(shut) denyPress(shut.querySelector('.day-thread')||shut);
     };
     $('introbody').querySelector('.wbweek').onkeydown=e=>{
       if(e.key!=='Enter' && e.key!==' ') return;
@@ -13927,96 +13916,54 @@ function untangleRewardGallery(){
   return `<div class="untangle-reward-heading"><b>untangle</b><span>exclusive neural stamps</span></div>`
     +untangleRewardStamps().map(r=>`<button type="button" class="fcell untangle-reward-tile${r.badge?'':' none'}" data-stamp="${r.key}"${r.badge?` data-grade="${gradeKey('perfect')}"`:''} style="--tc:var(--tier-perfect);--stamp-plate:${r.colour}" aria-label="${r.badge?r.label+' · exclusive Untangle reward':'exclusive Untangle reward · chapter '+(r.chapter||1)+' · clear levels '+(r.level-4)+'–'+r.level}"><svg class="rfeat" viewBox="0 0 96 96" role="img" aria-label="${r.badge?r.label:'unearned Untangle reward'}">${r.badge?`<rect class="fcell-plate" width="96" height="96" fill="${r.colour}"/>`:''}<g opacity="${r.badge?1:.38}">${untangleRewardMark(r.key,r.badge?EMBLEM_INK:'var(--silver)')}</g></svg></button>`).join('');
 }
-const CLIMB_GROUPS=[
-  [[.5,1.2],[4.4,3.8],[.6,3.8],[4.1,.8],[4.5,2]],
-  [[.4,2],[3.5,2.8],[1.2,4.5],[2.8,.5],[4.6,2.8]],
-  [[.5,.5],[4.4,2.1],[.7,2.8],[3.7,4.5],[3,.6]],
-  [[.5,.6],[4.6,3.6],[.7,3],[4.4,.4],[1.7,4.6]],
-  [[2.5,.4],[2.5,4.6],[.4,2.2],[4.6,2.2],[3.9,4.5]],
-  [[.4,1.1],[4.6,1.1],[1,4.5],[1.3,.4],[4.4,3.8]]
-];
-function climbPlaces(group,chapter=1){
-  if(chapter===1)return CLIMB_GROUPS[group].map(p=>[...p]);
-  const variation=(chapter-1)/(chapter+6)*.09;
-  return CLIMB_GROUPS[group].map(([x,y],i)=>[+(x+(i%2?1:-1)*variation).toFixed(4),+(y+(i%3-1)*variation).toFixed(4)]);
-}
-function climbNeuron(group){
-  const radius=MARK.r+MARK.w;
-  return `<svg class="climb-neuron" viewBox="${-radius} ${-radius} ${radius*2} ${radius*2}" aria-hidden="true">${neuronParts(0,0,[THREADPAL[group%THREADPAL.length]]).map(p=>partHTML({...p,attrs:{...p.attrs,class:p.cls}})).join('')}</svg>`;
-}
-const CLIMB_CROSS_MARK=`<svg viewBox="-8 -8 16 16" aria-hidden="true">${crossParts([[0,0]]).map(partHTML).join('')}</svg>`;
-function climbPath(places,i){return `M${places[i].join(',')}L${places[i+1].join(',')}`}
-function paintClimbCrosses(sheet,places){
-  const hits=[];
-  const edges=places.length-1;
-  for(let i=0;i<edges;i++)for(let j=i+2;j<edges;j++){
-    const point=([x,y])=>({x,y}),hit=segX(point(places[i]),point(places[i+1]),point(places[j]),point(places[j+1]));
-    if(hit&&!hits.some(p=>Math.hypot(p.x-hit.x,p.y-hit.y)<.015))hits.push(hit);
-  }
-  sheet.querySelector('.climb-crosses').innerHTML=hits.map(p=>`<span class="climb-cross" style="--x:${p.x};--y:${p.y}">${CLIMB_CROSS_MARK}</span>`).join('');
-}
-function climbGroupNet(group,cleared,next,best,locked,chapter=1){
-  const at=climbPlaces(group,chapter),start=group*5,colour=`var(${THREADPAL[group%THREADPAL.length]})`;
-  return `<svg class="climb-way" viewBox=".3 .3 4.4 4.4" preserveAspectRatio="none">${at.slice(0,4).map((_,i)=>`<path d="${climbPath(at,i)}" stroke="${colour}"${start+i+2<=cleared?' class="cleared"':''}/>`).join('')}</svg><div class="climb-crosses"></div>`
-    +at.map(([x,y],i)=>{
-      const n=start+i+1;
-      return `<i data-level="${n}" style="--x:${x};--y:${y};--climb-colour:${colour}" class="${n<=cleared?'on':n===next?'next':''}${n>cleared&&n<=best?' best':''}">${climbNeuron(group)}${locked?`<span class="climb-padlock">${premiumLock()}</span>`:`<span class="climb-n">${n}</span>`}</i>`;
-    }).join('');
+function climbRow(g,reward,count,next,best,locked,limit,chapter){
+  const start=g*5,done=Math.max(0,Math.min(5,count-start)),complete=done===5,active=next>start&&next<=start+5,newRun=start>=limit&&!complete;
+  const colour=`var(${THREADPAL[g%THREADPAL.length]})`;
+  const cells=Array.from({length:5},(_,i)=>{
+    const n=start+i+1,on=n<=count;
+    return `<i data-level="${n}" class="${on?'on':n===next?'next':''}${!on&&n<=best?' best':''}"${on?` style="--fill:${colour}"`:''}></i>`;
+  }).join('');
+  return `<figure class="climb-group${complete?' complete':active?' active':done?'':' ahead'}" data-group="${g}" style="--climb-colour:${colour}" aria-label="Levels ${start+1}–${start+5}: ${newRun?'available in a new thirty-level run.':done+' of 5 cleared.'}${complete?' '+reward.label+' reward revealed.':''}">`
+    +`<i class="climb-spine" aria-hidden="true"></i><figcaption class="climb-group-head"><span>${start+1}–${start+5}</span>${newRun?'<span>new run</span>':''}</figcaption>`
+    +`<div class="endless-dots${locked?' locked':''}${complete?' complete':''}" data-group="${g}" data-chapter="${chapter}" aria-hidden="true"><span class="track day-thread climb-thread">${cells}</span></div>`
+    +`<span class="climb-goal${complete?' earned':''}" aria-hidden="true">${complete?`<span class="climb-reward" data-reward="${reward.key}"><svg viewBox="0 0 96 96">${reward.art}</svg></span>`:`<svg viewBox="0 0 96 96">${reward.art}</svg>`}</span></figure>`;
 }
 function endlessClimb(cleared,failed=false,best=endlessPreviousBest??endlessBest,limit=Endless.RUN_LIMIT,chapter=1){
   const locked=!canPlayEndless(),count=Math.min(Endless.RUN_LIMIT,Math.max(0,cleared));
   const record=best?`${endlessPreviousBest===null?'best':'previous best'} ${best}`:'';
   const next=!locked&&!failed&&count<limit?count+1:null;
-  return `<figure class="endless-climb${locked?' locked':''}"><div class="endless-grid-space" role="group" aria-label="${locked?'Premium required to play. ':''}${cleared} levels cleared in this run. ${record?record+'. ':''}${next?'Next: level '+next+'. ':''}Levels 1–${Endless.RUN_LIMIT}. Six groups of five; one exclusive reward per completed group.">`
-    +untangleChapterRewards(chapter).map((r,g)=>{
-      const start=g*5,done=Math.max(0,Math.min(5,count-start)),complete=done===5,active=next>start&&next<=start+5,newRun=start>=limit&&!complete;
-      return `<figure class="climb-group${complete?' complete':active?' active':done?'':' ahead'}" data-group="${g}" aria-label="Levels ${start+1}–${start+5}: ${newRun?'available in a new thirty-level run.':done+' of 5 cleared.'}${complete?' '+r.label+' reward revealed.':''}"><figcaption class="climb-group-head"><span>${start+1}–${start+5}</span><span>${newRun?'new run':done+'/5'}</span></figcaption><div class="endless-dots${locked?' locked':''}${complete?' complete':''}" data-group="${g}" data-chapter="${chapter}" aria-hidden="true" style="--climb-thread:${MARK.wThread}px">${complete?`<span class="climb-reward" data-reward="${r.key}"><span class="climb-reward-mark"><svg viewBox="0 0 96 96">${r.art}</svg></span><span>${r.label}</span></span>`:climbGroupNet(g,count,next,best,locked,chapter)}</div></figure>`;
-    }).join('')+`</div>${locked?`<figcaption class="climb-access"><button type="button" class="climb-upgrade" id="climbupgrade" aria-label="unlock untangle · discover premium">${premiumLock()}premium ›</button></figcaption>`:''}</figure>`;
+  return `<figure class="endless-climb${locked?' locked':''}"><div class="endless-grid-space" role="group" aria-label="${locked?'Premium required to play. ':''}${cleared} levels cleared in this run. ${record?record+'. ':''}${next?'Next: level '+next+'. ':''}Levels 1–${Endless.RUN_LIMIT}. Six stages of five; one exclusive reward per completed stage.">`
+    +untangleChapterRewards(chapter).map((r,g)=>climbRow(g,r,count,next,best,locked,limit,chapter)).join('')
+    +`</div>${locked?`<figcaption class="climb-access"><button type="button" class="climb-upgrade" id="climbupgrade" aria-label="unlock untangle · discover premium">${premiumLock()}premium ›</button></figcaption>`:''}</figure>`;
 }
-function resolveClimbReward(sheet,group,milestone){
+function resolveClimbReward(row,group,milestone){
   endlessMilestone=null;
   const chapter=Endless.runChapter(milestone.run),earned=untangleChapterRewards(chapter)[group];
   const nextChapter=()=>{if(Endless.runComplete(milestone.run)&&Endless.runLimit(milestone.run)===30&&endlessRun===milestone.run&&menuShown()&&menuView==='endless')renderEndlessMenu()};
   if(reduceMotion){setTimeout(nextChapter,300);return}
-  const home=climbPlaces(group,chapter),pos=home.map(p=>[...p]),ghost=document.createElement('div');
-  ghost.className='climb-resolve';ghost.innerHTML=climbGroupNet(group,milestone.run.cleared,null,0,false,chapter);sheet.appendChild(ghost);
-  const cells=[...ghost.querySelectorAll('i')],lines=[...ghost.querySelectorAll('.climb-way path')];
-  const reward=sheet.querySelector('.climb-reward'),figure=sheet.closest('.climb-group');
+  const sheet=row.querySelector('.endless-dots'),reward=row.querySelector('.climb-reward');
   const buttons=[...document.querySelectorAll('#endlessentry,#endlessnew,#endlesslast')].map(el=>[el,el.disabled]);
-  buttons.forEach(([el])=>el.disabled=true);sheet.classList.add('resolving');figure.setAttribute('aria-busy','true');
-  paintClimbCrosses(ghost,pos);
-  let frame=0,timer=0,start=0,done=false,animation;
+  buttons.forEach(([el])=>el.disabled=true);row.classList.add('resolving');row.setAttribute('aria-busy','true');
+  let timer=0,done=false,animation,light=null;
   const finish=()=>{
-    if(done)return;done=true;cancelAnimationFrame(frame);clearTimeout(timer);animation?.cancel();ghost.remove();
-    sheet.classList.remove('resolving');figure.removeAttribute('aria-busy');
+    if(done)return;done=true;clearTimeout(timer);animation?.cancel();light?.remove();
+    row.classList.remove('resolving');row.removeAttribute('aria-busy');
     buttons.forEach(([el,disabled])=>{if(el.isConnected)el.disabled=disabled});
     if(climbResolve?.finish===finish)climbResolve=null;
   };
   climbResolve={finish};
+  const gone=()=>!row.isConnected||!menuShown()||menuView!=='endless'||endlessRun!==milestone.run;
   timer=setTimeout(()=>{
-    if(!sheet.isConnected||!menuShown()||menuView!=='endless'||endlessRun!==milestone.run){finish();return}
-    const box=sheet.getBoundingClientRect(),pad=parseFloat(getComputedStyle(sheet).getPropertyValue('--climb-pad'));
-    const size=Math.min(box.width-2*pad,box.height-2*pad)*.82;
-    const pixel=([x,y])=>[pad+(x-.3)/4.4*(box.width-2*pad),pad+(y-.3)/4.4*(box.height-2*pad)];
-    const target=(earned.shape||UNTANGLE_REWARD_SHAPES[group]).map(([x,y])=>[
-      ((box.width/2+(x-48)/96*size-pad)/(box.width-2*pad))*4.4+.3,
-      ((box.height/2+(y-48)/96*size-pad)/(box.height-2*pad))*4.4+.3]);
-    const light=document.createElementNS('http://www.w3.org/2000/svg','svg');
-    light.setAttribute('class','climb-release');light.setAttribute('viewBox',`0 0 ${box.width} ${box.height}`);ghost.appendChild(light);
-    endlessReleaseLight(light,home.map(pixel).map(p=>p.join(',')).join(' '),cssv(THREADPAL[group%THREADPAL.length]),1.4*parseFloat(getComputedStyle(lines[0]).strokeWidth));
-    start=performance.now();
-    const step=now=>{
-      if(!sheet.isConnected||!menuShown()||menuView!=='endless'||endlessRun!==milestone.run){finish();return}
-      const elapsed=now-start;
-      pos.forEach((p,i)=>{
-        const k=Math.max(0,Math.min(1,(elapsed-ENDLESS_SIGN_AFTER-i*26)/440)),ease=1-(1-k)**4;
-        p[0]=home[i][0]+(target[i][0]-home[i][0])*ease;p[1]=home[i][1]+(target[i][1]-home[i][1])*ease;
-        cells[i].style.setProperty('--x',p[0]);cells[i].style.setProperty('--y',p[1]);
-        cells[i].style.opacity=String(1-k*.7);
-      });
-      lines.forEach((line,i)=>line.setAttribute('d',climbPath(pos,i)));paintClimbCrosses(ghost,pos);
-      if(elapsed<ENDLESS_SIGN_AFTER+4*26+440){frame=requestAnimationFrame(step);return}
-      ghost.remove();sheet.classList.remove('resolving');
+    if(gone()){finish();return}
+    const box=sheet.getBoundingClientRect(),points=[...sheet.querySelectorAll('i[data-level]')].map(cell=>{
+      const r=cell.getBoundingClientRect();return [r.left+r.width/2-box.left,r.top+r.height/2-box.top].map(v=>v.toFixed(1)).join(',');
+    });
+    light=document.createElementNS('http://www.w3.org/2000/svg','svg');
+    light.setAttribute('class','climb-release');light.setAttribute('viewBox',`0 0 ${box.width} ${box.height}`);sheet.appendChild(light);
+    endlessReleaseLight(light,points.join(' '),cssv(THREADPAL[group%THREADPAL.length]),MARK.wThread*1.4);
+    timer=setTimeout(()=>{
+      if(gone()){finish();return}
+      light.remove();row.classList.remove('resolving');
       animation=reward.animate([{opacity:0,transform:'translateY(3px) scale(.94)'},{opacity:1,transform:'scale(1.025)',offset:.75},{opacity:1,transform:'scale(1)'}],{duration:320,easing:cssv('--ease-out')});
       animation.finished.then(()=>{
         if(menuShown()&&menuView==='endless')toast(earned.label+' · discovered');
@@ -14024,69 +13971,22 @@ function resolveClimbReward(sheet,group,milestone){
           timer=setTimeout(()=>{finish();nextChapter()},900);
         }else finish();
       },finish);
-    };
-    frame=requestAnimationFrame(step);
+    },ENDLESS_SIGN_AFTER+260);
   },260);
 }
-function denyClimbLevel(cell){
-  if(cell.classList.contains('denied'))return;
-  cell.classList.add('denied');
-  const a=cell.animate(reduceMotion?[{opacity:1},{opacity:.65}]:[0,-3,3,-2,2,0].map(x=>({transform:`translateX(${x}px)`})),
-    {duration:reduceMotion?240:420,easing:cssv('--ease-out')});
-  const end=()=>{a.cancel();cell.classList.remove('denied')};a.finished.then(end,end);
-}
-function wireClimb(root,cleared,places=climbPlaces){
+function wireClimb(root){
   if(!root)return;
   if(endlessMilestone&&!endlessMilestone.ready&&endlessMilestone.epoch!==menuEpoch)endlessMilestone=null;
-  for(const sheet of root.querySelectorAll('.endless-dots')){
-    const group=Number(sheet.dataset.group),home=places(group,Number(sheet.dataset.chapter)||1),pos=home.map(p=>[...p]);
-    if(sheet.classList.contains('complete')){
-      if(endlessMilestone?.ready&&endlessMilestone.run===endlessRun&&endlessMilestone.group===group)resolveClimbReward(sheet,group,endlessMilestone);
-      continue;
-    }
-    paintClimbCrosses(sheet,pos);
-    if(!canPlayEndless()){
-      sheet.onpointerdown=e=>{const cell=e.target.closest?.('i[data-level]');if(cell&&e.button<1){e.preventDefault();denyClimbLevel(cell)}};continue;
-    }
-    const cells=[...sheet.querySelectorAll('i[data-level]')],lines=[...sheet.querySelectorAll('.climb-way path')],vel=home.map(()=>[0,0]);
-    let held=-1,hovered=-1,grip=null,hoverTarget=null,raf=0,timer=0,last=0;
-    const put=i=>{
-      const [x,y]=pos[i].map(v=>+v.toFixed(4));cells[i].style.setProperty('--x',x);cells[i].style.setProperty('--y',y);
-      for(const edge of [i-1,i])if(lines[edge])lines[edge].setAttribute('d',climbPath(pos,edge));
-    };
-    const step=now=>{
-      raf=0;clearTimeout(timer);if(!sheet.isConnected)return;
-      const dt=Math.min(.034,last?(now-last)/1000:.016);last=now;let moving=false;
-      pos.forEach((p,i)=>{
-        const h=i===hovered&&hoverTarget&&!reduceMotion?hoverTarget:home[i],v=vel[i];if(i===held)return;
-        if(reduceMotion){p[0]=h[0];p[1]=h[1];v[0]=v[1]=0}
-        else for(const a of [0,1]){v[a]+=(-220*(p[a]-h[a])-23*v[a])*dt;p[a]+=v[a]*dt}
-        if(!reduceMotion&&(Math.hypot(p[0]-h[0],p[1]-h[1])>.001||Math.hypot(v[0],v[1])>.008))moving=true;
-        else{p[0]=h[0];p[1]=h[1];v[0]=v[1]=0}
-        put(i);
-      });
-      paintClimbCrosses(sheet,pos);if(moving)run();else last=0;
-    };
-    const run=()=>{if(raf)return;const go=now=>{cancelAnimationFrame(raf);clearTimeout(timer);step(typeof now==='number'?now:performance.now())};raf=requestAnimationFrame(go);timer=setTimeout(go,40)};
-    const at=e=>{const b=sheet.getBoundingClientRect(),pad=parseFloat(getComputedStyle(sheet).getPropertyValue('--climb-pad'));return [(e.clientX-b.left-pad)/(b.width-2*pad)*4.4+.3,(e.clientY-b.top-pad)/(b.height-2*pad)*4.4+.3]};
-    const hover=e=>{
-      if(held>=0||e.pointerType!=='mouse'||reduceMotion)return;
-      const cell=e.target.closest?.('i[data-level]');hovered=cells.indexOf(cell);hoverTarget=null;
-      if(hovered>=0){const q=at(e),h=home[hovered],dx=q[0]-h[0],dy=q[1]-h[1],length=Math.hypot(dx,dy),scale=length?Math.min(.2,.06/length):0;hoverTarget=[h[0]+dx*scale,h[1]+dy*scale-.035]}
-      run();
-    };
-    sheet.onpointermove=e=>{
-      if(held<0){hover(e);return}
-      const p=at(e);pos[held]=[Math.max(.3,Math.min(4.7,p[0]-grip[0])),Math.max(.3,Math.min(4.7,p[1]-grip[1]))];put(held);paintClimbCrosses(sheet,pos);
-    };
-    sheet.onpointerleave=()=>{if(held>=0)return;hovered=-1;hoverTarget=null;run()};
-    sheet.onpointerdown=e=>{
-      const cell=e.target.closest?.('i[data-level]');if(!cell||e.button>0||held>=0)return;
-      e.preventDefault();sheet.setPointerCapture?.(e.pointerId);hovered=-1;hoverTarget=null;
-      held=cells.indexOf(cell);const p=at(e);grip=[p[0]-pos[held][0],p[1]-pos[held][1]];vel[held]=[0,0];cell.classList.add('held');
-    };
-    sheet.onpointerup=sheet.onpointercancel=()=>{if(held<0)return;cells[held].classList.remove('held');held=-1;hovered=-1;hoverTarget=null;run()};
+  for(const row of root.querySelectorAll('.climb-group')){
+    const group=Number(row.dataset.group);
+    if(row.querySelector('.endless-dots.complete')&&endlessMilestone?.ready&&endlessMilestone.run===endlessRun&&endlessMilestone.group===group)
+      resolveClimbReward(row,group,endlessMilestone);
   }
+  if(!canPlayEndless()){
+    root.onpointerdown=e=>{const cell=e.target.closest?.('i[data-level]');if(cell&&e.button<1){e.preventDefault();denyPress(cell)}};
+    return;
+  }
+  wireDayPull(root,'.climb-group:not(.resolving)');
 }
 function endlessMenuChapter(){
   if(endlessRun){
@@ -14103,8 +14003,7 @@ function endlessDiscovery(run,chapter=endlessMenuChapter()){
   const rewards=untangleChapterRewards(chapter),earned=r=>!!untangleRewardBadge(r.key);
   const next=rewards.find(r=>r.level>cleared&&!earned(r)),left=next?Math.max(0,next.level-cleared):0;
   const note=next?`${left} ${left===1?'level':'levels'} to ${next.label}`:'all six stamps discovered';
-  return `<div class="endless-discovery"><div class="endless-discovery-copy"><b>${next?'next discovery':'discovered'}</b><span>${note}</span></div>`
-    +`<div class="endless-discovery-stamps" role="list" aria-label="chapter ${chapter} · ${rewards.filter(earned).length} of six stamps discovered">${rewards.map(r=>`<span class="endless-discovery-stamp${earned(r)?' earned':r===next?' next':''}" role="listitem" aria-label="${r.label} · ${earned(r)?'discovered':`clear levels ${r.level-4}–${r.level}`}"><svg viewBox="0 0 96 96" aria-hidden="true">${r.art}</svg></span>`).join('')}</div></div>`;
+  return `<div class="endless-discovery" aria-label="chapter ${chapter} · ${rewards.filter(earned).length} of six stamps discovered"><div class="endless-discovery-copy"><b>${next?'next discovery':'discovered'}</b><span>${note}</span></div></div>`;
 }
 function renderEndlessMenu(){
   climbResolve?.finish();
@@ -14143,7 +14042,7 @@ function renderEndlessMenu(){
   if($('endlessnew'))$('endlessnew').onclick=restartEndlessRun;
   if($('endlesslast'))$('endlesslast').onclick=enterEndless;
   if($('climbupgrade'))$('climbupgrade').onclick=()=>requireEndless();
-  wireClimb($('paneendless').querySelector('.endless-grid-space'),r?.cleared||0);
+  wireClimb($('paneendless').querySelector('.endless-grid-space'));
   placeMenuPlay();
   fitMenuIntros();
 }
