@@ -46,26 +46,33 @@ const files = await inventory(root);
 assert.ok(files.length <= 20000, "export exceeds the Workers Free asset count");
 assert.ok(files.every((file) => file.bytes <= 25 * 1024 * 1024), "export contains an asset larger than 25 MiB");
 
-await waitForHostedExport(origin, hash(await readFile(join(root, "index.html"))));
-await waitForHostedExport(origin, hash(await readFile(join(root, "features/index.html"))), {
+const readyPages = new Map();
+readyPages.set("/", await waitForHostedExport(origin, hash(await readFile(join(root, "index.html")))));
+readyPages.set("/features/", await waitForHostedExport(origin, hash(await readFile(join(root, "features/index.html"))), {
   path: "/features/",
-  expectedHeaders: {"cache-control": "public, max-age=0, must-revalidate, no-transform"},
-});
+  expectedHeaders: {"cache-control": "public, max-age=0, must-revalidate"},
+}));
 
 const pages = ["", "features", "trek", "meditator"];
 for (const page of pages) {
   const path = page ? `/${page}/` : "/";
-  const response = await request(path);
+  const ready = readyPages.get(path);
+  const response = ready?.response || await request(path);
   assert.equal(response.status, 200, `${path} must remain available`);
   assert.match(response.headers.get("content-type") || "", /text\/html/, `${path} MIME type`);
   checkRevalidation(response, path);
-  if (page === 'features') assert.match(response.headers.get('cache-control') || '', /(?:^|,)\s*no-transform(?:,|$)/, 'Features must prevent automatic analytics injection');
-  assert.equal(hash(Buffer.from(await response.arrayBuffer())), hash(await readFile(join(root, page, "index.html"))), `${path} must serve the exact exported HTML`);
+  assert.equal(hash(ready?.body || Buffer.from(await response.arrayBuffer())), hash(await readFile(join(root, page, "index.html"))), `${path} must serve the exact exported HTML`);
   for (const [name, value] of Object.entries(headers)) assert.equal(response.headers.get(name), value, `${path} ${name}`);
   if (preview) assert.equal(response.headers.get("x-robots-tag"), "noindex", "preview must not be indexed");
 }
 
 const features = await readFile(join(root, "features/index.html"), "utf8");
+const browserGame = await request("/features/", {headers: {
+  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+}});
+assert.equal(browserGame.status, 200);
+if (origin.protocol === "https:") assert.match(browserGame.headers.get("content-encoding") || "", /^(gzip|br|zstd)$/, "game must stay compressed");
+assert.equal(hash(Buffer.from(await browserGame.arrayBuffer())), hash(features), "browser requests must receive the exact game without analytics injection");
 assert.match(features, /<meta name="features-native-bridge" content="2">/, "keep the native-compatible game");
 const policy = features.match(/http-equiv="Content-Security-Policy"\s+content="([^"]+)"/i)?.[1] || "";
 assert.doesNotMatch(policy, /script-src[^;]*'unsafe-inline'/, "published game must keep its hardened script policy");
@@ -118,7 +125,6 @@ for (const path of samples) {
   else assert.equal(hash(actual), hash(expected), `${path} bytes`);
   if (path.startsWith("_next/static/")) assert.match(response.headers.get("cache-control") || "", /max-age=31536000.*immutable/, "fingerprinted assets are immutable");
   else checkRevalidation(response, path);
-  if (path.startsWith('features/')) assert.match(response.headers.get('cache-control') || '', /(?:^|,)\s*no-transform(?:,|$)/, `${path} must prevent automatic analytics injection`);
 }
 
 // A workers.dev preview has no production zone route and must not become a

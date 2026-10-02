@@ -1,12 +1,9 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { copyFile, writeFile } from 'node:fs/promises';
 
 // Both domains receive the one verified game export. Only static-host policy
 // differs at the standalone root; the Features publisher still owns the game.
 const root = new URL('../out/features/', import.meta.url);
-const headers = await readFile(new URL('../public/_headers', import.meta.url), 'utf8');
-// Features promises no analytics. Prevent Cloudflare's automatic beacon
-// injection on the standalone origin as well as the legacy /features/ path.
-await writeFile(new URL('_headers', root), headers + '\n/*\n  Cache-Control: public, max-age=0, must-revalidate, no-transform\n');
+await copyFile(new URL('../public/_headers', import.meta.url), new URL('_headers', root));
 await writeFile(new URL('_redirects', root), '/features / 301\n/features/ / 301\n/features/index.html / 301\n');
 await writeFile(new URL('robots.txt', root), 'User-agent: *\nAllow: /\nDisallow: /features/api/\nSitemap: https://features.games/sitemap.xml\n');
 await writeFile(new URL('sitemap.xml', root), '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://features.games/</loc></url></urlset>\n');

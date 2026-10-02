@@ -58,6 +58,8 @@ files remain in the export for the GitHub Pages fallback.
 `npm run check:hosting -- <origin>` checks exported HTML and representative asset
 bytes, Features' script hashes and native marker, security headers, canonical
 game and `www` redirects, real 404s, caching, preview indexing and production API health.
+The game is also fetched with a browser user agent to catch injected analytics
+and require compression on the hosted origin.
 Keep a direct browser run-through of the affected pages alongside this check.
 
 ## Routing and response policy
@@ -84,11 +86,12 @@ Keep a direct browser run-through of the affected pages alongside this check.
 - Fingerprinted `/_next/static/*` files receive one-year immutable caching.
   HTML, artwork with stable filenames, JSON and service workers retain
   Cloudflare's default `public, max-age=0, must-revalidate` behavior.
-- Features adds `no-transform` to that cache policy under `/features/*` and
-  across its standalone origin. This prevents Cloudflare from automatically
-  injecting its Web Analytics beacon into a game that promises no analytics
-  or tracking, while preserving the game's hardened CSP. See the
-  [Web Analytics FAQ](https://developers.cloudflare.com/web-analytics/faq/).
+- Features promises no analytics or tracking. Its standalone Web Analytics site
+  is disabled; Akibwa excludes `/features` and `/features/*` with a configuration
+  rule setting `disable_rum: true`. The game's hardened CSP remains unchanged.
+  Avoid `Cache-Control: no-transform` as a beacon exclusion: it also disables
+  compression and expands the game download. See the
+  [configuration rule settings](https://developers.cloudflare.com/rules/configuration-rules/settings/#disable-real-user-monitoring-rum).
 - The existing zone-managed robots policy prepends Cloudflare's Content Signals
   and crawler rules to the generated `robots.txt`. Keep that provider policy.
   The public-domain check permits only its single marked block and comment
@@ -104,7 +107,8 @@ bytes on both the preview and public domain. Each origin gets up to 60 seconds
 to serve this build's exact homepage and game bytes, plus the game's header policy,
 after Wrangler finishes, because
 edge propagation can briefly leave the previous deployment visible. After
-readiness, all content, security and route assertions run once. A wrong artifact
+readiness, all content, security and route assertions run once, using the ready
+homepage/game responses instead of refetching during propagation. A wrong artifact
 at the deadline or any failed assertion fails the workflow; check the affected
 response before treating a release as complete.
 

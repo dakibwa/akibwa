@@ -26,8 +26,10 @@ test("waits through the previous deployment and returns when exact new bytes arr
     paths.push(request.url);
     response.end(paths.length < 3 ? "<html>previous deployment</html>" : expected);
   }, async (origin) => {
-    await waitForHostedExport(origin, hash(expected), { timeoutMs: 1000, intervalMs: 10, log: quiet });
+    const ready = await waitForHostedExport(origin, hash(expected), { timeoutMs: 1000, intervalMs: 10, log: quiet });
     assert.deepEqual(paths, ["/", "/", "/"], "readiness must check the real canonical URL");
+    assert.equal(ready.body.toString(), expected, "callers can verify the ready response without refetching another edge version");
+    assert.equal(ready.response.status, 200);
   });
 });
 

@@ -25,14 +25,15 @@ export async function waitForHostedExport(origin, expectedHash, {
         signal: AbortSignal.timeout(Math.max(1, Math.ceil(Math.min(15000, deadline - performance.now())))),
       });
       if (response.status === 200) {
-        const actual = createHash("sha256").update(Buffer.from(await response.arrayBuffer())).digest("hex");
+        const body = Buffer.from(await response.arrayBuffer());
+        const actual = createHash("sha256").update(body).digest("hex");
         lastResponse = `HTTP 200, SHA256 ${actual}`;
         lastRequestError = null;
         const mismatches = Object.entries(expectedHeaders).filter(([name, value]) => response.headers.get(name) !== value);
         if (mismatches.length) lastResponse += `; headers ${mismatches.map(([name]) => `${name}=${response.headers.get(name)}`).join(", ")}`;
         if (actual === expectedHash && !mismatches.length) {
           if (attempts > 1) log(`Export ready at ${target.origin} after ${attempts} checks.`);
-          return;
+          return { response, body };
         }
       } else {
         lastResponse = `HTTP ${response.status}`;

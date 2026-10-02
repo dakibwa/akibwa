@@ -8,16 +8,18 @@ const origin = new URL(process.argv[2] || 'https://features.games');
 const preview = origin.hostname.endsWith('.workers.dev');
 const hash = body => createHash('sha256').update(body).digest('hex');
 await waitForHostedExport(origin, hash(await readFile(new URL('index.html', root))), {
-  expectedHeaders: {'cache-control': 'public, max-age=0, must-revalidate, no-transform'},
+  expectedHeaders: {'cache-control': 'public, max-age=0, must-revalidate'},
 });
 for (const file of ['index.html', 'manifest.webmanifest', 'og.png', 'icon-192.png', 'icon-512-maskable.png']) {
-  const response = await fetch(new URL(file === 'index.html' ? '/' : file, origin));
+  const response = await fetch(new URL(file === 'index.html' ? '/' : file, origin), {
+    headers: file === 'index.html' ? {'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36'} : {},
+  });
   assert.equal(response.status, 200, file);
+  if (file === 'index.html') assert.match(response.headers.get('content-encoding') || '', /^(gzip|br|zstd)$/, 'game must stay compressed');
   assert.equal(hash(Buffer.from(await response.arrayBuffer())), hash(await readFile(new URL(file, root))), file + ' bytes');
   assert.equal(response.headers.get('x-content-type-options'), 'nosniff');
   assert.equal(response.headers.get('x-frame-options'), 'SAMEORIGIN');
   assert.match(response.headers.get('cache-control'), /max-age=0.*must-revalidate/);
-  assert.match(response.headers.get('cache-control'), /(?:^|,)\s*no-transform(?:,|$)/, 'Features must prevent automatic analytics injection');
   if (preview) assert.equal(response.headers.get('x-robots-tag'), 'noindex');
 }
 for (const alias of ['/features', '/features/', '/features/index.html']) {
