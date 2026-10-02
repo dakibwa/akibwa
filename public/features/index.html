@@ -10,12 +10,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>features</title>
-<!-- This is the one image that leaves the game before a player opens it. Keep
-     its words aligned with the welcome card and publish it with the page: a
-     correct local tag pointing at a missing file is still a bare share. -->
 <meta name="description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <link rel="canonical" href="https://features.games/">
-<!-- The terms carry the licence. Agents are welcome and start at /llms.txt. -->
 <link rel="license terms-of-service" href="https://features.games/legal">
 <link rel="privacy-policy" href="https://features.games/legal#privacy">
 <meta name="author" content="Dan Atkinson">
@@ -33,34 +29,16 @@
 <meta name="twitter:title" content="features">
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
-<!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-BWR1RL8KHy8cLp3ItP5qnSbL14zS0UPLc9k1huV8pNU=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
-<!-- The approved concept quartet: aeroplane, smaller heart, leaf and lightning.
-     Render web icons from assets/marketing/features-app-mark.svg with
-     tools/render-web-icons.mjs; keep the tab SVG embedded for offline copies. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-utsKTtBL2w54OBazqr+XXww2x4/FimCTZ/0iBGpp9PA=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48" href="favicon.ico?v=bfeac949b18b">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=bfeac949b18b">
 <link rel="icon" type="image/svg+xml" sizes="any" href="favicon.svg?v=bfeac949b18b">
-<!-- the ground is stamped before the first paint, or the page shows one theme
-     and then the other. the key is repeated here rather than shared because
-     this has to run before the stylesheet is even parsed; it is the one place
-     in the file that knows a storage key twice, and it is the cheap half of
-     the trade. no stored choice means the light paper ground.
-     data-boot holds the game back until its script has chosen the first
-     screen; the script clears it, and DOMContentLoaded does if it ever fails. -->
 <script>(function(){var t='light',d=document.documentElement;
 try{var s=JSON.parse(localStorage.getItem('probe-run-v3')||'{}');if(s.theme==='light'||s.theme==='dark')t=s.theme}catch(e){}
 d.setAttribute('data-theme',t);document.querySelector('meta[name="theme-color"]').content=t==='light'?'#EAE7DF':'#0E1214';
 d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){setTimeout(function(){d.removeAttribute('data-boot')})})})();</script>
 <script>try{var a=JSON.parse(localStorage.getItem('features-accessibility-v1')||'{}');for(var k of ['palette','threadNumbers','resultPatterns'])document.documentElement.dataset[k==='palette'?'colourBlind':k]=String(a[k]===true)}catch(e){}</script>
-<!-- Akibwa's project index links here with one presentation-only flag. Read it
-     before paint so the portfolio masthead takes real space rather than
-     appearing over a board that has already been sized. The flag changes no
-     game state and does nothing when Features is opened on its own. -->
 <script>(function(){try{if(new URLSearchParams(location.search).get('from')==='akibwa')document.documentElement.setAttribute('data-akibwa-project','true')}catch(e){}})();</script>
-<!-- A top-level visit can read the old browser record without third-party
-     storage access. The API posts it privately and keeps the original intact.
-     Offline copies and native shells keep their existing origin and behaviour. -->
 <script>(async function(){try{
   var old=location.origin==='https://akibwa.com',fresh=location.origin==='https://features.games';
   if(fresh)sessionStorage.removeItem('features-domain-empty');
@@ -1853,15 +1831,11 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   <header class="hud-head">
     <div class="mark">
       <div>
-        <!-- the rule lives inside the heading because it is part of the word,
-             not a thing beside it: it takes the word's measure for free and it
-             cannot be left behind when the word resizes. -->
         <h1>features<i class="wordrule" aria-hidden="true"></i></h1>
       </div>
     </div>
     <div class="instruments">
       <div class="unitrow">
-        <!-- Each reading pairs its number and label above the bar. -->
         <div class="unit unit-cross">
           <div class="unit-top">
             <b class="unit-fig" id="crossnum">0</b>
@@ -1872,8 +1846,6 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
         <div class="unit unit-par">
           <div class="unit-top">
             <b class="unit-fig" id="parnum">0</b>
-            <!-- "turns" is what is counted and "to perfect" is which line it is
-                 counted against, so they are one phrase and travel together -->
             <span class="unit-name"><span class="unit-label">turns</span><em class="unit-of" id="parof">to par</em></span>
           </div>
           <div class="track parmeter" id="parmeter" role="img" aria-label="turns against par"><span class="run" id="parrow"></span></div>
@@ -1886,28 +1858,17 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
           <div class="track setmeter" id="setmeter" role="img" aria-label="today's set"></div>
         </div>
       </div>
-      <!-- every piece of game feedback lands here, so it has to be announced.
-           it is clipped, not hidden, and it costs the head no height. -->
       <span class="msg" id="msg" role="status" aria-live="polite"></span>
     </div>
     <div class="board-showcase" id="boardshowcase" role="group" aria-label="your concept showcase" hidden></div>
     <div class="btns">
-      <!-- The masthead is not a second menu. This one door opens the persistent
-           menu, where Collection, How to Play and Profile live; only the two
-           global state marks stay beside it. Equal icon boxes keep the readings
-           legible instead of spending their width on duplicated destinations. -->
       <button class="help" id="histbtn" aria-label="the menu">
         <svg class="recglyph" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M3.5 5h3.5v3.5H3.5zm0 5.25h3.5v3.5H3.5zm0 5.25h3.5V19H3.5z" fill="currentColor"/>
           <path d="M10 6.75h10.5M10 12h10.5M10 17.25h10.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
         </svg>
       </button>
-      <!-- `paintTill` draws both purchase and owned states here and in the menu;
-           this is the one destination important enough to remain immediately
-           visible, and the one whose state is useful without opening a card. -->
       <button class="help" id="buybtn" hidden></button>
-      <!-- `groundbtn` is what applyTheme writes and what the click is wired to,
-           so this one and the menu's are found together and cannot drift. -->
       <button class="help groundbtn" id="themebtn" aria-label="ground">
         <svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg>
       </button>
@@ -1926,25 +1887,19 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
         <i data-col="--sig-orange" style="background:var(--sig-orange)"></i>
       </div>
       <div class="coach-body">
-        <!-- the count is spoken, not drawn: the three boxes already show it -->
         <span class="coach-label" id="coachlabel">lesson · step 1 of 3</span>
         <div class="coach-head">
           <div class="coach-text" id="coachtext"></div>
         </div>
-        <!-- filled by renderTutorial from the board's own marks -->
         <div class="coach-key" id="coachkey"></div>
       </div>
     </div>
 
-    <!-- Visual message; #msg provides the accessible announcement. -->
     <div class="say" id="say" aria-hidden="true"></div>
 
-    <!-- A single-net result belongs to its board. The full-day card below
-         owns the viewport so a short landscape board cannot crop its stamps. -->
     <div class="veil boardcard" id="netveil"><section class="bulletin levelstrip" id="netbulletin"></section></div>
   </div>
   </div><!-- /play -->
-<!--@endlesshtml-->
   <section class="play" id="endlessplay" hidden aria-label="untangle">
     <div class="field" id="endlessarea">
       <div id="endlessframe"><svg id="endlesssvg" viewBox="0 0 900 900" preserveAspectRatio="none" aria-label="untangle net"></svg></div>
@@ -1960,7 +1915,6 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
     </div>
     <span id="endlessmessage"></span>
   </section>
-<!--@endendlesshtml-->
 
   </div>
   </div>
@@ -1976,13 +1930,11 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
     <button class="act" id="skipnet"><svg viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 6l7 6-7 6zM13 6l7 6-7 6z"/></g></svg><span>skip net</span></button>
     <button class="act" id="reset"><svg viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 12a7 7 0 1 1-2-4.9M19 4v4h-4"/></g></svg><span>reset</span></button>
     <button class="act" id="newrun" hidden><svg viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 5l11 7-11 7z"/></g></svg><span>new run</span></button>
-    <!-- DEV only: walk the certified solution. -->
     <button class="act devsolve" id="solvebtn" hidden
             title="dev · solve this net (walks the route par is priced from)">
       <svg viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8">
         <path d="M4 18L10 12L4 6"/><path d="M12 18h8"/></g></svg><span>solve net</span></button>
   </div>
-  <!-- DEV screen navigation; [ and ] work with the drawer closed. -->
   <div class="dd-screens">
     <button class="act sq" id="ddprev" aria-label="previous screen">&lsaquo;</button>
     <span class="dd-screen" id="ddscreen">the board</span>
@@ -1992,18 +1944,15 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
 </div>
 
 <div class="veil" id="introveil">
-  <!-- One menu frame; menuView selects the panes through renderPanes. -->
   <div class="intro-card menusheet" id="introcard">
     <div class="intro-strip" aria-hidden="true"></div>
     <div class="menu-content" id="menucontent">
-    <!-- renderIntro fills the net artwork. -->
     <div class="intro-art" id="introart"></div>
     <div class="opening" id="introopening" tabindex="-1"></div>
     <div class="menupane collection" id="panecoll" hidden></div>
     <section class="menupane paneendless" id="paneendless" aria-labelledby="endlessmenutitle" hidden></section>
     <div class="menupane panerules" id="panerules" hidden></div>
     <div class="menupane paneside" id="paneside" hidden>
-      <!-- Shared heading across menu panes. -->
       <div class="pane-head menu-heading" id="panehead"></div>
       <div class="acct-body" id="acctbody"></div>
       <details class="acct-prefs" id="acctprefs" hidden>
@@ -2028,22 +1977,17 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
           <p class="acct-note">saved on this device. no account needed.</p>
         </div>
       </details>
-      <!-- the restore line lives with the profile: a buyer on a new phone is
-           exactly who is standing here -->
       <div class="rec-arch" id="recarch" hidden></div>
       <div class="pay-body" id="paybody" hidden></div>
       <p class="acct-note" id="pricefoot" hidden></p>
-      <!-- The small print sits open at the foot of the profile, off the main pages. -->
       <p class="acct-note legal-foot" id="acctsmall" hidden>© 2026 dan atkinson · <a href="https://features.games/legal" id="legallink" target="_blank" rel="noopener noreferrer">terms and privacy</a></p>
     </div>
     <div class="intro-body" id="introbody"></div>
     </div>
-    <!-- Persistent navigation; renderPanes updates the active door. -->
     <div class="intro-doors rec-doors" id="menudoors"></div>
   </div>
 </div>
 
-<!-- Signing in from the welcome borrows the profile's form (openSignIn). -->
 <div class="veil askveil signveil" id="signveil">
   <section class="bulletin" id="signcard" role="dialog" aria-modal="true" aria-labelledby="signtitle">
     <div class="bstrip"></div>
@@ -2052,7 +1996,6 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   </section>
 </div>
 
-<!-- Terms and privacy read over the game rather than leaving it (openLegal). -->
 <div class="veil askveil legalveil" id="legalveil">
   <section class="bulletin" id="legalcard" role="dialog" aria-modal="true" aria-labelledby="legaltitle">
     <div class="bstrip"></div>
@@ -2061,7 +2004,6 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   </section>
 </div>
 
-<!-- ask() replaces the current consequence in this alertdialog. -->
 <div class="veil askveil" id="askveil">
   <section class="bulletin" id="askbulletin" role="alertdialog" aria-modal="true"></section>
 </div>
@@ -3285,7 +3227,7 @@ function netSpec(i, rules){
 }
 
 const SALT_V38=((from,rows)=>Object.fromEntries(rows.split(';').map((row,n)=>[new Date(Date.parse(from+'T00:00:00Z')+n*864e5).toISOString().slice(0,10),row.split(',').map(salt=>parseInt(salt,36)||0)])))("2026-09-26","6,,12,b,47,1a,6k,g8,8x,7o");
-const SALT_V39=((from,rows)=>Object.fromEntries(rows.split(';').map((row,n)=>[new Date(Date.parse(from+'T00:00:00Z')+n*864e5).toISOString().slice(0,10),row.split(',').map(salt=>parseInt(salt,36)||0)])))("2026-09-26","1e,1,1,,4b,q,3ig,7xj,4hm,aq;t,j,3v,4,g,o7,35,1d,8sq,12;8f,11,13,bx,59r,n,4w9,1sg,1sq,6n8;78,wc,1p,55j,20,7j,4v0,d1,zy,7d2;c6,hf,4wx,f,6p,48,c2,1yg,12b,w9;1j,152,t3,25,o,1gf,kt,3q8,4d0,3e;20,41,8pa,17,1v,2uv,w6,ts,io,ld");
+const SALT_V39=((from,rows)=>Object.fromEntries(rows.split(';').map((row,n)=>[new Date(Date.parse(from+'T00:00:00Z')+n*864e5).toISOString().slice(0,10),row.split(',').map(salt=>parseInt(salt,36)||0)])))("2026-09-26","1e,1,1,,4b,q,3ig,7xj,4hm,aq;t,j,3v,4,g,o7,35,1d,8sq,12;8f,11,13,bx,59r,n,4w9,1sg,1sq,6n8;78,wc,1p,55j,20,7j,4v0,d1,zy,7d2;c6,hf,4wx,f,6p,48,c2,1yg,12b,w9;1j,152,t3,25,o,1gf,kt,3q8,4d0,3e;20,41,8pa,17,1v,2uv,w6,ts,io,ld;1l,z9,o,391,28,gn,4pz,yz,bgm,276;1t,3k,6z,6,2g8,1h,12rm,1ls,35n,pdm");
 function graceFor(s){
   if(!s) return 0;
   const load=(s.shared||0)+(s.pinned||0)+Math.max(0,(s.threads||0)-3);
@@ -3379,6 +3321,8 @@ function pruneDailyHistory(value) {
   if (!savedObject(value)) return value;
   const reset = value.dailyHistoryVersion !== DAILY_HISTORY_VERSION;
   const keep = day => typeof day === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(day)
+    && Number.isFinite(Date.parse(`${day}T00:00:00Z`))
+    && new Date(`${day}T00:00:00Z`).toISOString().slice(0, 10) === day
     && (reset ? day === BOARD_LAUNCH : day >= BOARD_LAUNCH);
   const state = { ...value, dailyHistoryVersion: DAILY_HISTORY_VERSION };
   let changed = reset;
@@ -3520,10 +3464,13 @@ if(store.run && !store.run.startedAt) store.run.startedAt=new Date().toISOString
 function tidyRun(r){
   for(const k of ['turns','netIndex','netMoves']) if(!Number.isFinite(r[k])) r[k]=0;
   for(const k of ['cleared','freed','splitNodes']) if(!Array.isArray(r[k])) r[k]=[];
+  if(Array.isArray(r.cleared)) r.cleared=r.cleared.map((c,i)=>!savedObject(c) ? {tier:'done',feats:[],idx:i}
+    : c.feats===undefined||Array.isArray(c.feats) ? c : {...c,feats:[]});
   if(!r.positions || typeof r.positions!=='object') r.positions={};
   return r;
 }
 for(const r of [store.run,store.parked]) if(r) tidyRun(r);
+if(savedObject(store.tutorialParked)) tidyRun(store.tutorialParked);
 function canStartAnotherRun(){
   return POLICY.unlimited || ((store.runsToday||0) < POLICY.runsPerDay
     && !dayRows().some(r=>r.d===today()));
@@ -3567,6 +3514,7 @@ function follow(){
     seenSave=raw;
     const s=pruneDailyHistory(pruneRetiredRecords(migrateBoardState(JSON.parse(raw))));
     if(![s.run,s.collection,s.meta].every(savedObject)||Number(s.boardEdition)>BOARD_EDITION) return false;
+    for(const r of [s.run,s.parked,s.tutorialParked]) if(savedObject(r)) tidyRun(r);
     const same=JSON.stringify(s.run)===JSON.stringify(store.run);
     if(same) s.run=store.run;
     store=s;
@@ -3754,7 +3702,7 @@ function stopMenuMotion(){
   if(pending&&menuShown()) renderMenu();
 }
 function openMenu(v){
-  if(endlessActive)cancelEndlessInput();
+  if(endlessActive)cancelEndlessInput(); else cancelDrag();
   if(tutorialCompleting()) endTutorial();
   if(tutorialFinishT) clearTimeout(tutorialFinishT);
   tutorialFinishT=null;
@@ -4531,8 +4479,11 @@ function adoptState(merged){
       store.tutorialDone=true; store.introSeen=true; coachSig=''; coachQueuedSig='';
     }
     store.run=tidyRun(theirs);
-    if(merged.parked) store.parked=tidyRun(merged.parked);
-    if('tutorialParked' in merged) store.tutorialParked=merged.tutorialParked;
+    if(merged.parked&&!(merged.parked.day===theirs.day&&merged.parked.startedAt===theirs.startedAt))
+      store.parked=tidyRun(merged.parked);
+    if(store.parked&&store.parked.day===theirs.day&&store.parked.startedAt===theirs.startedAt)
+      store.parked=null;
+    if('tutorialParked' in merged) store.tutorialParked=savedObject(merged.tutorialParked)?tidyRun(merged.tutorialParked):null;
     put();
     builtFor=-1; resetDescent(); renderAll();
     toast('your set is where you left it · net '+((theirs.cleared||[]).length+1));
@@ -5994,7 +5945,7 @@ function posterEvidence(board) {
 return {posterEvidence,threadSpace};
 })();
 
-const FAM_SEP=64;          // the clearance a *composition* wants, not the 38 that stops overlap
+const FAM_SEP=64;
 
 function segList(len, chord){
   const s=[];
@@ -6050,13 +6001,15 @@ function ingredientSpec(i,rules){
   return {nodes:Math.max(...lens),lens:[...lens],shared:uses.includes('fused')?1:0,
     pinned:uses.includes('frozen')?1:0,...(rules.bend==='daily'&&uses.includes('curve')?{bend:1}:{})};
 }
-function mosaicCells(style,T,rnd,rules=GEN_RULES){
+function mosaicCells(style,T,rnd,rules=GEN_RULES,netIndex=-1){
   let cells;
   if(T===2){
+    const split=netIndex===1&&Number(rules.catalogueRevision)>=39&&rules.outlineDay>='2026-10-04'
+      ?[.44,.46,.48,.52,.54,.56][fnv(rules.outlineDay+':challenge-span')%6]:.5;
     cells=style==='tiers'||style==='corners'
-      ? [[0,0,1,.5],[0,.5,1,.5]] : [[0,0,.5,1],[.5,0,.5,1]];
-    if(style==='wings')cells=[[0,0,.5,.84],[.5,.16,.5,.84]];
-    if(style==='steps')cells=[[0,.16,.5,.84],[.5,0,.5,.84]];
+      ? [[0,0,1,split],[0,split,1,1-split]] : [[0,0,split,1],[split,0,1-split,1]];
+    if(style==='wings')cells=[[0,0,split,.84],[split,.16,1-split,.84]];
+    if(style==='steps')cells=[[0,.16,split,.84],[split,0,1-split,.84]];
   }else if(T===3){
     cells=style==='panels' ? [[0,0,1/3,1],[1/3,0,1/3,1],[2/3,0,1/3,1]]
       : style==='tiers' ? [[0,0,1,1/3],[0,1/3,1,1/3],[0,2/3,1,1/3]]
@@ -6082,7 +6035,7 @@ function mosaicCells(style,T,rnd,rules=GEN_RULES){
 function mosaicSlots(style,T,L,rnd,lens,rules=GEN_RULES,netIndex=-1){
   const figures=figuresForRevision(rules.catalogueRevision);
   const spread=true, gutter=24;
-  let cells=mosaicCells(style,T,rnd,rules);const s=[],g=[],keys=[],chords=[],used=new Set();
+  let cells=mosaicCells(style,T,rnd,rules,netIndex);const s=[],g=[],keys=[],chords=[],used=new Set();
   const turn=Math.floor(rnd()*T);
   const lengths=Array.from({length:T},(_,k)=>lens?lens[(k+turn)%lens.length]:L);
   let bendThread=null;
@@ -6091,7 +6044,9 @@ function mosaicSlots(style,T,L,rnd,lens,rules=GEN_RULES,netIndex=-1){
     if(!eligible.length)return {s:[],g:[]};
     const shortest=Math.min(...eligible.map(k=>lengths[k])),pool=eligible.filter(k=>lengths[k]<=shortest+1);
     bendThread=pool[Math.floor(rnd()*pool.length)];
-    const raw=T===3?[[0,0,.31,1],[.31,0,.38,1],[.69,0,.31,1]]
+    const wideRare=T===3&&lengths.includes(7)&&(rules.ingredientTurn||0)>=240;
+    const raw=T===3?(wideRare?[[0,0,.48,1],[.48,0,.30,1],[.78,0,.22,1]]
+      :[[0,0,.31,1],[.31,0,.38,1],[.69,0,.31,1]])
       :T===4?[[0,0,.31,1],[.31,0,.38,1],[.69,0,.31,.5],[.69,.5,.31,.5]]
       :[[0,0,.31,.5],[.31,0,.38,1],[.69,0,.31,.5],[0,.5,.31,.5],[.69,.5,.31,.5]];
     const flip=rnd()<.5;
@@ -6675,7 +6630,7 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd,idx,lens,mechanic){
 
   const pairs=[];
   for(let a=0;a<nodes.length;a++)for(let b=a+1;b<nodes.length;b++){
-    if(nodes[a].t[0]===nodes[b].t[0]) continue;      // one thread cannot superpose with itself
+    if(nodes[a].t[0]===nodes[b].t[0]) continue;
     if(bendThread!=null&&(nodes[a].t[0]===bendThread||nodes[b].t[0]===bendThread))continue;
     pairs.push([Math.hypot(nodes[a].hx-nodes[b].hx, nodes[a].hy-nodes[b].hy), nodes[a], nodes[b]]);
   }
@@ -6865,8 +6820,8 @@ function famCost(plan){
     p.x=clampX(p.hx); p.y=clampY(p.hy);
     step();
   });
-  return moves;      // the floor that keeps par sane lives at the call site,
-}                    // so the scramble loop can see a genuinely cheap board
+  return moves;
+}
 
 const FREE_CLEAR=34;
 const PRACTICAL_RANGE=[[2,3],[2,4],[3,5],[4,6],[3,5],[5,7],[6,8],[7,9],[7,10],[6,8]];
@@ -7178,7 +7133,7 @@ function famPractical(plan,trace=null,limit=36,variant=0,firstNode=null){
       const score=now+3*(merged-1)-0.5;
       if(!best || score<best.score) best={score, kind:'split', p:all.find(q=>q.merged)};
     }
-    if(!best) return 0;                       // nothing legal left: no line to quote
+    if(!best) return 0;
     if(best.kind==='split'){
       const p=best.p, kb=p.t[1], j=seq[kb].indexOf(p);
       if(j<0) return 0;
@@ -7203,7 +7158,7 @@ function famPractical(plan,trace=null,limit=36,variant=0,firstNode=null){
     stood();
     if(s.done) return moves;
   }
-  return 0;                                   // did not finish: the caller falls back
+  return 0;
 }
 function mosaicOpening(threads,members,idx){
   const xs=members.map(n=>n.x0),ys=members.map(n=>n.y0);
@@ -7237,6 +7192,7 @@ if(RMQ && RMQ.addEventListener) RMQ.addEventListener('change',e=>{
     cancelShowcaseDrag();finishShowcaseFlights();
     document.querySelectorAll('.tutorial-picture').forEach(el=>el.remove());
     if(galleryOn){galleryKey='';presentCompletedBoard(false)}
+    climbResolve?.settle?.();
     if(endlessActive&&endlessGalleryKey){
       clearTimeout(endlessGalleryTimer);endlessGalleryKey='';endlessGalleryAnimate=false;
       fitEndless();
@@ -7257,9 +7213,9 @@ function separateNodes(min=MIN_SEP){
       const A=members[a], B=members[b];
       let dx=B.x0-A.x0, dy=B.y0-A.y0, d=Math.hypot(dx,dy);
       if(d>=min) continue;
-      if(d<1e-6){dx=1;dy=0;d=1}                 // coincident: part along a fixed axis
+      if(d<1e-6){dx=1;dy=0;d=1}
       const ux=dx/d, uy=dy/d, push=(min-d)/2+.5;
-      if(A.pinned&&B.pinned) continue;          // the pin loop refuses to make these
+      if(A.pinned&&B.pinned) continue;
       if(A.pinned){ B.x0=clampX(B.x0+ux*push*2); B.y0=clampY(B.y0+uy*push*2) }
       else if(B.pinned){ A.x0=clampX(A.x0-ux*push*2); A.y0=clampY(A.y0-uy*push*2) }
       else { A.x0=clampX(A.x0-ux*push); A.y0=clampY(A.y0-uy*push);
@@ -7354,12 +7310,13 @@ function buildNet(force){
     const saltHint=(GEN.catalogueRevision<39?SALT_V38:SALT_V39)[genDay]?.[idx]||0, saltLimit=12000;
     const keepMechanics=needsDecisions(GEN_RULES.outlineDay,GEN_RULES.catalogueRevision);
     const unbentHint=!keepMechanics&&saltHint<0&&spec.bend?-saltHint-1:null,specStart={...spec};
+    const lenientLimit=keepMechanics?60000:saltLimit;
     let unbent=unbentHint!=null,accepted=false,lenient=false;
     for(;;){
       const hint=unbent?unbentHint||0:saltHint;
-      const hinted=hint>0&&hint<saltLimit?hint:0, spec0=hinted?{...spec}:null;
+      const hinted=hint>0&&hint<lenientLimit?hint:0, spec0=hinted?{...spec}:null;
       for(let pass=hinted?-1:0;pass<1&&!accepted;pass++){
-        for(let salt=pass<0?hinted:0;salt<(pass<0?hinted+1:saltLimit);salt++){
+        for(let salt=pass<0?hinted:0;salt<(pass<0?hinted+1:lenient?lenientLimit:saltLimit);salt++){
           const rnd=mulberry32(fnv(genDay+':net:'+idx+':'+salt));
           for(let turn=pass<0?0:Math.floor(salt/200);turn<=Math.floor(salt/200);turn++){
             GEN_RULES.ingredientTurn=turn;
@@ -7367,7 +7324,7 @@ function buildNet(force){
           }
           members=[];
           threads=chosen.slice(0,spec.threads).map((k,i)=>{
-            const strength=1+(fnv(genDay+':str:'+idx+':'+k)%3);   // 1 faint, 2 clear, 3 dominant
+            const strength=1+(fnv(genDay+':str:'+idx+':'+k)%3);
             return {key:k,catalogueRevision:GEN.catalogueRevision,def:FEATURES[k],col:THREADPAL[i%THREADPAL.length],
                     strength, nodeCount:spec.nodes+(strength-1),
                     width:4.5,
@@ -7662,8 +7619,10 @@ function splitPlace(idx, ox, oy, probe, legal=null){
 }
 function paintNode(n){
   const held=n.g&&document.activeElement===n.g;
+  const recoil=n.g?.recoil;
   if(n.g) n.g.remove();
   n.g=svgAdd('g',{class:'node'},gMembers);
+  if(recoil){n.g.recoil=recoil;n.g.classList.add('recoiling')}
   n.ax=n.x0; n.ay=n.y0;
   n.threadId=svgAdd('g',{class:'thread-id','aria-hidden':'true'},n.g);
   svgAdd('text',{x:13,y:-13},n.threadId).textContent=n.threads.map(t=>threads.indexOf(t)+1).join('·');
@@ -8055,7 +8014,7 @@ function startPhysics(){
       }
     });
     if(applyGalleryPositions(t)) moving=true;
-    if(quiet&&!moving&&!physDirty) return;
+    if((quiet||galleryOn)&&!moving&&!physDirty) return;
     threads.forEach(paintThread);
     members.forEach(placeNode);
     if(moving||physDirty){
@@ -8303,7 +8262,7 @@ function presentCompletedBoard(animate){
     const size=slot.r/unit;
     const points=conceptPlacement(t,center.x,center.y,size);
     t.galleryCenter={cx:center.x,cy:center.y};
-    if(motion){t.galleryLabel=null;t.galleryLabelNext=label}else t.galleryLabel=label;
+    if(motion){t.galleryLabel=null;t.galleryLabelNext=label}else{t.galleryLabel=label;t.galleryLabelNext=null}
     t.galleryScreen=slot.cw;
     t.nodes.forEach((node,j)=>{
       if(seen.has(node)||!points[j]) return;
@@ -8567,6 +8526,7 @@ function markFreed(t,silent){
 
 
 let dragN=null,dragMoved=false,dragIntent=false,dragStart=null,dragOff={x:0,y:0};
+let dragClient=null,dragTravelled=false;
 let dragLast={x:0,y:0},dragNbrs=[],swallowNextDown=false;
 let dragId=null;
 function spacedPoint(from,to,others,box,gap,full=false){
@@ -8792,6 +8752,8 @@ $('netsvg').addEventListener('pointerdown',e=>{
   if(swallowNextDown){swallowNextDown=false; return}
   bumpIdle();
   sayNudge();
+  const field=$('field');
+  if(field.classList.contains('swap-in')){clearTimeout(swapT);field.classList.remove('swap-in')}
   const p=svgPt(e); dragN=pick(p.x,p.y);
   if(!dragN){
     const pin=pinnedAt(p.x,p.y);
@@ -8806,6 +8768,7 @@ $('netsvg').addEventListener('pointerdown',e=>{
     return;
   }
   if(dragN){dragId=e.pointerId; dragMoved=dragIntent=false;dragStart={x:dragN.x0,y:dragN.y0};
+    dragClient={x:e.clientX,y:e.clientY};dragTravelled=false;
     dragLast={x:dragN.x0,y:dragN.y0};
     $('field').classList.add('dragging');
     liftHold(dragN.g);liftHold(dragN.mf?.g);
@@ -8830,6 +8793,7 @@ $('netsvg').addEventListener('pointerleave',()=>$('field').classList.remove('ove
 $('netsvg').addEventListener('pointermove',e=>{
   if(!dragN || e.pointerId!==dragId)return;
   if(e.pointerType==='mouse'&&!e.buttons)return cancelDrag();
+  trackDragPointer(e);
   const p=svgPt(e);
   dragN.tw=null;
   moveDragTo(p.x+dragOff.x,p.y+dragOff.y);
@@ -8870,8 +8834,13 @@ function endDrag(e){
   if(!dragN){dragId=null; return}
   if(!canAccessRun()){ cancelDrag(); openMenu('home'); return }
   const r=R(), node=dragN;
-  if(e){const p=svgPt(e);moveDragTo(p.x+dragOff.x,p.y+dragOff.y)}
-  if(node.hold){node.hold.size=markSize($('field'));stepDrag(performance.now(),true)}
+  if(e)trackDragPointer(e);
+  const tap=dragId!=='kbd'&&!dragTravelled;
+  if(tap)dragMoved=dragIntent=false;
+  else{
+    if(e){const p=svgPt(e);moveDragTo(p.x+dragOff.x,p.y+dragOff.y)}
+    if(node.hold){node.hold.size=markSize($('field'));stepDrag(performance.now(),true)}
+  }
   const held={x:node.x0,y:node.y0};
   if(dragMoved&&node.hold){
     const h=node.hold,p=spacedPoint({x:dragStart.x*h.kx,y:dragStart.y*h.ky},h,h.others,h.box,h.gap,true);
@@ -8911,6 +8880,9 @@ function endDrag(e){
   recordDay(); tutReach(1);
   chargeTurn(r,[0,node.idx,r.positions[node.idx][0],r.positions[node.idx][1]]);
   afterMove(r);
+}
+function trackDragPointer(e){
+  if(dragClient&&Math.hypot(e.clientX-dragClient.x,e.clientY-dragClient.y)>8)dragTravelled=true;
 }
 function afterMove(r){
   countCross();
@@ -9844,6 +9816,7 @@ function endTutorial(){
   }else{
     const r=R();
     r.catalogueRevision=CATALOGUE_REVISION;
+    if(r.day!==today()){ r.day=today(); r.archive=false; r.startedAt=new Date().toISOString() }
     r.netIndex=0; r.netMoves=0; r.turns=0; r.positions={}; r.freed=[]; r.minted={};
     r.splitNodes=[]; r.assisted=false; r.cleared=[]; r.over=false;
     r.log=[]; r.assists=0; r.logGap=false;
@@ -9930,7 +9903,7 @@ function clearNet(){
   if(r.over) return;
   const wasTutorial=inTutorial();
   const feats=threads.map(t=>t.key);
-  threads.forEach(t=>{
+  if(!wasTutorial) threads.forEach(t=>{
     const k=t.key, fit=t.fit;
     const cur=store.collection.badges[k];
     if(!cur){ store.collection.badges[k]={tier,day:r.day,fit,fitDay:fit?r.day:undefined}; return }
@@ -9963,8 +9936,10 @@ function clearNet(){
               clean:r.cleared.filter(c=>TIERRANK[c.tier]>=TIERRANK.clean).length};
   resetDescent();
   const depth=r.cleared.length;
-  store.meta.bestDepth=Math.max(store.meta.bestDepth||0,depth);
-  netPairs.forEach(p=>{ if(!store.collection.pairs[p]) store.collection.pairs[p]=r.day });
+  if(!wasTutorial){
+    store.meta.bestDepth=Math.max(store.meta.bestDepth||0,depth);
+    netPairs.forEach(p=>{ if(!store.collection.pairs[p]) store.collection.pairs[p]=r.day });
+  }
   stampToday(depth,feats,tier);
   if(wasTutorial){
     if(!finalTutorial) tutStepAt=1;
@@ -10124,7 +10099,7 @@ function showRunOver(){
   const actions=signup?`<p class="acct-ask">keep your discoveries by making an account.</p>
       <button class="wbtn solid" id="firstsignup">create an account</button>
     <button class="wbtn" id="sharebtn">${SHARE_LABEL}</button>`
-    :(canResume()?`<button class="wbtn solid" id="resumebtn">${parked?'back to today':'resume your day'}</button>`:'')
+    :(canResume()?`<button class="wbtn solid" id="resumebtn">${store.parked.day===today()?'back to today':'resume your day'}</button>`:'')
     +`<button class="wbtn${canResume()?'':' solid'}" id="sharebtn">${SHARE_LABEL}</button>`
     +(canStartAnotherRun()?`<button class="wbtn" id="againbtn">play again${CHEVRON}</button>`:'');
   $('runveil').classList.add('daily-result');
@@ -11122,7 +11097,7 @@ const TOYS={
     draw:([a,b,c,d])=>{const x=segX(...[a,b,c,d].map(([x,y])=>({x,y})));
       return [threadPart([a,b],'--orange'),threadPart([c,d],'--hellblau'),...(x?crossParts([x]):[])]},sign:v=>{v[0][1]+=110;v[1][1]+=110}}
 };
-let learnSignT=0;
+let learnSignT=0,learnRowT=[];
 function playToy(row,kind){
   const svg=row?.querySelector('.rmark'),toy=TOYS[kind];if(!svg||!toy)return;
   const rest=toy.rest,st={pts:rest.map(p=>[...p]),vel:rest.map(()=>[0,0]),home:rest,held:-1,from:null,grab:null,
@@ -11204,12 +11179,13 @@ function playToy(row,kind){
   paint();
 }
 function learnSigns(rows){
-  clearInterval(learnSignT);
+  clearInterval(learnSignT);learnRowT.forEach(clearTimeout);learnRowT=[];
   let every=0;
+  const shown=()=>!reduceMotion&&!document.hidden&&menuShown()&&menuView==='rules';
   const sign=()=>{
     if(!rows[0]?.isConnected)return clearInterval(every);
-    if(reduceMotion||document.hidden||!menuShown()||menuView!=='rules')return;
-    rows.forEach((row,i)=>setTimeout(()=>row._sign?.(),i*700));
+    if(!shown())return;
+    learnRowT=rows.map((row,i)=>setTimeout(()=>{if(row.isConnected&&shown())row._sign?.()},i*700));
   };
   setTimeout(sign,900);every=learnSignT=setInterval(sign,5600);
 }
@@ -14037,7 +14013,7 @@ function resolveClimbReward(row,group,milestone){
     buttons.forEach(([el,disabled])=>{if(el.isConnected)el.disabled=disabled});
     if(climbResolve?.finish===finish)climbResolve=null;
   };
-  climbResolve={finish};
+  climbResolve={finish,settle(){finish();setTimeout(nextChapter,300)}};
   const gone=()=>!row.isConnected||!menuShown()||menuView!=='endless'||endlessRun!==milestone.run;
   timer=setTimeout(()=>{
     if(gone()){finish();return}
@@ -14342,7 +14318,8 @@ function layoutEndlessCompletion(state,animate){
   if(!plate.width||!plate.height) return;
   const indexes=endlessGalleryIndexes(state);
   if(!indexes.length) return;
-  const obstacle=endlessObstacle(plate,$('endlessfooter'));
+  const measured=endlessObstacle(plate,$('endlessfooter'));
+  const obstacle=measured&&Object.fromEntries(Object.entries(measured).map(([k,v])=>[k,Math.round(v)]));
   const key=[Math.round(plate.width),Math.round(plate.height),indexes.join(','),
     obstacle?[obstacle.left,obstacle.top,obstacle.right,obstacle.bottom].map(v=>Math.round(v)).join(','):''].join('|');
   if(key===endlessGalleryKey) return;
@@ -14439,6 +14416,8 @@ function endlessDisplayNodes(nodes){
     const sign=endlessSigns[n.thread];if(!sign)return endlessNodes[id]?.recoil?{...n,...recoilPoint(endlessNodes[id].recoil)}:n;
     const target=sign.points[endlessRun.state.board.threads[n.thread].nodes.indexOf(id)],tween=endlessTweens[id];
     if(!tween)return {...n,...target};
+    const held=endlessNodes[id]?.recoil;
+    if(now<tween.start&&held){const q=recoilPoint(held);tween.from={x:q.x,y:q.y};return {...n,...q}}
     const k=Math.max(0,Math.min(1,(now-tween.start)/440)),ease=1-(1-k)**4;
     if(k===1)endlessTweens[id]=null;
     return {...n,x:tween.from.x+(target.x-tween.from.x)*ease,y:tween.from.y+(target.y-tween.from.y)*ease};
@@ -14624,14 +14603,16 @@ function renderEndless(preview,deferResult=false,motionOnly=false){
     },reduceMotion?0:milestone&&!endlessGalleryNamed?680:240);
   }
 }
-function commitEndless(id,x,y){
+function commitEndless(id,x,y,pointer=false){
   if(endlessBlocked()||adoptEndlessSave())return;
   const drop={id,x,y};moveEndlessTo(drop,x,y);
   const h=drop.hold,n=endlessRun.state.nodes[id];
   const p=spacedPoint({x:n.x*h.kx,y:n.y*h.ky},h,h.others,h.box,h.gap,true);
   x=p.x/h.kx;y=p.y/h.ky;
+  const m=$('endlesssvg').getScreenCTM(),tap=pointer
+    ?Math.hypot((x-n.x)*(m?.a||1),(y-n.y)*(m?.d||1))<=8:Math.hypot(x-n.x,y-n.y)<=6;
   const previous=endlessRun.state.freed.slice();
-  const before=endlessRun.state.freed.filter(Boolean).length,result=Endless.playMove(endlessRun,id,x,y);
+  const before=endlessRun.state.freed.filter(Boolean).length,result=tap?{run:endlessRun,changed:false}:Endless.playMove(endlessRun,id,x,y);
   if(result.changed){
     endlessRun=result.run;
     endlessBest=Math.max(endlessBest,endlessRun.cleared);
@@ -14695,15 +14676,16 @@ $('endlesssvg').addEventListener('pointerdown',e=>{
 });
 $('endlesssvg').addEventListener('pointermove',e=>{
   if(!endlessDrag||e.pointerId!==endlessDrag.pointer)return;
+  if(e.pointerType==='mouse'&&!e.buttons)return cancelEndlessInput();
   const p=endlessPoint(e);moveEndlessTo(endlessDrag,p.x+endlessDrag.dx,p.y+endlessDrag.dy);endlessPreview(endlessDrag);
 });
 $('endlesssvg').addEventListener('pointerup',e=>{
   if(!endlessDrag||e.pointerId!==endlessDrag.pointer)return;
   const d=endlessDrag,p=endlessPoint(e);moveEndlessTo(d,p.x+d.dx,p.y+d.dy);endlessDrag=null;
   if($('endlesssvg').hasPointerCapture(e.pointerId))$('endlesssvg').releasePointerCapture(e.pointerId);
-  commitEndless(d.id,d.x,d.y);
+  commitEndless(d.id,d.x,d.y,true);
 });
-$('endlesssvg').addEventListener('pointercancel',cancelEndlessInput);
+$('endlesssvg').addEventListener('pointercancel',e=>{if(!endlessDrag||e.pointerId===endlessDrag.pointer)cancelEndlessInput()});
 $('endlesssvg').addEventListener('lostpointercapture',()=>{if(endlessDrag)cancelEndlessInput()});
 $('endlesssvg').addEventListener('keydown',e=>{
   const el=e.target.closest('[data-endless-node]');if(!el||e.altKey||e.ctrlKey||e.metaKey||endlessBlocked()||endlessDrag)return;
