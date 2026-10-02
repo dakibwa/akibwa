@@ -15,6 +15,7 @@ for (const file of ['index.html', 'manifest.webmanifest', 'og.png', 'icon-192.pn
   assert.equal(response.headers.get('x-content-type-options'), 'nosniff');
   assert.equal(response.headers.get('x-frame-options'), 'SAMEORIGIN');
   assert.match(response.headers.get('cache-control'), /max-age=0.*must-revalidate/);
+  assert.match(response.headers.get('cache-control'), /(?:^|,)\s*no-transform(?:,|$)/, 'Features must prevent automatic analytics injection');
   if (preview) assert.equal(response.headers.get('x-robots-tag'), 'noindex');
 }
 for (const alias of ['/features', '/features/', '/features/index.html']) {

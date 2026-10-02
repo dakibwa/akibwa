@@ -55,6 +55,7 @@ for (const page of pages) {
   assert.equal(response.status, 200, `${path} must remain available`);
   assert.match(response.headers.get("content-type") || "", /text\/html/, `${path} MIME type`);
   checkRevalidation(response, path);
+  if (page === 'features') assert.match(response.headers.get('cache-control') || '', /(?:^|,)\s*no-transform(?:,|$)/, 'Features must prevent automatic analytics injection');
   assert.equal(hash(Buffer.from(await response.arrayBuffer())), hash(await readFile(join(root, page, "index.html"))), `${path} must serve the exact exported HTML`);
   for (const [name, value] of Object.entries(headers)) assert.equal(response.headers.get(name), value, `${path} ${name}`);
   if (preview) assert.equal(response.headers.get("x-robots-tag"), "noindex", "preview must not be indexed");
@@ -113,6 +114,7 @@ for (const path of samples) {
   else assert.equal(hash(actual), hash(expected), `${path} bytes`);
   if (path.startsWith("_next/static/")) assert.match(response.headers.get("cache-control") || "", /max-age=31536000.*immutable/, "fingerprinted assets are immutable");
   else checkRevalidation(response, path);
+  if (path.startsWith('features/')) assert.match(response.headers.get('cache-control') || '', /(?:^|,)\s*no-transform(?:,|$)/, `${path} must prevent automatic analytics injection`);
 }
 
 // A workers.dev preview has no production zone route and must not become a

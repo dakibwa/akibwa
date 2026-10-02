@@ -84,6 +84,11 @@ Keep a direct browser run-through of the affected pages alongside this check.
 - Fingerprinted `/_next/static/*` files receive one-year immutable caching.
   HTML, artwork with stable filenames, JSON and service workers retain
   Cloudflare's default `public, max-age=0, must-revalidate` behavior.
+- Features adds `no-transform` to that cache policy under `/features/*` and
+  across its standalone origin. This prevents Cloudflare from automatically
+  injecting its Web Analytics beacon into a game that promises no analytics
+  or tracking, while preserving the game's hardened CSP. See the
+  [Web Analytics FAQ](https://developers.cloudflare.com/web-analytics/faq/).
 - The existing zone-managed robots policy prepends Cloudflare's Content Signals
   and crawler rules to the generated `robots.txt`. Keep that provider policy.
   The public-domain check permits only its single marked block and comment
