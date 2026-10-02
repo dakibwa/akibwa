@@ -29,7 +29,7 @@
 <meta name="twitter:title" content="features">
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-utsKTtBL2w54OBazqr+XXww2x4/FimCTZ/0iBGpp9PA=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-vwx96vcSe1V1ehzBb6Zw5zNljagVe1iHmU1T5GX/8nw=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48" href="favicon.ico?v=bfeac949b18b">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=bfeac949b18b">
 <link rel="icon" type="image/svg+xml" sizes="any" href="favicon.svg?v=bfeac949b18b">
@@ -1753,6 +1753,10 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   .climb-goal{display:grid;place-items:center;width:var(--goal);aspect-ratio:1;box-sizing:border-box;border:1px dashed var(--silver);color:var(--silver);background:var(--surface)}
   .climb-goal>svg{display:block;width:70%;height:70%;opacity:.5}
   .climb-goal.earned{border-style:solid}
+  button.climb-goal{position:relative;z-index:1;padding:0;border-radius:0;cursor:pointer}
+  button.climb-goal:hover{border-color:var(--ink);background:var(--ground)}
+  button.climb-goal:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+  .endless-replay-note{font-size:var(--menu-small);line-height:1.5;color:var(--ink-soft);margin:0 0 var(--text-gap)}
   .climb-reward{display:grid;place-items:center;width:100%;height:100%;color:var(--ink-soft)}
   .climb-reward svg{display:block;width:70%;height:70%}
   .climb-group.resolving .climb-reward{visibility:hidden}
@@ -13632,8 +13636,8 @@ function routeAiming(board,route){
 }
 
 
-const ENDLESS_REVISION='endless-gen-13';
-const supportsEndlessRevision=revision=>[ENDLESS_REVISION,'endless-gen-12'].includes(revision);
+const ENDLESS_REVISION='endless-gen-14';
+const supportsEndlessRevision=revision=>[ENDLESS_REVISION,'endless-gen-13','endless-gen-12'].includes(revision);
 const LEVEL_COLOURS=['#e97e18','#2e92bd','#299775'];
 const runHash=s=>{let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;};
 const runRandom=seed=>()=>{let t=seed+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return ((t^t>>>14)>>>0)/4294967296;};
@@ -13675,6 +13679,13 @@ function levelEvidence(board){
 const ENDLESS_INFINITY_EVERY=10;
 function endlessRecipe(level,revision=ENDLESS_REVISION){
   if(!Number.isSafeInteger(level)||level<1)throw new Error('Level must be a positive safe integer.');
+  if(revision===ENDLESS_REVISION){
+    if(level>48)throw new Error('This Untangle run ends at level 48.');
+    const minimum=level<=6?2:level<=16?3:level<=26?4:level<=38?5:6;
+    return {tier:minimum-1,minimum,extra:0,survival:true,detailed:false,
+      role:level%ENDLESS_INFINITY_EVERY===0?'infinity knot':level%8===0?'stage reward':'climb',
+      stage:Math.ceil(level/8),step:(level-1)%8+1,infinity:level%ENDLESS_INFINITY_EVERY===0,rare:false,rareLength:0};
+  }
   const tier=level<=2?1:level<=5?2:level<=9?3:level<=16?4:5,infinity=level%ENDLESS_INFINITY_EVERY===0,rare=!infinity&&level%24===8;
   return {tier,minimum:tier+1,extra:0,survival:true,detailed:false,role:infinity?'infinity knot':rare?'long outline':'survival',
     sourceLevel:[0,2,4,7,11,17][tier],infinity,rare,rareLength:rare?(revision==='endless-gen-12'?8+(Math.floor(level/24)%3):7):0};
@@ -13693,6 +13704,7 @@ function buildEndlessBoard({seed,level,aspect=1,revision=ENDLESS_REVISION}={}){
   if(!supportsEndlessRevision(revision))throw new Error('Unsupported endless generator revision.');
   if(typeof seed!=='string'||!seed.trim()||seed.length>80||/[\x00-\x1f]/.test(seed))throw new Error('Use a seed of 1–80 visible characters.');
   if(aspect!==1)throw new Error('Endless boards use square world coordinates.');
+  if(revision===ENDLESS_REVISION)return buildV14(seed,level);
   const legacy=revision==='endless-gen-12',stamps=legacy?LEGACY_STAMPS:CURRENT_STAMPS;
   const recipe=endlessRecipe(level,revision),kind=recipe.infinity?`infinity${recipe.minimum}`
     :legacy&&recipe.rare?`rare${recipe.minimum}x${recipe.rareLength}`:`regular${recipe.minimum}`;
@@ -13719,6 +13731,125 @@ function buildEndlessBoard({seed,level,aspect=1,revision=ENDLESS_REVISION}={}){
       allowancePolicy:'proved perfect; exact at every level',humanDifficulty:'requires play review'}};
 }
 
+const V14_PATTERNS=[
+  [[3,4],[4,4],[4,5],[3,4,4],[4,5,4],[4,4,5],[4,4,6],[4,5,5]],
+  [[3,4,5],[4,4,5],[4,5,5],[3,4,6],[3,4,5],[4,5,6],[4,4,6],[4,4,5]],
+  [[3,4,5,6],[4,4,5,5],[4,4,5,6],[4,4,5,6],[3,4,5,6],[4,4,5,5],[4,4,5,6],[4,5,5,6]],
+  [[4,4,5,5],[4,4,5,6],[4,4,5,6],[4,5,5,6],[4,4,5,6],[4,4,5,6],[4,5,5,6],[4,4,6,6]],
+  [[4,4,5,6],[4,5,5,6],[4,4,5,6],[4,4,6,6],[4,5,5,6],[4,4,5,6],[4,4,6,6],[4,4,6,6]],
+  [[4,4,6,6],[4,5,5,6],[4,5,5,6],[4,5,5,6],[4,4,6,6],[4,5,5,6],[4,5,5,6],[4,5,5,6]]
+];
+const V14_COLOURS=['#e97e18','#2e92bd','#299775','#7d6bb0'];
+function v14Shuffle(list,rnd){
+  const a=list.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a;
+}
+function v14Deal(seed,level){
+  const pools={},decks={},uses={};
+  for(const [key,def] of Object.entries(CURRENT_STAMPS)){
+    if(['boat','crowbar','crown','crank'].includes(key))continue;
+    (pools[def.p.length]??=[]).push(key);
+  }
+  let keys;
+  for(let l=1;l<=level;l++){
+    const stage=Math.floor((l-1)/8),step=(l-1)%8;
+    let pattern=V14_PATTERNS[stage][step];
+    if(l===2||l===5)pattern=[l===2?'boat':'crowbar',4];
+    if(l===8)pattern=[4,5,'crown'];
+    if(l===12||l===25)pattern=['crank',4,5,...(l===25?[6]:[])];
+    if(l%ENDLESS_INFINITY_EVERY===0)pattern=[(Math.floor(l/ENDLESS_INFINITY_EVERY)+(runHash(seed)&1))%2?'key':'bed',...(l===10?[4,5]:l===20?[4,4,5]:[4,5,6])];
+    keys=pattern.map(n=>{
+      if(typeof n==='string')return n;
+      const used=uses[n]||0,round=Math.floor(used/pools[n].length);
+      if(used%pools[n].length===0)decks[n]=v14Shuffle(pools[n],runRandom(runHash(`${seed}:deck:${n}:${round}`)));
+      uses[n]=used+1;return decks[n][used%pools[n].length];
+    });
+    for(let i=0;i<keys.length;i++)if(keys.indexOf(keys[i])!==i){
+      const n=pattern[i],used=uses[n]-1,j=used%pools[n].length;
+      const swap=decks[n].findIndex((key,k)=>k>j&&!keys.includes(key));
+      if(swap>=0){[decks[n][j],decks[n][swap]]=[decks[n][swap],decks[n][j]];keys[i]=decks[n][j]}
+    }
+  }
+  return keys;
+}
+function v14Homes(keys,rnd,wide){
+  const cells=wide?[[275,450,470],[700,450,270]]:keys.length===2?[[240,450,350],[660,450,350]]:
+    keys.length===3?[[235,235,350],[665,235,350],[450,665,350]]:[[235,235,350],[665,235,350],[235,665,350],[665,665,350]];
+  const nodes=[],threads=[];
+  for(const [i,key] of keys.entries()){
+    const def=CURRENT_STAMPS[key],turn=Math.floor(rnd()*4),flip=rnd()<.5;
+    let points=def.p.map(([x,y])=>{if(flip)x=-x;for(let t=0;t<turn;t++)[x,y]=[-y,x];return [x,y]});
+    const xs=points.map(p=>p[0]),ys=points.map(p=>p[1]),left=Math.min(...xs),top=Math.min(...ys),w=Math.max(...xs)-left,h=Math.max(...ys)-top;
+    const [cx,cy,size]=cells[i],scale=(size-rnd()*8)/Math.max(w,h);
+    points=points.map(([x,y])=>runRound([cx+(x-left-w/2)*scale,cy+(y-top-h/2)*scale]));
+    const ids=points.map(([x,y])=>{const id=nodes.length;nodes.push({x,y,thread:i});return id});
+    threads.push({nodes:ids,closed:!!def.chord,target:key,key,colour:V14_COLOURS[i]});
+  }
+  return {nodes,threads};
+}
+function v14Route(board,home,ids){
+  let state=replay(board,[],true),route=[];
+  for(const id of ids){
+    const [x,y]=home[id];
+    if(state.freed[state.nodes[id].thread]||state.nodes.some((n,j)=>j!==id&&!state.freed[n.thread]&&Math.hypot(n.x-x,n.y-y)<58))return null;
+    const action=[id,x,y],next=moveNode(state,...action);if(!next.changed)return null;
+    route.push(action);state=next.state;
+  }
+  return state.cleared?route:null;
+}
+function v14Infinity(board,home,rnd){
+  const points=[[200,450],[310,325],[590,575],[700,450],[590,325],[310,575]];
+  const landing=board.threads[0].key==='key'?[200,700]:[170,835];
+  const all=[...points,landing],xs=all.map(p=>p[0]),ys=all.map(p=>p[1]);
+  const left=Math.min(...xs),top=Math.min(...ys),w=Math.max(...xs)-left,h=Math.max(...ys)-top;
+  const scale=(346-rnd()*6)/Math.max(w,h),turn=Math.floor(rnd()*4),flip=rnd()<.5;
+  const map=([x,y])=>{x=(x-left-w/2)*scale;y=(y-top-h/2)*scale;if(flip)x=-x;
+    for(let k=0;k<turn;k++)[x,y]=[-y,x];return runRound([235+x,235+y])};
+  points.forEach((p,id)=>{const [x,y]=map(p);board.nodes[id]={x,y,thread:0};home[id]=[x,y]});
+  home[1]=map(landing);board.motif={key:'infinity',thread:0};
+}
+function buildV14(seed,level){
+  const recipe=endlessRecipe(level),keys=v14Deal(seed,level),rnd=runRandom(runHash(`${seed}:${level}:v14`));
+  const minimum=recipe.minimum,wide=level===2||level===5;
+  for(let attempt=0;attempt<600;attempt++){
+    const board=v14Homes(keys,rnd,wide),home=board.nodes.map(n=>[n.x,n.y]),stampHomes=structuredClone(home);
+    board.allowance=minimum;board.reference=minimum;board.landingScale={x:1,y:1,min:38};
+    if(levelEvidence(board).separation<38||crossingState(board,board.nodes).total)continue;
+    const moved=[];
+    if(recipe.infinity){v14Infinity(board,home,rnd);moved.push(1);
+      if(moveFloor(board)!==1||crossingState(board,home.map(([x,y],i)=>({x,y,thread:board.nodes[i].thread}))).total)continue;
+    }
+    for(let step=moved.length;step<minimum;step++){
+      let took=false;
+      for(let trial=0;trial<400;trial++){
+        const id=Math.floor(rnd()*board.nodes.length);if(moved.includes(id)||recipe.infinity&&id<6)continue;
+        const [hx,hy]=home[id];
+        if(home.some(([x,y],j)=>j!==id&&Math.hypot(x-hx,y-hy)<62))continue;
+        const x=runRound([65+rnd()*770])[0],y=runRound([65+rnd()*770])[0];
+        if(board.nodes.some((n,j)=>j!==id&&Math.hypot(n.x-x,n.y-y)<62)
+          ||home.some(([hx,hy],j)=>j!==id&&Math.hypot(hx-x,hy-y)<62))continue;
+        const previous=board.nodes[id];board.nodes[id]={...previous,x,y};
+        if(moveFloor(board)!==step+1){board.nodes[id]=previous;continue}
+        moved.push(id);took=true;break;
+      }
+      if(!took)break;
+    }
+    if(moved.length!==minimum)continue;
+    const metrics=levelEvidence(board);
+    if(!metrics.connected||metrics.counts.some(n=>!n)||metrics.separation<38)continue;
+    if(metrics.nearNeuron>minimum||metrics.crossingCluster>6||metrics.crossings>minimum*6+2)continue;
+    const route=v14Route(board,home,v14Shuffle(moved,rnd));if(!route)continue;
+    const aiming=routeAiming(board,route);if(!aiming.passed)continue;
+    board.route=route;board.initialCrossings=metrics.crossings;
+    return {...board,home:stampHomes,aspect:1,structure:null,seed,level,revision:ENDLESS_REVISION,
+      id:`${ENDLESS_REVISION}:${level}:${runHash(seed).toString(16)}`,stampRevision:39,extra:0,
+      difficulty:{...recipe,lengths:board.threads.map(t=>t.nodes.length),family:'dealt stamps'},
+      evidence:{template:`${recipe.infinity?'infinity':'woven'}-${minimum}-${board.threads.map(t=>t.nodes.length+(t.closed?'c':'o')).join('-')}`,
+        metrics,aiming,recipe,attempts:attempt+1,referenceKind:'legal route meets a proved lower bound',rules:'endless-rules-2',
+        allowancePolicy:'proved perfect; exact at every level',humanDifficulty:'requires play review'}};
+  }
+  throw new Error(`Could not prove Untangle ${level} for ${keys.join(',')}.`);
+}
+
 
 const RUN_VERSION=1;
 const RUN_LIMIT=48;
@@ -13728,8 +13859,9 @@ function runLimit(run){
   return run?(Object.hasOwn(run,'limit')?run.limit:25):RUN_LIMIT;
 }
 const runStage=run=>{const limit=runLimit(run);return limit===25?5:limit/6};
-const runOpensChapter=run=>runLimit(run)!==25;
-const runComplete=run=>!!run?.state.cleared&&run.level>=runLimit(run);
+const runOpensChapter=run=>run?.replayStage===undefined&&runLimit(run)!==25;
+const runFinish=run=>run?.replayStage===undefined?runLimit(run):(run.replayStage+1)*8;
+const runComplete=run=>!!run?.state.cleared&&run.level>=runFinish(run);
 const count=n=>Number.isSafeInteger(n)&&n>=0;
 const point=p=>Array.isArray(p)&&p.length===2&&p.every(n=>Number.isFinite(n)&&n>=0&&n<=SIZE);
 const current=revision=>{if(!supportsEndlessRevision(revision))throw new Error('Unsupported endless revision.')};
@@ -13756,6 +13888,13 @@ function beginRun(seed,revision,board,startedAt=new Date().toISOString(),chapter
   if(!Number.isSafeInteger(chapter)||chapter<1)throw new Error('Invalid endless chapter.');
   return {version:RUN_VERSION,seed,revision,startedAt,limit:RUN_LIMIT,chapter,level:1,cleared:0,state:createState(board,true)};
 }
+function beginStageReplay(parent,stage,seed,board,tier){
+  if(parent?.revision!==ENDLESS_REVISION||parent.replayStage!==undefined||runLimit(parent)!==48
+    ||!Number.isInteger(stage)||stage<0||stage>5||parent.cleared<(stage+1)*8
+    ||![2,3].includes(tier)||board.level!==stage*8+1)throw new Error('Clear this stage before replaying it.');
+  return {...beginRun(seed,ENDLESS_REVISION,board,undefined,runChapter(parent)),
+    level:stage*8+1,cleared:stage*8,replayStage:stage,replayTier:tier};
+}
 function playMove(run,id,x,y){
   const moved=moveNode(run.state,id,x,y);
   if(!moved.changed)return {run,changed:false};
@@ -13778,16 +13917,24 @@ function restoreRun(raw){
     ||!count(raw.level)||raw.level<1||!count(raw.cleared)
     ||!RUN_LIMITS.includes(limit)
     ||(Object.hasOwn(raw,'chapter')&&(!Number.isSafeInteger(raw.chapter)||raw.chapter<1))
-    ||(raw.revision===ENDLESS_REVISION&&raw.level>limit))throw new Error('Invalid endless run.');
+    ||(raw.revision!=='endless-gen-12'&&raw.level>limit))throw new Error('Invalid endless run.');
+  const stage=raw.replayStage,replaying=Object.hasOwn(raw,'replayStage');
+  if(replaying?(raw.revision!==ENDLESS_REVISION||limit!==48||!Number.isInteger(stage)||stage<0||stage>5
+    ||![2,3].includes(raw.replayTier)||raw.level<stage*8+1||raw.level>(stage+1)*8):Object.hasOwn(raw,'replayTier'))
+    throw new Error('Invalid stage replay.');
+  if(Object.hasOwn(raw,'rewardTiers')&&(raw.revision!==ENDLESS_REVISION||!Array.isArray(raw.rewardTiers)
+    ||raw.rewardTiers.length!==6||raw.rewardTiers.some(n=>![1,2,3].includes(n))))throw new Error('Invalid reward tiers.');
   current(raw.revision);validateBoard(raw.board);
   const state=replay(raw.board,raw.log,true);
   const cleared=state.cleared?raw.level:raw.level-1;
   if(raw.cleared!==cleared)throw new Error('Invalid endless score.');
   return {version:RUN_VERSION,seed:raw.seed,revision:raw.revision,startedAt:raw.startedAt,
-    limit,...(Object.hasOwn(raw,'chapter')?{chapter:raw.chapter}:{}),level:raw.level,cleared,state};
+    limit,...(Object.hasOwn(raw,'chapter')?{chapter:raw.chapter}:{}),level:raw.level,cleared,
+    ...(replaying?{replayStage:stage,replayTier:raw.replayTier}:{}),
+    ...(Object.hasOwn(raw,'rewardTiers')?{rewardTiers:raw.rewardTiers.slice()}:{}),state};
 }
 
-return {ENDLESS_REVISION,buildEndlessBoard,createState,crossingState,canLand,moveNode,replay,RUN_LIMIT,runChapter,runLimit,runStage,runOpensChapter,runComplete,beginRun,playMove,advanceRun,packRun,restoreRun,workerSource:()=>`const engine=(${endlessEngine.toString()})();onmessage=({data})=>{try{postMessage({board:engine.buildEndlessBoard(data)})}catch(error){postMessage({error:error.message})}}`};
+return {ENDLESS_REVISION,supportsEndlessRevision,buildEndlessBoard,createState,crossingState,canLand,moveNode,replay,RUN_LIMIT,runChapter,runLimit,runFinish,runStage,runOpensChapter,runComplete,beginRun,beginStageReplay,playMove,advanceRun,packRun,restoreRun,workerSource:()=>`const engine=(${endlessEngine.toString()})();onmessage=({data})=>{try{postMessage({board:engine.buildEndlessBoard(data)})}catch(error){postMessage({error:error.message})}}`};
 })();
 const UNTANGLE_STAGE=8;
 const UNTANGLE_REWARDS=[
@@ -13832,12 +13979,12 @@ function untangleChapterRewards(chapter=1,stage=UNTANGLE_STAGE){
 
 function untangleGalleryRewards(collection={},chapter=1,stage=UNTANGLE_STAGE){
   const chapters=new Set([chapter]);
-  if(UNTANGLE_REWARDS.some(r=>collection[r.flag]===true))chapters.add(1);
+  if(UNTANGLE_REWARDS.some(r=>untangleRewardGrade(collection,r.key)))chapters.add(1);
   for(const flag of Object.keys(collection)){
-    const match=/^untangleC([2-9]|[1-9]\d+)G([0-5])$/.exec(flag);
+    const match=/^untangleC([2-9]|[1-9]\d+)G([0-5])(?:Resolved|Refined)?$/.exec(flag);
     if(match&&collection[flag]===true)chapters.add(Number(match[1]));
   }
-  return [...chapters].sort((a,b)=>a-b).flatMap(c=>untangleChapterRewards(c,stage).filter(r=>c===chapter||collection[r.flag]===true));
+  return [...chapters].sort((a,b)=>a-b).flatMap(c=>untangleChapterRewards(c,stage).filter(r=>c===chapter||untangleRewardGrade(collection,r.key)));
 }
 
 function untangleRewardFlag(key){
@@ -13854,12 +14001,33 @@ function untangleReward(key,stage=UNTANGLE_STAGE){
 function untangleRewardKeys(cleared,chapter=1,stage=UNTANGLE_STAGE){
   return Number.isSafeInteger(cleared)&&cleared>=0?untangleChapterRewards(chapter,stage).filter(r=>r.level<=cleared).map(r=>r.key):[];
 }
-function awardUntangleRewards(collection,cleared,chapter=1,stage=UNTANGLE_STAGE){
+function awardUntangleRewards(collection,cleared,chapter=1,stage=UNTANGLE_STAGE,tiers=null){
   if(!collection||typeof collection!=='object'||Array.isArray(collection))return false;
   let changed=false;
-  for(const key of untangleRewardKeys(cleared,chapter,stage)){
+  for(const [i,key] of untangleRewardKeys(cleared,chapter,stage).entries()){
     const flag=untangleRewardFlag(key);
-    if(collection[flag]!==true){collection[flag]=true;changed=true}
+    if(awardUntangleGrade(collection,flag,tiers?.[i]||3))changed=true;
+  }
+  return changed;
+}
+function untangleRewardGrade(collection,key){
+  const flag=untangleRewardFlag(key);
+  if(!flag)return null;
+  return collection?.[flag]===true?'perfect':collection?.[flag+'Refined']===true?'clean':collection?.[flag+'Resolved']===true?'done':null;
+}
+function awardUntangleReplay(collection,run){
+  if(!collection||!run?.state?.cleared||!Number.isInteger(run.replayStage)
+    ||run.replayStage<0||run.replayStage>5||run.level!==(run.replayStage+1)*8
+    ||![2,3].includes(run.replayTier))return false;
+  const reward=untangleChapterRewards(run.chapter??1)[run.replayStage],flag=reward.flag;
+  if(!untangleRewardGrade(collection,reward.key))return false;
+  return awardUntangleGrade(collection,flag,run.replayTier);
+}
+function awardUntangleGrade(collection,flag,tier){
+  let changed=false;
+  if(collection[flag]===true)return false;
+  for(const suffix of tier===3?['']:tier===2?['Refined']:['Resolved']){
+    if(collection[flag+suffix]!==true){collection[flag+suffix]=true;changed=true}
   }
   return changed;
 }
@@ -13870,6 +14038,7 @@ let endlessRevealUntil=0,endlessRevealTimer=0,endlessResultTimer=0;
 let endlessSigns=[],endlessLabels=[],endlessTweens=[],endlessMotionFrame=0,endlessLayoutKey='';
 let endlessGalleryKey='',endlessGalleryAnimate=false,endlessGalleryWait=false,endlessGalleryNamed=false,endlessGalleryTimer=0;
 let endlessStoredReceipt='null';
+let endlessParkedRun=null;
 let endlessMilestone=null,climbResolve=null;
 function canPlayEndless(){return DEV||!!POLICY.premium}
 function endlessComplete(){return Endless.runComplete(endlessRun)}
@@ -13880,14 +14049,22 @@ function saveEndless(replace=false){
     if(Number.isSafeInteger(best)&&best>=0)endlessBest=Math.max(endlessBest,best)}catch{}
   if(replace)endlessPreviousBest=endlessBest;
   try{const run=endlessRun?Endless.packRun(endlessRun):null;
-    localStorage.setItem(ENDLESS_KEY,JSON.stringify({version:1,bestRevision:Endless.ENDLESS_REVISION,active:endlessActive,best:endlessBest,previousBest:endlessPreviousBest,run}));
+    localStorage.setItem(ENDLESS_KEY,JSON.stringify({version:1,bestRevision:Endless.ENDLESS_REVISION,active:endlessActive,best:endlessBest,previousBest:endlessPreviousBest,run,
+      ...(endlessParkedRun?{parked:Endless.packRun(endlessParkedRun)}:{})}));
     endlessStoredReceipt=JSON.stringify(run);endlessStorage=true}
   catch{endlessStorage=false}
   return true;
 }
 function currentEndlessRecord(raw){
   if(!raw||raw.version!==1||raw.bestRevision)return raw;
-  return {...raw,best:0,previousBest:null,run:[Endless.ENDLESS_REVISION,'endless-gen-12'].includes(raw.run?.revision)?raw.run:null};
+  return {...raw,best:0,previousBest:null,run:Endless.supportsEndlessRevision(raw.run?.revision)?raw.run:null};
+}
+function restoreEndlessParked(raw,run){
+  if(run?.replayStage===undefined)return null;
+  const parked=Endless.restoreRun(raw.parked);
+  if(parked.replayStage!==undefined||parked.revision!==Endless.ENDLESS_REVISION
+    ||parked.chapter!==run.chapter||parked.cleared<(run.replayStage+1)*8)throw new Error('Invalid parked climb.');
+  return parked;
 }
 function previousEndlessBest(raw){
   const n=raw.previousBest,b=raw.best;
@@ -13899,8 +14076,8 @@ function adoptEndlessSave(){
     if(!raw||raw.version!==1)return false;
     if(Number.isSafeInteger(raw.best)&&raw.best>=0)endlessBest=Math.max(endlessBest,raw.best);
     if(!raw.run||receipt===endlessStoredReceipt)return false;
-    const run=Endless.restoreRun(raw.run);endlessPreviousBest=previousEndlessBest(raw);
-    cancelEndlessInput(false);climbResolve?.finish();endlessMilestone=null;endlessNext?.cancel();endlessNext=null;endlessRun=run;endlessStoredReceipt=receipt;collectEndlessRewards();
+    const run=Endless.restoreRun(raw.run),parked=restoreEndlessParked(raw,run);endlessPreviousBest=previousEndlessBest(raw);
+    cancelEndlessInput(false);climbResolve?.finish();endlessMilestone=null;endlessNext?.cancel();endlessNext=null;endlessRun=run;endlessParkedRun=parked;endlessStoredReceipt=receipt;collectEndlessRewards();
     if(endlessActive){buildEndlessView();renderEndless();prepareEndlessNext()}
     if(menuShown()&&menuView==='endless')renderEndlessMenu();
     return true;
@@ -13913,6 +14090,7 @@ function restoreEndless(){
     if(raw.version!==1)throw new Error('Saved run uses different rules.');
     if(Number.isSafeInteger(raw.best)&&raw.best>=0)endlessBest=raw.best;
     if(raw.run)endlessRun=Endless.restoreRun(raw.run);
+    endlessParkedRun=restoreEndlessParked(raw,endlessRun);
     endlessPreviousBest=previousEndlessBest(raw);
     endlessStoredReceipt=JSON.stringify(raw.run||null);
     endlessBest=Math.max(endlessBest,endlessRun?.cleared||0);
@@ -13960,8 +14138,8 @@ function endlessMenuStage(chapter=endlessMenuChapter()){
   return endlessRun&&Endless.runChapter(endlessRun)===chapter?Endless.runStage(endlessRun):Endless.runStage(null);
 }
 function untangleRewardBadge(key){
-  const flag=untangleRewardFlag(key);
-  return flag&&store.collection[flag]===true?{tier:'perfect',untangle:true}:null;
+  const tier=untangleRewardGrade(store.collection,key);
+  return tier?{tier,untangle:true}:null;
 }
 function untangleRewardStamps(){
   const chapter=endlessMenuChapter(),stage=endlessMenuStage(chapter);
@@ -13971,24 +14149,31 @@ function untangleRewardMark(key,ink='currentColor'){
   return (untangleReward(key)?.art||'').replaceAll('currentColor',ink);
 }
 function collectEndlessRewards(){
-  if(!endlessRun||!awardUntangleRewards(store.collection,endlessRun.cleared,Endless.runChapter(endlessRun),Endless.runStage(endlessRun)))return false;
+  if(!endlessRun)return false;
+  const changed=endlessRun.replayStage===undefined
+    ?awardUntangleRewards(store.collection,endlessRun.cleared,Endless.runChapter(endlessRun),Endless.runStage(endlessRun),endlessRun.rewardTiers)
+    :awardUntangleReplay(store.collection,endlessRun);
+  if(!changed)return false;
   save();return true;
 }
 function untangleRewardGallery(){
   return `<div class="untangle-reward-heading"><b>untangle</b><span>exclusive neural stamps</span></div>`
-    +untangleRewardStamps().map(r=>`<button type="button" class="fcell untangle-reward-tile${r.badge?'':' none'}" data-stamp="${r.key}"${r.badge?` data-grade="${gradeKey('perfect')}"`:''} style="--tc:var(--tier-perfect);--stamp-plate:${r.colour}" aria-label="${r.badge?r.label+' · exclusive Untangle reward':'exclusive Untangle reward · chapter '+(r.chapter||1)+' · clear levels '+r.first+'–'+r.level}"><svg class="rfeat" viewBox="0 0 96 96" role="img" aria-label="${r.badge?r.label:'unearned Untangle reward'}">${r.badge?stampPlateShape(true,`class="fcell-plate" fill="${r.colour}"`)+gradeNotch('perfect','var(--tc)'):''}<g opacity="${r.badge?1:.5}">${untangleRewardMark(r.key,r.badge?EMBLEM_INK:'var(--silver)')}</g></svg></button>`).join('');
+    +untangleRewardStamps().map(r=>`<button type="button" class="fcell untangle-reward-tile${r.badge?'':' none'}" data-stamp="${r.key}"${r.badge?` data-grade="${gradeKey(r.badge.tier)}"`:''} style="--tc:var(--tier-${r.badge?.tier||'done'});--stamp-plate:${r.colour}" aria-label="${r.badge?r.label+' · '+TIERSAY[r.badge.tier]+' · exclusive Untangle reward':'exclusive Untangle reward · chapter '+(r.chapter||1)+' · clear levels '+r.first+'–'+r.level}"><svg class="rfeat" viewBox="0 0 96 96" role="img" aria-label="${r.badge?r.label:'unearned Untangle reward'}">${r.badge?stampPlateShape(true,`class="fcell-plate" fill="${r.colour}"`)+gradeNotch(r.badge.tier,'var(--tc)'):''}<g opacity="${r.badge?1:.5}">${untangleRewardMark(r.key,r.badge?EMBLEM_INK:'var(--silver)')}</g></svg></button>`).join('');
 }
 function climbRow(g,reward,count,next,best,locked,limit,chapter,stage){
   const start=g*stage,end=start+stage,done=Math.max(0,Math.min(stage,count-start)),complete=done===stage,active=next>start&&next<=end,newRun=start>=limit&&!complete;
   const colour=`var(${THREADPAL[g%THREADPAL.length]})`;
+  const tier=untangleRewardGrade(store.collection,reward.key)||'done',main=endlessParkedRun||endlessRun;
+  const replayable=complete&&!locked&&main?.revision===Endless.ENDLESS_REVISION&&main.chapter===chapter;
+  const goal=replayable?'button':'span',action=tier==='done'?'replay for refined':tier==='clean'?'replay for optimised':'replay stage';
   const cells=Array.from({length:stage},(_,i)=>{
     const n=start+i+1,on=n<=count;
     return `<i data-level="${n}" class="${on?'on':n===next?'next':''}${!on&&n<=best?' best':''}"${on?` style="--fill:${colour}"`:''}></i>`;
   }).join('');
   return `<figure class="climb-group${complete?' complete':active?' active':done?'':' ahead'}" data-group="${g}" style="--climb-colour:${colour}" aria-label="Levels ${start+1}–${end}: ${newRun?'available in a new forty-eight-level run.':done+' of '+stage+' cleared.'}${complete?' '+reward.label+' reward revealed.':''}">`
-    +`<i class="climb-spine" aria-hidden="true"></i><figcaption class="climb-group-head"><span>${start+1}–${end}</span>${newRun?'<span>new run</span>':''}</figcaption>`
+    +`<i class="climb-spine" aria-hidden="true"></i><figcaption class="climb-group-head"><span>${start+1}–${end}</span>${newRun?'<span>new run</span>':complete?`<span>${TIERSAY[tier]}</span>`:''}</figcaption>`
     +`<div class="endless-dots${locked?' locked':''}${complete?' complete':''}" data-group="${g}" data-chapter="${chapter}" aria-hidden="true"><span class="track day-thread climb-thread">${cells}</span></div>`
-    +`<span class="climb-goal${complete?' earned':''}" aria-hidden="true">${complete?`<span class="climb-reward" data-reward="${reward.key}"><svg viewBox="0 0 96 96">${reward.art}</svg></span>`:`<svg viewBox="0 0 96 96">${reward.art}</svg>`}</span></figure>`;
+    +`<${goal} class="climb-goal${complete?' earned':''}"${replayable?` type="button" data-replay-stage="${g}" aria-label="${reward.label} · ${TIERSAY[tier]} · ${action}" title="${action}"`:' aria-hidden="true"'}>${complete?`<span class="climb-reward" data-reward="${reward.key}" data-tier="${tier}"><svg viewBox="0 0 96 96">${reward.art}${gradeNotch(tier,`var(--tier-${tier})`)}</svg></span>`:`<svg viewBox="0 0 96 96">${reward.art}</svg>`}</${goal}></figure>`;
 }
 function endlessClimb(cleared,failed=false,best=endlessPreviousBest??endlessBest,limit=Endless.RUN_LIMIT,chapter=1,stage=Endless.runStage(null)){
   const locked=!canPlayEndless(),count=Math.min(stage*6,Math.max(0,cleared));
@@ -14028,7 +14213,7 @@ function resolveClimbReward(row,group,milestone){
       light.remove();row.classList.remove('resolving');
       animation=reward.animate([{opacity:0,transform:'translateY(3px) scale(.94)'},{opacity:1,transform:'scale(1.025)',offset:.75},{opacity:1,transform:'scale(1)'}],{duration:320,easing:cssv('--ease-out')});
       animation.finished.then(()=>{
-        if(menuShown()&&menuView==='endless')toast(earned.label+' · discovered');
+        if(menuShown()&&menuView==='endless')toast(earned.label+' · '+(milestone.run.replayStage===undefined?'discovered':TIERSAY[untangleRewardGrade(store.collection,earned.key)]));
         if(Endless.runComplete(milestone.run)&&Endless.runOpensChapter(milestone.run)){
           timer=setTimeout(()=>{finish();nextChapter()},900);
         }else finish();
@@ -14049,11 +14234,12 @@ function wireClimb(root){
     return;
   }
   wireDayPull(root,'.climb-group:not(.resolving)');
+  root.querySelectorAll('[data-replay-stage]').forEach(button=>button.onclick=()=>startEndlessStage(Number(button.dataset.replayStage)));
 }
 function endlessMenuChapter(){
   if(endlessRun){
     const chapter=Endless.runChapter(endlessRun);
-    return endlessComplete()&&Endless.runOpensChapter(endlessRun)&&!endlessMilestone&&!climbResolve?chapter+1:chapter;
+    return endlessRun.revision!==Endless.ENDLESS_REVISION&&endlessComplete()&&Endless.runOpensChapter(endlessRun)&&!endlessMilestone&&!climbResolve?chapter+1:chapter;
   }
   let chapter=1;
   while(untangleChapterRewards(chapter).every(r=>untangleRewardBadge(r.key)))chapter++;
@@ -14071,8 +14257,9 @@ function renderEndlessMenu(){
   climbResolve?.finish();
   restoreMenuPlay();
   const r=endlessRun,s=r?.state,complete=endlessComplete(),failed=s?.failed,ended=complete||failed,continuing=s?.cleared&&!complete;
+  const replaying=r?.replayStage!==undefined,main=endlessParkedRun||r;
   const chapter=endlessMenuChapter(),nextChapter=!!r&&chapter>Endless.runChapter(r);
-  const primary=!canPlayEndless()?'discover':!r?'begin':nextChapter?'begin chapter '+chapter:ended?'restart':'resume';
+  const primary=!canPlayEndless()?'discover':!r?'begin':replaying&&ended?'return to climb':nextChapter?'begin chapter '+chapter:complete&&Endless.runOpensChapter(r)?'begin chapter '+(Endless.runChapter(r)+1):ended?'restart':'resume';
   const notice=endlessRecovery||(!endlessStorage?'storage unavailable · this run stays in this tab':'');
   paintPane($('paneendless'),`<div class="endless-menu-art">${endlessPlate()}</div>
     <header class="opening">
@@ -14081,28 +14268,32 @@ function renderEndlessMenu(){
       </div>
     </header>
   <div class="intro-body endless-menu-body">
-    <p class="intro-sub endless-menu-intro">${nextChapter?RUN_WORDS:runWords(r)}<span class="endless-intro-detail"> · ${chapter>1?'chapter '+chapter:'increasingly complex'}</span></p>
+    <p class="intro-sub endless-menu-intro">${replaying?`levels ${r.replayStage*8+1}–${(r.replayStage+1)*8}`:nextChapter?RUN_WORDS:runWords(r)}<span class="endless-intro-detail"> · ${replaying?(r.replayTier===2?'refine':'optimise')+' '+untangleChapterRewards(chapter)[r.replayStage].label:chapter>1?'chapter '+chapter:'increasingly complex'}</span></p>
     <div class="endless-overview">
       ${endlessDiscovery(r,chapter)}
     </div>
-    ${endlessClimb(nextChapter?0:r?.cleared||0,nextChapter?false:failed,nextChapter?0:undefined,nextChapter?Endless.RUN_LIMIT:Endless.runLimit(r),chapter,nextChapter?Endless.runStage(null):Endless.runStage(r))}
+    ${endlessClimb(nextChapter?0:main?.cleared||0,nextChapter?false:main?.state.failed,nextChapter?0:undefined,nextChapter?Endless.RUN_LIMIT:Endless.runLimit(main),chapter,nextChapter?Endless.runStage(null):Endless.runStage(main))}
+    ${main?.revision===Endless.ENDLESS_REVISION&&main.cleared>=8?'<p class="endless-replay-note">choose an earned stamp to replay its eight levels · refined, then optimised</p>':''}
     <div class="endless-menu-actions">
       <div class="endless-menu-play" id="endlessmenuplay">
         <button class="intro-start" id="endlessentry">${primary}</button>
         ${canPlayEndless()&&r&&!ended?`<button class="endless-restart" id="endlessnew" aria-label="restart · start a new run"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3M19.5 3.5v5h-5"/></svg><span>restart</span></button>`:''}
         ${canPlayEndless()&&ended?'<button class="endless-restart" id="endlesslast">view last board</button>':''}
+        ${canPlayEndless()&&replaying&&!ended?'<button class="endless-restart" id="endlessreturn">return to climb</button>':''}
       </div>
       ${notice?`<p class="endless-menu-save" role="status">${notice}</p>`:''}
     </div>
   </div>`);
   $('endlessentry').onclick=()=>{
     if(!requireEndless())return;
-    if(ended){startEndlessRun(chapter);return}
+    if(replaying&&ended){returnEndlessClimb();return}
+    if(ended){startEndlessRun(complete&&Endless.runOpensChapter(r)?Endless.runChapter(r)+1:chapter);return}
     enterEndless();
     if(continuing)advanceEndless();
   };
   if($('endlessnew'))$('endlessnew').onclick=restartEndlessRun;
   if($('endlesslast'))$('endlesslast').onclick=enterEndless;
+  if($('endlessreturn'))$('endlessreturn').onclick=returnEndlessClimb;
   if($('climbupgrade'))$('climbupgrade').onclick=()=>requireEndless();
   wireClimb($('paneendless').querySelector('.endless-grid-space'));
   placeMenuPlay();
@@ -14110,7 +14301,7 @@ function renderEndlessMenu(){
 }
 function prepareEndlessNext(){
   if(!canPlayEndless()||!endlessRun||endlessRun.state.failed)return null;
-  if(endlessRun.level>=Endless.runLimit(endlessRun)){endlessNext?.cancel();endlessNext=null;return null}
+  if(endlessRun.level>=Endless.runFinish(endlessRun)){endlessNext?.cancel();endlessNext=null;return null}
   const {seed,revision,level}=endlessRun,input={seed,revision,level:level+1},key=JSON.stringify(input);
   if(endlessNext?.key===key)return endlessNext.promise;
   endlessNext?.cancel();let cancel=()=>{};
@@ -14163,10 +14354,38 @@ function startEndlessRun(chapter=endlessMenuChapter()){
   try{
     const seed=endlessSeed(),revision=Endless.ENDLESS_REVISION;
     const board=Endless.buildEndlessBoard({seed,level:1,revision});
-    const next=Endless.beginRun(seed,revision,board,undefined,chapter);
-    cancelDrag();cancelEndlessInput();climbResolve?.finish();endlessMilestone=null;endlessRun=next;endlessRecovery='';
+    const next={...Endless.beginRun(seed,revision,board,undefined,chapter),
+      rewardTiers:untangleChapterRewards(chapter).map(r=>({done:2,clean:3,perfect:3})[untangleRewardGrade(store.collection,r.key)]||1)};
+    cancelDrag();cancelEndlessInput();climbResolve?.finish();endlessMilestone=null;endlessRun=next;endlessParkedRun=null;endlessRecovery='';
     hideVeils();setEndlessSurface(true);buildEndlessView();saveEndless(true);renderEndless();focusEndless();prepareEndlessNext();
   }catch(error){toast('this run could not open. your saved progress is still here.');console.error(error)}
+}
+async function startEndlessStage(stage){
+  if(!requireEndless()||adoptEndlessSave())return;
+  if(endlessParkedRun&&!endlessComplete()&&!endlessRun.state.failed&&(endlessRun.state.moves||endlessRun.level>endlessRun.replayStage*8+1)){
+    const run=endlessRun;
+    if(!await ask({title:'restart this stage replay?',yes:'restart',no:'continue playing'})||run!==endlessRun)return;
+  }
+  const parent=endlessParkedRun||endlessRun,reward=untangleChapterRewards(Endless.runChapter(parent))[stage];
+  if(!parent||!reward)return;
+  const tier=untangleRewardGrade(store.collection,reward.key)==='done'?2:3;
+  try{
+    const seed=endlessSeed(),board=Endless.buildEndlessBoard({seed,level:stage*8+1});
+    const replay=Endless.beginStageReplay(parent,stage,seed,board,tier);
+    cancelDrag();cancelEndlessInput(false);climbResolve?.finish();endlessMilestone=null;
+    endlessNext?.cancel();endlessNext=null;endlessParkedRun=parent;endlessRun=replay;
+    hideVeils();setEndlessSurface(true);buildEndlessView();saveEndless();renderEndless();focusEndless();prepareEndlessNext();
+  }catch(error){toast('this stage could not open. your climb is saved.');console.error(error)}
+}
+async function returnEndlessClimb(){
+  if(!endlessParkedRun||adoptEndlessSave())return;
+  if(!endlessComplete()&&!endlessRun.state.failed&&(endlessRun.state.moves||endlessRun.level>endlessRun.replayStage*8+1)){
+    const run=endlessRun;
+    if(!await ask({title:'leave this stage replay?',yes:'return to climb',no:'keep playing'})||endlessRun!==run)return;
+  }
+  collectEndlessRewards();cancelEndlessInput(false);climbResolve?.finish();endlessMilestone=null;
+  endlessNext?.cancel();endlessNext=null;endlessRun=endlessParkedRun;endlessParkedRun=null;
+  buildEndlessView();saveEndless();openMenu('endless');
 }
 function leaveEndless(){
   climbResolve?.finish();endlessMilestone=null;
@@ -14567,17 +14786,17 @@ function renderEndless(preview,deferResult=false,motionOnly=false){
     $('endlessminted').dataset.sig=mintedSig;
     $('endlessminted').innerHTML=minted.map((f,i)=>`<div class="mb" style="--i:${i}">${featureStamp(f.key,grade,false)}</div>`).join('');
   }
-  $('endlesslevel').textContent=complete?(level===Endless.runLimit(endlessRun)?`${runWords(endlessRun)} · one run`:`legacy run · ${cleared} levels cleared`):s.failed?`out of turns on level ${level}`
+  $('endlesslevel').textContent=complete?(endlessParkedRun?`levels ${endlessRun.replayStage*8+1}–${Endless.runFinish(endlessRun)} · stage complete`:level===Endless.runLimit(endlessRun)?`${runWords(endlessRun)} · one run`:`legacy run · ${cleared} levels cleared`):s.failed?`out of turns on level ${level}`
     :`level ${level}${s.cleared?' cleared':''}`;
   $('endlessresultstrip').style.background=`var(${s.failed?'--sig-orange':s.moves<=b.reference?'--tier-perfect':'--tier-clean'})`;
   const levels=n=>`${n} ${n===1?'level':'levels'}`;
   if(complete){
-    $('endlessdetail').textContent=Endless.runOpensChapter(endlessRun)?'chapter complete. six new discoveries are waiting.':'you cleared every level. your best is saved.';
+    $('endlessdetail').textContent=endlessParkedRun?`${untangleChapterRewards(Endless.runChapter(endlessRun))[endlessRun.replayStage].label} · ${endlessRun.replayTier===2?'refined':'optimised'}. your climb is saved.`:Endless.runOpensChapter(endlessRun)?'chapter complete. six new discoveries are waiting.':'you cleared every level. your best is saved.';
   }else if(s.failed){
     const best=endlessBest?`<br>${cleared===endlessBest?'personal best':`best · ${levels(endlessBest)}`}`:'';
     $('endlessdetail').innerHTML=`<strong>${cleared}</strong><span>${cleared===1?'level':'levels'} cleared${best}</span>`;
   }else $('endlessdetail').textContent='';
-  $('endlessnext').innerHTML=endlessAdvancing?'one moment…':complete&&Endless.runOpensChapter(endlessRun)?'next chapter'+CHEVRON:complete?'restart':s.failed?'restart'+CHEVRON:'next level'+CHEVRON;
+  $('endlessnext').innerHTML=endlessAdvancing?'one moment…':endlessParkedRun&&(complete||s.failed)?'return to climb'+CHEVRON:complete&&Endless.runOpensChapter(endlessRun)?'next chapter'+CHEVRON:complete?'restart':s.failed?'restart'+CHEVRON:'next level'+CHEVRON;
   const milestone=endlessMilestone?.run===endlessRun;
   $('endlessnext').disabled=endlessAdvancing||(s.cleared&&(performance.now()<endlessRevealUntil||milestone&&endlessMilestone.epoch===menuEpoch));
   $('endlessfooter').setAttribute('aria-busy',String(endlessAdvancing));
@@ -14703,9 +14922,10 @@ $('endlesssvg').addEventListener('keydown',e=>{
 $('endlesssvg').addEventListener('focusout',()=>{
   if(endlessKeyboard&&!holdMoving){const k=endlessKeyboard;endlessKeyboard=null;commitEndless(k.id,k.x,k.y)}
 });
-$('endlessnext').onclick=()=>endlessComplete()||endlessRun.state.failed?startEndlessRun():advanceEndless();
+$('endlessnext').onclick=()=>endlessParkedRun&&(endlessComplete()||endlessRun.state.failed)?returnEndlessClimb():endlessComplete()||endlessRun.state.failed?startEndlessRun():advanceEndless();
 async function restartEndlessRun(){
   if(!requireEndless())return;
+  if(endlessParkedRun){startEndlessStage(endlessRun.replayStage);return}
   if((endlessRun?.state.moves||endlessRun?.cleared)&&!endlessRun.state.failed&&!endlessComplete()){
     const run=endlessRun;
     const ok=await ask({title:'restart untangle?',yes:'restart',no:'continue playing'});
