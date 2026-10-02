@@ -34,7 +34,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-zXDGa9GUBAafedt9ZvIF6VaAnKymEl+nhoz+EkL2ODo=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-BWR1RL8KHy8cLp3ItP5qnSbL14zS0UPLc9k1huV8pNU=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- The approved concept quartet: aeroplane, smaller heart, leaf and lightning.
      Render web icons from assets/marketing/features-app-mark.svg with
      tools/render-web-icons.mjs; keep the tab SVG embedded for offline copies. -->
@@ -1119,69 +1119,60 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
     gap:10px;margin:0 -14px;padding:11px 14px;background:var(--gelb);color:#15191C;font-size:12px;font-weight:700}
   #runveil.daily-result{position:fixed;padding:20px 20px calc(20px + env(safe-area-inset-bottom,0px));align-items:center;justify-content:center;background:var(--veil)}
   #runveil.daily-result>.day-result{width:100%;max-width:440px;max-height:100%;margin:0;box-shadow:var(--shadow-panel)}
-  .day-content{padding:var(--panel-y) var(--panel-x)}
-  .day-heading{position:relative;padding-right:48px}
-  .day-heading .day-close{position:absolute;right:-4px;top:-6px}
-  .day-heading p{margin:0 0 var(--text-gap);font-size:var(--caption);color:var(--ink-soft)}
-  .day-result .day-heading h2{font-size:36px;font-weight:900;letter-spacing:-.05em;line-height:1.05}
-  .day-fingerprint{position:relative;width:min(100%,206px);aspect-ratio:1;margin:20px auto 16px}
-  .day-loop{position:absolute;inset:0;width:100%;height:100%;fill:none;stroke-width:1.4}
-  .day-loop path{stroke:var(--fill,var(--rule))}
-  .day-fingerprint>i{position:absolute;translate:-50% -50%;display:grid;place-items:center;width:18px;aspect-ratio:1;
-    border:2px solid var(--fill,var(--rule));border-radius:50%;background:var(--fill,var(--surface));font-style:normal}
-  .day-result-reading{position:absolute;left:50%;top:50%;translate:-50% -50%;display:grid;gap:4px;text-align:center;color:var(--ink-soft);font-size:var(--caption)}
-  .day-result-reading strong{font-size:30px;line-height:1;letter-spacing:-.04em;color:var(--ink)}
-  .day-award{margin:-6px 0 16px;text-align:center;font-size:var(--caption);color:var(--ink-soft)}
-  [data-result-patterns="true"] .day-fingerprint>i[data-grade]{background-image:var(--grade-pattern);background-size:8px 8px}
-  [data-thread-numbers="true"] .day-fingerprint>i::after{content:attr(data-thread-id);font-size:8px;line-height:1;color:var(--ink-soft)}
-  [data-thread-numbers="true"] .day-fingerprint>i.on::after{color:#101719}
-  .day-stamps{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;margin:16px 0 0}
+  .day-content{padding:var(--panel-y) var(--panel-x) var(--section-gap)}
+  .day-heading{padding-right:48px}
+  .day-result .day-close{position:absolute;right:calc(var(--panel-x) - 4px);top:calc(var(--panel-y) + 1px)}
+  .day-result h2{font-size:34px}
+  .day-result .bsub,.share-summary{font-size:var(--caption);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .day-row{margin-top:calc(var(--section-gap) + 4px)}
+  .day-row .track.dtrack{--day-neuron:18px;width:auto;min-width:0;margin:0;height:18px;background:none;
+    grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr)}
+  .day-stamps{display:flex;flex-wrap:wrap;gap:5px;margin-top:var(--section-gap)}
   .day-stamps>span{width:28px;flex:none}
   .day-stamps .rfeat{display:block;width:100%;height:auto}
-  #runveil .day-actions{padding:0 var(--panel-x) var(--panel-y);grid-template-columns:1fr;gap:var(--text-gap)}
-  #runveil .day-actions:has(#runoffer){grid-template-columns:1fr 1.7fr}
-  #runveil .day-actions:has(#againbtn):not(:has(#runoffer)){grid-template-columns:1.6fr 1fr}
-  #runveil .day-actions>.wbtn{grid-column:auto}
-  #runveil .day-actions>#resumebtn{grid-column:1/-1}
-  .day-more{display:flex;align-items:center;justify-content:space-between;gap:14px;
-    min-height:44px;padding:0 16px;border:1px solid var(--gelb);background:var(--gelb);
-    color:#15191C;font:inherit;text-align:left;cursor:pointer;
-    transition:border-color var(--t-ui),transform var(--t-lift) var(--ease-out)}
-  .day-more:hover,.day-more:focus-visible{border-color:#15191C}
-  .day-more:active{transform:translateY(1px) scale(.985);transition-duration:var(--t-ui),var(--t-press)}
-  .day-more b{font-size:14px;letter-spacing:-.015em;white-space:nowrap}
-  .day-more-price{font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
-  .share-options{grid-column:1/-1;display:grid;gap:12px;padding:12px 0 0}
+  #runveil .day-actions,.share-actions{border-top:1px solid var(--rule);padding:var(--content-gap) var(--panel-x) var(--panel-y);gap:var(--text-gap)}
+  #runveil .day-actions{grid-template-columns:1fr}
+  #runveil .day-actions:has(#againbtn){grid-template-columns:1fr 1fr}
+  #runveil .day-actions>:is(#resumebtn,#runoffer,.acct-ask,#firstsignup){grid-column:1/-1}
+  #runveil :is(.day-actions,.share-actions) .wbtn{display:flex;align-items:center;justify-content:center}
+  .day-more,.share-back{display:flex;align-items:center;justify-content:center;gap:.4em;min-height:44px;padding:0;
+    border:0;background:none;font:inherit;font-size:var(--menu-small);letter-spacing:.06em;color:var(--ink-soft);
+    cursor:pointer;transition:color var(--t-ui)}
+  .day-more b{color:var(--ink);font-weight:700}
+  :is(.day-more,.share-back):is(:hover,:focus-visible){color:var(--ink)}
+  :is(.day-more,.share-back):focus-visible{outline:1px solid var(--ink);outline-offset:-1px}
+  :is(.day-more,.share-back) svg.chev{margin:0}
+  .share-back{justify-content:flex-start;margin:-12px 0 0}
+  .share-back svg.chev{scale:-1 1}
+  .share-back:is(:hover,:focus-visible) svg.chev{translate:-2px 0}
   .share-options[hidden]{display:none}
-  .day-result.sharing .day-content{padding-bottom:0}
-  .day-result.sharing :is(.day-fingerprint,.day-award,.day-stamps),
-  #runveil .day-result.sharing .day-actions>:not(.share-options){display:none}
-  .share-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:12px;color:var(--ink-soft)}
+  .day-result.sharing .day-content{padding:0}
+  .day-result.sharing :is(.day-heading>:not(.day-close),.day-row,.day-stamps),
+  #runveil .day-result.sharing .day-actions{display:none}
+  .share-head{margin:0 var(--panel-x);padding:var(--panel-y) 48px var(--section-gap) 0;border-bottom:1px solid var(--rule)}
+  .share-body{display:grid;gap:var(--content-gap);padding:var(--section-gap) var(--panel-x)}
   .share-designs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
-  #runveil .share-options .wbtn{line-height:1.3;padding:8px 12px}
+  #runveil .share-options .wbtn{padding:8px 12px}
   .share-qual{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
-  .share-designs .wbtn[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 -2px var(--ink)}
-  .share-preview{width:min(100%,260px);margin:auto}
+  .share-preview{width:min(100%,240px);margin:auto}
   .share-preview canvas{display:block;width:100%;height:auto;border:1px solid var(--rule)}
-  .share-summary{margin:0;font-size:11px;line-height:1.4;color:var(--ink-soft);text-align:center}
-  .share-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .share-summary{margin:0;letter-spacing:.14em;color:var(--ink-soft);text-align:center}
+  .share-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
   .share-actions>.wbtn:first-child:nth-last-child(odd){grid-column:1/-1}
   @media(max-width:380px){
     #runveil.daily-result{padding:12px 12px calc(12px + env(safe-area-inset-bottom,0px))}
-    .day-result .day-heading h2{font-size:32px}
+    .day-result h2{font-size:28px}
   }
   @media(min-width:600px) and (max-height:500px){
     #runveil.daily-result>.day-result{max-width:660px}
-    .day-content{padding:16px}
-    .day-heading p{margin-bottom:6px}
-    .day-result .day-heading h2{font-size:28px}
-    .day-fingerprint{width:130px;margin:12px auto}
-    .day-fingerprint>i{width:13px}
-    .day-result-reading strong{font-size:24px}
-    .day-result-reading{font-size:11px}
-    .day-award{margin-bottom:12px}
-    .day-stamps{margin-top:12px}
-    #runveil .day-actions{padding:0 16px 16px}
+    .day-content{padding:16px 16px 12px}
+    .day-result .day-close{top:17px;right:12px}
+    .day-result h2{font-size:28px}
+    .day-row,.day-stamps{margin-top:12px}
+    #runveil .day-actions,.share-actions{padding:8px 16px 12px}
+    .share-head{margin:0 16px;padding:16px 48px 8px 0}
+    .share-body{padding:8px 16px;gap:8px}
+    .share-preview{width:120px}
   }
   .acct-err{font-size:11px;color:var(--ink);
     border-left:2px solid var(--sig-orange);padding-left:9px;line-height:1.45}
@@ -1713,7 +1704,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
     .say,.say.on{transform:none;
       transition-property:opacity,visibility}
     .say .rowin{animation:none}
-    .help:active,.act:active,.wbtn:active,.intro-start:active,.day-more:active,
+    .help:active,.act:active,.wbtn:active,.intro-start:active,
     .tval:hover,.tval:active{transform:none}
     .colour-blind-switch input::after{transition:none}
     .toast,.toast.show{transform:translateX(-50%);transition:opacity var(--t-ui)}
@@ -3294,7 +3285,7 @@ function netSpec(i, rules){
 }
 
 const SALT_V38=((from,rows)=>Object.fromEntries(rows.split(';').map((row,n)=>[new Date(Date.parse(from+'T00:00:00Z')+n*864e5).toISOString().slice(0,10),row.split(',').map(salt=>parseInt(salt,36)||0)])))("2026-09-26","6,,12,b,47,1a,6k,g8,8x,7o");
-const SALT_V39=((from,rows)=>Object.fromEntries(rows.split(';').map((row,n)=>[new Date(Date.parse(from+'T00:00:00Z')+n*864e5).toISOString().slice(0,10),row.split(',').map(salt=>parseInt(salt,36)||0)])))("2026-09-26","1e,1,1,,4b,q,3ig,7xj,4hm,aq;t,j,3v,4,g,o7,35,1d,8sq,12;8f,11,13,bx,59r,n,4w9,1sg,1sq,6n8;78,wc,1p,55j,20,7j,4v0,d1,zy,7d2;c6,hf,4wx,f,6p,48,c2,1yg,12b,w9;1j,152,t3,25,o,1gf,kt,3q8,4d0,3e");
+const SALT_V39=((from,rows)=>Object.fromEntries(rows.split(';').map((row,n)=>[new Date(Date.parse(from+'T00:00:00Z')+n*864e5).toISOString().slice(0,10),row.split(',').map(salt=>parseInt(salt,36)||0)])))("2026-09-26","1e,1,1,,4b,q,3ig,7xj,4hm,aq;t,j,3v,4,g,o7,35,1d,8sq,12;8f,11,13,bx,59r,n,4w9,1sg,1sq,6n8;78,wc,1p,55j,20,7j,4v0,d1,zy,7d2;c6,hf,4wx,f,6p,48,c2,1yg,12b,w9;1j,152,t3,25,o,1gf,kt,3q8,4d0,3e;20,41,8pa,17,1v,2uv,w6,ts,io,ld");
 function graceFor(s){
   if(!s) return 0;
   const load=(s.shared||0)+(s.pinned||0)+Math.max(0,(s.threads||0)-3);
@@ -10118,7 +10109,7 @@ function runOverOffer(depth,day){
   ensurePrice();
   if(!canBuy()) return '';
   const price=priceWords();
-  return `<button class="day-more" id="runoffer" aria-label="keep playing · ${price?esc(price)+' once':'one payment'}, no subscription"><b>keep playing</b>${price?`<span class="day-more-price">${esc(price)}</span>`:''}</button>`;
+  return `<button class="day-more" id="runoffer" aria-label="keep playing · premium, ${price?esc(price)+' once':'one payment'}, no subscription"><b>keep playing</b> <span>· premium</span>${CHEVRON}</button>`;
 }
 function showRunOver(){
   if(endlessActive)return;
@@ -10134,21 +10125,22 @@ function showRunOver(){
       <button class="wbtn solid" id="firstsignup">create an account</button>
     <button class="wbtn" id="sharebtn">${SHARE_LABEL}</button>`
     :(canResume()?`<button class="wbtn solid" id="resumebtn">${parked?'back to today':'resume your day'}</button>`:'')
-    +`<button class="wbtn${!canResume()&&!offer?' solid':''}" id="sharebtn">${SHARE_LABEL}</button>`
+    +`<button class="wbtn${canResume()?'':' solid'}" id="sharebtn">${SHARE_LABEL}</button>`
     +(canStartAnotherRun()?`<button class="wbtn" id="againbtn">play again${CHEVRON}</button>`:'');
   $('runveil').classList.add('daily-result');
   $('runbulletin').classList.add('day-result');
   $('runbulletin').classList.remove('sharing');
-  $('runbulletin').innerHTML=`<div class="day-content">
-    <div class="day-heading"><p>${esc(dayLabel(r.day))}</p><h2>${depth>=nets?'day complete':'your day so far'}</h2>
+  const flawless=isFlawless(tiers,r.day),grade=dayGrade(tiers,r.day),whole=depth>=nets;
+  const count=[...tiers].filter(t=>TIEROF[t]).length,untangled=count+'/'+nets+' untangled';
+  $('runbulletin').innerHTML=`<div class="bstrip"><i style="background:var(${grade?TIERCOL[grade]:'--rule'})"></i></div><div class="day-content">
+    <div class="day-heading"><h2>${flawless?'mastered':whole?'day complete':'your day so far'}</h2>
+      <p class="bsub">${flawless?'day complete · '+esc(dayLabel(r.day)):esc(dayLabel(r.day))+' · '+untangled}</p>
       <button class="help day-close" id="recordbtn2" aria-label="back to the menu">${CLOSE_GLYPH}</button></div>
-    ${dayFingerprint(tiers,r.day)}
-    ${isFlawless(tiers,r.day)?'<p class="day-award">mastered day</p>':''}
+    <div class="day-row" role="img" aria-label="${count} of ${nets} untangled${tierWords(tiers)?' · '+tierWords(tiers):''}${flawless?' · mastered day':''}">${rungTrack(tiers,true,true,r.day)}</div>
     ${stamps.length?`<div class="day-stamps" aria-label="discoveries from this day">${stamps.map(({key,tier,large})=>`<span role="img" aria-label="${esc(key+' concept · '+tierSay(tier))}">${featureStamp(key,tier,false,undefined,large)}</span>`).join('')}</div>`:''}
     <textarea class="shareout" id="shareout" readonly rows="3" aria-label="the day, to copy" hidden></textarea>
-    </div><div class="bactions day-actions">${actions}${offer}
-      <div class="share-options" id="shareoptions" role="group" aria-label="share options" hidden></div>
-    </div>`;
+    </div><div class="bactions day-actions">${actions}${offer}</div>
+    <div class="share-options" id="shareoptions" role="group" aria-label="share options" hidden></div>`;
   sayHide(true);showVeil('runveil');
   requestAnimationFrame(()=>requestAnimationFrame(()=>presentCompletedBoard(true)));
   $('recordbtn2').onclick=()=>{if(signup)setFirstPlay(false);hideVeils();openMenu('home')};
@@ -10281,6 +10273,12 @@ const isFlawless=(tiers,day)=>{
   return flawlessTally(t.filter(x=>x==='perfect').length,
                        t.filter(x=>x!=='done').length, t.length);
 };
+function dayGrade(tiers,day){
+  const nets=netsForDay(day),scores=String(tiers||'').slice(0,nets);
+  if(isFlawless(scores,day))return 'flawless';
+  const got=[...scores].map(t=>TIERRANK[TIEROF[t]]||0);
+  return ['perfect','clean','done'].find(g=>2*got.filter(n=>n>=TIERRANK[g]).length>=nets)||null;
+}
 function rungTrack(tiers,row,thread=false,day){
   const s=typeof tiers==='string'?tiers:'',nets=netsForDay(day);
   const flawless=isFlawless(s,day);
@@ -10394,20 +10392,6 @@ const SHARE_LABEL='share';
 const SHARE_DESIGNS={daily:'daily fingerprint',weekly:'weekly weave',postcard:'stamp postcard'};
 const runShareTiers=r=>r.cleared.slice(0,netsForDay(r.day))
   .map(c=>(RUNGOF[c.tier]||'?')[0]).join('');
-function dayFingerprint(tiers,day){
-  const nets=netsForDay(day),scores=String(tiers||'').slice(0,nets);
-  let arcs='',neurons='';
-  for(let i=0;i<nets;i++){
-    const angle=-Math.PI/2+i*2*Math.PI/nets,grade=TIEROF[scores[i]];
-    const point=a=>[50+42*Math.cos(a),50+42*Math.sin(a)].map(n=>n.toFixed(3));
-    const fill=grade?`--fill:var(${TIERCOL[grade]});`:'',p=point(angle);
-    arcs+=`<path style="${fill}" d="M${point(angle-Math.PI/nets)}A42 42 0 0 1 ${point(angle+Math.PI/nets)}"/>`;
-    neurons+=`<i data-thread-id="${i+1}"${grade?` class="on" data-grade="${grade}"`:''} style="${fill}left:${p[0]}%;top:${p[1]}%"></i>`;
-  }
-  const count=[...scores].filter(t=>TIEROF[t]).length;
-  const words=tierWords(scores,undefined,day);
-  return `<div class="day-fingerprint" role="img" aria-label="${count} of ${nets} untangled${words?' · '+words:''}"><svg class="day-loop" viewBox="0 0 100 100" aria-hidden="true">${arcs}</svg>${neurons}<div class="day-result-reading" aria-hidden="true"><strong>${count}/${nets}</strong><span>untangled</span></div></div>`;
-}
 const shareText=day=>'features · '+dayLabel(day)+'\nhttps://features.games/';
 function runShareDays(run){
   const saved=new Map(dayRows().map(row=>[row.d,row]));
@@ -10511,7 +10495,8 @@ function dayShareCanvas(day,tiers,stamps=[],design='daily',details={}){
       text(recorded?recorded+'/'+count:'—',1122,y+10,29,500,muted,'right');
     });
     text('empty thread · no recorded grades',78,1140,28,500,muted);
-    reading(rows.filter(row=>{const count=netsForDay(row.d);return row.depth>=count||[...String(row.tiers||'').slice(0,count)].filter(t=>TIEROF[t]).length>=count}).length,'days complete',78);
+    const complete=rows.filter(row=>{const count=netsForDay(row.d);return row.depth>=count||[...String(row.tiers||'').slice(0,count)].filter(t=>TIEROF[t]).length>=count}).length;
+    reading(complete,complete===1?'day complete':'days complete',78);
     reading(rows.filter(row=>isFlawless(row.tiers||'',row.d)).length,'mastered',1122,'right');
   }else if(design==='postcard'){
     const columns=shown.length>4?3:2,size=columns===2?280:232,gap=46;
@@ -10573,13 +10558,13 @@ function shareOptions(button,run){
     ...(navigator.clipboard?.write&&typeof ClipboardItem!=='undefined'?[['copyimage','copy image']]:[]),
     ['saveimage','save image'],['copylink','copy link']];
   button._shareDesign=Object.hasOwn(SHARE_DESIGNS,button._shareDesign)?button._shareDesign:'daily';
-  box.innerHTML=`<div class="share-heading"><span>choose a design</span><button class="wbtn" data-share="close">back</button></div>
-    <div class="share-designs" role="group" aria-label="result design">${Object.entries(SHARE_DESIGNS).map(([id,label])=>`<button class="wbtn" type="button" data-share-design="${id}" aria-pressed="false">${label.replace(/\S+ /,'<span class="share-qual">$&</span>')}</button>`).join('')}</div>
-    <div class="share-preview"></div><p class="share-summary" role="status" aria-live="polite"></p>
-    <div class="share-actions">${choices.map(([id,label])=>`<button class="wbtn${id==='share'?' solid':''}" type="button" data-share="${id}">${label}</button>`).join('')}</div>`;
+  box.innerHTML=`<div class="share-head"><button class="share-back" type="button" data-share="close">${CHEVRON}back</button><h2>share</h2><p class="bsub">choose a design</p></div>
+    <div class="share-body"><div class="share-designs" role="group" aria-label="result design">${Object.entries(SHARE_DESIGNS).map(([id,label])=>`<button class="wbtn" type="button" data-share-design="${id}" aria-pressed="false">${label.replace(/\S+ /,'<span class="share-qual">$&</span>')}</button>`).join('')}</div>
+    <div class="share-preview"></div><p class="share-summary" role="status" aria-live="polite"></p></div>
+    <div class="share-actions">${choices.map(([id,label],i)=>`<button class="wbtn${i?'':' solid'}" type="button" data-share="${id}">${label}</button>`).join('')}</div>`;
   const draw=()=>{
     const design=button._shareDesign,tiers=runShareTiers(run),rows=runShareDays(run),discoveries=runShareDiscoveries(run);
-    box.querySelectorAll('[data-share-design]').forEach(option=>option.setAttribute('aria-pressed',String(option.dataset.shareDesign===design)));
+    box.querySelectorAll('[data-share-design]').forEach(option=>{const on=option.dataset.shareDesign===design;option.setAttribute('aria-pressed',String(on));option.classList.toggle('solid',on)});
     const nets=netsForDay(run.day);
     const label=design==='weekly'?rows.map(row=>dayLabel(row.d)+': '+([...row.tiers].some(t=>TIEROF[t])?[...row.tiers].filter(t=>TIEROF[t]).length+' of '+netsForDay(row.d)+' untangled; '+tierWords(row.tiers,undefined,row.d)+(isFlawless(row.tiers,row.d)?', mastered':''):'no recorded grades')).join('; ')
       :run.cleared.length+' of '+nets+' untangled; '+discoveries+' concepts discovered; '+tierWords(tiers,undefined,run.day)+(isFlawless(tiers,run.day)?'; mastered day':'');
