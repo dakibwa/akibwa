@@ -48,6 +48,33 @@ test("a permanently wrong artifact fails at the deadline with expected and actua
   });
 });
 
+test("unchanged game bytes wait for the new header policy at the game path", async () => {
+  const paths = [];
+  const policy = "public, max-age=0, must-revalidate, no-transform";
+  await fixture((request, response) => {
+    paths.push(request.url);
+    response.setHeader("cache-control", paths.length < 3 ? "public, max-age=0, must-revalidate" : policy);
+    response.end(expected);
+  }, async (origin) => {
+    await waitForHostedExport(origin, hash(expected), {
+      ...deadlineOptions, path: "/features/", expectedHeaders: {"cache-control": policy},
+    });
+    assert.deepEqual(paths, ["/features/", "/features/", "/features/"]);
+  });
+});
+
+test("matching game bytes with a permanently old header policy fail at the deadline", async () => {
+  await fixture((_request, response) => {
+    response.setHeader("cache-control", "public, max-age=0, must-revalidate");
+    response.end(expected);
+  }, async (origin) => {
+    await assert.rejects(waitForHostedExport(origin, hash(expected), {
+      ...deadlineOptions,
+      expectedHeaders: {"cache-control": "public, max-age=0, must-revalidate, no-transform"},
+    }), /headers cache-control=public, max-age=0, must-revalidate/);
+  });
+});
+
 test("matching bytes with a failure status never count as the deployed page", async () => {
   let requests = 0;
   await fixture((_request, response) => {

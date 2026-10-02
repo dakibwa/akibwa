@@ -2,14 +2,16 @@ import { createHash } from "node:crypto";
 import { setTimeout as delay } from "node:timers/promises";
 
 // Wrangler can finish before an edge starts serving the new asset version.
-// Wait only for that version marker; the caller still checks every response
+// Wait for the bytes and any changed headers; the caller still checks every response
 // and security policy once, without retrying or weakening failed assertions.
 export async function waitForHostedExport(origin, expectedHash, {
   timeoutMs = 60000,
   intervalMs = 2000,
   log = console.log,
+  path = "/",
+  expectedHeaders = {},
 } = {}) {
-  const target = new URL("/", origin);
+  const target = new URL(path, origin);
   const deadline = performance.now() + timeoutMs;
   let attempts = 0;
   let lastResponse = "no response";
@@ -26,7 +28,9 @@ export async function waitForHostedExport(origin, expectedHash, {
         const actual = createHash("sha256").update(Buffer.from(await response.arrayBuffer())).digest("hex");
         lastResponse = `HTTP 200, SHA256 ${actual}`;
         lastRequestError = null;
-        if (actual === expectedHash) {
+        const mismatches = Object.entries(expectedHeaders).filter(([name, value]) => response.headers.get(name) !== value);
+        if (mismatches.length) lastResponse += `; headers ${mismatches.map(([name]) => `${name}=${response.headers.get(name)}`).join(", ")}`;
+        if (actual === expectedHash && !mismatches.length) {
           if (attempts > 1) log(`Export ready at ${target.origin} after ${attempts} checks.`);
           return;
         }

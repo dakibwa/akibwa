@@ -101,7 +101,8 @@ Keep a direct browser run-through of the affected pages alongside this check.
 excluding Markdown and `docs/**`, and can also be dispatched manually. It builds
 one export with the release check, deploys it, then verifies the exact served
 bytes on both the preview and public domain. Each origin gets up to 60 seconds
-to serve this build's exact homepage bytes after Wrangler finishes, because
+to serve this build's exact homepage and game bytes, plus the game's header policy,
+after Wrangler finishes, because
 edge propagation can briefly leave the previous deployment visible. After
 readiness, all content, security and route assertions run once. A wrong artifact
 at the deadline or any failed assertion fails the workflow; check the affected

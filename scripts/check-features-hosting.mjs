@@ -7,7 +7,9 @@ const root = new URL('../out/features/', import.meta.url);
 const origin = new URL(process.argv[2] || 'https://features.games');
 const preview = origin.hostname.endsWith('.workers.dev');
 const hash = body => createHash('sha256').update(body).digest('hex');
-await waitForHostedExport(origin, hash(await readFile(new URL('index.html', root))));
+await waitForHostedExport(origin, hash(await readFile(new URL('index.html', root))), {
+  expectedHeaders: {'cache-control': 'public, max-age=0, must-revalidate, no-transform'},
+});
 for (const file of ['index.html', 'manifest.webmanifest', 'og.png', 'icon-192.png', 'icon-512-maskable.png']) {
   const response = await fetch(new URL(file === 'index.html' ? '/' : file, origin));
   assert.equal(response.status, 200, file);

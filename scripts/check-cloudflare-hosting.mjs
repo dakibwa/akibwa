@@ -47,6 +47,10 @@ assert.ok(files.length <= 20000, "export exceeds the Workers Free asset count");
 assert.ok(files.every((file) => file.bytes <= 25 * 1024 * 1024), "export contains an asset larger than 25 MiB");
 
 await waitForHostedExport(origin, hash(await readFile(join(root, "index.html"))));
+await waitForHostedExport(origin, hash(await readFile(join(root, "features/index.html"))), {
+  path: "/features/",
+  expectedHeaders: {"cache-control": "public, max-age=0, must-revalidate, no-transform"},
+});
 
 const pages = ["", "features", "trek", "meditator"];
 for (const page of pages) {
