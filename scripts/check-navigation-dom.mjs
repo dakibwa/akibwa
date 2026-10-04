@@ -398,7 +398,7 @@ const checkPublicLanding = async () => {
   check(await waitFor(`document.activeElement?.id === "room-career"`), "the homepage accepts focus after leaving an open sheet");
   await goto("/#music");
   check(await evaluate(`!document.querySelector("dialog:modal")`), "returning to music does not reopen the previous sheet");
-  for (const width of [320, 360, 820]) {
+  for (const width of [320, 360, 401, 414, 479, 480, 600, 720, 820]) {
     await setDesktop(width, 844);
     await sleep(500);
     const fit = await evaluate(`(() => { const map = document.querySelector("#music .music-map").getBoundingClientRect(); const wide = [...document.querySelectorAll("body *")].filter((element) => element.getBoundingClientRect().right > innerWidth + 1).map((element) => element.tagName + "." + String(element.className).split(" ")[0]).slice(0, 3); return { ok: document.documentElement.scrollWidth <= innerWidth + 1 && map.right <= innerWidth, wide, right: Math.round(map.right) }; })()`);

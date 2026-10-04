@@ -2367,7 +2367,7 @@ html:not(.js) .music-tile .music-hours {
 }
 
 /* The five room names fit the narrowest phones on one line. */
-@media (max-width: 400px) {
+@media (max-width: 479px) {
   .bar-rooms {
     gap: 0;
   }
