@@ -1305,8 +1305,8 @@ try{var a=JSON.parse(localStorage.getItem("features-accessibility-v1")||"{}");fo
   .view-profile .paneside{overflow-y:auto;overscroll-behavior:contain}
   .view-profile .pane-head{flex:none;padding-bottom:var(--section-gap);border-bottom:1px solid var(--rule)}
   .view-profile .acct-body{flex:none;overflow:visible}
-  .view-profile .acct-body.acct-door{flex:1 0 auto;justify-content:flex-start;padding-top:var(--section-gap)}
-  .acct-door>*{width:100%;max-width:400px}
+  .view-profile .acct-body.acct-door{flex:1 0 auto;justify-content:center;padding-block:var(--section-gap)}
+  .acct-door>*{width:100%;max-width:400px;margin-inline:auto}
   .pane-head[hidden],.paneside .pay-body[hidden],.paneside .acct-body[hidden],.rec-arch[hidden]{display:none}
   #menudoors{grid-column:1/-1;grid-row:3}
   #introcard:is(.view-profile,.view-pay,.view-rules,.view-coll) :is(#introbody,.opening){display:none}
