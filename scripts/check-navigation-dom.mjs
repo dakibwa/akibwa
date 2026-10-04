@@ -330,6 +330,7 @@ const checkPublicLanding = async () => {
   await sleep(600);
   check(await roomVisible("music"), "a room's link opens straight into it");
   check(await evaluate("scrollY === 0"), "a room's link loads with the bar in view");
+  check(await evaluate("document.activeElement?.id === 'room-music'"), "a shared room link focuses its heading");
   await evaluate("history.back()");
   await sleep(900);
   check(await evaluate("document.documentElement.dataset.room === 'index' && location.pathname === '/'"), "Back from a shared room link lands on the front page");
@@ -387,14 +388,54 @@ const checkPublicLanding = async () => {
   await cdp.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
   await sleep(500);
   check(await evaluate(`!document.querySelector("dialog.music-tracks[open]") && document.documentElement.dataset.room === "music"`), "Escape closes the track list and leaves the room open");
+  check(await evaluate(`document.activeElement?.classList.contains("music-face") && document.activeElement?.getAttribute("aria-label").startsWith("Graceland")`), "closing a sheet returns keyboard focus to its album");
   check(await evaluate(`!document.body.innerHTML.includes("spotify:")`), "no track identifiers reach the page");
-  for (const width of [360, 820]) {
+  await evaluate(`document.querySelectorAll("#music .is-albums .music-face")[1].click()`);
+  await waitFor(`Boolean(document.querySelector("dialog:modal"))`);
+  await evaluate("history.back()");
+  check(await waitFor(`document.documentElement.dataset.room === "index" && !document.querySelector("dialog:modal")`), "Back with a sheet open releases the homepage from the modal");
+  await clickThing("career");
+  check(await waitFor(`document.activeElement?.id === "room-career"`), "the homepage accepts focus after leaving an open sheet");
+  await goto("/#music");
+  check(await evaluate(`!document.querySelector("dialog:modal")`), "returning to music does not reopen the previous sheet");
+  for (const width of [320, 360, 820]) {
     await setDesktop(width, 844);
     await sleep(500);
     const fit = await evaluate(`(() => { const map = document.querySelector("#music .music-map").getBoundingClientRect(); const wide = [...document.querySelectorAll("body *")].filter((element) => element.getBoundingClientRect().right > innerWidth + 1).map((element) => element.tagName + "." + String(element.className).split(" ")[0]).slice(0, 3); return { ok: document.documentElement.scrollWidth <= innerWidth + 1 && map.right <= innerWidth, wide, right: Math.round(map.right) }; })()`);
     check(fit.ok, `the music map fits ${width}px [${fit.right}px ${fit.wide.join(", ")}]`);
   }
   await setDesktop();
+
+  section("music loading recovery");
+  await cdp.send("Fetch.enable", { patterns: [{ urlPattern: "*music-ranking.json", requestStage: "Request" }] });
+  let paused = cdp.waitFor("Fetch.requestPaused");
+  let navigation = goto("/#music");
+  let request = await paused;
+  await cdp.send("Fetch.fulfillRequest", { requestId: request.requestId, responseCode: 503, body: Buffer.from("unavailable").toString("base64") });
+  await navigation;
+  check(await waitFor(`Boolean(document.querySelector("#music .music-more button"))`), "a failed ranking preserves the seed and offers recovery");
+  await evaluate(`document.querySelector("#music .music-face").click()`);
+  check(await waitFor(`Boolean(document.querySelector("dialog[open] .music-tracks-note button"))`), "a failed track list can be retried from inside its modal");
+  paused = cdp.waitFor("Fetch.requestPaused");
+  await evaluate(`document.querySelector("dialog .music-tracks-note button").click()`);
+  request = await paused;
+  await cdp.send("Fetch.continueRequest", { requestId: request.requestId });
+  await cdp.send("Fetch.disable");
+  check(await waitFor(`Boolean(document.querySelector("dialog[open] .music-track-list li"))`, 8000), "retrying fills the same open sheet with its tracks");
+
+  await cdp.send("Fetch.enable", { patterns: [{ urlPattern: "*music-ranking.json", requestStage: "Request" }] });
+  paused = cdp.waitFor("Fetch.requestPaused");
+  navigation = goto("/#music");
+  request = await paused;
+  await cdp.send("Fetch.fulfillRequest", {
+    requestId: request.requestId,
+    responseCode: 200,
+    responseHeaders: [{ name: "Content-Type", value: "application/json" }],
+    body: Buffer.from(JSON.stringify({ schemaVersion: 2, names: [], songs: [], albums: [] })).toString("base64")
+  });
+  await navigation;
+  check(await waitFor(`document.querySelectorAll("#music .music-tile").length === 150 && Boolean(document.querySelector("#music .music-more button"))`), "an empty successful response cannot erase the music room");
+  await cdp.send("Fetch.disable");
 
   section("mascot");
   await goto("/");
@@ -446,6 +487,18 @@ const checkPublicLanding = async () => {
   const { nodeId } = await cdp.send("DOM.querySelector", { nodeId: root.nodeId, selector: "#career" });
   const box = await cdp.send("DOM.getBoxModel", { nodeId }).catch(() => null);
   check(Boolean(box), "a room's link still opens the room through :target");
+  await setDesktop(320, 568);
+  for (const id of ["music", "features", "websites", "career", "trek"]) {
+    await cdp.send("Emulation.setScriptExecutionDisabled", { value: true });
+    await goto(`/#${id}`);
+    await cdp.send("Emulation.setScriptExecutionDisabled", { value: false });
+    check(await roomVisible(id), `${id} opens without JavaScript`);
+    check(await evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), `${id} fits a 320px phone without JavaScript`);
+    if (id === "features" || id === "trek") {
+      check(await evaluate(`Boolean(document.querySelector("#${id} iframe.room-frame")?.getBoundingClientRect().width)`), `${id} retains its framed content without JavaScript`);
+    }
+  }
+  await setDesktop();
   await goto("/");
 
   section("reduced motion");

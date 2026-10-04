@@ -9,7 +9,8 @@
    URLs, new pixels — or removed. Activation purges the old cache, so returning
    visitors get the new art on their next load instead of one visit behind.
    v3: the album archive, wall and old project artwork were deleted. */
-const CACHE_NAME = "akibwa-static-v3";
+const CACHE_NAME = "akibwa-static-v4";
+const CACHE_PREFIX = "akibwa-static-";
 
 /* Other apps share this origin and own their own caching. */
 const FOREIGN_PATHS = ["/features/", "/onebagger/"];
@@ -25,33 +26,40 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches
       .keys()
-      .then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))))
+      .then((keys) => Promise.all(keys.filter((key) => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME).map((key) => caches.delete(key))))
       .then(() => self.clients.claim())
   );
 });
 
 async function cacheFirst(request) {
-  const cache = await caches.open(CACHE_NAME);
-  const cached = await cache.match(request);
+  const cache = await caches.open(CACHE_NAME).catch(() => null);
+  const cached = await cache?.match(request).catch(() => null);
   if (cached) return cached;
 
   const response = await fetch(request);
-  if (response.ok) cache.put(request, response.clone());
+  if (response.ok) await cache?.put(request, response.clone()).catch(() => {});
   return response;
 }
 
-async function staleWhileRevalidate(request) {
-  const cache = await caches.open(CACHE_NAME);
-  const cached = await cache.match(request);
-
+function staleWhileRevalidate(request) {
+  const opened = caches.open(CACHE_NAME).catch(() => null);
+  const cached = opened.then((cache) => cache?.match(request).catch(() => null));
   const refresh = fetch(request)
-    .then((response) => {
-      if (response.ok) cache.put(request, response.clone());
+    .then(async (response) => {
+      const cache = await opened;
+      if (response.ok) await cache?.put(request, response.clone()).catch(() => {});
       return response;
     })
-    .catch(() => cached);
+    .catch(async (error) => {
+      const previous = await cached;
+      if (previous) return previous;
+      throw error;
+    });
 
-  return cached || refresh;
+  return {
+    response: cached.then((previous) => previous || refresh),
+    refreshed: refresh.then(() => {}, () => {})
+  };
 }
 
 self.addEventListener("fetch", (event) => {
@@ -69,6 +77,10 @@ self.addEventListener("fetch", (event) => {
   }
 
   if (ASSET_EXTENSIONS.test(url.pathname)) {
-    event.respondWith(staleWhileRevalidate(request));
+    const task = staleWhileRevalidate(request);
+    event.respondWith(task.response);
+    // Keep the worker alive until the network refresh AND cache write finish,
+    // even when the cached response has already reached the page.
+    event.waitUntil(task.refreshed);
   }
 });

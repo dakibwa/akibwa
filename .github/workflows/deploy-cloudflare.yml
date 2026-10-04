@@ -45,7 +45,7 @@ jobs:
         run: npm ci
 
       - name: Check hosting verification logic
-        run: node --test scripts/hosting-readiness.test.mjs scripts/hosting-robots.test.mjs
+        run: node --test scripts/hosting-readiness.test.mjs scripts/hosting-robots.test.mjs scripts/service-worker.test.mjs
 
       - name: Run release check
         run: npm run check:release

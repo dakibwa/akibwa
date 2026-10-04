@@ -97,12 +97,16 @@ export function PaperHome({ music, websites }) {
       history.pushState({ akibwaRoom: initial }, "", `#${initial}`);
       setRoom(initial);
       root.dataset.room = initial;
+      window.scrollTo({ top: 0, behavior: "instant" });
+      document.getElementById(`room-${initial}`)?.focus({ preventScroll: true });
     } else {
       root.dataset.room = "index";
     }
     const restore = () => {
-      const next = history.state?.akibwaRoom ?? location.hash.slice(1);
-      show(isRoom(next) ? next : null);
+      const hash = location.hash.slice(1);
+      const next = isRoom(hash) ? hash : null;
+      // Back can send both events; direct hash links send only hashchange.
+      if (root.dataset.room !== (next ?? "index")) show(next);
     };
     const escape = (event) => {
       if (event.key !== "Escape" || !isRoom(document.documentElement.dataset.room)) return;
@@ -111,9 +115,11 @@ export function PaperHome({ music, websites }) {
       });
     };
     window.addEventListener("popstate", restore);
+    window.addEventListener("hashchange", restore);
     window.addEventListener("keydown", escape);
     return () => {
       window.removeEventListener("popstate", restore);
+      window.removeEventListener("hashchange", restore);
       window.removeEventListener("keydown", escape);
       clearTimeout(drawn);
     };

@@ -41,6 +41,10 @@ export function FramedRoom({ active, name, path, search = "", title }) {
   }, [active]);
   return (
     <div className={`room-body framed-room is-${name}`}>
+      <noscript>
+        {name === "features" ? <p className="frame-note">Enable JavaScript to play Features.</p> : null}
+        <iframe className="room-frame" src={`${page(path)}${search}`} title={title} loading="lazy" />
+      </noscript>
       {opened ? (
         <iframe className="room-frame" src={`${page(path)}${search}`} title={title} allow="fullscreen" onLoad={bleed(name)} />
       ) : (

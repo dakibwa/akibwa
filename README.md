@@ -24,6 +24,7 @@ The approved career roles, cultural curation and Instagram/X links are restored 
 
 - `npm run build`: run the public-boundary and Trek privacy contracts, then export to `out/`.
 - `npm run check:navigation:dom`: exercise the rendered public boundary in Chrome.
+- `npm run check:worker`: check repeat-visit caching, background refreshes, offline failures and cache isolation from other apps.
 - `npm run publish:check`: verify registered public surfaces and exported routes.
 - `npm run publish:ready`: run the full publication gate.
 - `npm run trek:build`: rebuild the Trek from the exact route data and privacy-edited journal.

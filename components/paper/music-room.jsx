@@ -427,7 +427,7 @@ function Sheet({ cover, title, byline, totals, links, label, onClose, children }
 // The same song on a sheet as on the map, whatever its reissue note.
 const sameSong = (a, b) => fold(songTitle(a)).trim() === fold(songTitle(b)).trim();
 
-function AlbumTracks({ album, year, picked, found, loading, onClose }) {
+function AlbumTracks({ album, year, picked, found, loading, loadError, retry, onClose }) {
   const lit = useRef(null);
   const most = Math.max(1, ...(album.tracks ?? []).map((track) => track.plays));
   // A song chosen on the map is brought into view on its album's list.
@@ -464,9 +464,10 @@ function AlbumTracks({ album, year, picked, found, loading, onClose }) {
           })}
         </ol>
       ) : (
-        <p className="music-tracks-note" role="status">
-          {loading ? "Fetching the tracks…" : "The tracks could not be loaded."}
-        </p>
+        <div className="music-tracks-note">
+          <p role="status">{loading ? "Fetching the tracks…" : "The tracks could not be loaded."}</p>
+          {loadError && !loading ? <button type="button" className="chip" onClick={retry}>try loading again</button> : null}
+        </div>
       )}
     </Sheet>
   );
@@ -502,6 +503,16 @@ export function MusicRoom({ initial, active }) {
   // What a sheet shows: an album (with a song lit) or a song alone.
   const [open, setOpen] = useState(null);
   const opener = useRef(null);
+  useEffect(() => {
+    if (!active) {
+      setOpen(null);
+      opener.current = null;
+    } else if (!open) {
+      // Wait until the modal has been removed and the map accepts focus.
+      opener.current?.focus({ preventScroll: true });
+      opener.current = null;
+    }
+  }, [active, open]);
   const map = useRef(null);
   const list = useRef(null);
   const live = useRef(null);
@@ -588,11 +599,11 @@ export function MusicRoom({ initial, active }) {
 
   const close = () => {
     setOpen(null);
-    opener.current?.focus({ preventScroll: true });
   };
 
   return (
     <div className="room-body music">
+      <noscript><p className="music-tracks-note">Enable JavaScript to search music and open track lists.</p></noscript>
       <div className="music-bar">
         <div className="music-switch" role="group" aria-label="Albums or songs" data-view={pressed}>
           <span className="music-switch-thumb" aria-hidden="true" />
@@ -651,16 +662,18 @@ export function MusicRoom({ initial, active }) {
         </div>
       ) : null}
 
-      {album ? (
+      {active && album ? (
         <AlbumTracks
           album={album}
           year={album.year || meta?.years?.[album.id] || null}
           picked={song ? song.title : null}
           found={links?.albums?.[album.id]}
           loading={music.loading}
+          loadError={music.loadError}
+          retry={music.retry}
           onClose={close}
         />
-      ) : song ? (
+      ) : active && song ? (
         <SongSheet song={song} onClose={close} />
       ) : null}
     </div>

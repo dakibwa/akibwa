@@ -33,6 +33,22 @@ Dan asked for the site to be rebuilt from first principles with the sensibility 
 - **trek** frames the standalone `/trek/` journey in place, filling the room under the bar, with no link out; it loads the first time the room opens. Framed, `/trek/` hides its own masthead and sends its links to the whole window.
 - Reduced motion removes the drawing, spinning, bobbing and view transitions; everything appears at rest.
 
+Room links, including shared links, focus the room heading. Closing a music
+sheet returns focus to its tile; browser Back closes any open sheet before
+showing the front page, so an invisible native modal cannot leave it inert.
+Failed track loads can be retried from inside the sheet, and invalid or empty
+ranking responses preserve the page's usable seed and offer a retry.
+
+Without JavaScript, the Music room shows its albums in a responsive grid and
+explains how to enable search and track lists. Features and Trek retain their
+frames through `noscript`; Features explains that playing requires JavaScript,
+and Trek retains its original static day list. All five room links fit at 320px.
+
+The root service worker owns only `akibwa-static-*` caches. Activating a new
+version preserves other apps' caches and the Trek tile cache. Background artwork
+refreshes keep the worker alive through the network response and cache write;
+unavailable cache storage or a full cache does not block a valid network response.
+
 ## Standalone project surfaces
 
 - Project cards open standalone destinations: `https://portuguesewithines.com/` and `https://www.castle-bank.com/`. Do not add `from=akibwa` or activate an Akibwa portfolio header on the destination.
@@ -40,5 +56,12 @@ Dan asked for the site to be rebuilt from first principles with the sensibility 
 - Trek opens as an interactive terrain relief with an SVG Atlas alternative, explicit playback controls and reachable photo/music context on phones and desktop. It uses the existing public geography and cached elevation.
 
 ## Verification — 24 September 2026
+
+The browser suite also covers shared-link focus, modal closure on Back, focus
+restoration after closing a sheet, failed-load retry within the modal, rejection
+of an empty HTTP-success ranking, and every room without JavaScript at 320px.
+`npm run check:worker` checks cache ownership, background-refresh lifetime,
+offline images, storage failures and foreign-app exclusions; the deployment
+workflow runs these checks alongside its hosting verification tests.
 
 `npm run check:navigation` covers the routes, search posture, private contact, the name change's timing, the five things, the restored components, the public song ranking's fields and the music map (no holes or overlaps, the most listened first), and every album's sleeve against an independent cover or a review by eye, its links and its hours by year (`scripts/check-music-room-data.mjs`). `npm run check:navigation:dom` renders the front page at 320–1920px, rooms and history, the ink tab, the sole mascot appearing on paper and being dragged, the square music map and switch with all the songs and a small sleeve growing, the career cards, websites, the framed trek and Features game, unselectable text, rooms without JavaScript, reduced motion and a clean console.

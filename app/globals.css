@@ -907,6 +907,22 @@ html:not(.js) :is(#features, #trek):target {
   min-height: 0;
 }
 
+html:not(.js) .framed-room > .room-frame {
+  display: none;
+}
+
+html:not(.js) .framed-room > noscript {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.frame-note {
+  margin: 0 0 12px;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
 .room-frame {
   display: block;
   flex: 1;
@@ -1946,6 +1962,34 @@ button.music-face {
   font-size: 13px;
 }
 
+.music-tracks-note .chip {
+  margin-top: 10px;
+}
+
+/* The static album list remains readable when scripting is unavailable. */
+html:not(.js) .music-bar {
+  display: none;
+}
+
+html:not(.js) .music-map {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 4px;
+  height: auto !important;
+}
+
+html:not(.js) .music-tile {
+  position: relative;
+  inset: auto !important;
+  width: auto !important;
+  height: auto !important;
+  aspect-ratio: 1;
+}
+
+html:not(.js) .music-tile .music-hours {
+  opacity: 1;
+}
+
 .music-tracks-cover .music-blank {
   aspect-ratio: 1;
 }
@@ -2324,8 +2368,12 @@ button.music-face {
 
 /* The five room names fit the narrowest phones on one line. */
 @media (max-width: 400px) {
+  .bar-rooms {
+    gap: 0;
+  }
+
   .bar-rooms a {
-    padding: 0 6px;
+    padding: 0 4px;
     font-size: 16px;
   }
 }
