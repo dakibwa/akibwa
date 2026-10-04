@@ -10,6 +10,7 @@ export async function waitForHostedExport(origin, expectedHash, {
   log = console.log,
   path = "/",
   expectedHeaders = {},
+  requestHeaders = {},
 } = {}) {
   const target = new URL(path, origin);
   const deadline = performance.now() + timeoutMs;
@@ -22,6 +23,7 @@ export async function waitForHostedExport(origin, expectedHash, {
     try {
       const response = await fetch(target, {
         redirect: "manual",
+        headers: requestHeaders,
         signal: AbortSignal.timeout(Math.max(1, Math.ceil(Math.min(15000, deadline - performance.now())))),
       });
       if (response.status === 200) {
