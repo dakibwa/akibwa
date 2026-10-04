@@ -1484,6 +1484,7 @@ try{var a=JSON.parse(localStorage.getItem("features-accessibility-v1")||"{}");fo
   :is(.wbweek,.endless-grid-space) .day-thread>i::after{animation:netbreathe 4.8s ease-in-out infinite;
     animation-delay:calc(var(--wave,0ms) - 9.6s)}
   @media(prefers-reduced-motion:reduce){:is(.wbweek,.endless-grid-space) .day-thread>i::after{animation:none}}
+  #introveil:not(.show) :is(.wbweek,.endless-grid-space) .day-thread>i::after{animation:none}
   [data-thread-numbers="true"] .track.day-thread i[data-thread-id]::after{display:grid;line-height:1}
   [data-thread-numbers="true"] .day-thread i:not(.on)::after{color:var(--ink-soft)}
   [data-result-patterns="true"] .track.day-thread [data-grade]{background-image:none}
