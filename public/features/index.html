@@ -1461,11 +1461,11 @@ try{var a=JSON.parse(localStorage.getItem("features-accessibility-v1")||"{}");fo
   .wbweek::-webkit-scrollbar{width:5px}
   .wbweek::-webkit-scrollbar-thumb{background:var(--silver)}
   .wbweek::-webkit-scrollbar-track{background:transparent}
-  .wbday{display:grid;grid-template-columns:7px 5.6em minmax(0,1fr);font-size:var(--menu-small);
+  .wbday{display:grid;grid-template-columns:7px 4.4em minmax(0,1fr);font-size:var(--menu-small);
          gap:8px 10px;align-items:center;padding:0 9px 0 0;min-height:clamp(28px,2.8vw,42px);
          overflow:hidden}
   @media(max-width:340px){
-    .wbday{grid-template-columns:7px 4.4em minmax(0,1fr);column-gap:8px}
+    .wbday{column-gap:8px}
     .wbweek .wbday .track.dtrack{--day-neuron:clamp(11px,4.2vw,15px)}
   }
 
@@ -1512,6 +1512,7 @@ try{var a=JSON.parse(localStorage.getItem("features-accessibility-v1")||"{}");fo
   .wbday.locked .track{transition:opacity var(--t-ui)}
   .wbday .wbwhen{display:flex;align-items:center;justify-content:space-between;gap:.4em;min-width:0}
   .wbday .wbwhen>.lock{width:12px;height:12px;color:var(--ink-soft)}
+  .wbday .wbwhen:has(>.lock){justify-content:center}
   .wbdate{display:inline-flex;gap:.55em;font-variant-numeric:tabular-nums}
   .wbdate>b{font-weight:inherit;min-width:calc(2ch + .28em);text-align:right}
   .wbday.locked .day-thread.denied>i::after{border-color:var(--sig-orange)}
@@ -1881,6 +1882,7 @@ try{var a=JSON.parse(localStorage.getItem("features-accessibility-v1")||"{}");fo
   .climb-range>b{display:inline-block;min-width:calc(2ch + .28em);font-weight:inherit;text-align:right}
   .climb-group.active .climb-group-head{color:var(--ink)}
   .climb-range>.lock{display:block;width:12px;height:12px;color:var(--ink-soft)}
+  .climb-group-head:has(>.climb-range>.lock){justify-content:center}
   .climb-group.progress-locked .climb-spine{opacity:calc(.6 + .4 * var(--row-glow,0))}
   .climb-group.progress-locked .climb-thread>i::before,.climb-group.progress-locked .climb-thread>i::after,
   .climb-thread>i.progress-locked::before,.climb-thread>i.progress-locked::after{opacity:calc(.6 + .4 * var(--glow,0))}
