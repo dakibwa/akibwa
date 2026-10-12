@@ -13,13 +13,14 @@ const ready=await waitForHostedExport(origin, hash(await readFile(new URL('index
   requestHeaders: documentHeaders,
 });
 for (const file of ['index.html', 'manifest.webmanifest', 'og.png', 'icon-192.png', 'icon-512-maskable.png']) {
-  // Readiness already fetched these exact document bytes. A second request can
-  // hit an edge still serving the previous deployment during propagation.
-  const response = file==='index.html'?ready.response:await fetch(new URL(file,origin));
-  const body = file==='index.html'?ready.body:Buffer.from(await response.arrayBuffer());
+  // Each file can propagate separately. Check the matched response without
+  // refetching an edge that could still serve the previous deployment.
+  const expected = await readFile(new URL(file, root));
+  const matched = file==='index.html'?ready:await waitForHostedExport(origin, hash(expected), {path: file});
+  const {response, body} = matched;
   assert.equal(response.status, 200, file);
   if (file === 'index.html') assert.match(response.headers.get('content-encoding') || '', /^(gzip|br|zstd)$/, 'game must stay compressed');
-  assert.equal(hash(body), hash(await readFile(new URL(file, root))), file + ' bytes');
+  assert.equal(hash(body), hash(expected), file + ' bytes');
   assert.equal(response.headers.get('x-content-type-options'), 'nosniff');
   assert.equal(response.headers.get('x-frame-options'), 'SAMEORIGIN');
   assert.match(response.headers.get('cache-control'), /max-age=0.*must-revalidate/);

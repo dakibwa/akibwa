@@ -46,33 +46,31 @@ const files = await inventory(root);
 assert.ok(files.length <= 20000, "export exceeds the Workers Free asset count");
 assert.ok(files.every((file) => file.bytes <= 25 * 1024 * 1024), "export contains an asset larger than 25 MiB");
 
-const readyPages = new Map();
-readyPages.set("/", await waitForHostedExport(origin, hash(await readFile(join(root, "index.html")))));
-readyPages.set("/features/", await waitForHostedExport(origin, hash(await readFile(join(root, "features/index.html"))), {
-  path: "/features/",
-  expectedHeaders: {"cache-control": "public, max-age=0, must-revalidate"},
-}));
-
 const pages = ["", "features", "trek", "meditator"];
 for (const page of pages) {
   const path = page ? `/${page}/` : "/";
-  const ready = readyPages.get(path);
-  const response = ready?.response || await request(path);
+  const expected = await readFile(join(root, page, "index.html"));
+  const ready = await waitForHostedExport(origin, hash(expected), {
+    path,
+    expectedHeaders: page === "features" ? {"cache-control": "public, max-age=0, must-revalidate"} : {},
+  });
+  const response = ready.response;
   assert.equal(response.status, 200, `${path} must remain available`);
   assert.match(response.headers.get("content-type") || "", /text\/html/, `${path} MIME type`);
   checkRevalidation(response, path);
-  assert.equal(hash(ready?.body || Buffer.from(await response.arrayBuffer())), hash(await readFile(join(root, page, "index.html"))), `${path} must serve the exact exported HTML`);
+  assert.equal(hash(ready.body), hash(expected), `${path} must serve the exact exported HTML`);
   for (const [name, value] of Object.entries(headers)) assert.equal(response.headers.get(name), value, `${path} ${name}`);
   if (preview) assert.equal(response.headers.get("x-robots-tag"), "noindex", "preview must not be indexed");
 }
 
 const features = await readFile(join(root, "features/index.html"), "utf8");
-const browserGame = await request("/features/", {headers: {
+const browserReady = await waitForHostedExport(origin, hash(features), {path: "/features/", requestHeaders: {
   "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
 }});
+const browserGame = browserReady.response;
 assert.equal(browserGame.status, 200);
 if (origin.protocol === "https:") assert.match(browserGame.headers.get("content-encoding") || "", /^(gzip|br|zstd)$/, "game must stay compressed");
-assert.equal(hash(Buffer.from(await browserGame.arrayBuffer())), hash(features), "browser requests must receive the exact game without analytics injection");
+assert.equal(hash(browserReady.body), hash(features), "browser requests must receive the exact game without analytics injection");
 assert.match(features, /<meta name="features-native-bridge" content="2">/, "keep the native-compatible game");
 const policy = features.match(/http-equiv="Content-Security-Policy"\s+content="([^"]+)"/i)?.[1] || "";
 assert.doesNotMatch(policy, /script-src[^;]*'unsafe-inline'/, "published game must keep its hardened script policy");
@@ -92,9 +90,9 @@ for (const [path, target] of [
   assert.equal(response.status, 301, `${path} must permanently redirect`);
   assert.equal(new URL(response.headers.get("location"), origin).href, new URL(target, origin).href, `${path} redirect target`);
 }
-const gameAlias = await request("/features/index.html", { redirect: "follow" });
-assert.equal(gameAlias.status, 200, "existing index.html links must still reach the game");
-assert.equal(hash(Buffer.from(await gameAlias.arrayBuffer())), hash(features));
+const gameAlias = await waitForHostedExport(origin, hash(features), {path: "/features/index.html", redirect: "follow"});
+assert.equal(gameAlias.response.status, 200, "existing index.html links must still reach the game");
+assert.equal(hash(gameAlias.body), hash(features));
 
 const canonical = await fetch("https://www.akibwa.com/features/?hosting-check=canonical", {
   redirect: "manual", signal: AbortSignal.timeout(15000),
@@ -117,10 +115,13 @@ const samples = [
 ];
 for (const path of samples) {
   assert.ok(path, "representative generated asset exists");
-  const response = await request(`/${path}`);
-  assert.equal(response.status, 200, `${path} must remain available`);
-  const actual = Buffer.from(await response.arrayBuffer());
   const expected = await readFile(join(root, path));
+  // Cloudflare may prepend its managed robots block; that path keeps its
+  // dedicated validator. Every exact-byte asset waits for its own version.
+  const ready = path === "robots.txt" ? null : await waitForHostedExport(origin, hash(expected), {path: `/${path}`});
+  const response = ready?.response || await request(`/${path}`);
+  assert.equal(response.status, 200, `${path} must remain available`);
+  const actual = ready?.body || Buffer.from(await response.arrayBuffer());
   if (path === "robots.txt") assertRobotsBytes(actual, expected, { managed: origin.origin === "https://akibwa.com" });
   else assert.equal(hash(actual), hash(expected), `${path} bytes`);
   if (path.startsWith("_next/static/")) assert.match(response.headers.get("cache-control") || "", /max-age=31536000.*immutable/, "fingerprinted assets are immutable");

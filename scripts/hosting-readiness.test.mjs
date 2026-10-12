@@ -40,7 +40,7 @@ test("waits through the previous deployment and returns when exact new bytes arr
   });
 });
 
-test("Features hosting validates the matched document without fetching a different edge version", async (t) => {
+test("Features hosting waits for assets separately and never refetches matched bytes", async (t) => {
   const scratch=await mkdtemp(join(tmpdir(),"features-hosting-"));
   t.after(()=>rm(scratch,{recursive:true,force:true}));
   await mkdir(join(scratch,"scripts"));await mkdir(join(scratch,"out/features"),{recursive:true});
@@ -50,6 +50,7 @@ test("Features hosting validates the matched document without fetching a differe
     "icon-192.png":"fixture icon","icon-512-maskable.png":"fixture maskable icon"};
   for(const [name,body] of Object.entries(files))await writeFile(join(scratch,"out/features",name),body);
   let documents=0;
+  const assetRequests=new Map();
   await fixture((request,response)=>{
     const path=new URL(request.url,"http://fixture.test").pathname;
     response.setHeader("x-content-type-options","nosniff");
@@ -62,23 +63,45 @@ test("Features hosting validates the matched document without fetching a differe
       response.writeHead(301,{location:"/?signin=ok"});response.end();
     }else if(path==="/features/api/health"){
       response.setHeader("cache-control","no-store");response.end(JSON.stringify({ok:true}));
-    }else if(Object.hasOwn(files,path.slice(1)))response.end(files[path.slice(1)]);
+    }else if(Object.hasOwn(files,path.slice(1))){
+      const count=(assetRequests.get(path)||0)+1;
+      assetRequests.set(path,count);
+      response.end(path==="/manifest.webmanifest"&&count===1?"previous manifest":files[path.slice(1)]);
+    }
     else{response.statusCode=404;response.end()}
   },async origin=>{
     const {stdout}=await runNode(process.execPath,[join(scratch,"scripts/check-features-hosting.mjs"),origin],{timeout:10000});
     assert.match(stdout,/Features hosting verified/);
     assert.equal(documents,1,"the checked document is the exact response that passed readiness");
+    assert.equal(assetRequests.get("/manifest.webmanifest"),2,"a current document does not establish that its manifest is ready");
+    assert.equal(assetRequests.get("/icon-192.png"),1,"a matching asset is checked without fetching it again");
   });
 });
 
 test("readiness uses the caller's document request headers", async () => {
+  let browserRequests=0;
   await fixture((request,response)=>{
-    response.end(request.headers["user-agent"]==="hosting-fixture"?expected:"other variant");
+    response.end(request.headers["user-agent"]==="hosting-fixture"&&++browserRequests>1?expected:"other variant");
   },async origin=>{
     const ready=await waitForHostedExport(origin,hash(expected),{
       ...deadlineOptions,requestHeaders:{"user-agent":"hosting-fixture"},
     });
     assert.equal(ready.body.toString(),expected);
+    assert.equal(browserRequests,2,"the browser variant must independently reach the current version");
+  });
+});
+
+test("an export alias follows redirects only when requested", async () => {
+  await fixture((request,response)=>{
+    if(request.url==="/features/index.html"){
+      response.writeHead(301,{location:"/features/"});response.end();
+    }else response.end(expected);
+  },async origin=>{
+    const options={...deadlineOptions,path:"/features/index.html"};
+    await assert.rejects(waitForHostedExport(origin,hash(expected),options),/HTTP 301/);
+    const ready=await waitForHostedExport(origin,hash(expected),{...options,redirect:"follow"});
+    assert.equal(ready.body.toString(),expected);
+    assert.equal(new URL(ready.response.url).pathname,"/features/");
   });
 });
 

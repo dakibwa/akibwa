@@ -103,12 +103,12 @@ Keep a direct browser run-through of the affected pages alongside this check.
 `.github/workflows/deploy-cloudflare.yml` runs on changes pushed to `main`,
 excluding Markdown and `docs/**`, and can also be dispatched manually. It builds
 one export with the release check, deploys it, then verifies the exact served
-bytes on both the preview and public domain. Each origin gets up to 60 seconds
-to serve this build's exact homepage and game bytes, plus the game's header policy,
-after Wrangler finishes, because
-edge propagation can briefly leave the previous deployment visible. After
-readiness, all content, security and route assertions run once, using the ready
-homepage/game responses instead of refetching during propagation. A wrong artifact
+bytes on both the preview and public domain. Each exact-byte page, browser request
+variant and sampled asset gets up to 60 seconds to serve this build's version,
+plus any required header policy. Files can propagate independently after Wrangler
+finishes, so a current homepage does not establish that a manifest, icon or sitemap
+is ready. After readiness, all content, security and route assertions run once,
+using the matched responses instead of refetching during propagation. A wrong artifact
 at the deadline or any failed assertion fails the workflow; check the affected
 response before treating a release as complete.
 

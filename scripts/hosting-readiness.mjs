@@ -4,6 +4,7 @@ import { setTimeout as delay } from "node:timers/promises";
 // Wrangler can finish before an edge starts serving the new asset version.
 // Wait for the bytes and any changed headers; the caller still checks every response
 // and security policy once, without retrying or weakening failed assertions.
+// Files and request variants propagate independently, so each needs its own check.
 export async function waitForHostedExport(origin, expectedHash, {
   timeoutMs = 60000,
   intervalMs = 2000,
@@ -11,6 +12,7 @@ export async function waitForHostedExport(origin, expectedHash, {
   path = "/",
   expectedHeaders = {},
   requestHeaders = {},
+  redirect = "manual",
 } = {}) {
   const target = new URL(path, origin);
   const deadline = performance.now() + timeoutMs;
@@ -22,7 +24,7 @@ export async function waitForHostedExport(origin, expectedHash, {
     attempts++;
     try {
       const response = await fetch(target, {
-        redirect: "manual",
+        redirect,
         headers: requestHeaders,
         signal: AbortSignal.timeout(Math.max(1, Math.ceil(Math.min(15000, deadline - performance.now())))),
       });
@@ -34,7 +36,7 @@ export async function waitForHostedExport(origin, expectedHash, {
         const mismatches = Object.entries(expectedHeaders).filter(([name, value]) => response.headers.get(name) !== value);
         if (mismatches.length) lastResponse += `; headers ${mismatches.map(([name]) => `${name}=${response.headers.get(name)}`).join(", ")}`;
         if (actual === expectedHash && !mismatches.length) {
-          if (attempts > 1) log(`Export ready at ${target.origin} after ${attempts} checks.`);
+          if (attempts > 1) log(`Export ready at ${target.href} after ${attempts} checks.`);
           return { response, body };
         }
       } else {
@@ -47,10 +49,10 @@ export async function waitForHostedExport(origin, expectedHash, {
       // completed response, especially its wrong-artifact hash or HTTP status.
       lastRequestError = error.name;
     }
-    if (attempts === 1) log(`Waiting up to ${timeoutMs / 1000}s for the deployed export at ${target.origin}.`);
+    if (attempts === 1) log(`Waiting up to ${timeoutMs / 1000}s for the deployed export at ${target.href}.`);
     const remaining = deadline - performance.now();
     if (remaining > 0) await delay(Math.min(intervalMs, remaining));
   }
 
-  throw new Error(`Export did not become ready at ${target.origin} within ${timeoutMs}ms: expected SHA256 ${expectedHash}; last response ${lastResponse}${lastRequestError ? `; latest request ${lastRequestError}` : ""}`);
+  throw new Error(`Export did not become ready at ${target.href} within ${timeoutMs}ms: expected SHA256 ${expectedHash}; last response ${lastResponse}${lastRequestError ? `; latest request ${lastRequestError}` : ""}`);
 }
