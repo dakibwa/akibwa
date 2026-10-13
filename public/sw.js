@@ -13,7 +13,7 @@ const CACHE_NAME = "akibwa-static-v4";
 const CACHE_PREFIX = "akibwa-static-";
 
 /* Other apps share this origin and own their own caching. */
-const FOREIGN_PATHS = ["/features/", "/onebagger/"];
+const FOREIGN_PATHS = ["/features/"];
 
 const IMMUTABLE_PATH = "/_next/static/";
 const ASSET_EXTENSIONS = /\.(?:webp|avif|jpg|jpeg|png|gif|svg|ico|woff2?)$/;

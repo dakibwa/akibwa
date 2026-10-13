@@ -21,6 +21,9 @@
 /work / 301
 /concept / 301
 
+# One Bagger was deleted on 13 October 2026.
+/onebagger / 301
+
 /probe/* /features/ 301
 /portugal/* https://portuguesewithines.com/ 301
 /albums/* / 301
@@ -33,3 +36,4 @@
 /systems/* / 301
 /work/* / 301
 /concept/* / 301
+/onebagger/* / 301

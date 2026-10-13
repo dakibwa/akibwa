@@ -21,16 +21,15 @@ leave the dashboard-managed domain and existing zone routes untouched. Do not
 add domain routing to Wrangler or broaden the deployment token to manage DNS.
 GitHub Pages is retained as a manual fallback; it no longer publishes on push.
 
-Two existing routes must remain ahead of the static origin:
+One existing route must remain ahead of the static origin:
 
 | Route | Existing Worker |
 | --- | --- |
 | `akibwa.com/features/api/*` | `features-api` |
-| `akibwa.com/onebagger*` | `one-bag` |
 
 Cloudflare treats a Worker Custom Domain as the origin, so existing route
-Workers execute before it. Static deployments must not replace these routes
-or change their Worker bindings, databases, cookies,
+Workers execute before it. Static deployments must not replace this route
+or change its Worker bindings, databases, cookies,
 `PUBLIC_ORIGIN`, provider callbacks, or secrets. The static preview has no API
 proxy: its `/features/api/*` returns 404, and account/purchase flows belong to
 the production origin. Hosting checks probe production API health separately;

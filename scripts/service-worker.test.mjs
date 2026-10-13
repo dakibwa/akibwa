@@ -102,7 +102,7 @@ test("unavailable cache storage and failed writes do not block valid network res
 
 test("the worker leaves documents, data, other apps and foreign origins to their owners", () => {
   const w = worker();
-  for (const url of ["https://akibwa.test/features/icon.png", "https://akibwa.test/onebagger/icon.png", "https://akibwa.test/music-ranking.json", "https://other.test/cover.webp"]) {
+  for (const url of ["https://akibwa.test/features/icon.png", "https://akibwa.test/music-ranking.json", "https://other.test/cover.webp"]) {
     assert.equal(w.dispatch("fetch", new Request(url)).response, undefined);
   }
   assert.equal(w.dispatch("fetch", { url: "https://akibwa.test/cover.svg", method: "GET", mode: "navigate", destination: "document" }).response, undefined);
