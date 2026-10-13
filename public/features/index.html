@@ -1343,6 +1343,9 @@ html[data-turning=dusk]::view-transition-old(root){z-index:1;--turn:var(--turn-r
 clip-path:inset(calc(100% - var(--turn)) 0 0 0)}
 #introveil{padding:20px calc(20px + var(--safe-right)) calc(22px + var(--safe-bottom)) calc(20px + var(--safe-left))}
 #introveil > .intro-card{max-height:100%;max-width:1480px;transform:none;transition-property:opacity}
+@media (min-width:701px){
+#introopening,#introbody,#panecoll,#panerules,#paneside{justify-self:center;width:100%;max-width:720px}
+}
 .intro-art{grid-column:1;grid-row:1/-1}
 #introbody{grid-column:2;grid-row:2;padding-top:var(--menu-body-inset)}
 .menupane{grid-row:1/-1;grid-column:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
@@ -1990,6 +1993,7 @@ font-size:44px;font-weight:800;line-height:.82;letter-spacing:-.06em;font-varian
 .endless-infinity{position:absolute;inset:0;width:100%;height:100%;opacity:.45}
 .endless-infinity-mobile{display:none}
 .endless-menu-body{container:iterate-body / inline-size;grid-column:2;grid-row:2;padding-top:var(--menu-body-inset);min-width:0;display:flex;flex-direction:column}
+@media (min-width:701px){#paneendless>:is(.opening,.endless-menu-body){justify-self:center;width:100%;max-width:720px}}
 .endless-menu-intro{margin:var(--heading-gap) 0 0;white-space:nowrap;overflow:hidden}
 .endless-menu-intro.short .endless-intro-detail{display:none}
 .endless-menu-intro{padding-bottom:var(--section-gap);border-bottom:1px solid var(--rule)}
