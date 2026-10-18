@@ -397,7 +397,9 @@ display:flex;flex-direction:column;overflow:hidden;
 animation:rise .5s .12s var(--ease-out) both}
 .board-svg{display:block;flex:1 1 0;min-height:0;width:100%;height:100%;touch-action:none;
 outline:none;overflow:hidden;background-color:var(--surface);
-background-image:radial-gradient(circle at 50% 50%,var(--grid) calc(var(--grid-line,1px) * 1.25 + .35px),transparent calc(var(--grid-line,1px) * 1.25 + .95px));
+--ring-r:calc(var(--grid-line,1px) * 2.4 + 1.25px);--ring-w:max(.7px,calc(var(--grid-line,1px) * .8));
+background-image:radial-gradient(circle at 50% 50%,transparent calc(var(--ring-r) - var(--ring-w) / 2 - .5px),var(--grid) calc(var(--ring-r) - var(--ring-w) / 2),
+var(--grid) calc(var(--ring-r) + var(--ring-w) / 2),transparent calc(var(--ring-r) + var(--ring-w) / 2 + .5px));
 background-size:var(--grid-cell,33px) var(--grid-cell,33px)}
 .field .thread{fill:none;stroke-width:var(--thread-stroke,6.6);stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;
 transition:opacity .22s var(--ease-out),stroke-width .2s}
