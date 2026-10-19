@@ -23,10 +23,16 @@
   paper plane and folded map) are inline SVG in `components/paper/things.jsx`,
   so they scale and draw in without image requests.
 - The taste sleeves are cartoons drawn from the real covers in
-  `public/album-art/`: Taking Tiger Mountain's rows of small orange-haired
-  portraits round the large one and its red dragon on grey; Person Pitch's
-  round pool of bathers with the gorilla, seal, bear, panda and tiger; and
-  Graceland's spaced title over the small painting of a rider on a white horse.
+  `public/album-art/` (`components/paper/sleeves.jsx`), redrawn on 19 October
+  2026 (Dan: “keep them cute but meticulously improve all three”): Taking
+  Tiger Mountain's charcoal sheet of black prints, small Enos round the edge
+  and middling ones within, round the large Eno with his hand on his head,
+  the red dragon curling behind him and ENO on his black top; Person Pitch's
+  turquoise pool on its pale rim, crowded with a seal, a bear, a panda, a
+  llama, a tiger, a fox, a dolphin and a parrot among children in paper, red,
+  black and feathered hats; and Graceland's spaced slate title over the
+  small painting, a haloed rider in yellow with a red cloak and spear on an
+  outlined white horse in a red harness and dotted saddle cloth.
   The cards are 84 units, as large as the Features tile and the windows
   (Dan, 25 September 2026: the music thing looked smaller than the others).
 - The front websites window carries Português com a Inês's mark: its cream,
@@ -36,7 +42,12 @@
   from its card art (`public/project-art/websites/castle-bank.webp`). The back
   window keeps its first size, so only the C's top stroke and terminal peep
   out above the front window (Dan, 26 September 2026: a taller back window
-  made it too obvious). The splat that burst out behind them was removed on
+  made it too obvious). Between them, leaning the other way so its corner
+  peeps out on the left, Butterfly Rose's window carries a pale butterfly and
+  a rose over ribbons of hair on the salon's burgundy, after its card art
+  (Dan, 19 October 2026: “there's three websites too so add butterfly
+  rose”); opened, it slides out to the left while Castle Bank's rises
+  behind. The splat that burst out behind them was removed on
   25 September 2026.
 - The Features tile is the game's board as it draws it since October 2026
   (`features.games`: the clear six and the ink direction): its faint lattice
@@ -56,7 +67,7 @@
   Inês's: Castle Bank's mark beside a pencil drawing of an office building
   with orange conduit running into an open distribution board, and a salon
   client whose hair streams into ribbons, roses and butterflies.
-- `public/share-card-b.jpg` is the front page's first screen at rest.
+- `public/share-card-c.jpg` is the front page's first screen at rest.
 
 ## Akibwa identity
 
@@ -160,13 +171,14 @@ Create a beautifully detailed panoramic website project-cover illustration for T
 
 ## Link-preview card
 
-`public/share-card-b.jpg` (1200×630) is the Open Graph and X image: the
+`public/share-card-c.jpg` (1200×630) is the Open Graph and X image: the
 front page's first screen at rest, captured in a browser at 1200×630 with
 reduced motion so the name, the `a` and the five things stand still. When
 that screen changes, capture it again under a new filename so link previews
 do not keep a cached copy (it was `share-card-a.jpg` until the night switch,
 the outlined `a`, the paper contact objects and the new Features board on
-19 October 2026).
+19 October 2026, then briefly `share-card-b.jpg` before the redrawn sleeves
+and Butterfly Rose's window the same day).
 
 ## Fonts on devices without Apple's faces
 

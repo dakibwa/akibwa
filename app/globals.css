@@ -1258,7 +1258,7 @@ html[data-drawn] .front .t-pin {
 
 /* Taste: a hand of sleeves that fans open. */
 .t-sleeve-type {
-  fill: #978b73;
+  fill: #5f6b6c;
   font-family: Georgia, "Times New Roman", serif;
   font-size: 2.6px;
   letter-spacing: 0.7px;
@@ -1291,15 +1291,22 @@ html[data-drawn] .front .t-pin {
 .t-window {
   transform-box: view-box;
   transform-origin: 80px 128px;
-  transition: transform 420ms var(--ease-out);
+  transition: transform 520ms var(--ease-pop);
 }
 
+/* At rest Castle Bank's corner peeps out on the right and Butterfly Rose's on
+   the left; opened, Castle Bank rises behind, Butterfly Rose slides out to
+   the left and Português com a Inês leans right. */
 .t-window-back { transform: rotate(-4deg); }
+.t-window-middle { transform: rotate(8deg); }
 .t-window-front { transform: rotate(2deg); }
 
 .thing:hover .t-window-back,
 .thing:focus-visible .t-window-back,
-.thing.is-visited .t-window-back { transform: rotate(-11deg) translateX(-6px); }
+.thing.is-visited .t-window-back { transform: rotate(-6deg) translate(4px, -12px); }
+.thing:hover .t-window-middle,
+.thing:focus-visible .t-window-middle,
+.thing.is-visited .t-window-middle { transform: rotate(-8deg) translate(-10px, -4px); }
 .thing:hover .t-window-front,
 .thing:focus-visible .t-window-front,
 .thing.is-visited .t-window-front { transform: rotate(5deg) translate(5px, -3px); }

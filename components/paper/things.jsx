@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { HOUSE } from "./feature-shapes.mjs";
 import { BLOBS } from "./websites-art.mjs";
+import { Graceland, PersonPitch, TigerMountain } from "./sleeves";
 
 /*
  * The five things on the front page, drawn as small papercraft objects
@@ -32,7 +33,8 @@ function Sketch({ d, transform, delay = 0 }) {
  * Taste: a small hand of cards, each a cartoon of a favourite sleeve drawn
  * from its real artwork — Taking Tiger Mountain (By Strategy), Person Pitch
  * and Graceland — that fans open on hover. Faces are drawn in a 60-unit square
- * and set 1.3 times larger on 84-unit cards, the size of the other things.
+ * (sleeves.jsx) and set 1.3 times larger on 84-unit cards, the size of the
+ * other things.
  */
 const CARD = "M-38-84h76a4 4 0 0 1 4 4v76a4 4 0 0 1-4 4h-76a4 4 0 0 1-4-4v-76a4 4 0 0 1 4-4z";
 
@@ -57,124 +59,6 @@ function Card({ className, clip, children }) {
 }
 
 const round = (value) => +value.toFixed(2);
-
-// Taking Tiger Mountain: rows of small portraits round a large one, a red
-// dragon curling beside it, on grey.
-const ENOS = [];
-[0.5, 8, 15.5, 23, 30.5, 38, 45.5, 53].forEach((y, row) => {
-  [0.5, 6.5, 12.5, 18.5, 24.5, 30.5, 36.5, 42.5, 48.5, 54.5].forEach((x, column) => {
-    if (row < 2 || row > 5 || column < 2 || column > 7) ENOS.push([x, y]);
-  });
-});
-const enoPath = (draw) => ENOS.map(([x, y]) => draw((dx) => round(x + dx), (dy) => round(y + dy))).join("");
-const ENO_SHOULDERS = enoPath((x, y) => `M${x(0.4)} ${y(7.4)}C${x(0.5)} ${y(5.6)} ${x(1.6)} ${y(4.9)} ${x(3)} ${y(4.9)}S${x(5.5)} ${y(5.6)} ${x(5.6)} ${y(7.4)}Z`);
-const ENO_HAIR = enoPath((x, y) => `M${x(0.9)} ${y(5.6)}C${x(0.6)} ${y(2)} ${x(1.6)} ${y(0.6)} ${x(3)} ${y(0.6)}S${x(5.4)} ${y(2)} ${x(5.1)} ${y(5.6)}Z`);
-const ENO_FACES = enoPath((x, y) => `M${x(1.75)} ${y(3.3)}a1.25 1.6 0 1 0 2.5 0a1.25 1.6 0 1 0-2.5 0Z`);
-const DRAGON = "M21.5 19c-6 2-8.5 8-4.5 12s9.5 3 7.5 9-7.5 4.5-9 2.5";
-
-function TigerMountain() {
-  return (
-    <>
-      <rect width="60" height="60" fill="#77736d" />
-      <path d={ENO_SHOULDERS} fill="#1d1b1a" />
-      <path d={ENO_HAIR} fill="#e0913a" />
-      <path d={ENO_FACES} fill="#f3efe8" />
-      <path d={DRAGON} fill="none" stroke="#1d1b1a" strokeWidth="4.4" strokeLinecap="round" />
-      <path d={DRAGON} fill="none" stroke="#d13b2a" strokeWidth="2.8" strokeLinecap="round" />
-      <circle cx="22" cy="19" r="3.3" fill="#e5872f" stroke="#1d1b1a" strokeWidth=".6" />
-      <circle cx="22" cy="19" r="1.5" fill="#d13b2a" />
-      <path d="M25 46c.6-5.6 4.6-8.8 10-9.4h5c5.4.6 8.6 3.8 9 9.4z" fill="#1d1b1a" />
-      <path d="M29.2 39.5c-2.4-8-1.6-17.4 5.4-19.8s12.8.6 13 7.4c.2 5.2-.6 9.4-2.2 12.4z" fill="#e0913a" />
-      <ellipse cx="38.2" cy="29.8" rx="5.6" ry="7.2" fill="#f3efe8" />
-      <path d="M35.6 28.8h1.5M39.4 28.8h1.5" stroke="#3a2c28" strokeWidth=".8" strokeLinecap="round" />
-      <path d="M37.3 33.8h1.8" stroke="#b5483a" strokeWidth="1" strokeLinecap="round" />
-      <path d="M33.6 21.6c1.6-3.4 6.6-4.6 10.2-2.6 1.6.9 2.2 2.6 1.2 3.8-1.4 1.6-4.4 1.2-6.6 1.4-2 .2-4.2-.4-4.8-2.6z" fill="#f7f4ee" stroke="#1d1b1a" strokeWidth=".5" />
-    </>
-  );
-}
-
-// Person Pitch: bathers and animals crowded into a round pool, from above.
-const BATHERS = [
-  [22, 21.5, 3.3, "#e0b28c", "#3a2a22"],
-  [44, 25, 3.2, "#d9a67f", "#2d2320"],
-  [26.5, 32, 3.6, "#e8c3a0", "#5a3d2a"],
-  [38.5, 34, 3.4, "#c98f6a", "#2a2020"],
-  [49.5, 35.5, 3.1, "#e0b08a", "#6b4a2e"],
-  [17.5, 42.5, 3.6, "#d7a47c", "#2b2320"],
-  [31, 44, 3.5, "#f0c9a8", "#3b2b22"],
-  [44, 46, 3.4, "#b9805a", "#1f1a18"],
-  [24, 52.5, 3.7, "#e2b491", "#4a3426"],
-  [37.5, 53.5, 3.5, "#d39f78", "#2d2320"]
-];
-
-function PersonPitch() {
-  return (
-    <>
-      <rect width="60" height="60" fill="#7f978c" />
-      <circle cx="30" cy="30.5" r="28" fill="#6c8480" stroke="#b3b6a9" strokeWidth="2.4" />
-      {BATHERS.map(([x, y, r, skin, hair]) => (
-        <g key={`${x}-${y}`}>
-          <ellipse cx={x} cy={round(y + r * 1.25)} rx={round(r * 1.35)} ry={round(r * 0.85)} fill={skin} />
-          <circle cx={x} cy={y} r={r} fill={skin} />
-          <path d={`M${round(x - r)} ${y}a${r} ${r} 0 0 1 ${round(2 * r)} 0z`} fill={hair} />
-        </g>
-      ))}
-      <path d="M23 30l3.5-5.4 3.5 5.4z" fill="#f2efe6" />
-      <path d="M40.6 25.4c0-3.1 1.5-4.8 3.4-4.8s3.4 1.7 3.4 4.8z" fill="#b8332f" />
-      <path d="M40.6 48.8h6.8v2h-6.8z" fill="#b8332f" />
-      <circle cx="11" cy="14" r="4.6" fill="#2e2a28" />
-      <ellipse cx="11" cy="15.4" rx="2.4" ry="1.8" fill="#6d5a50" />
-      <ellipse cx="21" cy="8" rx="4.6" ry="4.2" fill="#4f5150" />
-      <path d="M19.6 7.4h.1M22.4 7.4h.1" stroke="#111" strokeWidth="1" strokeLinecap="round" />
-      <circle cx="27.8" cy="4.8" r="1.6" fill="#7a5436" />
-      <circle cx="34.2" cy="4.8" r="1.6" fill="#7a5436" />
-      <circle cx="31" cy="8.2" r="4.4" fill="#7a5436" />
-      <ellipse cx="31" cy="9.8" rx="1.9" ry="1.3" fill="#b88a60" />
-      <path d="M41 15c-.3-5 .9-9 3-9s3.3 4 3 9z" fill="#ece5d8" />
-      <path d="M42 6.6l-.6-2.4M46 6.6l.6-2.4" stroke="#ece5d8" strokeWidth="1.2" strokeLinecap="round" />
-      <circle cx="52" cy="18" r="3.2" fill="#d9a67f" />
-      <path d="M49 15.5l-1.6-4.6M53.2 14.6l.8-5M55.2 15.6l1.8-4.4" stroke="#c43a2f" strokeWidth="1.2" strokeLinecap="round" />
-      <path d="M51 14.6l-.6-5" stroke="#3a5aa0" strokeWidth="1.2" strokeLinecap="round" />
-      <circle cx="31.2" cy="15" r="1.5" fill="#1f1d1c" />
-      <circle cx="36.8" cy="15" r="1.5" fill="#1f1d1c" />
-      <circle cx="34" cy="18" r="3.8" fill="#f4f1ea" />
-      <ellipse cx="32.6" cy="18" rx="1" ry="1.3" fill="#1f1d1c" />
-      <ellipse cx="35.4" cy="18" rx="1" ry="1.3" fill="#1f1d1c" />
-      <circle cx="34" cy="20" r=".55" fill="#1f1d1c" />
-      <circle cx="10.5" cy="27" r="4.8" fill="#dd8a31" />
-      <ellipse cx="10.5" cy="29" rx="2.2" ry="1.6" fill="#f3e6d2" />
-      <path d="M8.2 23.4l.9 2M12.8 23.4l-.9 2M6.4 27.5h2M14.6 27.5h-2" stroke="#2a2420" strokeWidth=".8" strokeLinecap="round" />
-      <path d="M9.2 26.2h.1M11.8 26.2h.1" stroke="#2a2420" strokeWidth="1" strokeLinecap="round" />
-      <path d="M9 38.6l1-3.4 2 1.8 2-1.8 1 3.4-3 3z" fill="#d8883c" />
-    </>
-  );
-}
-
-// Graceland: the small painting of a rider on a white horse, set low on
-// cream under the spaced title.
-function Graceland() {
-  return (
-    <>
-      <rect width="60" height="60" fill="#ede3c2" />
-      <text className="t-sleeve-type" x="30" y="7.8" textAnchor="middle">PAUL·SIMON</text>
-      <text className="t-sleeve-type" x="30" y="11.4" textAnchor="middle">GRACELAND</text>
-      <path d="M19.2 19.5l22.8-.4.5 23.4-23 .4z" fill="#2a211d" />
-      <path d="M20.9 21.1h19.8v19.8H20.9z" fill="#1f1c26" />
-      <path d="M24.2 37.4h.1M38.4 29.6h.1M22.6 34.2h.1M36.8 38.8h.1M39.2 22.8h.1" stroke="#c8402e" strokeWidth=".9" strokeLinecap="round" />
-      <path d="M21.2 21.4l4.4.6-3.2 2.6z" fill="#d8472f" />
-      <path d="M28.4 25.4c-2.6.4-5.8 1.4-7.4 3.6l.2 4.4 6.8-2.6z" fill="#c8402e" />
-      <ellipse cx="31.6" cy="32.6" rx="6.8" ry="3.3" transform="rotate(-8 31.6 32.6)" fill="#f1e5e0" />
-      <path d="M34.6 31.4l2-7c.3-1 1.4-1.6 2.4-1.3l1 .4-.3 3.2-1.4 1-1.1 5.3z" fill="#f1e5e0" />
-      <path d="M27.4 34.8l-2.2 5.3M29.8 35.4l-.6 5.1M33.6 35.2l1 5.2M35.9 34.2l2.6 5" stroke="#f1e5e0" strokeWidth="1.3" strokeLinecap="round" />
-      <path d="M28 30.4l1.2-5.4h3.6l1.4 5.4z" fill="#d8472f" />
-      <path d="M28.6 28.6h4.8v1.2h-4.8z" fill="#e3b53b" />
-      <circle cx="31" cy="23.2" r="2.1" fill="none" stroke="#e3b53b" strokeWidth=".5" />
-      <circle cx="31" cy="23.2" r="1.5" fill="#6b4030" />
-      <path d="M22.6 22.2l17 17" stroke="#efe2cc" strokeWidth=".7" strokeLinecap="round" />
-      <circle cx="38.8" cy="24.4" r=".45" fill="#1f1c26" />
-    </>
-  );
-}
 
 export function TasteThing() {
   const clip = `t-card-${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
@@ -306,7 +190,9 @@ export function FeaturesThing({ solved = false }) {
           <path key={colour} d={`M${BOARD.x + index * 23} ${round(BOARD.y)}h23v4.4h-23z`} fill={colour} opacity={1 - mount} />
         ))}
         {RAIL.map((colour, index) => {
-          const filled = phase(k, 0.8 + index * 0.03, 0.08);
+          // One after another, the last full by the end, so the foot spans
+          // the plate's width with an even margin on each side.
+          const filled = phase(k, 0.74 + index * 0.03, 0.1);
           return filled ? (
             <path key={colour} d={`M${round(BOARD.x + (3 + 16 * index) * UNIT)} ${round(BOARD.y + 102 * UNIT)}h${round(16.05 * UNIT * filled)}v${round(5 * UNIT)}h${round(-16.05 * UNIT * filled)}z`} fill={colour} />
           ) : null;
@@ -342,9 +228,14 @@ export function FeaturesThing({ solved = false }) {
    one behind it Castle Bank's, the orange circuit C with its two terminals on
    cream. The back window keeps its first size, so only the C's top stroke and
    terminal peep out above the front one (Dan, 26 September 2026: it needn't
-   be obvious). Dan dropped the splat behind them on 25 September 2026. */
+   be obvious). Between them, leaning the other way so its corner peeps out on
+   the left, is Butterfly Rose's: a butterfly over a rose and ribbons of hair
+   on the salon's burgundy (Dan, 19 October 2026: “there's three websites too
+   so add butterfly rose”). Dan dropped the splat behind them on 25 September
+   2026. */
 const windowShape = (x, y, w, h) => `M${x + 5} ${y}h${w - 10}a5 5 0 0 1 5 5v${h - 5}H${x}V${y + 5}a5 5 0 0 1 5-5z`;
 const BACK = windowShape(34, 38, 96, 90);
+const MIDDLE = windowShape(26, 46, 98, 76);
 const FRONT = windowShape(26, 48, 108, 80);
 
 // Castle Bank's mark, traced from its card art (public/project-art/websites/
@@ -375,12 +266,48 @@ function CastleBankMark() {
   );
 }
 
+// Butterfly Rose's marks, after Dan's card art (public/project-art/websites/
+// butterfly-rose.webp): a pale butterfly with blush underwings, and a rose
+// furled in two pinks, each in its own box centred on 0 0.
+function Butterfly() {
+  return (
+    <>
+      <path d="M0 0C-1.8-4.6-6.6-8.4-10-6.8-12.6-5.6-11.4-1.4-7.6.2-5 1.2-2.4.8 0 0Z" fill="#f7dcd8" />
+      <path d="M0 0C1.8-4.6 6.6-8.4 10-6.8 12.6-5.6 11.4-1.4 7.6.2 5 1.2 2.4.8 0 0Z" fill="#f7dcd8" />
+      <path d="M0 .4C-1.6 2.6-4.6 6-7 5.2-8.8 4.6-8 1.8-5.6.8-3.6 0-1.6.2 0 .4Z" fill="#e7a9ad" />
+      <path d="M0 .4C1.6 2.6 4.6 6 7 5.2 8.8 4.6 8 1.8 5.6.8 3.6 0 1.6.2 0 .4Z" fill="#e7a9ad" />
+      <path d="M-7.6-3.2c1.8-.2 3.6.4 5 1.6M7.6-3.2c-1.8-.2-3.6.4-5 1.6" fill="none" stroke="#d58f96" strokeWidth=".8" strokeLinecap="round" />
+      <path d="M0-4.6v6.6" stroke="#3f1520" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M-.4-4.4c-.6-2-1.8-3.2-3.2-3.8M.4-4.4c.6-2 1.8-3.2 3.2-3.8" fill="none" stroke="#3f1520" strokeWidth=".7" strokeLinecap="round" />
+    </>
+  );
+}
+
+function Rose() {
+  return (
+    <>
+      <path d="M-7.4 1.6c-2.6-1.4-4.4.8-3.4 2.6 1 1.6 3.4 1.4 4.6-.6M6.8 2c2.8-1.2 4.4 1 3.2 2.8-1.2 1.4-3.6 1-4.6-1" fill="#7a9b6e" />
+      <circle r="6.6" fill="#c76b7b" />
+      <path d="M-4.6-.6c.6-3.6 5.4-4.6 7.4-1.6 1.6 2.6-.8 5.6-3.6 4.6-2-.8-1.8-3.4.2-3.6" fill="none" stroke="#8e3a4b" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M-5.8 2.4c1.4 3 6.4 3.8 9 1.2" fill="none" stroke="#e39aa5" strokeWidth="1.1" strokeLinecap="round" />
+    </>
+  );
+}
+
 export function WebsitesThing() {
+  const clip = `t-salon-${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
   return (
     <svg className="thing-art thing-websites" viewBox="0 0 160 140" aria-hidden="true" focusable="false">
+      <defs>
+        <clipPath id={clip}>
+          <path d={MIDDLE} />
+        </clipPath>
+      </defs>
       {ground(80, 60)}
       <Sketch d={BACK} transform="rotate(-4 80 128)" />
       <Sketch d="M34 46h96" transform="rotate(-4 80 128)" delay={200} />
+      <Sketch d={MIDDLE} transform="rotate(8 80 128)" delay={70} />
+      <Sketch d="M26 58h98" transform="rotate(8 80 128)" delay={270} />
       <Sketch d={FRONT} transform="rotate(2 80 128)" delay={140} />
       <Sketch d="M26 60h108" transform="rotate(2 80 128)" delay={340} />
       <Paper>
@@ -394,6 +321,26 @@ export function WebsitesThing() {
             <CastleBankMark />
           </g>
           <path className="t-ink" d={BACK} />
+        </g>
+        <g className="t-window t-window-middle">
+          <path d={MIDDLE} fill="#6c2a37" />
+          <path d="M26 58v-7a5 5 0 0 1 5-5h88a5 5 0 0 1 5 5v7z" fill="#f0d0cd" />
+          <circle cx="33" cy="52" r="1.9" fill="#c9566c" />
+          <circle cx="39.4" cy="52" r="1.9" fill="#2a2420" fillOpacity=".22" />
+          <circle cx="45.8" cy="52" r="1.9" fill="#2a2420" fillOpacity=".22" />
+          {/* Ribbons of hair sweep across, under a butterfly and a rose. */}
+          <g clipPath={`url(#${clip})`}>
+            <path d="M26 88c10-8 20 4 32-3s20-14 34-6 20 2 32-6" fill="none" stroke="#a24a5a" strokeWidth="5.4" strokeLinecap="round" />
+            <path d="M26 100c12-7 22 3 34-3s22-12 36-4 16 2 28-4" fill="none" stroke="#bf6576" strokeWidth="3.6" strokeLinecap="round" />
+            <path d="M26 111c14-5 26 2 38-2s24-9 38-3" fill="none" stroke="#8a3a49" strokeWidth="2.6" strokeLinecap="round" />
+            <g transform="translate(42 73) rotate(-14) scale(1.15)">
+              <Butterfly />
+            </g>
+            <g transform="translate(38 102)">
+              <Rose />
+            </g>
+          </g>
+          <path className="t-ink" d={`${MIDDLE}M26 58h98`} />
         </g>
         <g className="t-window t-window-front">
           <path d={FRONT} fill="#12387d" />
