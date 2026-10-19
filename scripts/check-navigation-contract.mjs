@@ -120,9 +120,11 @@ requireText(things, "CARD_REST.map(", "the music sketch must trace the fanned ca
 requireText(things, "<CastleBankMark />", "the back websites window must carry Castle Bank's mark");
 // Dan, 26 September 2026: the back window stays its first size, so the mark only peeps out.
 requireText(things, "const BACK = windowShape(34, 38, 96, 90);", "the back websites window must not grow to show Castle Bank's mark");
-// Dan, 26 September 2026: the Features tile is Features' own box.
-requireText(things, 'const BAND = ["#2EA3DC", "#EFC319", "#1FA45A", "#E97E18"];', "the Features box must carry the wordmark's four colours");
-requireText(things, 'className="t-squared"', "the Features box must be the game's squared paper");
+// Dan, 26 September 2026: the Features tile is Features' own board; 19 October
+// 2026: in the game's new theme, on its lattice, minting a stamp on hover.
+requireText(things, 'const BAND = ["#22A3DD", "#EFC319", "#279B57", "#DD700C"];', "the Features board must carry the wordmark's four colours");
+requireText(things, 'className="t-lattice"', "the Features board must be the game's lattice paper");
+requireText(things, "RAIL.map(", "the Features board must mint a stamp whose foot fills with the six colours");
 requireText(things, "<Reveal id={mask} d={TRAIL}", "the career trail must be laid down, not shown from the start");
 requireText(things, "<Reveal id={mask} d={ROUTE}", "the trek route must be walked in on arrival");
 requireText(framed, "#introveil{padding:0!important}", "the Features game must reach the edges of its frame");

@@ -7,6 +7,7 @@ import { Cast } from "./cast";
 import { NameFlip } from "./name-flip";
 import { THINGS } from "./things";
 import { Contact } from "./contact";
+import { NightSwitch } from "./night-switch";
 import { WebsitesRoom } from "./websites-room";
 import { MusicRoom } from "./music-room";
 import { FramedRoom } from "./framed-room";
@@ -147,8 +148,12 @@ export function PaperHome({ music, websites }) {
           <Arrow back size={26} />
         </a>
         <BarRooms room={room} follow={follow} />
-        {/* On the front page the contact links sit under the lede. */}
-        <Contact />
+        {/* On the front page the contact links and the night switch sit under
+            the lede. */}
+        <div className="bar-end">
+          <Contact />
+          <NightSwitch />
+        </div>
       </header>
 
       <section className="front" aria-labelledby="hello">
@@ -157,7 +162,10 @@ export function PaperHome({ music, websites }) {
             <NameFlip />
           </h1>
           <p className="front-lede">Building in the age of AI.</p>
-          <Contact />
+          <div className="front-controls">
+            <Contact />
+            <NightSwitch />
+          </div>
         </div>
         <Cast onVisit={setVisited} />
         <div className="front-stage">

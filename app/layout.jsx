@@ -24,7 +24,7 @@ export const metadata = {
     // captured at 1200×630 with reduced motion (see README).
     images: [
       {
-        url: "/share-card-a.jpg",
+        url: "/share-card-b.jpg",
         width: 1200,
         height: 630,
         alt: "I'm Daniel, building in the age of AI, above five paper things: music, features, websites, career and trek"
@@ -36,7 +36,7 @@ export const metadata = {
     title: "Akibwa",
     description:
       "Daniel, online as Akibwa. The music I listen to, a puzzle I made, websites I’ve built, how I got here, and a walk from Paris to Sofia.",
-    images: ["/share-card-a.jpg"]
+    images: ["/share-card-b.jpg"]
   },
   // The sized .ico serves browsers without SVG icons and requests that skip
   // the page (feeds, robots.txt); iOS draws its own corners on the touch icon.
@@ -61,9 +61,11 @@ export const viewport = {
 /* Runs before the first paint: marks the page as scripted and opens the room
    named in the hash, so a shared room link never flashes the front page. The
    same five names live in components/paper/paper-home.jsx. Without
-   JavaScript, rooms open through :target instead. A future hash-based
-   Content-Security-Policy must include this script's hash. */
-const openRoom = `(function(d,r){d.classList.add("js");d.dataset.room=["music","features","websites","career","trek"].indexOf(r)>-1?r:"index"})(document.documentElement,location.hash.slice(1))`;
+   JavaScript, rooms open through :target instead. It also lays the night
+   paper when it was chosen on this device, tinting the browser chrome to
+   match (the key and colour live in components/paper/night-switch.jsx). A
+   future hash-based Content-Security-Policy must include this script's hash. */
+const openRoom = `(function(d,r){d.classList.add("js");d.dataset.room=["music","features","websites","career","trek"].indexOf(r)>-1?r:"index";try{if(localStorage.getItem("akibwa-paper")==="night"){d.dataset.paper="night";var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content","#1e1a17")}}catch(e){}})(document.documentElement,location.hash.slice(1))`;
 
 export default function RootLayout({ children }) {
   return (

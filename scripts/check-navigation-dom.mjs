@@ -450,6 +450,16 @@ const checkPublicLanding = async () => {
   await sleep(400);
   check(await evaluate(`(() => { const box = document.querySelector(".mascot").getBoundingClientRect(); return Math.abs(box.left + box.width / 2 - ${mascot.x - 240}) < 12; })()`), "the mascot can be picked up and set down elsewhere");
 
+  section("night paper");
+  await goto("/");
+  const toggle = await evaluate(`(() => { const toggle = document.querySelector(".front-controls .night-switch"); const state = { paper: document.documentElement.dataset.paper ?? "day", role: toggle?.getAttribute("role"), name: toggle?.getAttribute("aria-label"), checked: toggle?.getAttribute("aria-checked") }; toggle?.click(); return state; })()`);
+  check(toggle.paper === "day" && toggle.role === "switch" && toggle.name === "Night paper" && toggle.checked === "false", "the sheet opens on day paper, with a night switch beside the contact links");
+  check(await waitFor(`document.documentElement.dataset.paper === "night" && localStorage.getItem("akibwa-paper") === "night" && document.querySelector(".front-controls .night-switch").getAttribute("aria-checked") === "true" && getComputedStyle(document.body).backgroundColor === "rgb(30, 26, 23)"`), "the switch lays the night paper and remembers it");
+  await goto("/#career");
+  check(await evaluate(`document.documentElement.dataset.paper === "night" && document.querySelector('meta[name="theme-color"]').content === "#1e1a17" && getComputedStyle(document.querySelector(".bar .night-switch")).display !== "none"`), "a room link opens on the chosen paper, with the switch in the bar");
+  await evaluate(`document.querySelector(".bar .night-switch").click()`);
+  check(await waitFor(`!("paper" in document.documentElement.dataset) && localStorage.getItem("akibwa-paper") === "day" && document.querySelector('meta[name="theme-color"]').content === "#f3ecdf"`), "turning it back restores the day paper");
+
   section("career, websites and features");
   await goto("/#career");
   await sleep(2600);

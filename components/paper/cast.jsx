@@ -2,33 +2,47 @@
 
 import { useEffect, useRef } from "react";
 import { LETTERS } from "./cast-paths";
+import { PAPER_EVENT } from "./night-switch";
 
 /*
  * The Akibwa a lives directly on the paper. It rests beside the introduction,
  * follows the pointer, explores the five things and can be picked up.
- * A click makes it twirl; a drop becomes its new home. Rooms pause it and
- * reduced motion leaves it still. The original drawing keeps its proportions.
+ * A click makes it twirl; a drop becomes its new home. It breathes, blinks,
+ * stretches and spin-jumps (above all when its name, Akibwa, is written in),
+ * and now and then stops to think, three dots bobbing in a paper bubble over
+ * its head (from Kevin Ngo's hand-drawn UI animations, October 2026). A mouse
+ * close by draws a lean, one resting on the paper draws a visit, one resting
+ * on the a is a pet and one swooshing past makes it duck; when the paper turns
+ * it looks round and bops. Rooms pause it and reduced motion leaves it still.
+ * The original drawing keeps its proportions, outlined in ink.
  */
 const EYE = { w: 4.8, h: 6.9, rx: 1.8 };
 const CAST = [
-  { id: "a", view: { x: 1, y: 13, w: 99, h: 97 }, eyes: [[42.47, 27.56], [52.07, 27.56]], shadow: [53.5, 36], width: 88.8, top: 18.7 }
+  { id: "a", view: { x: 1, y: 13, w: 99, h: 97 }, eyes: [[42.47, 27.56], [52.07, 27.56]], cheeks: [[39.2, 38.4], [60.6, 38.4]], shadow: [53.5, 36], width: 88.8, top: 18.7 }
 ];
 const FEET = { x: 50, y: 104 };
 // Where one perches on each thing, in the things' 160 × 140 drawing, before
 // the hover lift of 7.
 const PERCH = {
   music: [80, 55, true],
-  features: [80, 36, true],
+  features: [80, 29, true],
   websites: [63, 54, true],
   career: [26, 128, false],
   trek: [80, 31, true]
 };
 
+// The thought bubble, in a 120 × 84 box: a lumpy paper cloud with two puffs
+// trailing down to the a's head at its lower right.
+const THOUGHT = "M20 12C28 3 46 2 56 8C66 1 86 4 90 17C100 22 100 39 89 45C86 56 68 60 58 54C48 61 28 59 24 50C10 51 4 39 10 31C3 23 10 11 20 12Z";
+const PUFFS = [[95, 63, 6.4], [107, 76, 3.8]];
+const DOTS = [34, 50, 66];
+
 const aborted = () => new DOMException("aborted", "AbortError");
 const pick = (list) => list[Math.floor(Math.random() * list.length)];
+const smooth = (t) => t * t * (3 - 2 * t);
 
-// A letter: its body and tail, each over a darker edge like cut card. The tail
-// wags about its joint.
+// A letter: its body and tail, each outlined in ink over an ink edge like cut
+// card. The tail wags about its joint.
 function Art({ id }) {
   const { body, tail, joint } = LETTERS[id];
   return (
@@ -45,6 +59,7 @@ function Art({ id }) {
 
 export function Cast({ onVisit }) {
   const roots = useRef([]);
+  const leans = useRef([]);
   const bodies = useRef([]);
   const gazes = useRef([]);
 
@@ -53,8 +68,14 @@ export function Cast({ onVisit }) {
     const doc = document.documentElement;
     const still = matchMedia("(prefers-reduced-motion: reduce)");
     const wide = matchMedia("(min-width: 720px)");
+    // Only a mouse can come near it, pet it, startle it or be followed.
+    const mouse = matchMedia("(hover: hover) and (pointer: fine)");
     let userOnThings = false;
     let gazeFrame = 0;
+    // Where the pointer is, since when, how fast it went and whether it rests
+    // on bare paper rather than on something to click.
+    let pointer = null;
+    let startled = 0;
 
     const roomOpen = () => doc.dataset.room && doc.dataset.room !== "index";
 
@@ -87,10 +108,11 @@ export function Cast({ onVisit }) {
 
     const actors = CAST.map((spec, index) => {
       const el = roots.current[index];
+      const leaning = leans.current[index];
       const body = bodies.current[index];
       const gaze = gazes.current[index];
       const { view } = spec;
-      const actor = { spec, el, pos: { x: 0, y: 0 }, ground: 0, dest: null, size: { w: 100, h: 100 }, home: null, busy: false, held: null, peeking: false, life: null };
+      const actor = { spec, el, pos: { x: 0, y: 0 }, ground: 0, dest: null, size: { w: 100, h: 100 }, home: null, busy: false, held: null, peeking: false, life: null, blinks: 0, wags: 0 };
 
       actor.measure = () => {
         actor.size = { w: el.offsetWidth, h: el.offsetHeight };
@@ -138,14 +160,69 @@ export function Cast({ onVisit }) {
         }
       };
 
-      // A hop-walk: crouch, spring along an arc, land with a squash.
+      // A lean on its feet, which the stylesheet springs to; none sets it
+      // upright again.
+      actor.lean = (rot = 0, stretch = 1) => {
+        leaning.style.transform = rot || stretch !== 1 ? `rotate(${rot.toFixed(2)}deg) scale(${(2 - stretch).toFixed(3)}, ${stretch.toFixed(3)})` : "";
+      };
+      // Curious about a pointer close by: it leans towards it, reaching up
+      // when it is above.
+      actor.leanTowards = (x, y, box = el.getBoundingClientRect()) => {
+        const dx = x - (box.left + box.width / 2);
+        const dy = y - (box.top + box.height * 0.45);
+        const near = 1 - Math.min(1, Math.hypot(dx, dy) / 300);
+        if (!near) return actor.lean();
+        const reach = Math.max(0, -dy) / (Math.hypot(dx, dy) || 1);
+        actor.lean(Math.max(-1, Math.min(1, dx / 160)) * 9 * near, 1 + 0.07 * near * reach);
+      };
+      // The follow-through after a landing or a fright: a squash and stretch
+      // that rings down like a spring.
+      actor.wobble = (signal, strength = 1) =>
+        frames(460, (t) => {
+          const swing = strength * Math.exp(-5.5 * t) * Math.sin(t * 19);
+          actor.pose({ sx: 1 + 0.07 * swing, sy: 1 - 0.08 * swing });
+        }, signal).then(() => actor.pose());
+      actor.wag = (ms = 700) => {
+        clearTimeout(actor.wags);
+        el.classList.add("is-wagging");
+        actor.wags = setTimeout(() => el.classList.remove("is-wagging"), ms);
+      };
+      // Blinks come now and then, one at a time or two together.
+      actor.blink = () => {
+        clearTimeout(actor.blinks);
+        actor.blinks = setTimeout(() => {
+          if (!actor.held && !document.hidden) {
+            el.classList.remove("is-blinking");
+            requestAnimationFrame(() => el.classList.add("is-blinking"));
+            if (Math.random() < 0.28) {
+              setTimeout(() => {
+                el.classList.remove("is-blinking");
+                requestAnimationFrame(() => el.classList.add("is-blinking"));
+              }, 260);
+            }
+          }
+          actor.blink();
+        }, 1800 + Math.random() * 4200);
+      };
+      actor.stopBlinking = () => {
+        clearTimeout(actor.blinks);
+        el.classList.remove("is-blinking");
+      };
+
+      // A hop-walk: crouch, spring along an arc, land with a squash, and at
+      // the end of the trip a wobble and a wag of the tail.
       actor.hopTo = async (target, signal, options) => {
         actor.dest = target;
+        const far = Math.hypot(target.x - actor.pos.x, target.y - actor.pos.y) > 4;
         try {
           await hop(target, signal, options);
         } finally {
           // A hop cut short leaves a newer destination alone.
           if (actor.dest === target) actor.dest = null;
+        }
+        if (far) {
+          actor.wag(620);
+          await actor.wobble(signal, 0.8);
         }
       };
       const hop = async (target, signal, { height = 18, stride = 62 } = {}) => {
@@ -218,8 +295,68 @@ export function Cast({ onVisit }) {
             actor.pose({ sx: 1 + 0.1 * d * Math.sin(t * Math.PI * 7), sy: 1 - 0.1 * d * Math.sin(t * Math.PI * 7), rot: 4 * d * Math.sin(t * Math.PI * 5) });
           }, signal);
           actor.pose();
-        }
+        },
+        // A think.
+        async (signal) => actor.think(signal),
+        // A long stretch with its eyes shut, then a shake.
+        async (signal) => {
+          el.classList.add("is-sleepy");
+          try {
+            await frames(760, (t) => {
+              const reach = smooth(t);
+              actor.pose({ sx: 1 - 0.08 * reach, sy: 1 + 0.15 * reach, rot: 3 * Math.sin(t * Math.PI) });
+            }, signal);
+            await wait(420, signal);
+            await frames(160, (t) => actor.pose({ sx: 0.92 + 0.18 * t, sy: 1.15 - 0.27 * t }), signal);
+          } finally {
+            el.classList.remove("is-sleepy");
+          }
+          await actor.wobble(signal, 1.2);
+        },
+        // A spin jump.
+        async (signal) => actor.leap(signal)
       ];
+
+      // A deep crouch, a high leap turning once on its edge, and a squashed
+      // landing that rings down.
+      actor.leap = async (signal) => {
+        const origin = { ...actor.pos };
+        await frames(140, (t) => actor.pose({ sx: 1 + 0.12 * t, sy: 1 - 0.16 * t }), signal);
+        el.classList.add("is-twirling");
+        try {
+          await frames(760, (t) => {
+            actor.pos = { x: origin.x, y: origin.y - 34 * 4 * t * (1 - t) };
+            actor.place();
+            actor.pose({ sx: 0.95, sy: 1.08 - 0.08 * t });
+          }, signal);
+        } finally {
+          el.classList.remove("is-twirling");
+          actor.pos = origin;
+          actor.place();
+        }
+        await frames(110, (t) => actor.pose({ sx: 1.12 - 0.12 * t, sy: 0.84 + 0.16 * t }), signal);
+        actor.wag(760);
+        await actor.wobble(signal, 1.1);
+      };
+
+      // Three dots bob in a bubble over its head while it leans towards it,
+      // eyes turned up. Near the sheet's left edge the bubble rises on its
+      // right instead.
+      actor.think = async (signal) => {
+        const side = actor.pos.x < front.clientWidth * 0.4 ? 1 : -1;
+        el.classList.toggle("thinks-right", side > 0);
+        el.classList.add("is-thinking");
+        try {
+          actor.look(side * 1.6, -2.6);
+          await frames(2800, (t) => {
+            const lean = Math.min(1, t * 5) * Math.min(1, (1 - t) * 6);
+            actor.pose({ rot: side * 5 * lean, sy: 1 + 0.018 * Math.sin(t * Math.PI * 8) });
+          }, signal);
+        } finally {
+          el.classList.remove("is-thinking");
+          actor.pose();
+        }
+      };
 
       actor.start = (task) => {
         actor.life?.abort();
@@ -233,6 +370,7 @@ export function Cast({ onVisit }) {
         actor.life = null;
         actor.busy = false;
         actor.peeking = false;
+        actor.lean();
         onVisit(null);
       };
       return actor;
@@ -303,6 +441,37 @@ export function Cast({ onVisit }) {
     const idle = (actor) => !actor.busy && !actor.held;
     const canWander = () => !userOnThings && !document.hidden && !roomOpen() && !actors.some((actor) => actor.held);
 
+    // A mouse that has rested a moment on bare paper, and the spot beside it
+    // where the a would stand to look at it, if that is a trip worth making.
+    const restingPointer = (actor) => {
+      if (!mouse.matches || !wide.matches || !pointer?.free || performance.now() - pointer.since < 900) return null;
+      const sheet = front.getBoundingClientRect();
+      const x = pointer.x - sheet.left;
+      const y = pointer.y - sheet.top;
+      if (x < 0 || y < 0 || x > sheet.width || y > sheet.height) return null;
+      const side = x > actor.pos.x ? -1 : 1;
+      const spot = clearSpot(actor, { x: x + side * (actor.half() + 30), y: Math.max(actor.size.h + 4, Math.min(sheet.height - 2, y + actor.size.h * 0.5)) });
+      return Math.hypot(spot.x - actor.pos.x, spot.y - actor.pos.y) > 80 ? spot : null;
+    };
+    // The cursor follower from Kevin Ngo's animations: it hops over to the
+    // resting pointer, bops hello, watches it a while with its head on one
+    // side and goes home.
+    const approach = async (actor, spot, signal) => {
+      await actor.hopTo(spot, signal);
+      if (pointer) actor.lookAt(pointer.x, pointer.y);
+      await actor.dances[1](signal);
+      const until = performance.now() + 1800 + Math.random() * 1400;
+      while (performance.now() < until) {
+        if (pointer) {
+          actor.lookAt(pointer.x, pointer.y);
+          actor.leanTowards(pointer.x, pointer.y);
+        }
+        await wait(90, signal);
+      }
+      actor.lean();
+      await actor.hopTo(actor.homeSpot(), signal);
+    };
+
     // Keep the original lively rhythm, now with just the a on the paper.
     const live = async (actor, signal) => {
       for (;;) {
@@ -310,10 +479,16 @@ export function Cast({ onVisit }) {
         while (actor.held) await wait(400, signal);
         if (!canWander()) continue;
         actor.busy = true;
+        actor.lean();
         try {
           const roll = Math.random();
-          if (roll < 0.42) {
+          const resting = restingPointer(actor);
+          if (resting && Math.random() < 0.55) {
+            await approach(actor, resting, signal);
+          } else if (roll < 0.42) {
             try {
+              // Sometimes it thinks it over before it goes.
+              if (Math.random() < 0.45) await actor.think(signal);
               if (wide.matches) {
                 await inspect(actor, pick(things()), signal);
                 await actor.hopTo(actor.homeSpot(), signal);
@@ -355,10 +530,17 @@ export function Cast({ onVisit }) {
         actor.place();
         actor.pose();
         actor.el.classList.add("is-placed");
-        if (!still.matches) actor.start((signal) => live(actor, signal));
+        if (!still.matches) {
+          actor.start((signal) => live(actor, signal));
+          actor.blink();
+        }
       });
     };
-    const stopAll = () => actors.forEach((actor) => actor.stop());
+    const stopAll = () =>
+      actors.forEach((actor) => {
+        actor.stop();
+        actor.stopBlinking();
+      });
 
     // Picked up, one dangles and swings with the pointer; set down, it stays.
     const handlers = actors.map((actor) => {
@@ -368,6 +550,7 @@ export function Cast({ onVisit }) {
         event.preventDefault();
         actor.stop();
         actor.pose();
+        el.classList.remove("is-happy");
         el.setPointerCapture(event.pointerId);
         const sheet = front.getBoundingClientRect();
         const held = { id: event.pointerId, dx: actor.pos.x - (event.clientX - sheet.left), dy: actor.pos.y - (event.clientY - sheet.top), startX: event.clientX, startY: event.clientY, moved: false, rot: 0, spin: 0, lastX: event.clientX, frame: 0 };
@@ -432,23 +615,88 @@ export function Cast({ onVisit }) {
           await live(actor, signal);
         });
       };
+      // Under a resting mouse it is petted: its eyes close happily, its
+      // cheeks colour, its tail wags and it gives a little shiver of joy.
+      const pet = (event) => {
+        if (event.pointerType !== "mouse" || actor.held || still.matches) return;
+        el.classList.add("is-happy");
+        actor.wag(1100);
+        if (!idle(actor) || !actor.life) return;
+        actor.start(async (signal) => {
+          actor.busy = true;
+          try {
+            await actor.wobble(signal, 0.9);
+          } finally {
+            actor.busy = false;
+          }
+          await live(actor, signal);
+        });
+      };
+      const unpet = () => el.classList.remove("is-happy");
       el.addEventListener("pointerdown", grab);
       el.addEventListener("pointermove", drag);
       el.addEventListener("pointerup", drop);
       el.addEventListener("pointercancel", drop);
+      el.addEventListener("pointerenter", pet);
+      el.addEventListener("pointerleave", unpet);
       return () => {
         el.removeEventListener("pointerdown", grab);
         el.removeEventListener("pointermove", drag);
         el.removeEventListener("pointerup", drop);
         el.removeEventListener("pointercancel", drop);
+        el.removeEventListener("pointerenter", pet);
+        el.removeEventListener("pointerleave", unpet);
       };
     });
 
-    // Their eyes follow the pointer while they are at rest.
+    // A pointer swooshing past makes a resting a duck, eyes wide, and wobble
+    // back up.
+    const startle = (actor) => {
+      startled = performance.now();
+      actor.start(async (signal) => {
+        actor.busy = true;
+        actor.lean();
+        actor.el.classList.add("is-surprised");
+        try {
+          await frames(110, (t) => actor.pose({ sx: 1 + 0.14 * t, sy: 1 - 0.2 * t }), signal);
+          await actor.wobble(signal, 1.5);
+        } finally {
+          actor.el.classList.remove("is-surprised");
+          actor.busy = false;
+        }
+        await live(actor, signal);
+      });
+    };
+
+    // At rest its eyes follow the pointer, and a mouse close by draws a lean.
     const follow = (event) => {
       if (still.matches) return;
+      const now = performance.now();
+      const moved = pointer ? Math.hypot(event.clientX - pointer.x, event.clientY - pointer.y) : Infinity;
+      const speed = pointer ? moved / Math.max(8, now - pointer.at) : 0;
+      const target = event.target instanceof Element ? event.target : null;
+      pointer = {
+        x: event.clientX,
+        y: event.clientY,
+        at: now,
+        since: moved > 4 ? now : pointer.since,
+        free: !target?.closest("a, button, input, .mascot, .things, .bar")
+      };
       cancelAnimationFrame(gazeFrame);
-      gazeFrame = requestAnimationFrame(() => actors.forEach((actor) => idle(actor) && actor.lookAt(event.clientX, event.clientY)));
+      gazeFrame = requestAnimationFrame(() => actors.forEach((actor) => {
+        if (!idle(actor)) return;
+        const box = actor.el.getBoundingClientRect();
+        actor.lookAt(event.clientX, event.clientY);
+        if (!mouse.matches) return;
+        actor.leanTowards(event.clientX, event.clientY, box);
+        const near = Math.hypot(event.clientX - (box.left + box.width / 2), event.clientY - (box.top + box.height / 2)) < box.width * 1.3;
+        if (near && speed > 2.4 && now - startled > 1800 && actor.life && !actor.el.classList.contains("is-happy")) startle(actor);
+      }));
+    };
+    // A pointer that leaves the page leaves it upright.
+    const away = () => {
+      pointer = null;
+      actors.forEach((actor) => idle(actor) && actor.lean());
     };
     const row = front.querySelector(".things");
     const onThings = () => {
@@ -457,6 +705,47 @@ export function Cast({ onVisit }) {
     const offThings = () => {
       userOnThings = false;
     };
+
+    // When the paper turns, a resting a looks round at the switch and bops.
+    const turned = (event) => {
+      const actor = actors[0];
+      if (still.matches || roomOpen() || !actor.life || !idle(actor)) return;
+      const { x, y } = event.detail ?? {};
+      actor.start(async (signal) => {
+        actor.busy = true;
+        try {
+          if (Number.isFinite(x) && Number.isFinite(y)) actor.lookAt(x, y);
+          await actor.flag("is-surprised", 380, signal);
+          await actor.dances[1](signal);
+        } finally {
+          actor.busy = false;
+        }
+        await live(actor, signal);
+      });
+    };
+
+    // When its own name, Akibwa, is written in, a resting a turns to watch
+    // and leaps for joy.
+    const name = front.querySelector(".name");
+    const named = new MutationObserver(() => {
+      const actor = actors[0];
+      if (name.dataset.name !== "akibwa" || name.dataset.phase !== "write") return;
+      if (still.matches || roomOpen() || !actor.life || !idle(actor) || Math.random() > 0.6) return;
+      actor.start(async (signal) => {
+        actor.busy = true;
+        actor.lean();
+        try {
+          const box = name.getBoundingClientRect();
+          actor.lookAt(box.left + box.width / 2, box.top + box.height / 2);
+          await wait(420, signal);
+          await actor.leap(signal);
+        } finally {
+          actor.busy = false;
+        }
+        await live(actor, signal);
+      });
+    });
+    if (name) named.observe(name, { attributes: true, attributeFilter: ["data-name", "data-phase"] });
 
     // Rooms hide the front page: they rest while one is open.
     const rooms = new MutationObserver(() => {
@@ -484,6 +773,8 @@ export function Cast({ onVisit }) {
     };
 
     window.addEventListener("pointermove", follow, { passive: true });
+    doc.addEventListener("pointerleave", away);
+    window.addEventListener(PAPER_EVENT, turned);
     window.addEventListener("resize", resize);
     still.addEventListener("change", resize);
     row?.addEventListener("pointerenter", onThings);
@@ -491,11 +782,15 @@ export function Cast({ onVisit }) {
     if (!roomOpen()) begin();
     return () => {
       stopAll();
+      actors.forEach((actor) => clearTimeout(actor.wags));
       clearTimeout(settle);
       rooms.disconnect();
+      named.disconnect();
       cancelAnimationFrame(gazeFrame);
       handlers.forEach((remove) => remove());
       window.removeEventListener("pointermove", follow);
+      doc.removeEventListener("pointerleave", away);
+      window.removeEventListener(PAPER_EVENT, turned);
       window.removeEventListener("resize", resize);
       still.removeEventListener("change", resize);
       row?.removeEventListener("pointerenter", onThings);
@@ -515,24 +810,56 @@ export function Cast({ onVisit }) {
     >
       <svg className="mascot-art" viewBox={`${spec.view.x} ${spec.view.y} ${spec.view.w} ${spec.view.h}`} focusable="false">
         <ellipse className="mascot-shadow" cx={spec.shadow[0]} cy="103.6" rx={spec.shadow[1]} ry="3.4" />
+        {/* It leans towards a nearby pointer on its feet, springing there. */}
         <g
+          className="mascot-lean"
           ref={(element) => {
-            bodies.current[index] = element;
+            leans.current[index] = element;
           }}
         >
-          <g className="mascot-paper">
-            <Art id={spec.id} />
-            <g
-              ref={(element) => {
-                gazes.current[index] = element;
-              }}
-            >
-              <g className="mascot-blink">
-                {spec.eyes.map(([x, y]) => (
-                  <rect key={x} x={x} y={y} width={EYE.w} height={EYE.h} rx={EYE.rx} />
+          <g
+            ref={(element) => {
+              bodies.current[index] = element;
+            }}
+          >
+            <g className="mascot-paper">
+              <Art id={spec.id} />
+              <g className="mascot-cheeks">
+                {spec.cheeks.map(([x, y]) => (
+                  <ellipse key={x} cx={x} cy={y} rx="3.6" ry="2.2" />
                 ))}
               </g>
+              <g
+                ref={(element) => {
+                  gazes.current[index] = element;
+                }}
+              >
+                <g className="mascot-blink">
+                  {spec.eyes.map(([x, y]) => (
+                    <rect key={x} x={x} y={y} width={EYE.w} height={EYE.h} rx={EYE.rx} />
+                  ))}
+                </g>
+              </g>
             </g>
+          </g>
+        </g>
+      </svg>
+      {/* Paper over a darker edge, like the a: the small puff pops up first,
+          then the larger, then the cloud with its dots. */}
+      <svg className="mascot-thought" viewBox="0 0 120 84" focusable="false">
+        {PUFFS.map(([cx, cy, r], index) => (
+          <g key={cx} className="thought-puff" style={{ "--k": PUFFS.length - 1 - index }}>
+            <circle className="thought-edge" cx={cx + 1.2} cy={cy + 1.6} r={r} />
+            <circle className="thought-paper" cx={cx} cy={cy} r={r} />
+          </g>
+        ))}
+        <g className="thought-cloud" style={{ "--k": PUFFS.length }}>
+          <g className="thought-float">
+            <path className="thought-edge" d={THOUGHT} transform="translate(1.6 2.2)" />
+            <path className="thought-paper" d={THOUGHT} />
+            {DOTS.map((cx, index) => (
+              <circle key={cx} className="thought-dot" cx={cx} cy="31" r="4.4" style={{ "--k": index }} />
+            ))}
           </g>
         </g>
       </svg>

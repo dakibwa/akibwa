@@ -14,7 +14,9 @@
   eye). `data/music-art.json` records each source.
 - The sole mascot is the orange `a` from the Codex drawing Dan chose on
   25 September 2026, traced into `components/paper/cast-paths.js`. Its body,
-  apricot tail, darker paper edge and eyes keep the accepted proportions.
+  apricot tail and eyes keep the accepted proportions; since 19 October 2026
+  both are outlined in ink over an ink edge (Dan: “the a would be cuter with
+  a border”), with pink cheeks that show when it is petted.
   It rests beside the introduction. Dan removed the extra `k` and `i` and
   the circular entrance on 28 September 2026.
 - The five things (a hand of sleeves, the Features tile, browser windows,
@@ -36,12 +38,16 @@
   out above the front window (Dan, 26 September 2026: a taller back window
   made it too obvious). The splat that burst out behind them was removed on
   25 September 2026.
-- The Features tile is Features' own box (its `assets/marketing` artwork):
-  the game's squared paper under the wordmark's band of blue, yellow, green
-  and orange, with the house's six threads each in its own colour from the
-  game's palette, falling from a star into its corners; the chord that ends up
-  across the house runs under its ink (Dan, 26 September 2026; it was an
-  orange square with ink threads).
+- The Features tile is the game's board as it draws it since October 2026
+  (`features.games`: the clear six and the ink direction): its faint lattice
+  in a stamp's 102 × 110 proportions under the wordmark's band of blue,
+  yellow, green and orange, with the house's six threads and five rings each
+  in its own colour, dealt as a star. On hover they untangle into the house's
+  corners and the board turns into the stamp they make: the threads lift
+  away, the house inks in on its orange plate, the mount takes the plate's
+  tint and the foot fills with the six colours in the collection's rail order
+  (Dan, 19 October 2026: “based on our new theme of features can we update
+  the thing?”; before, it was the game's squared paper with ink rings).
 - The mascot is the mark's own paths at their own weight, drawn a size up
   (Dan asked for bigger, not chunkier, on 25 September 2026), with two square
   eyes centred on the arch of the `a`, clear of its edges.
@@ -50,7 +56,7 @@
   Inês's: Castle Bank's mark beside a pencil drawing of an office building
   with orange conduit running into an open distribution board, and a salon
   client whose hair streams into ribbons, roses and butterflies.
-- `public/share-card-a.jpg` is the front page's first screen at rest.
+- `public/share-card-b.jpg` is the front page's first screen at rest.
 
 ## Akibwa identity
 
@@ -154,14 +160,13 @@ Create a beautifully detailed panoramic website project-cover illustration for T
 
 ## Link-preview card
 
-`public/share-card.jpg` (1200×630) is the Open Graph and X image. It replaced
-the older mountain-meadow photograph on 22 September 2026 at Dan's request, so
-shared links show the homepage's own first screen: the hero, the blue Projects
-rule, the three project cards and the chapter links. Its source is
-`scripts/share-card.html`, which reuses the committed project-art variants and
-the Ember `a`; render it on a Mac with the command in that file's header. If a
-project card changes, re-render the card and give the image a new filename so
-link previews do not keep a cached copy.
+`public/share-card-b.jpg` (1200×630) is the Open Graph and X image: the
+front page's first screen at rest, captured in a browser at 1200×630 with
+reduced motion so the name, the `a` and the five things stand still. When
+that screen changes, capture it again under a new filename so link previews
+do not keep a cached copy (it was `share-card-a.jpg` until the night switch,
+the outlined `a`, the paper contact objects and the new Features board on
+19 October 2026).
 
 ## Fonts on devices without Apple's faces
 

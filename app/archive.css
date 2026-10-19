@@ -675,6 +675,22 @@
   --project-card-ink: var(--ink);
   --project-card-muted: var(--ink-soft);
   --project-card-border: var(--ink);
+  /* The sites arrive one after another when the room opens, as the roles do. */
+  animation: career-card 560ms var(--ease-pop) 120ms both;
+}
+
+.room .concept-project-stop:nth-child(2) {
+  animation-delay: 210ms;
+}
+
+.room .concept-project-stop:nth-child(3) {
+  animation-delay: 300ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .room .concept-project-stop {
+    animation: none;
+  }
 }
 
 .room .concept-project-card {

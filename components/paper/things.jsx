@@ -206,31 +206,59 @@ export function TasteThing() {
   );
 }
 
-/* Features' box, as its own plate and marketing draw it (features.games:
-   assets/marketing): the game's squared paper under the wordmark's band of
-   four colours, and the house's five neurons dealt as a star with a chord
-   across it, each thread in one of those colours (Dan, 26 September 2026).
-   They fall into the house's corners on hover while its ink silhouette
-   appears beneath them, as the first front page drew it. */
-// The wordmark's colours, left to right, along the top of the box.
-const BAND = ["#2EA3DC", "#EFC319", "#1FA45A", "#E97E18"];
-// Each thread its own colour from the game's palette, no two alike (Dan, 26
-// September 2026): round the house blue, yellow, pink, green and violet, then
-// the chord in orange.
-const THREAD_COLOURS = ["#2EA3DC", "#EFC319", "#DE3C75", "#1FA45A", "#7D6BB0", "#E97E18"];
+/* Features as the game draws it now (features.games, October 2026: the clear
+   six and the ink direction). Its board lies on the game's faint lattice
+   under the wordmark's four-colour rule, in a stamp's proportions, and the
+   house's five neurons are dealt on it as a star with a chord across it, each
+   thread and its ring in a colour of its own (Dan, 26 September 2026). On
+   hover they untangle into the house's corners and the board becomes the
+   stamp they make (Dan, 19 October 2026: “based on our new theme of features
+   can we update the thing?”): the threads lift away as the house inks in on
+   its orange plate, the mount takes the plate's tint and the six colours fill
+   its foot one after another. */
+// The wordmark's rule, left to right, along the top of the board.
+const BAND = ["#22A3DD", "#EFC319", "#279B57", "#DD700C"];
+// Round the house blue, yellow, pink, green and violet, then the chord in
+// orange: no two threads alike.
+const THREAD_COLOURS = ["#22A3DD", "#EFC319", "#DA327B", "#279B57", "#7A68B6", "#DD700C"];
+// A collected stamp's foot, in the collection's rail order.
+const RAIL = ["#DA327B", "#DD700C", "#EFC319", "#279B57", "#22A3DD", "#7A68B6"];
+// The house's plate and its mount, the plate's colour at 26% on the game's
+// stamp paper; the glyph is the game's emblem ink.
+const STAMP = { paper: "#fbfaf6", mount: "#f3d6b9", plate: "#dd700c", ink: "#0e1214" };
 // The outline's threads, and the chord that crosses the house.
 const OUTLINE = HOUSE.threads.slice(0, -1);
 const CHORD = HOUSE.threads.at(-1);
-// Eight squares a side on the 92-unit plate.
-const LINES = Array.from({ length: 7 }, (_, i) => 11.5 * (i + 1));
-const SQUARED = LINES.map((at) => `M${34 + at} 36v92M34 ${36 + at}h92`).join("");
+// A stamp is mounted 102 wide and 110 tall, with 3 units round its square
+// plate and an 11-unit foot; the board is one, 92 wide, standing on the ground.
+const UNIT = 92 / 102;
+const BOARD = { x: 34, y: 128 - 110 * UNIT, w: 92, h: 110 * UNIT };
+const PLATE = { x: BOARD.x + 3 * UNIT, y: BOARD.y + 3 * UNIT, side: 96 * UNIT };
+const BOARD_PATH = `M${BOARD.x} ${round(BOARD.y)}h${BOARD.w}v${round(BOARD.h)}H${BOARD.x}z`;
+// The lattice: rows of triangles, each row offset by half a cell, eight cells
+// across the board.
+const CELL = BOARD.w / 8;
+const ROW = (CELL * Math.sqrt(3)) / 2;
+const RUN = BOARD.h / Math.sqrt(3);
+const LATTICE = [
+  ...Array.from({ length: Math.floor(BOARD.h / ROW) }, (_, k) => `M${BOARD.x} ${round(BOARD.y + ROW * (k + 1))}h${BOARD.w}`),
+  ...Array.from({ length: 14 }, (_, i) => {
+    const x = BOARD.x + CELL * (i - 5);
+    return `M${round(x)} ${round(BOARD.y)}l${round(RUN)} ${round(BOARD.h)}M${round(x + CELL * 5)} ${round(BOARD.y)}l${round(-RUN)} ${round(BOARD.h)}`;
+  })
+].join("");
 const at = ([x, y]) => `${+x.toFixed(2)} ${+y.toFixed(2)}`;
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+// How far one step of the mint has come, once the whole has reached `from`.
+const phase = (k, from, span) => Math.min(1, Math.max(0, (k - from) / span));
+// A spring's overshoot, for the plate landing.
+const back = (p) => 1 + 2.70158 * (p - 1) ** 3 + 1.70158 * (p - 1) ** 2;
 
 export function FeaturesThing({ solved = false }) {
   const [t, setT] = useState(0);
   const frame = useRef(0);
   const current = useRef(0);
+  const clip = `t-board-${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
   useEffect(() => {
     const target = solved ? 1 : 0;
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -240,7 +268,8 @@ export function FeaturesThing({ solved = false }) {
     }
     const from = current.current;
     const start = performance.now();
-    const duration = 620 * Math.abs(target - from) || 1;
+    // Minting takes a little longer than undoing it.
+    const duration = (target ? 1150 : 720) * Math.abs(target - from) || 1;
     const step = (now) => {
       const progress = Math.min(1, (now - start) / duration);
       current.current = from + (target - from) * progress;
@@ -251,36 +280,58 @@ export function FeaturesThing({ solved = false }) {
     frame.current = requestAnimationFrame(step);
     return () => cancelAnimationFrame(frame.current);
   }, [solved]);
-  const k = ease(t);
-  const nodes = HOUSE.tangle.map(([x, y], index) => [x + (HOUSE.nodes[index][0] - x) * k, y + (HOUSE.nodes[index][1] - y) * k]);
+  const k = t;
+  const move = ease(phase(k, 0, 0.56));
+  const nodes = HOUSE.tangle.map(([x, y], index) => [x + (HOUSE.nodes[index][0] - x) * move, y + (HOUSE.nodes[index][1] - y) * move]);
+  const mount = phase(k, 0.54, 0.2);
+  const plate = phase(k, 0.58, 0.22);
+  const ink = phase(k, 0.62, 0.16);
+  const lift = phase(k, 0.66, 0.16);
+  const grow = 0.78 + 0.22 * back(plate);
+  const centre = PLATE.side / 2;
   return (
     <svg className="thing-art thing-features" viewBox="0 0 160 140" aria-hidden="true" focusable="false">
-      {ground(82, 52)}
-      <Sketch d="M34 36h92v92H34z" />
+      <defs>
+        <clipPath id={clip}>
+          <path d={BOARD_PATH} />
+        </clipPath>
+      </defs>
+      {ground(80, 52)}
+      <Sketch d={BOARD_PATH} />
       <Paper>
-        <path d="M126 36l5 3.4v92l-5-3.4z" fill="#cbc6b9" />
-        <path d="M126 36l5 3.4v4.4l-5-3.4z" fill="#b8620f" />
-        <path d="M34 36h92v92H34z" fill="#fbfaf6" />
-        <path className="t-squared" d={SQUARED} />
+        <path d={BOARD_PATH} fill={STAMP.paper} />
+        <path className="t-lattice" d={LATTICE} clipPath={`url(#${clip})`} />
+        <path d={BOARD_PATH} fill={STAMP.mount} opacity={mount} />
         {BAND.map((colour, index) => (
-          <path key={colour} d={`M${34 + index * 23} 36h23v4.4h-23z`} fill={colour} />
+          <path key={colour} d={`M${BOARD.x + index * 23} ${round(BOARD.y)}h23v4.4h-23z`} fill={colour} opacity={1 - mount} />
         ))}
-        <g transform="translate(34 36) scale(.958)">
-          {/* The chord, the last thread, lies under the house's ink. */}
-          <g className="t-graph">
-            <path d={`M${CHORD.map((n) => at(nodes[n])).join("L")}`} stroke={THREAD_COLOURS[OUTLINE.length]} />
-          </g>
-          <path d={HOUSE.fill} fill="#161a1d" opacity={k > 0.92 ? (k - 0.92) / 0.08 : 0} />
-          <g className="t-graph">
-            {OUTLINE.map((thread, index) => (
-              <path key={thread.join("-")} d={`M${thread.map((n) => at(nodes[n])).join("L")}`} stroke={THREAD_COLOURS[index]} />
-            ))}
-            {nodes.map(([x, y], index) => (
-              <circle key={index} cx={x} cy={y} r="4.6" />
-            ))}
+        {RAIL.map((colour, index) => {
+          const filled = phase(k, 0.8 + index * 0.03, 0.08);
+          return filled ? (
+            <path key={colour} d={`M${round(BOARD.x + (3 + 16 * index) * UNIT)} ${round(BOARD.y + 102 * UNIT)}h${round(16.05 * UNIT * filled)}v${round(5 * UNIT)}h${round(-16.05 * UNIT * filled)}z`} fill={colour} />
+          ) : null;
+        })}
+        <g transform={`translate(${round(PLATE.x)} ${round(PLATE.y)})`}>
+          {plate ? (
+            <rect width={round(PLATE.side)} height={round(PLATE.side)} fill={STAMP.plate} opacity={Math.min(1, plate * 2.2)} transform={`translate(${round(centre)} ${round(centre)}) scale(${round(grow)}) translate(${round(-centre)} ${round(-centre)})`} />
+          ) : null}
+          <g transform={`scale(${round(UNIT)})`}>
+            {/* The chord, the last thread, lies under the house's ink. */}
+            <g className="t-graph" opacity={1 - lift}>
+              <path d={`M${CHORD.map((n) => at(nodes[n])).join("L")}`} stroke={THREAD_COLOURS[OUTLINE.length]} />
+            </g>
+            <path d={HOUSE.fill} fill={STAMP.ink} opacity={ink} />
+            <g className="t-graph" opacity={1 - lift}>
+              {OUTLINE.map((thread, index) => (
+                <path key={thread.join("-")} d={`M${thread.map((n) => at(nodes[n])).join("L")}`} stroke={THREAD_COLOURS[index]} />
+              ))}
+              {nodes.map(([x, y], index) => (
+                <circle key={index} cx={x} cy={y} r="4.6" stroke={THREAD_COLOURS[index]} />
+              ))}
+            </g>
           </g>
         </g>
-        <path className="t-ink" d="M34 36h92v92H34z" />
+        <path className="t-ink" d={BOARD_PATH} />
       </Paper>
     </svg>
   );
