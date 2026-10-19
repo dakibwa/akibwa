@@ -1304,11 +1304,11 @@ margin:0 calc(-1 * var(--menu-pad));padding:0 var(--menu-pad) 20px;-webkit-mask:
 grid-template-columns:repeat(auto-fill,minmax(min(52px,calc((100% - 7 * var(--sheet-gap)) / 8 - .5px)),1fr));align-content:start;overscroll-behavior:contain;
 transition:filter var(--t-card) var(--ease-out),opacity var(--t-card) var(--ease-out)}
 .collhd{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
-.coll-head{grid-column:1/-1;display:flex;flex-direction:row-reverse;align-items:center;gap:12px;padding:2px 0 12px;margin-bottom:3px;border-bottom:1px solid var(--rule);--place:34px;
+.coll-head{grid-column:1/-1;display:flex;align-items:center;gap:12px;padding:2px 0 12px;margin-bottom:3px;border-bottom:1px solid var(--rule);--place:34px;
 min-height:calc(var(--place) * 110 / 102 + 15px);position:sticky;top:0;z-index:2;background:var(--surface)}
 .coll-pins{display:flex;gap:12px}
-.coll-tools{display:flex;align-items:center;justify-content:flex-end;margin:0 0 0 auto}
-.coll-tools:first-child{margin-right:-9px}
+.coll-head>:first-child{margin-left:auto}
+.coll-tools{display:flex;align-items:center;justify-content:flex-end;margin-right:-9px}
 .pin-place{position:relative;flex:none;width:var(--place);aspect-ratio:102/110;padding:0;border:0;background:none;cursor:pointer;
 touch-action:pan-y;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 .pin-place[data-pin]{cursor:grab}
@@ -1323,7 +1323,8 @@ touch-action:pan-y;-webkit-touch-callout:none;-webkit-user-select:none;user-sele
 .pin-place.drop-target>.edge rect{animation-play-state:running}
 @media (max-width:700px) and (orientation:portrait){
 .coll-head{container-type:inline-size;--place:clamp(34px,calc((100cqw - 115px) / 4),46px);min-height:0;padding-bottom:16px}
-.coll-head>.coll-tools{margin:0 auto 0 -9px;justify-content:flex-start}
+.coll-head>:first-child{margin-left:0}
+.coll-head>.coll-tools{margin-left:auto}
 }
 @media (prefers-reduced-motion:reduce){.pin-place.shift{transition:none}}
 .collcount{display:flex;align-items:center;gap:14px;margin:0;font-size:13px;color:var(--ink-soft);font-variant-numeric:tabular-nums;white-space:nowrap}
