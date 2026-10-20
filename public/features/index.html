@@ -307,6 +307,7 @@ background:linear-gradient(90deg,transparent 41%,rgba(255,255,255,.35) 45.5%,#ff
 #parrow::before{right:auto;left:var(--lit-l,0px);width:var(--lit-w,0px)}
 :root[data-theme=dark] #parrow>.ink.lit{background:color-mix(in srgb,var(--ink) 62%,var(--surface))}
 @media (hover:hover){:is(.tval:hover,#parrow.lit)::before{animation:barsignal .9s cubic-bezier(.45,0,.55,1) infinite alternate}}
+@media (hover:hover){#threadrow:has(>.tval:hover)>.tval:not(:hover),#parrow.lit>:not(.lit){opacity:.45}}
 .tval:focus-visible::before{animation:barsignal .9s cubic-bezier(.45,0,.55,1) infinite alternate}
 @keyframes barsignal{0%{background-position:100% 0;opacity:0}14%,86%{opacity:1}100%{background-position:0% 0;opacity:0}}
 @media (prefers-reduced-motion:reduce){:is(.tval,#parrow>*)::before{animation:none!important}}
@@ -314,7 +315,7 @@ background:linear-gradient(90deg,transparent 41%,rgba(255,255,255,.35) 45.5%,#ff
 .run>*{flex:0 1 0;min-width:0;background:var(--fill);transition:flex-grow 300ms var(--ease-glide),opacity var(--t-ui)}
 #parmeter{background:none}
 #parrow{position:relative;width:100%;transition:none}
-#parrow>*{position:relative;flex:1 1 0;background:var(--pale);transition:background-color var(--t-ui)}
+#parrow>*{position:relative;flex:1 1 0;background:var(--pale);transition:background-color var(--t-ui),opacity var(--t-ui)}
 #parrow>.ink{background:var(--ink)}
 #parrow>.soft{background:color-mix(in srgb,var(--ink) 55%,transparent)}
 #parrow>.cut{margin-left:2px}
