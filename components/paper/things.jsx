@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
-import { HOUSE } from "./feature-shapes.mjs";
+import { NET } from "./feature-shapes.mjs";
 import { BLOBS } from "./websites-art.mjs";
 import { Graceland, PersonPitch, TigerMountain } from "./sleeves";
 
@@ -90,56 +90,87 @@ export function TasteThing() {
   );
 }
 
-/* Features as the game draws it now (features.games, October 2026: the clear
-   six and the ink direction). Its board lies on the game's faint lattice
-   under the wordmark's four-colour rule, in a stamp's proportions, and the
-   house's five neurons are dealt on it as a star with a chord across it, each
-   thread and its ring in a colour of its own (Dan, 26 September 2026). On
-   hover they untangle into the house's corners and the board becomes the
-   stamp they make (Dan, 19 October 2026: “based on our new theme of features
-   can we update the thing?”): the threads lift away as the house inks in on
-   its orange plate, the mount takes the plate's tint and the six colours fill
-   its foot one after another. */
-// The wordmark's rule, left to right, along the top of the board.
-const BAND = ["#22A3DD", "#EFC319", "#279B57", "#DD700C"];
-// Round the house blue, yellow, pink, green and violet, then the chord in
-// orange: no two threads alike.
-const THREAD_COLOURS = ["#22A3DD", "#EFC319", "#DA327B", "#279B57", "#7A68B6", "#DD700C"];
-// A collected stamp's foot, in the collection's rail order.
-const RAIL = ["#DA327B", "#DD700C", "#EFC319", "#279B57", "#22A3DD", "#7A68B6"];
-// The house's plate and its mount, the plate's colour at 26% on the game's
-// stamp paper; the glyph is the game's emblem ink.
-const STAMP = { paper: "#fbfaf6", mount: "#f3d6b9", plate: "#dd700c", ink: "#0e1214" };
-// The outline's threads, and the chord that crosses the house.
-const OUTLINE = HOUSE.threads.slice(0, -1);
-const CHORD = HOUSE.threads.at(-1);
-// A stamp is mounted 102 wide and 110 tall, with 3 units round its square
-// plate and an 11-unit foot; the board is one, 92 wide, standing on the ground.
-const UNIT = 92 / 102;
-const BOARD = { x: 34, y: 128 - 110 * UNIT, w: 92, h: 110 * UNIT };
-const PLATE = { x: BOARD.x + 3 * UNIT, y: BOARD.y + 3 * UNIT, side: 96 * UNIT };
-const BOARD_PATH = `M${BOARD.x} ${round(BOARD.y)}h${BOARD.w}v${round(BOARD.h)}H${BOARD.x}z`;
-// The lattice: rows of triangles, each row offset by half a cell, eight cells
-// across the board.
-const CELL = BOARD.w / 8;
-const ROW = (CELL * Math.sqrt(3)) / 2;
-const RUN = BOARD.h / Math.sqrt(3);
+/* Features: a messy neural net on the game's board that resolves under the
+   pointer (Dan, 21 October 2026: “can it not just be a representation look
+   like a neural messy net that when you hover it resolves”, and “I think
+   having the board background is still a good thing”). It is drawn as
+   features.games draws a board: its paper and faint lattice, each feature one
+   closed loop in one colour with a ring at every neuron, and an ink conflict
+   wherever two threads cross. On hover the neurons glide home one after
+   another, each ring springing as it lands, each conflict clears as its
+   threads part, and every thread settles into its feature's outline, heavier,
+   under a passing light, as the game frees it: a heart, a house and a droplet
+   (feature-shapes.mjs). */
+const BOARD = { x: 18, y: 36, w: 124, h: 92 };
+const BOARD_PATH = `M${BOARD.x} ${BOARD.y}h${BOARD.w}v${BOARD.h}H${BOARD.x}z`;
+// The game's lattice: rows of cells as tall as they are wide, every other row
+// half a cell aside, each meeting joined to its six neighbours; nine across.
+const CELL = BOARD.w / 9;
+const OVER = Math.ceil(BOARD.h / 2 / CELL);
 const LATTICE = [
-  ...Array.from({ length: Math.floor(BOARD.h / ROW) }, (_, k) => `M${BOARD.x} ${round(BOARD.y + ROW * (k + 1))}h${BOARD.w}`),
-  ...Array.from({ length: 14 }, (_, i) => {
-    const x = BOARD.x + CELL * (i - 5);
-    return `M${round(x)} ${round(BOARD.y)}l${round(RUN)} ${round(BOARD.h)}M${round(x + CELL * 5)} ${round(BOARD.y)}l${round(-RUN)} ${round(BOARD.h)}`;
+  ...Array.from({ length: Math.ceil(BOARD.h / CELL) - 1 }, (_, k) => `M${BOARD.x} ${round(BOARD.y + CELL * (k + 1))}h${BOARD.w}`),
+  ...Array.from({ length: 10 + 2 * OVER }, (_, i) => {
+    const x = round(BOARD.x + CELL * (i - OVER));
+    return `M${x} ${BOARD.y}l${BOARD.h / 2} ${BOARD.h}M${x} ${BOARD.y}l${-BOARD.h / 2} ${BOARD.h}`;
   })
 ].join("");
-const at = ([x, y]) => `${+x.toFixed(2)} ${+y.toFixed(2)}`;
-const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
-// How far one step of the mint has come, once the whole has reached `from`.
+// The game's marks (MARK in features.games) at a third of their size: the
+// ring and its stroke, the thread, a freed thread's heavier line, and a
+// conflict, a paper halo round an ink ring with a paper centre.
+const MARK = { r: 3.4, ring: 1.19, thread: 2.24, freed: 3.6, halo: 2.13, dot: 1.45, dotInk: 0.58 };
+const at = ([x, y]) => `${round(x)} ${round(y)}`;
+// How far one step of the resolve has come, once the whole has reached `from`.
 const phase = (k, from, span) => Math.min(1, Math.max(0, (k - from) / span));
-// A spring's overshoot, for the plate landing.
-const back = (p) => 1 + 2.70158 * (p - 1) ** 3 + 1.70158 * (p - 1) ** 2;
+const smooth = (p) => p * p * (3 - 2 * p);
+// Each neuron glides home as if dragged there, a beat after the one before
+// (when it leaves, as a share of the whole resolve), and its ring springs on
+// landing, as the game springs a dropped neuron into its place.
+const leaves = (f, i) => f * 0.08 + i * 0.03;
+const GLIDE = 0.42;
+const glide = (x) => (x <= 0 ? 0 : x >= 1 ? 1 : x < 0.5 ? 4 * x ** 3 : 1 - (2 - 2 * x) ** 3 / 2);
+const landing = (x) => (x <= 0 || x >= 1 ? 0 : Math.exp(-4 * x) * Math.sin(3 * Math.PI * x));
+
+// Each thread is straight between its neurons until it settles; neighbours on
+// one loop meet at a neuron and never conflict.
+function conflicts(loops) {
+  const lines = loops.flatMap((points, f) => points.map((a, i) => ({ a, b: points[(i + 1) % points.length], f, i, n: points.length })));
+  const found = [];
+  lines.forEach((p, m) => {
+    for (const q of lines.slice(m + 1)) {
+      if (p.f === q.f && (q.i - p.i === 1 || q.i - p.i === p.n - 1)) continue;
+      const [rx, ry] = [p.b[0] - p.a[0], p.b[1] - p.a[1]];
+      const [sx, sy] = [q.b[0] - q.a[0], q.b[1] - q.a[1]];
+      const across = rx * sy - ry * sx;
+      if (!across) continue;
+      const [ax, ay] = [q.a[0] - p.a[0], q.a[1] - p.a[1]];
+      const t = (ax * sy - ay * sx) / across;
+      const u = (ax * ry - ay * rx) / across;
+      if (t > 0 && t < 1 && u > 0 && u < 1) found.push([p.a[0] + rx * t, p.a[1] + ry * t]);
+    }
+  });
+  return found;
+}
+
+// One feature's loop through its neurons, its threads bent into the outline
+// as far as it has settled (0 to 1).
+function loopPath(points, edges, settled) {
+  let d = `M${at(points[0])}`;
+  points.forEach((a, i) => {
+    const b = points[(i + 1) % points.length];
+    const [cx, cy] = [b[0] - a[0], b[1] - a[1]];
+    if (settled > 0)
+      for (const [share, along, side] of edges[i]) {
+        const u = share + (along - share) * settled;
+        const v = side * settled;
+        d += `L${at([a[0] + u * cx - v * cy, a[1] + u * cy + v * cx])}`;
+      }
+    d += i === points.length - 1 ? "Z" : `L${at(b)}`;
+  });
+  return d;
+}
 
 export function FeaturesThing({ solved = false }) {
-  const [t, setT] = useState(0);
+  const [k, setK] = useState(0);
   const frame = useRef(0);
   const current = useRef(0);
   const clip = `t-board-${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
@@ -147,32 +178,36 @@ export function FeaturesThing({ solved = false }) {
     const target = solved ? 1 : 0;
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
       current.current = target;
-      setT(target);
+      setK(target);
       return undefined;
     }
     const from = current.current;
     const start = performance.now();
-    // Minting takes a little longer than undoing it.
-    const duration = (target ? 1150 : 720) * Math.abs(target - from) || 1;
+    // Resolving takes a little longer than knotting up again.
+    const duration = (target ? 1300 : 750) * Math.abs(target - from) || 1;
     const step = (now) => {
       const progress = Math.min(1, (now - start) / duration);
       current.current = from + (target - from) * progress;
-      setT(current.current);
+      setK(current.current);
       if (progress < 1) frame.current = requestAnimationFrame(step);
     };
     cancelAnimationFrame(frame.current);
     frame.current = requestAnimationFrame(step);
     return () => cancelAnimationFrame(frame.current);
   }, [solved]);
-  const k = t;
-  const move = ease(phase(k, 0, 0.56));
-  const nodes = HOUSE.tangle.map(([x, y], index) => [x + (HOUSE.nodes[index][0] - x) * move, y + (HOUSE.nodes[index][1] - y) * move]);
-  const mount = phase(k, 0.54, 0.2);
-  const plate = phase(k, 0.58, 0.22);
-  const ink = phase(k, 0.62, 0.16);
-  const lift = phase(k, 0.66, 0.16);
-  const grow = 0.78 + 0.22 * back(plate);
-  const centre = PLATE.side / 2;
+  // The heart's neurons leave first, then the house's, then the droplet's,
+  // and each feature settles as its last lands, by when every conflict has
+  // long cleared.
+  const loops = NET.map((feature, f) =>
+    feature.rest.map(([x, y], i) => {
+      const p = glide((k - leaves(f, i)) / GLIDE);
+      const [hx, hy] = feature.home[i];
+      return [x + (hx - x) * p, y + (hy - y) * p];
+    })
+  );
+  const rings = NET.map((feature, f) => feature.rest.map((_, i) => round(MARK.r * (1 + 0.25 * landing((k - leaves(f, i) - GLIDE) / 0.2)))));
+  const settled = NET.map((feature, f) => smooth(phase(k, leaves(f, feature.rest.length - 1) + GLIDE - 0.04, 0.28)));
+  const paths = NET.map((feature, f) => loopPath(loops[f], feature.edges, settled[f]));
   return (
     <svg className="thing-art thing-features" viewBox="0 0 160 140" aria-hidden="true" focusable="false">
       <defs>
@@ -180,43 +215,38 @@ export function FeaturesThing({ solved = false }) {
           <path d={BOARD_PATH} />
         </clipPath>
       </defs>
-      {ground(80, 52)}
+      {ground(80, 64)}
       <Sketch d={BOARD_PATH} />
       <Paper>
-        <path d={BOARD_PATH} fill={STAMP.paper} />
+        <path className="t-board" d={BOARD_PATH} />
         <path className="t-lattice" d={LATTICE} clipPath={`url(#${clip})`} />
-        <path d={BOARD_PATH} fill={STAMP.mount} opacity={mount} />
-        {BAND.map((colour, index) => (
-          <path key={colour} d={`M${BOARD.x + index * 23} ${round(BOARD.y)}h23v4.4h-23z`} fill={colour} opacity={1 - mount} />
+        {NET.map((feature, f) => (
+          <path key={feature.key} className="t-thread" d={paths[f]} stroke={feature.colour} strokeWidth={round(MARK.thread + (MARK.freed - MARK.thread) * settled[f])} />
         ))}
-        {RAIL.map((colour, index) => {
-          // One after another, the last full by the end, so the foot spans
-          // the plate's width with an even margin on each side.
-          const filled = phase(k, 0.74 + index * 0.03, 0.1);
-          return filled ? (
-            <path key={colour} d={`M${round(BOARD.x + (3 + 16 * index) * UNIT)} ${round(BOARD.y + 102 * UNIT)}h${round(16.05 * UNIT * filled)}v${round(5 * UNIT)}h${round(-16.05 * UNIT * filled)}z`} fill={colour} />
-          ) : null;
-        })}
-        <g transform={`translate(${round(PLATE.x)} ${round(PLATE.y)})`}>
-          {plate ? (
-            <rect width={round(PLATE.side)} height={round(PLATE.side)} fill={STAMP.plate} opacity={Math.min(1, plate * 2.2)} transform={`translate(${round(centre)} ${round(centre)}) scale(${round(grow)}) translate(${round(-centre)} ${round(-centre)})`} />
-          ) : null}
-          <g transform={`scale(${round(UNIT)})`}>
-            {/* The chord, the last thread, lies under the house's ink. */}
-            <g className="t-graph" opacity={1 - lift}>
-              <path d={`M${CHORD.map((n) => at(nodes[n])).join("L")}`} stroke={THREAD_COLOURS[OUTLINE.length]} />
-            </g>
-            <path d={HOUSE.fill} fill={STAMP.ink} opacity={ink} />
-            <g className="t-graph" opacity={1 - lift}>
-              {OUTLINE.map((thread, index) => (
-                <path key={thread.join("-")} d={`M${thread.map((n) => at(nodes[n])).join("L")}`} stroke={THREAD_COLOURS[index]} />
-              ))}
-              {nodes.map(([x, y], index) => (
-                <circle key={index} cx={x} cy={y} r="4.6" stroke={THREAD_COLOURS[index]} />
-              ))}
-            </g>
+        {NET.map((feature, f) =>
+          loops[f].map(([x, y], i) => <circle key={`${feature.key}-${i}`} className="t-neuron" cx={round(x)} cy={round(y)} r={rings[f][i]} stroke={feature.colour} strokeWidth={MARK.ring} />)
+        )}
+        {/* As in the game, conflicts lie over every neuron. */}
+        {conflicts(loops).map(([x, y], i) => (
+          <g key={i} className="t-conflict">
+            <circle cx={round(x)} cy={round(y)} r={MARK.halo} />
+            <circle cx={round(x)} cy={round(y)} r={MARK.dot} strokeWidth={MARK.dotInk} />
           </g>
-        </g>
+        ))}
+        {/* A light runs along each thread as it comes free. */}
+        {NET.map((feature, f) =>
+          settled[f] > 0 && settled[f] < 1 ? (
+            <path
+              key={`${feature.key}-light`}
+              className="t-release"
+              d={paths[f]}
+              pathLength="1"
+              strokeWidth={round(MARK.thread + (MARK.freed - MARK.thread) * settled[f])}
+              strokeDashoffset={round(0.1 - 1.1 * settled[f])}
+              opacity={round(0.6 * Math.sin(Math.PI * settled[f]))}
+            />
+          ) : null
+        )}
         <path className="t-ink" d={BOARD_PATH} />
       </Paper>
     </svg>

@@ -49,16 +49,23 @@
   rose”); opened, it slides out to the left while Castle Bank's rises
   behind. The splat that burst out behind them was removed on
   25 September 2026.
-- The Features tile is the game's board as it draws it since October 2026
-  (`features.games`: the clear six and the ink direction): its faint lattice
-  in a stamp's 102 × 110 proportions under the wordmark's band of blue,
-  yellow, green and orange, with the house's six threads and five rings each
-  in its own colour, dealt as a star. On hover they untangle into the house's
-  corners and the board turns into the stamp they make: the threads lift
-  away, the house inks in on its orange plate, the mount takes the plate's
-  tint and the foot fills with the six colours in the collection's rail order
-  (Dan, 19 October 2026: “based on our new theme of features can we update
-  the thing?”; before, it was the game's squared paper with ink rings).
+- The Features tile is a messy neural net on the game's board that resolves
+  under the pointer (Dan, 21 October 2026: “can it not just be a
+  representation look like a neural messy net that when you hover it
+  resolves”, keeping the board: “I think having the board background is still
+  a good thing”). It is drawn as `features.games` draws a board in its light
+  theme: the surface and faint lattice, each feature one closed loop in one
+  colour with a ring at every neuron (the game's marks at a third of their
+  size), and an ink conflict dot wherever two threads cross, ten at rest. On
+  hover the neurons glide home one after another, each ring springing as it
+  lands, the conflicts clear as their threads part, and every thread settles
+  into its feature's outline, heavier, under a passing light: a heart in
+  pink, a house in orange and a droplet in blue, in a row across the board.
+  The outlines are the game's own (its stamp collection, revision 41), in
+  `components/paper/feature-shapes.mjs`; the knot was chosen for readable
+  clearances between rings, threads and conflicts. Before, it was a star of
+  six threads each in its own colour that minted the house's stamp (19
+  October 2026), and before that the game's squared paper with ink rings.
 - The mascot is the mark's own paths at their own weight, drawn a size up
   (Dan asked for bigger, not chunkier, on 25 September 2026), with two square
   eyes centred on the arch of the `a`, clear of its edges.
@@ -67,7 +74,7 @@
   Inês's: Castle Bank's mark beside a pencil drawing of an office building
   with orange conduit running into an open distribution board, and a salon
   client whose hair streams into ribbons, roses and butterflies.
-- `public/share-card-c.jpg` is the front page's first screen at rest.
+- `public/share-card-d.jpg` is the front page's first screen at rest.
 
 ## Akibwa identity
 
@@ -171,14 +178,15 @@ Create a beautifully detailed panoramic website project-cover illustration for T
 
 ## Link-preview card
 
-`public/share-card-c.jpg` (1200×630) is the Open Graph and X image: the
+`public/share-card-d.jpg` (1200×630) is the Open Graph and X image: the
 front page's first screen at rest, captured in a browser at 1200×630 with
 reduced motion so the name, the `a` and the five things stand still. When
 that screen changes, capture it again under a new filename so link previews
 do not keep a cached copy (it was `share-card-a.jpg` until the night switch,
 the outlined `a`, the paper contact objects and the new Features board on
 19 October 2026, then briefly `share-card-b.jpg` before the redrawn sleeves
-and Butterfly Rose's window the same day).
+and Butterfly Rose's window the same day, and `share-card-c.jpg` until the
+Features net on 21 October 2026).
 
 ## Fonts on devices without Apple's faces
 
