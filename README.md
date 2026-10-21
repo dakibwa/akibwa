@@ -30,6 +30,6 @@ The approved career roles, cultural curation and Instagram/X links are restored 
 - `npm run trek:build`: rebuild the Trek from the exact route data and privacy-edited journal.
 - `npm run check:trek:dom`: exercise relief, playback, phone layouts and graphics failure paths. See [the Trek design and source contract](docs/trek-design.md).
 - `node scripts/build-music-ranking.mjs --history-root PRIVATE_HISTORY_DIRECTORY`: refresh the public song and artist ranking from the private history's prepared top 1,000.
-- The link-preview card, `public/share-card-e.jpg`, is the front page's first screen captured at 1200×630 with reduced motion, so the name and five things are at rest. When the first screen changes, capture it again under a new filename so link previews drop their cached copy.
+- The link-preview card, `public/share-card-f.jpg`, is the front page's first screen captured at 1200×630 with reduced motion, so the name and five things are at rest. When the first screen changes, capture it again under a new filename so link previews drop their cached copy.
 
 Public surface metadata lives in `data/public-surfaces.json`. API-backed refreshes belong in Cloudflare Workers rather than local schedulers or data-mutating GitHub Actions. See [Publication Workflow](docs/publication-workflow.md).

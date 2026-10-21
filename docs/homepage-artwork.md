@@ -52,11 +52,15 @@
 - The Features tile is the game's board as it draws it since October 2026
   (`features.games`: the clear six and the ink direction): its faint lattice
   in a stamp's 102 × 110 proportions under the wordmark's band of blue,
-  yellow, green and orange, with the house's six threads in orange and its
-  five rings in blue, dealt as a star (Dan, 21 October 2026: “I just didn't
-  like how the neurons were all different colours”, “or do just orange and
-  blue?”; a messy net that resolved into three features was tried the same
-  day and withdrawn: “the original was better”). On hover they untangle into
+  yellow, green and orange, with the house dealt as a star in the game's blue
+  and orange: two features sharing its eaves, the roof blue (apex to each
+  eave and the chord between them) and the walls and floor orange, each ring
+  in its threads' colour and the two eaves fused, a blue ring round an orange
+  one (Dan, 21 October 2026: “I just didn't like how the neurons were all
+  different colours”, “some of the lines will be blue and orange and some of
+  the circles will be blue and orange too, preferably matching”; a messy net
+  that resolved into three features was tried the same day and withdrawn:
+  “the original was better”). On hover they untangle into
   the house's corners and the board turns into the stamp they make: the
   threads lift away, the house inks in on its orange plate, the mount takes
   the plate's tint and the foot fills with the six colours in the collection's
@@ -71,7 +75,7 @@
   Inês's: Castle Bank's mark beside a pencil drawing of an office building
   with orange conduit running into an open distribution board, and a salon
   client whose hair streams into ribbons, roses and butterflies.
-- `public/share-card-e.jpg` is the front page's first screen at rest.
+- `public/share-card-f.jpg` is the front page's first screen at rest.
 
 ## Akibwa identity
 
@@ -175,16 +179,17 @@ Create a beautifully detailed panoramic website project-cover illustration for T
 
 ## Link-preview card
 
-`public/share-card-e.jpg` (1200×630) is the Open Graph and X image: the
+`public/share-card-f.jpg` (1200×630) is the Open Graph and X image: the
 front page's first screen at rest, captured in a browser at 1200×630 with
 reduced motion so the name, the `a` and the five things stand still. When
 that screen changes, capture it again under a new filename so link previews
 do not keep a cached copy (it was `share-card-a.jpg` until the night switch,
 the outlined `a`, the paper contact objects and the new Features board on
 19 October 2026, then briefly `share-card-b.jpg` before the redrawn sleeves
-and Butterfly Rose's window the same day, `share-card-c.jpg` until the
-Features board's threads turned orange and its neurons blue on 21 October
-2026, and for an hour that day `share-card-d.jpg`, under the withdrawn net).
+and Butterfly Rose's window the same day, and `share-card-c.jpg` until the
+Features board turned blue and orange on 21 October 2026, when
+`share-card-d.jpg` and `share-card-e.jpg` each lasted under an hour while it
+was reworked).
 
 ## Fonts on devices without Apple's faces
 

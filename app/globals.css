@@ -1256,6 +1256,17 @@ html[data-drawn] .front .t-pin {
   stroke-width: 2.1;
 }
 
+/* A fused neuron, as the game draws one: a heavier outer ring round the
+   other feature's ring. */
+.t-graph circle.t-fused {
+  stroke-width: 2.4;
+}
+
+.t-graph circle.t-fused-in {
+  fill: none;
+  stroke-width: 2;
+}
+
 /* Taste: a hand of sleeves that fans open. */
 .t-sleeve-type {
   fill: #5f6b6c;

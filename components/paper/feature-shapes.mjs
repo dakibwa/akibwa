@@ -4,9 +4,9 @@
  * first front page's layout: the neurons are dealt as a star (`tangle`) with a
  * chord across it and fall into the house's corners (`nodes`), where its
  * silhouette (`fill`) inks in under the threads — the thing it is, with no
- * coloured plate. `threads` joins the neurons one edge at a time, all orange:
- * the roof's right, the right wall, the floor, the left wall, the roof's left,
- * and last the chord. The chord ends up straight across the house, so it runs
+ * coloured plate. `threads` joins the neurons one edge at a time: the roof's
+ * right, the right wall, the floor, the left wall, the roof's left, and last
+ * the chord. The chord ends up straight across the house, so it runs
  * under the silhouette, which covers it once the house has formed (Dan,
  * 26 September 2026).
  */

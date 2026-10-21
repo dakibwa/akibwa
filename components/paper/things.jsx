@@ -94,21 +94,24 @@ export function TasteThing() {
    six and the ink direction). Its board lies on the game's faint lattice
    under the wordmark's four-colour rule, in a stamp's proportions, and the
    house's five neurons are dealt on it as a star with a chord across it (Dan,
-   26 September 2026), every thread orange, the colour its plate takes, and
-   every neuron's ring blue (Dan, 21 October 2026: “I just didn't like how the
-   neurons were all different colours”, “or do just orange and blue?”; a messy
-   net resolving into three features was tried that day and withdrawn: “the
-   original was better”). On hover they untangle into the house's corners and
-   the board becomes the stamp they make (Dan, 19 October 2026: “based on our
-   new theme of features can we update the thing?”): the threads lift away as
-   the house inks in on its orange plate, the mount takes the plate's tint and
-   the six colours fill its foot one after another. */
+   26 September 2026), in the game's blue and orange as two features sharing
+   its eaves (Dan, 21 October 2026: “some of the lines will be blue and orange
+   and some of the circles will be blue and orange too, preferably matching”;
+   a messy net resolving into three features was tried that day and
+   withdrawn: “the original was better”). On hover they untangle into the
+   house's corners and the board becomes the stamp they make (Dan, 19 October
+   2026: “based on our new theme of features can we update the thing?”): the
+   threads lift away as the house inks in on its orange plate, the mount takes
+   the plate's tint and the six colours fill its foot one after another. */
 // The wordmark's rule, left to right, along the top of the board.
 const BAND = ["#22A3DD", "#EFC319", "#279B57", "#DD700C"];
-// The game's orange and blue lines: the threads, as on the house's plate, and
-// the neurons' rings.
-const THREAD = "#dd700c";
-const NEURON = "#119bd5";
+// The game's orange and blue lines. The roof is one feature, in blue: the
+// roof's right, the roof's left and the chord between the eaves. The walls
+// and floor are the other, in orange, the colour the plate takes. Each neuron
+// takes its threads' colour, and the two eaves, shared, are drawn as the game
+// draws a fused neuron: a blue ring round an orange one.
+const ORANGE = "#dd700c";
+const BLUE = "#119bd5";
 // A collected stamp's foot, in the collection's rail order.
 const RAIL = ["#DA327B", "#DD700C", "#EFC319", "#279B57", "#22A3DD", "#7A68B6"];
 // The house's plate and its mount, the plate's colour at 26% on the game's
@@ -117,6 +120,8 @@ const STAMP = { paper: "#fbfaf6", mount: "#f3d6b9", plate: "#dd700c", ink: "#0e1
 // The outline's threads, and the chord that crosses the house.
 const OUTLINE = HOUSE.threads.slice(0, -1);
 const CHORD = HOUSE.threads.at(-1);
+const ROOF = new Set([HOUSE.threads[0], HOUSE.threads[4], CHORD]);
+const RINGS = [[BLUE], [BLUE, ORANGE], [ORANGE], [ORANGE], [BLUE, ORANGE]];
 // A stamp is mounted 102 wide and 110 tall, with 3 units round its square
 // plate and an 11-unit foot; the board is one, 92 wide, standing on the ground.
 const UNIT = 92 / 102;
@@ -207,17 +212,23 @@ export function FeaturesThing({ solved = false }) {
           ) : null}
           <g transform={`scale(${round(UNIT)})`}>
             {/* The chord, the last thread, lies under the house's ink. */}
-            <g className="t-graph" stroke={THREAD} opacity={1 - lift}>
-              <path d={`M${CHORD.map((n) => at(nodes[n])).join("L")}`} />
+            <g className="t-graph" opacity={1 - lift}>
+              <path d={`M${CHORD.map((n) => at(nodes[n])).join("L")}`} stroke={BLUE} />
             </g>
             <path d={HOUSE.fill} fill={STAMP.ink} opacity={ink} />
-            <g className="t-graph" stroke={THREAD} opacity={1 - lift}>
+            <g className="t-graph" opacity={1 - lift}>
               {OUTLINE.map((thread) => (
-                <path key={thread.join("-")} d={`M${thread.map((n) => at(nodes[n])).join("L")}`} />
+                <path key={thread.join("-")} d={`M${thread.map((n) => at(nodes[n])).join("L")}`} stroke={ROOF.has(thread) ? BLUE : ORANGE} />
               ))}
-              {nodes.map(([x, y], index) => (
-                <circle key={index} cx={x} cy={y} r="4.6" stroke={NEURON} />
-              ))}
+              {nodes.map(([x, y], index) => {
+                const [ring, fused] = RINGS[index];
+                return (
+                  <g key={index}>
+                    <circle className={fused ? "t-fused" : undefined} cx={x} cy={y} r="4.6" stroke={ring} />
+                    {fused ? <circle className="t-fused-in" cx={x} cy={y} r="2.3" stroke={fused} /> : null}
+                  </g>
+                );
+              })}
             </g>
           </g>
         </g>

@@ -24,7 +24,7 @@ export const metadata = {
     // captured at 1200×630 with reduced motion (see README).
     images: [
       {
-        url: "/share-card-e.jpg",
+        url: "/share-card-f.jpg",
         width: 1200,
         height: 630,
         alt: "I'm Daniel, building in the age of AI, above five paper things: music, features, websites, career and trek"
@@ -36,7 +36,7 @@ export const metadata = {
     title: "Akibwa",
     description:
       "Daniel, online as Akibwa. The music I listen to, a puzzle I made, websites I’ve built, how I got here, and a walk from Paris to Sofia.",
-    images: ["/share-card-e.jpg"]
+    images: ["/share-card-f.jpg"]
   },
   // The sized .ico serves browsers without SVG icons and requests that skip
   // the page (feeds, robots.txt); iOS draws its own corners on the touch icon.
