@@ -1236,47 +1236,24 @@ html[data-drawn] .front .t-pin {
   animation-duration: 1.8s;
 }
 
-/* Features: the game's board in its light theme. Its --surface, its lattice
-   (its ink at 9% on that surface) and a hairline of it; neurons filled with
-   the surface; a conflict's halo and centre in its --paper, its ring in its
-   --ink; and the white light that runs along a thread coming free. */
-.t-board {
-  fill: #fbfaf6;
-}
-
+/* Features: threads and rings in the clear six on the game's faint lattice
+   (its ink at 9% on its --surface), as thick against the rings as in play. */
 .t-lattice {
   fill: none;
-  stroke: #e6e6e2;
-  stroke-width: 0.5;
+  stroke: #e4e3dd;
+  stroke-width: 0.7;
 }
 
-.t-thread {
+.t-graph path {
   fill: none;
+  stroke-width: 3.2;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
-.t-neuron {
+.t-graph circle {
   fill: #fbfaf6;
-}
-
-.t-conflict circle {
-  fill: #eae7df;
-}
-
-.t-conflict circle:first-child {
-  opacity: 0.9;
-}
-
-.t-conflict circle + circle {
-  stroke: #15191c;
-}
-
-.t-release {
-  fill: none;
-  stroke: #fff;
-  stroke-linecap: round;
-  stroke-dasharray: 0.1 1.2;
+  stroke-width: 2.1;
 }
 
 /* Taste: a hand of sleeves that fans open. */
@@ -2980,7 +2957,7 @@ html[data-flipping]::view-transition-new(root) {
   }
 
   .thing-features {
-    --art-top: 35;
+    --art-top: 29;
   }
 
   .thing-websites {

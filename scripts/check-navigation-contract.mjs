@@ -3,7 +3,6 @@ import { websites } from "../data/websites.mjs";
 import { unpackRanking } from "../components/paper/music-ranking.mjs";
 import { albumSides, albumWeights, drawnOrder, layoutSquares, packSquares, rowOfSquares, tilesFor, GAP } from "../components/paper/music-map.mjs";
 import { indexItems, search } from "../components/paper/music-search.mjs";
-import { NET } from "../components/paper/feature-shapes.mjs";
 
 /* Build-time contract for the paper homepage: one sheet with five things —
    music, features, websites, career and the trek — that open in place (the
@@ -121,33 +120,15 @@ requireText(things, "CARD_REST.map(", "the music sketch must trace the fanned ca
 requireText(things, "<CastleBankMark />", "the back websites window must carry Castle Bank's mark");
 // Dan, 26 September 2026: the back window stays its first size, so the mark only peeps out.
 requireText(things, "const BACK = windowShape(34, 38, 96, 90);", "the back websites window must not grow to show Castle Bank's mark");
-// Dan, 26 September 2026: the Features tile is Features' own board; 21 October
-// 2026: a messy neural net on the game's lattice paper that resolves on hover,
-// each feature one loop in one colour with the game's conflicts.
+// Dan, 26 September 2026: the Features tile is Features' own board; 19 October
+// 2026: in the game's new theme, on its lattice, minting a stamp on hover.
+requireText(things, 'const BAND = ["#22A3DD", "#EFC319", "#279B57", "#DD700C"];', "the Features board must carry the wordmark's four colours");
 requireText(things, 'className="t-lattice"', "the Features board must be the game's lattice paper");
-requireText(things, "stroke={feature.colour}", "each Features thread must be drawn in its feature's one colour");
-requireText(things, "conflicts(loops).map(", "the Features net must mark its conflicts as the game does");
-requireText(things, "loopPath(loops[f], feature.edges, settled[f])", "the Features net must resolve into its features' outlines");
-{
-  // Knotted at rest, and clear of every conflict once resolved.
-  const crossings = (key) => {
-    const lines = NET.flatMap((feature, f) => feature[key].map((a, i) => ({ a, b: feature[key][(i + 1) % feature[key].length], f, i, n: feature[key].length })));
-    let count = 0;
-    lines.forEach((p, m) =>
-      lines.slice(m + 1).forEach((q) => {
-        if (p.f === q.f && (q.i - p.i === 1 || q.i - p.i === p.n - 1)) return;
-        const side = (o, a, b) => Math.sign((a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]));
-        if (side(p.a, p.b, q.a) * side(p.a, p.b, q.b) < 0 && side(q.a, q.b, p.a) * side(q.a, q.b, p.b) < 0) count += 1;
-      })
-    );
-    return count;
-  };
-  if (NET.some((feature) => feature.rest.length !== feature.home.length || feature.edges.length !== feature.home.length)) {
-    fail("every Features neuron must have a home and an outline to the next");
-  }
-  if (crossings("rest") < 8) fail("the Features net must start as a messy knot");
-  if (crossings("home") !== 0) fail("the Features net must resolve with no conflicts left");
-}
+requireText(things, "RAIL.map(", "the Features board must mint a stamp whose foot fills with the six colours");
+// Dan, 21 October 2026: “or do just orange and blue?” — every thread orange,
+// every neuron blue, never a colour each.
+requireText(things, '<g className="t-graph" stroke={THREAD}', "the Features threads must all be orange");
+requireText(things, 'r="4.6" stroke={NEURON}', "the Features neurons must all be blue");
 requireText(things, "<Reveal id={mask} d={TRAIL}", "the career trail must be laid down, not shown from the start");
 requireText(things, "<Reveal id={mask} d={ROUTE}", "the trek route must be walked in on arrival");
 requireText(framed, "#introveil{padding:0!important}", "the Features game must reach the edges of its frame");
