@@ -349,6 +349,7 @@ height:auto;padding:12px 20px 14px}
 :is(.help.hud-menu,.signclose,.day-close):is(:hover,:active)::before{opacity:1}
 :is(.help.hud-menu,.signclose,.day-close):focus-visible{outline:none}
 :is(.help.hud-menu,.signclose,.day-close):focus-visible::before{opacity:1;box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--ink)}
+.pointing .veil :is(.signclose,.day-close):focus-visible:not(:hover)::before{opacity:0;box-shadow:none}
 .pin-plate{display:block;width:100%;height:auto}
 .pin-plate>svg{width:96px;height:96px}
 .hud-pins{display:none;position:relative;flex:none;align-items:center;gap:5px;padding:6px;margin:-6px;border:0;background:none;cursor:pointer}
@@ -1398,6 +1399,7 @@ padding:4px var(--menu-pad) calc(var(--menu-foot) + var(--safe-bottom))}
 .pay-points .gm{--d:14px}
 .premium-sheet .pay-points{font-size:14px}
 .premium-sheet .pay-points li{gap:8px}
+@media(max-width:359px){.premium-sheet .pay-points{grid-template-columns:1fr}}
 .premium-sheet .pay-points .gm{--d:12px}
 .premium-fan .premium-sheet-actions{align-self:stretch;margin-top:20px}
 .pay-restore{justify-self:center;min-height:44px;padding:0 8px;border:0;background:none;font:inherit;font-size:13px;color:var(--ink-soft);cursor:pointer}
