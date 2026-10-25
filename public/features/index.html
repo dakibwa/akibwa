@@ -1144,7 +1144,7 @@ clip-path:inset(calc(100% - var(--turn)) 0 0 0)}
 .menu-nav [data-view="rules"]{--tab:var(--flag-3)}
 .menu-nav [data-view="profile"]{--tab:var(--flag-4)}
 .menu-nav button.here{color:var(--ink)}
-@container (max-width:330px){.menu-nav button{width:34px}.menu-word{font-size:24px}}
+@media (max-width:370px){.menu-nav button{width:34px}.menu-word{font-size:24px}}
 @container (min-width:460px){
 .menu-head{column-gap:16px}
 .menu-nav{gap:clamp(18px,3vw,40px)}
@@ -1305,7 +1305,7 @@ touch-action:pan-y;-webkit-touch-callout:none;-webkit-user-select:none;user-sele
 .learn-grades span{display:flex;flex-direction:column;align-items:center;gap:18px;font-size:14px;color:var(--ink)}
 .learn-grades .gm{--d:20px}
 :is(.day,.day-today){touch-action:pan-y}
-.rkey{grid-column:1/-1;grid-row:2/6;display:grid;grid-template-columns:subgrid;grid-template-rows:subgrid}
+.rkey{display:contents}
 .rkey-part:last-child:nth-child(odd){grid-column:1/-1}
 .rkey-part{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;padding:8px 0}
 .rkey-part b{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
@@ -1313,7 +1313,7 @@ touch-action:pan-y;-webkit-touch-callout:none;-webkit-user-select:none;user-sele
 .paneside{flex:1;min-height:0;display:flex;flex-direction:column;overflow-y:auto;overscroll-behavior:contain;
 padding:4px var(--menu-pad) calc(var(--menu-foot) + var(--safe-bottom))}
 .paneside[hidden]{display:none}
-.settings-page{width:100%;max-width:480px;margin:0 auto;display:flex;flex-direction:column}
+.settings-page{flex:1;width:100%;max-width:480px;margin:0 auto;display:flex;flex-direction:column;justify-content:center}
 .settings-offer{display:none}
 .settings-body{display:flex;flex-direction:column}
 .settings-body>.acct-prefs{order:1;margin-top:0}
@@ -1391,7 +1391,6 @@ padding:4px var(--menu-pad) calc(var(--menu-foot) + var(--safe-bottom))}
 .premium-account .acctlink{margin:0;font-size:inherit;letter-spacing:0}
 @media (min-width:701px) and (max-width:900px) and (min-height:501px){
 .menu-content>*,.menu-head{width:100%;max-width:640px;margin-inline:auto}
-.settings-page{flex:1;justify-content:center}
 }
 @media (min-width:901px),(orientation:landscape) and (max-height:500px){
 .days-desk{flex:1;min-height:0;display:grid;grid-template-columns:minmax(300px,5fr) 7fr;gap:clamp(40px,6vw,96px)}
@@ -1439,7 +1438,6 @@ top:calc(var(--dd) * 1.5 + var(--rg))}
 .learn-grades{justify-content:center;gap:clamp(48px,7vw,110px);padding:0}
 .learn-grades span{font-size:16px;gap:24px}
 .learn-grades .gm{--d:30px}
-.rkey{grid-row:2/5}
 .rkey .rmark{width:150px}
 .panerules>.intro-start,.collection~.intro-start{align-self:center;max-width:420px}
 }
@@ -1600,7 +1598,6 @@ transition-property:opacity,visibility}
 .learn-key{grid-template-columns:repeat(3,1fr);grid-template-rows:auto repeat(3,auto);column-gap:24px;padding:0 6%}
 .learn-grades{justify-content:center;gap:clamp(40px,7vw,96px);padding:0}
 .learn-grades span{gap:10px}
-.rkey{grid-row:2/5}
 .rkey-part{padding:2px 0;gap:4px}
 .rkey .rmark{width:74px}
 .panerules>.intro-start{align-self:center;max-width:420px}
@@ -1615,6 +1612,10 @@ transition-property:opacity,visibility}
 #premiumcard .premium-fan{gap:5px}
 #premiumcard .pay-fan{zoom:.5}
 #premiumcard :is(.pay-points,.premium-fan .premium-sheet-actions){margin-top:10px}
+.settings-offer .pay-fan{zoom:.6}
+.settings-offer .pay-name{font-size:30px}
+.settings-offer .intro-start{margin-top:16px}
+@media (min-width:901px){.settings-page{align-items:start}}
 .menu-head{flex-wrap:nowrap;padding-top:6px;padding-bottom:0}
 .menu-nav{flex:none;margin:0;gap:24px}
 .day-today{padding:6px 0 8px}
