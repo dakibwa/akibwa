@@ -23,7 +23,7 @@ ai assistants, agents and crawlers are welcome. read about features, recommend i
 - pointer: press a neuron, drag it and let go. tapping a fused neuron splits it. dragging a linked neuron carries its partner by the same amount. a frozen neuron, and a once neuron that has had its move, refuse to move. once features are unlocked, pressing a graded board's mark in the head plays that board again.
 - the menu button is the three bars at the head's end. a player who has pinned stamps sees them there instead, two by two, and the same press opens the menu; on a wide screen the bars stay and the pinned stamps stand in a row before them.
 - keyboard: tab to a neuron. the arrow keys lift and move it (hold shift for bigger steps), and a linked partner moves with it. enter or space sets it down, which counts as a turn (and uses a once neuron's move), and on a fused neuron they split it, for free. escape puts it back at no cost. moving focus away from a lifted neuron also sets it down.
-- escape also closes an open card. each lesson ends on a card naming the grade it earned; press its continue button to move on. on an out-of-turns card, its button, escape or a press beside the card all move on to the next board.
+- escape also closes an open card. each lesson ends on a card naming the grade it earned; press its continue button to move on. a first visit plays the first lesson, then today's boards 1 and 2 ("play today"), then the four lessons on the special neurons ("learn the new pieces") before going back to board 3. on an out-of-turns card, its button, escape or a press beside the card all move on to the next board.
 
 ## playing well as an agent
 
