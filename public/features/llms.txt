@@ -38,3 +38,4 @@ features, including its code, stamp artwork, puzzles and daily boards, is © 202
 
 - [play features](https://features.games/): the game
 - [terms and privacy](https://features.games/legal): what anyone, including an ai, may and may not do, and what the game keeps
+- [press](https://features.games/press): facts, words and pictures for writing about features
