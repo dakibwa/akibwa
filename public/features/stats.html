@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="robots" content="noindex, nofollow">
+<title>features · players</title>
+<link rel="icon" href="icon-192.png">
+<meta name="author" content="Dan Atkinson">
+<meta name="copyright" content="© 2026 Dan Atkinson. All rights reserved.">
+<!-- the game's own counts, read live from /features/api/go (worker/links.js) each
+     minute while the page is open: Dan, 4 Nov 2026, "lets get the report updating
+     every 30 mins". the same numbers the morning read and the weekly report use;
+     nothing here is about a player, only plain counts per day. unlisted and not indexed -->
+<style>
+:root{--paper:#EAE7DF;--ink:#15191C;--ink-soft:#5B656B;--rule:#D3CEC4;--well:#DFDBD1;
+  --blue:#22A3DD;--yellow:#EFC319;--green:#279B57;--orange:#DD700C;--red:#C8432E;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--paper:#0E1214;--ink:#F2F0EA;--ink-soft:#9AA6AC;--rule:#272F35;--well:#182024;--red:#E5684F;color-scheme:dark}}
+*{box-sizing:border-box}
+html{background:var(--paper);color:var(--ink);-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;font:16px/1.5 "Univers","Univers Next","Neue Haas Grotesk Text Pro","Helvetica Neue",Helvetica,Arial,sans-serif}
+.band{display:flex;height:7px}
+.band i{flex:1}
+.band i:nth-child(1){background:var(--blue)}.band i:nth-child(2){background:var(--yellow)}
+.band i:nth-child(3){background:var(--green)}.band i:nth-child(4){background:var(--orange)}
+main{max-width:60rem;margin:0 auto;padding:32px max(16px,env(safe-area-inset-right)) 64px max(16px,env(safe-area-inset-left))}
+.mark{font:900 22px/1 "Univers 75 Black","Univers","Helvetica Neue",Helvetica,Arial,sans-serif;color:var(--ink);text-decoration:none}
+h1{font:900 clamp(34px,8vw,52px)/1 "Univers 75 Black","Univers","Helvetica Neue",Helvetica,Arial,sans-serif;letter-spacing:-.02em;margin:24px 0 8px}
+.meta{margin:0;color:var(--ink-soft);font-size:14px}
+.meta b{color:var(--ink);font-weight:700}
+.lede{margin:16px 0 0;font-size:18px;line-height:1.4;max-width:40rem}
+.lede b,.today b{font-variant-numeric:tabular-nums}
+h2{font-size:18px;line-height:1.3;margin:0}
+section{margin-top:28px;padding-top:16px;border-top:1px solid var(--rule);min-width:0}
+.note{margin:4px 0 12px;color:var(--ink-soft);font-size:14px;max-width:42rem}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,9rem),1fr));gap:12px;margin-top:24px}
+.tile{background:var(--well);border-radius:6px;padding:12px 14px;display:grid;gap:2px;align-content:start}
+.tile .n{font:900 32px/1.1 "Univers 75 Black","Univers","Helvetica Neue",Helvetica,Arial,sans-serif;font-variant-numeric:tabular-nums}
+.tile .l{font-size:14px;font-weight:700}
+.tile .d{font-size:13px;color:var(--ink-soft);line-height:1.35}
+.today{margin:14px 0 0;color:var(--ink-soft)}
+.today b{color:var(--ink)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,22rem),1fr));gap:0 32px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;margin:0 0 8px;padding:0;list-style:none;font-size:13px;color:var(--ink-soft)}
+.legend li{display:flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px}
+.chart{position:relative;min-height:220px}
+.chart svg{display:block;width:100%;height:auto}
+.tip{position:absolute;pointer-events:none;background:var(--paper);border:1px solid var(--rule);border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.12);padding:6px 9px;font-size:13px;white-space:nowrap}
+.tip div{display:flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
+.tip .h{color:var(--ink-soft)}
+.box{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:15px;font-variant-numeric:tabular-nums}
+th{font-size:13px;font-weight:700;color:var(--ink-soft);text-align:right;padding:6px 8px;border-bottom:1px solid var(--rule);white-space:nowrap}
+td{text-align:right;padding:6px 8px;border-bottom:1px solid var(--rule);white-space:nowrap}
+th:first-child,td:first-child{text-align:left;padding-left:0}
+td.barcell{width:42%}
+.bw{display:flex;align-items:center;gap:8px}
+.track{flex:1;min-width:2.5rem;display:flex;justify-content:flex-end}
+.bw .num{min-width:2.5ch;text-align:right}
+.bar{display:block;height:11px;border-radius:2px;background:var(--blue)}
+td.name{white-space:normal;min-width:9rem}
+.worst{color:var(--red);font-weight:700}
+dl{margin:0}
+dl div{display:flex;justify-content:space-between;gap:16px;padding:6px 0;border-bottom:1px solid var(--rule)}
+dt{color:var(--ink-soft)}
+dd{margin:0;font-variant-numeric:tabular-nums;font-weight:700}
+.dev{display:flex;height:18px;border-radius:4px;overflow:hidden;background:var(--well);margin:4px 0 10px}
+.dev span{display:block;height:100%}
+.state{margin-top:24px;padding:12px 14px;background:var(--well);border-radius:6px;font-size:14px}
+.foot{margin-top:28px;color:var(--ink-soft);font-size:13px;max-width:42rem}
+a{color:inherit;text-underline-offset:3px;text-decoration-thickness:1px}
+a:focus-visible,button:focus-visible{outline:2.5px solid var(--green);outline-offset:2px;border-radius:2px}
+</style>
+</head>
+<body>
+<div class="band" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+<main>
+<a class="mark" href="./">features</a>
+<h1>players</h1>
+<p class="meta" id="when">reading the counts…</p>
+<p class="state" id="state" hidden></p>
+
+<div id="page" hidden>
+<p class="lede"><b data-v="new">0</b> new players since the game went public, <b data-v="finished">0</b> finished a whole day, and the biggest drop comes after board <b data-v="worst">0</b>.</p>
+
+<div class="tiles">
+  <div class="tile"><span class="l">new players</span><span class="n" data-v="new">0</span><span class="d">devices opening the game for the first time</span></div>
+  <div class="tile"><span class="l">played</span><span class="n" data-v="played">0</span><span class="d">made a first move on board 1</span></div>
+  <div class="tile"><span class="l">finished a day</span><span class="n" data-v="finished">0</span><span class="d">cleared all eight boards of a day</span></div>
+  <div class="tile"><span class="l">came back</span><span class="n" data-v="back">0</span><span class="d">opened the game the day after their first</span></div>
+  <div class="tile"><span class="l">shared</span><span class="n" data-v="share">0</span><span class="d">times a day card was shared</span></div>
+  <div class="tile"><span class="l">unlocked</span><span class="n" data-v="unlocked">0</span><span class="d">bought unlock features</span></div>
+</div>
+<p class="today">today so far (utc): <b data-t="new">0</b> new, <b data-t="active">0</b> played, <b data-t="finished">0</b> finished the day.</p>
+
+<section>
+  <h2>players by day</h2>
+  <p class="note">each utc day: devices new to the game, devices that played that day (new or not), and devices that finished that day's eight boards.</p>
+  <ul class="legend"><li><span class="sw" style="background:var(--blue)"></span>new players</li><li><span class="sw" style="background:var(--orange)"></span>played that day</li><li><span class="sw" style="background:var(--green)"></span>finished the day</li></ul>
+  <div class="chart" id="daily"></div>
+</section>
+
+<div class="two">
+<section>
+  <h2>how far players get</h2>
+  <p class="note">boards of the day's set ended at each place since 29 oct, and how many fewer reached the next. first moves and boards run out of turns count from 4 nov, today's set only.</p>
+  <div class="box"><table><thead><tr><th>board</th><th>ended</th><th>fewer at next</th><th>first moves</th><th>ran out</th></tr></thead><tbody id="funnel"></tbody></table></div>
+</section>
+
+<section>
+  <h2>paying and keeping in touch</h2>
+  <p class="note">once a device, counted from the evening of 4 nov.</p>
+  <dl>
+    <div><dt>saw the unlock offer</dt><dd data-v="offer">0</dd></div>
+    <div><dt>pressed unlock</dt><dd data-v="pay">0</dd></div>
+    <div><dt>unlocked</dt><dd data-v="unlocked">0</dd></div>
+    <div><dt>turned on the daily reminder</dt><dd data-v="remind">0</dd></div>
+    <div><dt>signed in to an account</dt><dd data-v="account">0</dd></div>
+    <div><dt>opened the collection (once a device a day)</dt><dd data-v="collection">0</dd></div>
+  </dl>
+  <h2 style="margin-top:24px">new players by device</h2>
+  <p class="note">counted from 3 nov.</p>
+  <div class="dev" id="dev"></div>
+  <dl>
+    <div><dt><span class="sw" style="background:var(--blue)"></span> phone</dt><dd data-v="phone">0</dd></div>
+    <div><dt><span class="sw" style="background:var(--orange)"></span> computer</dt><dd data-v="computer">0</dd></div>
+  </dl>
+</section>
+</div>
+
+<section>
+  <h2>where players came from</h2>
+  <p class="note">visits through each counted link, and the new players each place brought. a new player with no counted link takes the site that sent them (reddit, search, other sites) or "no site".</p>
+  <div class="box"><table><thead><tr><th>place</th><th>visits</th><th>new players</th><th>played</th><th>finished first day</th><th>came back</th><th>unlocked</th></tr></thead><tbody id="places"></tbody></table></div>
+</section>
+
+<p class="foot">counts come from the game itself, one per device for each moment; a browser that asks not to be tracked sends nothing. this page reads them again every minute while it is open.</p>
+</div>
+</main>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const fmt = (n) => Number(n || 0).toLocaleString('en-GB');
+  const MON = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+  const dayWords = (d) => `${Number(d.slice(8, 10))} ${MON[Number(d.slice(5, 7)) - 1]}`;
+  const el = (tag, attrs = {}, text) => { const e = document.createElement(tag); for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v); if (text != null) e.textContent = text; return e };
+  const svgEl = (tag, attrs = {}) => { const e = document.createElementNS('http://www.w3.org/2000/svg', tag); for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v); return e };
+  let rows = [], lastGood = 0;
+
+  function sum(tag, day) { return rows.reduce((a, r) => a + (r.tag === tag && (!day || r.day === day) ? Number(r.n) : 0), 0) }
+
+  function draw(go) {
+    rows = go.counts || [];
+    const links = go.links || {};
+    const today = new Date().toISOString().slice(0, 10);
+    const ended = [1, 2, 3, 4, 5, 6, 7, 8].map((b) => sum('play.board' + b));
+    let worst = 1, most = -Infinity;
+    ended.forEach((n, i) => { if (i < 7 && n - ended[i + 1] > most) { most = n - ended[i + 1]; worst = i + 1 } });
+    const v = {
+      new: sum('play.new'), played: sum('play.played'), finished: sum('play.finished'), back: sum('play.back'),
+      share: sum('play.share'), unlocked: sum('play.unlocked'), phone: sum('play.phone'), computer: sum('play.computer'),
+      offer: sum('play.offer'), pay: sum('play.pay'), remind: sum('play.remind'), account: sum('play.account'),
+      collection: sum('play.collection'), worst,
+    };
+    document.querySelectorAll('[data-v]').forEach((e) => { e.textContent = e.dataset.v === 'worst' ? String(v.worst) : fmt(v[e.dataset.v]) });
+    const t = { new: sum('play.new', today), active: sum('play.active', today), finished: sum('play.finished', today) };
+    document.querySelectorAll('[data-t]').forEach((e) => { e.textContent = fmt(t[e.dataset.t]) });
+
+    // devices
+    const dev = $('dev'); dev.replaceChildren();
+    const all = v.phone + v.computer;
+    if (all) for (const [n, c] of [[v.phone, 'var(--blue)'], [v.computer, 'var(--orange)']]) { const s = el('span'); s.style.width = (n / all) * 100 + '%'; s.style.background = c; dev.append(s) }
+
+    // funnel
+    const fb = $('funnel'); fb.replaceChildren();
+    const max = Math.max(1, ...ended);
+    ended.forEach((n, i) => {
+      const tr = el('tr');
+      tr.append(el('td', {}, String(i + 1)));
+      const td = el('td', { class: 'barcell' }), w = el('div', { class: 'bw' }), track = el('span', { class: 'track' }), bar = el('span', { class: 'bar' });
+      bar.style.width = (n / max) * 100 + '%';
+      track.append(bar); w.append(track, el('span', { class: 'num' }, fmt(n))); td.append(w); tr.append(td);
+      tr.append(el('td', i < 7 && i + 1 === worst ? { class: 'worst' } : {}, i < 7 ? fmt(n - ended[i + 1]) : ''));
+      tr.append(el('td', {}, fmt(sum('play.move' + (i + 1)))), el('td', {}, fmt(sum('play.fail' + (i + 1)))));
+      fb.append(tr);
+    });
+
+    // places
+    const extra = { direct: 'no site (typed, an app or a message)', search: 'search engines', web: 'other sites' };
+    const by = {};
+    for (const r of rows) {
+      const [tag, moment] = String(r.tag).split('.');
+      if (tag === 'play') continue;
+      const p = by[tag] || (by[tag] = { name: links[tag] || extra[tag] || tag, visits: 0, new: 0, played: 0, firstday: 0, back: 0, unlocked: 0 });
+      const k = moment || 'visits';
+      if (k in p) p[k] += Number(r.n);
+    }
+    const pb = $('places'); pb.replaceChildren();
+    Object.values(by).sort((a, b) => b.new - a.new || b.visits - a.visits || a.name.localeCompare(b.name)).forEach((p) => {
+      const tr = el('tr'); tr.append(el('td', { class: 'name' }, p.name));
+      for (const k of ['visits', 'new', 'played', 'firstday', 'back', 'unlocked']) tr.append(el('td', {}, fmt(p[k])));
+      pb.append(tr);
+    });
+
+    drawDaily();
+  }
+
+  function drawDaily() {
+    const box = $('daily'); box.replaceChildren();
+    const days = [...new Set(rows.map((r) => r.day))].sort();
+    if (!days.length) return;
+    const series = [['play.new', 'new players', 'var(--blue)'], ['play.active', 'played that day', 'var(--orange)'], ['play.finished', 'finished the day', 'var(--green)']];
+    const data = days.map((d) => ({ day: d, v: series.map(([tag]) => sum(tag, d)) }));
+    const W = Math.max(300, box.clientWidth || 600), H = 220, top = 10, bottom = 26, right = 4;
+    const ymax = Math.max(1, ...data.flatMap((d) => d.v));
+    const step = ymax <= 5 ? 1 : ymax <= 12 ? 2 : ymax <= 30 ? 5 : ymax <= 60 ? 10 : Math.ceil(ymax / 50) * 10;
+    const yTop = Math.ceil(ymax / step) * step;
+    const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'players by day' });
+    box.append(svg);
+    const ticks = []; for (let t = 0; t <= yTop; t += step) ticks.push(t);
+    const labels = ticks.map((t) => { const e = svgEl('text', { 'text-anchor': 'end', 'font-size': 12, fill: 'currentColor', opacity: .6 }); e.textContent = String(t); svg.append(e); return e });
+    const left = Math.ceil(Math.max(...labels.map((e) => e.getComputedTextLength()))) + 10;
+    const y = (n) => H - bottom - (n / yTop) * (H - bottom - top);
+    ticks.forEach((t, i) => {
+      labels[i].setAttribute('x', left - 6); labels[i].setAttribute('y', y(t) + 4);
+      svg.insertBefore(svgEl('line', { x1: left, x2: W - right, y1: y(t), y2: y(t), stroke: 'currentColor', 'stroke-opacity': t === 0 ? .35 : .12 }), svg.firstChild);
+    });
+    const band = (W - right - left) / data.length, inner = band * 0.78, bw = Math.min(28, inner / 3 - 2);
+    data.forEach((d, i) => {
+      const x0 = left + i * band + (band - (bw * 3 + 4)) / 2;
+      d.v.forEach((n, k) => { if (n > 0) svg.append(svgEl('rect', { x: x0 + k * (bw + 2), y: y(n), width: bw, height: Math.max(0, y(0) - y(n)), rx: 2, fill: series[k][2] })) });
+    });
+    // day labels, thinned so they never meet
+    const probe = svgEl('text', { 'font-size': 12 }); probe.textContent = '30 oct'; svg.append(probe);
+    const lw = probe.getComputedTextLength(); probe.remove();
+    const every = Math.max(1, Math.ceil((lw + 10) / band));
+    data.forEach((d, i) => {
+      if ((data.length - 1 - i) % every) return;
+      const e = svgEl('text', { x: left + i * band + band / 2, y: H - 8, 'text-anchor': 'middle', 'font-size': 12, fill: 'currentColor', opacity: .6 });
+      e.textContent = dayWords(d.day); svg.append(e);
+    });
+    // a tooltip for the day under the pointer
+    const tip = el('div', { class: 'tip' }); tip.hidden = true; box.append(tip);
+    data.forEach((d, i) => {
+      const hit = svgEl('rect', { x: left + i * band, y: top, width: band, height: H - bottom - top, fill: 'transparent' });
+      const show = (ev) => {
+        tip.replaceChildren(el('div', { class: 'h' }, dayWords(d.day)));
+        series.forEach(([, name, c], k) => { const row = el('div'), sw = el('span', { class: 'sw' }); sw.style.background = c; row.append(sw, el('span', {}, `${name} ${fmt(d.v[k])}`)); tip.append(row) });
+        tip.hidden = false;
+        const b = box.getBoundingClientRect(), px = ev.clientX - b.left, py = ev.clientY - b.top;
+        tip.style.left = Math.max(0, Math.min(b.width - tip.offsetWidth, px + 12)) + 'px';
+        tip.style.top = Math.max(0, Math.min(b.height - tip.offsetHeight, py - tip.offsetHeight - 8)) + 'px';
+      };
+      hit.addEventListener('pointermove', show); hit.addEventListener('pointerdown', show);
+      hit.addEventListener('pointerleave', () => { tip.hidden = true });
+      svg.append(hit);
+    });
+  }
+
+  async function read() {
+    try {
+      const res = await fetch('/features/api/go', { cache: 'no-store' });
+      if (!res.ok) throw new Error(String(res.status));
+      const go = await res.json();
+      draw(go);
+      lastGood = Date.now();
+      $('page').hidden = false; $('state').hidden = true;
+      const at = new Date(lastGood);
+      $('when').replaceChildren('live from the game · read at ', el('b', {}, at.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })), ' · every minute while open');
+    } catch (e) {
+      $('state').hidden = false;
+      $('state').textContent = lastGood ? 'the counts did not answer just now; these are from the last read. trying again in a minute.' : 'the counts did not answer. check the connection; trying again in a minute.';
+      if (!lastGood) $('when').textContent = 'not read yet';
+    }
+  }
+  read();
+  setInterval(() => { if (document.visibilityState === 'visible') read() }, 60000);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && Date.now() - lastGood > 30000) read() });
+  let w = 0; new ResizeObserver(() => { const n = $('daily').clientWidth; if (n && n !== w) { w = n; if (rows.length) drawDaily() } }).observe($('daily'));
+})();
+</script>
+</body>
+</html>
