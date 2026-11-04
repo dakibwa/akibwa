@@ -62,6 +62,20 @@ td.barcell{width:42%}
 .bar{display:block;height:11px;border-radius:2px;background:var(--blue)}
 td.name{white-space:normal;min-width:9rem}
 .worst{color:var(--red);font-weight:700}
+/* the last column ends on the rule's end, as the lists' numbers do */
+th:last-child,td:last-child{padding-right:0}
+/* on a phone the headers wrap and the cells close up, so how far players get
+   fits the width; the places scroll under their names, which stay put */
+@media (max-width:560px){
+  table{font-size:14px}
+  th{white-space:normal;vertical-align:bottom;padding:6px 3px;font-size:12px;line-height:1.25}
+  td{padding:6px 3px}
+  td.barcell{width:34%}
+  td.name{min-width:6rem}
+  .box:has(#places) :is(th,td){padding-inline:2px}
+  .box:has(#places) th{font-size:11.5px}
+  .box:has(#places) :is(th,td):first-child{position:sticky;left:0;z-index:1;background:var(--paper);padding:6px 8px 6px 0}
+}
 dl{margin:0}
 dl div{display:flex;justify-content:space-between;gap:16px;padding:6px 0;border-bottom:1px solid var(--rule)}
 dt{color:var(--ink-soft)}
@@ -188,12 +202,14 @@ a:focus-visible,button:focus-visible{outline:2.5px solid var(--green);outline-of
     });
 
     // places
-    const extra = { direct: 'no site (typed, an app or a message)', search: 'search engines', web: 'other sites' };
+    // the places that are not a site's own name read in the page's lowercase
+    const extra = { direct: 'no site (typed, an app or a message)', search: 'search engines', web: 'other sites',
+      press: 'writers and newsletters', ads: 'paid ads', share: 'shared days' };
     const by = {};
     for (const r of rows) {
       const [tag, moment] = String(r.tag).split('.');
       if (tag === 'play') continue;
-      const p = by[tag] || (by[tag] = { name: links[tag] || extra[tag] || tag, visits: 0, new: 0, played: 0, firstday: 0, back: 0, unlocked: 0 });
+      const p = by[tag] || (by[tag] = { name: extra[tag] || links[tag] || tag, visits: 0, new: 0, played: 0, firstday: 0, back: 0, unlocked: 0 });
       const k = moment || 'visits';
       if (k in p) p[k] += Number(r.n);
     }
