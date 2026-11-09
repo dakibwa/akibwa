@@ -16,44 +16,80 @@
      every 30 mins". the same numbers the morning read and the weekly report use;
      nothing here is about a player, only plain counts per day. unlisted and not indexed -->
 <style>
-:root{--paper:#EAE7DF;--ink:#15191C;--ink-soft:#5B656B;--rule:#D3CEC4;--well:#DFDBD1;
+:root{--paper:#EAE7DF;--surface:#FBFAF6;--ink:#15191C;--ink-soft:#5B656B;--rule:#D3CEC4;--well:#DFDBD1;
   --blue:#22A3DD;--yellow:#EFC319;--green:#279B57;--orange:#DD700C;--red:#C8432E;color-scheme:light}
-@media (prefers-color-scheme:dark){:root{--paper:#0E1214;--ink:#F2F0EA;--ink-soft:#9AA6AC;--rule:#272F35;--well:#182024;--red:#E5684F;color-scheme:dark}}
+@media (prefers-color-scheme:dark){:root{--paper:#0E1214;--surface:#161B1F;--ink:#F2F0EA;--ink-soft:#9AA6AC;--rule:#272F35;--well:#182024;--red:#E5684F;color-scheme:dark}}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html{background:var(--paper);color:var(--ink);-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{margin:0;font:16px/1.5 "Univers","Univers Next","Neue Haas Grotesk Text Pro","Helvetica Neue",Helvetica,Arial,sans-serif}
-.band{display:flex;height:7px}
+.band{display:flex;height:4px;margin-top:5px}
 .band i{flex:1}
 .band i:nth-child(1){background:var(--blue)}.band i:nth-child(2){background:var(--yellow)}
 .band i:nth-child(3){background:var(--green)}.band i:nth-child(4){background:var(--orange)}
-main{max-width:60rem;margin:0 auto;padding:32px max(16px,env(safe-area-inset-right)) 64px max(16px,env(safe-area-inset-left))}
-.mark{font:900 22px/1 "Univers 75 Black","Univers","Helvetica Neue",Helvetica,Arial,sans-serif;color:var(--ink);text-decoration:none}
-h1{font:900 clamp(34px,8vw,52px)/1 "Univers 75 Black","Univers","Helvetica Neue",Helvetica,Arial,sans-serif;letter-spacing:-.02em;margin:24px 0 8px}
+main{max-width:76rem;margin:0 auto;padding:32px max(16px,env(safe-area-inset-right)) 64px max(16px,env(safe-area-inset-left))}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.actions{display:flex;gap:8px}
+.actions button{font:inherit;font-size:13px;border:1px solid var(--rule);border-radius:0;color:var(--ink);background:transparent;padding:7px 10px;cursor:pointer;min-height:44px}
+.actions button:disabled{opacity:.5;cursor:wait}
+.funnel-step{min-height:32px;display:grid;grid-template-columns:8.5rem 1fr 4rem;align-items:center;gap:12px;margin:12px 0;font-size:14px}
+.funnel-track{background:var(--well);height:5px;border-radius:0;overflow:hidden}
+.funnel-fill{height:100%;background:var(--blue);border-radius:0}
+.funnel-number{text-align:right;font-weight:700;font-variant-numeric:normal}
+.funnel-label small{display:block;color:var(--ink-soft);font-size:12px}
+.heat{background:color-mix(in srgb,var(--green) var(--heat,0%),transparent);font-weight:700}
+.cohort-cell small{display:block;color:var(--ink-soft);font-weight:400;font-size:12px}
+.cohort-summary{display:flex;flex-wrap:wrap;gap:24px;margin:16px 0}
+.cohort-summary div{display:grid;gap:2px}
+.cohort-summary b{font-size:28px;line-height:1.2}
+.cohort-summary span{font-size:13px;color:var(--ink-soft)}
+.insights{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,20rem),1fr));gap:12px;margin-top:16px}
+.insight{padding:12px 0;border-top:1px solid var(--rule)}
+.insight h3{font-size:16px;line-height:1.3;margin:0 0 8px}
+.insight p{font-size:14px;margin:8px 0;line-height:1.5}
+
+.insight .measure{color:var(--ink-soft)}
+.insight button{font:inherit;font-size:13px;padding:7px 0;margin-top:4px;border:0;border-bottom:1px solid var(--ink-soft);color:var(--ink);background:none;cursor:pointer}
+.mark{display:inline-block;letter-spacing:-.045em;font:900 27px/1 "Univers 75 Black","Univers","Helvetica Neue",Helvetica,Arial,sans-serif;color:var(--ink);text-decoration:none}
+h1{font:900 clamp(28px,5vw,36px)/1 "Univers 75 Black","Univers","Helvetica Neue",Helvetica,Arial,sans-serif;letter-spacing:-.02em;margin:24px 0 8px}
 .meta{margin:0;color:var(--ink-soft);font-size:14px}
 .meta b{color:var(--ink);font-weight:700}
 .lede{margin:16px 0 0;font-size:18px;line-height:1.4;max-width:40rem}
-.lede b,.today b{font-variant-numeric:tabular-nums}
+.lede b,.today b{font-variant-numeric:normal}
 h2{font-size:18px;line-height:1.3;margin:0}
 section{margin-top:28px;padding-top:16px;border-top:1px solid var(--rule);min-width:0}
 .note{margin:4px 0 12px;color:var(--ink-soft);font-size:14px;max-width:42rem}
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,9rem),1fr));gap:12px;margin-top:24px}
-.tile{background:var(--well);border-radius:6px;padding:12px 14px;display:grid;gap:2px;align-content:start}
-.tile .n{font:900 32px/1.1 "Univers 75 Black","Univers","Helvetica Neue",Helvetica,Arial,sans-serif;font-variant-numeric:tabular-nums}
-.tile .l{font-size:14px;font-weight:700}
+.overview{grid-template-columns:repeat(3,minmax(0,1fr))}
+.overview .n{font-size:clamp(32px,6vw,48px)}
+
+.ranges{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-top:24px;font-size:14px}
+.ranges span{margin-right:auto;color:var(--ink-soft)}
+.ranges button{font:inherit;color:var(--ink);background:transparent;border:1px solid var(--rule);border-radius:0;padding:7px 11px;cursor:pointer;min-height:44px}
+.ranges button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.section-head span{font-size:13px;color:var(--ink-soft)}
+.empty{display:grid;place-items:center;min-height:96px;text-align:center;color:var(--ink-soft);font-size:14px;padding:20px}
+details{margin-top:16px;font-size:14px}
+summary{cursor:pointer;color:var(--ink-soft);padding:10px 0;min-height:44px}
+.chart [tabindex]:focus{outline:none;stroke:var(--ink);stroke-width:2;fill:var(--well);fill-opacity:.3}
+.tile{background:var(--surface);border:1px solid var(--rule);border-radius:0;padding:12px 14px;display:grid;gap:2px;align-content:start}
+.tile .n{font:900 32px/1.1 "Univers 75 Black","Univers","Helvetica Neue",Helvetica,Arial,sans-serif;font-variant-numeric:normal}
+.tile .l{font-size:14px;font-weight:400}
 .tile .d{font-size:13px;color:var(--ink-soft);line-height:1.35}
 .today{margin:14px 0 0;color:var(--ink-soft)}
 .today b{color:var(--ink)}
 .two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,22rem),1fr));gap:0 32px}
 .legend{display:flex;flex-wrap:wrap;gap:4px 16px;margin:0 0 8px;padding:0;list-style:none;font-size:13px;color:var(--ink-soft)}
 .legend li{display:flex;align-items:center;gap:6px}
-.sw{display:inline-block;width:10px;height:10px;border-radius:2px}
-.chart{position:relative;min-height:220px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:0}
+.chart{position:relative;min-height:0}
 .chart svg{display:block;width:100%;height:auto}
-.tip{position:absolute;pointer-events:none;background:var(--paper);border:1px solid var(--rule);border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.12);padding:6px 9px;font-size:13px;white-space:nowrap}
-.tip div{display:flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
+.tip{position:absolute;pointer-events:none;background:var(--paper);border:1px solid var(--rule);border-radius:0;box-shadow:0 4px 14px rgba(0,0,0,.12);padding:6px 9px;font-size:13px;white-space:nowrap}
+.tip div{display:flex;align-items:center;gap:6px;font-variant-numeric:normal}
 .tip .h{color:var(--ink-soft)}
 .box{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:15px;font-variant-numeric:tabular-nums}
+table{width:100%;border-collapse:collapse;font-size:15px;font-variant-numeric:normal}
 th{font-size:13px;font-weight:700;color:var(--ink-soft);text-align:right;padding:6px 8px;border-bottom:1px solid var(--rule);white-space:nowrap}
 td{text-align:right;padding:6px 8px;border-bottom:1px solid var(--rule);white-space:nowrap}
 th:first-child,td:first-child{text-align:left;padding-left:0}
@@ -61,7 +97,7 @@ td.barcell{width:42%}
 .bw{display:flex;align-items:center;gap:8px}
 .track{flex:1;min-width:2.5rem;display:flex;justify-content:flex-end}
 .bw .num{min-width:2.5ch;text-align:right}
-.bar{display:block;height:11px;border-radius:2px;background:var(--blue)}
+.bar{display:block;height:11px;border-radius:0;background:var(--blue)}
 td.name{white-space:normal;min-width:9rem}
 .worst{color:var(--red);font-weight:700}
 /* the last column ends on the rule's end, as the lists' numbers do */
@@ -69,6 +105,9 @@ th:last-child,td:last-child{padding-right:0}
 /* on a phone the headers wrap and the cells close up, so how far players get
    fits the width; the places scroll under their names, which stay put */
 @media (max-width:560px){
+  .overview{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .overview .tile:last-child{grid-column:1/-1}
+  .ranges span{flex-basis:100%}
   table{font-size:14px}
   th{white-space:normal;vertical-align:bottom;padding:6px 3px;font-size:12px;line-height:1.25}
   td{padding:6px 3px}
@@ -81,64 +120,141 @@ th:last-child,td:last-child{padding-right:0}
 dl{margin:0}
 dl div{display:flex;justify-content:space-between;gap:16px;padding:6px 0;border-bottom:1px solid var(--rule)}
 dt{color:var(--ink-soft)}
-dd{margin:0;font-variant-numeric:tabular-nums;font-weight:700}
-.dev{display:flex;height:18px;border-radius:4px;overflow:hidden;background:var(--well);margin:4px 0 10px}
+dd{margin:0;font-variant-numeric:normal;font-weight:700}
+.dev{display:flex;height:18px;border-radius:0;overflow:hidden;background:var(--well);margin:4px 0 10px}
 .dev span{display:block;height:100%}
-.state{margin-top:24px;padding:12px 14px;background:var(--well);border-radius:6px;font-size:14px}
+.state{margin-top:24px;padding:12px 14px;background:var(--well);border-radius:0;font-size:14px}
 .foot{margin-top:28px;color:var(--ink-soft);font-size:13px;max-width:42rem}
 a{color:inherit;text-underline-offset:3px;text-decoration-thickness:1px}
-a:focus-visible,button:focus-visible{outline:2.5px solid var(--green);outline-offset:2px;border-radius:2px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--ink);outline-offset:2px;border-radius:0}
+.views{display:flex;gap:24px;border-bottom:1px solid var(--rule);margin-top:16px;overflow:auto}
+.views button{font:inherit;font-size:14px;font-weight:400;padding:10px 0;color:var(--ink-soft);background:none;border:0;border-bottom:3px solid transparent;min-height:44px;cursor:pointer;white-space:nowrap}
+.views button[aria-pressed="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+.views+section{margin-top:16px}
+.metric-key p{max-width:48rem;color:var(--ink-soft)}
 </style>
 </head>
 <body>
-<div class="band" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <main>
-<a class="mark" href="./">features</a>
+<div class="topbar"><a class="mark" href="./">features<span class="band" aria-hidden="true"><i></i><i></i><i></i><i></i></span></a><div class="actions"><button type="button" id="refresh">refresh</button><button type="button" id="export" disabled>export csv</button></div></div>
 <h1>players</h1>
 <p class="meta" id="when">reading the counts…</p>
 <p class="state" id="state" hidden></p>
 
 <div id="page" hidden>
-<p class="lede"><b data-v="new">0</b> new players since the game went public, <b data-v="finished">0</b> finished a whole day, and the biggest drop comes after board <b data-v="worst">0</b>.</p>
+<p class="lede" id="headline" hidden></p>
 
-<div class="tiles">
-  <div class="tile"><span class="l">new players</span><span class="n" data-v="new">0</span><span class="d">devices opening the game for the first time</span></div>
-  <div class="tile"><span class="l">played</span><span class="n" data-v="played">0</span><span class="d">made a first move on board 1</span></div>
-  <div class="tile"><span class="l">finished a day</span><span class="n" data-v="finished">0</span><span class="d">cleared all eight boards of a day</span></div>
-  <div class="tile"><span class="l">came back</span><span class="n" data-v="back">0</span><span class="d">opened the game the day after their first</span></div>
-  <div class="tile"><span class="l">shared</span><span class="n" data-v="share">0</span><span class="d">times a day card was shared</span></div>
-  <div class="tile"><span class="l">unlocked</span><span class="n" data-v="unlocked">0</span><span class="d">bought unlock features</span></div>
+<div class="tiles overview">
+  <div class="tile live"><span class="l">played today</span><span class="n" data-a="today">—</span><span class="d">so far · utc</span></div>
+  <div class="tile"><span class="l">played yesterday</span><span class="n" data-a="yesterday">—</span><span class="d" id="comparison">last complete utc day</span></div>
+  <div class="tile"><span class="l">daily average</span><span class="n" data-a="average">—</span><span class="d" id="average-note">last seven complete days</span></div>
 </div>
-<p class="today">today so far (utc): <b data-t="new">0</b> new, <b data-t="active">0</b> played, <b data-t="finished">0</b> finished the day.</p>
 
-<section>
-  <h2>players by day</h2>
-  <p class="note">each utc day: devices new to the game, devices that played that day (new or not), and devices that finished that day's eight boards.</p>
-  <ul class="legend"><li><span class="sw" style="background:var(--blue)"></span>new players</li><li><span class="sw" style="background:var(--orange)"></span>played that day</li><li><span class="sw" style="background:var(--green)"></span>finished the day</li></ul>
+
+<div class="ranges" role="group" aria-label="chart date range">
+  <span id="range-label"></span>
+  <button type="button" data-days="7" aria-pressed="false">7 days</button>
+  <button type="button" data-days="14" aria-pressed="true">14 days</button>
+  <button type="button" data-days="28" aria-pressed="false">28 days</button>
+  <button type="button" data-days="56" aria-pressed="false">56 days</button>
+</div>
+
+<nav class="views" aria-label="player dashboard">
+  <button type="button" data-view="activity" aria-pressed="true">daily</button>
+  <button type="button" data-view="returns" aria-pressed="false">returns</button>
+  <button type="button" data-view="play" aria-pressed="false">play</button>
+  <button type="button" data-view="sources" aria-pressed="false">sources</button>
+</nav>
+
+
+<section data-panel="activity" aria-labelledby="daily-heading">
+  <div class="section-head"><h2 id="daily-heading">played</h2><span>devices · today so far</span></div>
+  <ul class="legend"><li><span class="sw" style="background:var(--orange)"></span>played</li><li><span class="sw" style="background:var(--ink-soft)"></span>7-day average</li></ul>
   <div class="chart" id="daily"></div>
 </section>
+<section data-panel="activity" aria-labelledby="insights-heading">
+  <div class="section-head"><h2 id="insights-heading">worth a look</h2><span>complete days</span></div>
+  <div class="insights" id="insights"></div>
+</section>
 
-<div class="two">
+<section data-panel="returns" aria-labelledby="return-heading" hidden>
+  <div class="section-head"><h2 id="return-heading">coming back</h2><span id="return-since"></span></div>
+  <p class="note" id="return-note" hidden></p>
+  <div class="tiles" style="margin:16px 0">
+    <div class="tile"><span class="l">returning today</span><span class="n" data-r="returning">—</span></div>
+    <div class="tile"><span class="l">played yesterday too</span><span class="n" data-r="consecutive">—</span></div>
+    <div class="tile"><span class="l">7+ days running</span><span class="n" data-r="week">—</span><span class="d" id="week-note">played every day for at least a week</span></div>
+    <div class="tile"><span class="l">returning share</span><span class="n" data-r="share">—</span><span class="d" id="return-denominator">of today's tracked players</span></div>
+  </div>
+  <ul class="legend"><li><span class="sw" style="background:var(--blue)"></span>returning</li><li><span class="sw" style="background:var(--green)"></span>played yesterday too</li><li><span class="sw" style="background:var(--orange)"></span>7+ days running</li></ul>
+  <div class="chart" id="returning"></div>
+  <details><summary>daily numbers</summary>
+    <div class="box"><table><caption class="note" style="text-align:left">daily active and returning devices</caption><thead><tr><th scope="col">utc day</th><th scope="col">played</th><th scope="col">returning</th><th scope="col">yesterday too</th><th scope="col">7+ days</th></tr></thead><tbody id="daily-numbers"></tbody></table></div>
+  </details>
+</section>
+
+<section data-panel="returns" aria-labelledby="cohort-heading" hidden>
+  <div class="section-head"><h2 id="cohort-heading">retention</h2><span>first tracked play · complete days</span></div>
+  <div class="cohort-summary" id="cohort-summary"></div>
+  <div class="box"><table><caption class="note" style="text-align:left">selected cohorts</caption><thead><tr><th scope="col">first tracked play</th><th scope="col">devices</th><th scope="col">day 1</th><th scope="col">day 7</th><th scope="col">day 30</th></tr></thead><tbody id="cohorts"></tbody></table></div>
+  <p class="note" id="cohort-empty"></p>
+</section>
+
+<div class="two" data-panel="play" hidden>
 <section>
-  <h2>how far players get</h2>
-  <p class="note">boards of the day's set ended at each place since 29 oct, and how many fewer reached the next. first moves and boards run out of turns count from 4 nov, today's set only.</p>
-  <div class="box"><table><thead><tr><th>board</th><th>ended</th><th>fewer at next</th><th>first moves</th><th>ran out</th></tr></thead><tbody id="funnel"></tbody></table></div>
+  <h2>first day</h2>
+  <p class="note">milestone counts · selected days</p>
+  <div id="acquisition-funnel" aria-label="acquisition milestone funnel"></div>
+</section>
+<section>
+  <h2>unlock</h2>
+  <p class="note">milestone counts · selected days</p>
+  <div id="purchase-funnel" aria-label="purchase milestone funnel"></div>
+</section>
+</div>
+
+<section data-panel="activity">
+  <h2>arrivals and finishes</h2>
+  <ul class="legend"><li><span class="sw" style="background:var(--blue)"></span>new devices</li><li><span class="sw" style="background:var(--orange)"></span>first-ever move</li><li><span class="sw" style="background:var(--green)"></span>finished sets</li></ul>
+  <div class="chart" id="arrivals"></div>
+</section>
+
+<section data-panel="activity">
+<details><summary>eight-week totals</summary>
+
+<div class="tiles">
+  <div class="tile"><span class="l">new players</span><span class="n" data-v="new">0</span></div>
+  <div class="tile"><span class="l">first played</span><span class="n" data-v="played">0</span></div>
+  <div class="tile"><span class="l">finished sets</span><span class="n" data-v="finished">0</span></div>
+  <div class="tile"><span class="l">first next-day return</span><span class="n" data-v="back">0</span></div>
+  <div class="tile"><span class="l">shared</span><span class="n" data-v="share">0</span></div>
+  <div class="tile"><span class="l">unlocked</span><span class="n" data-v="unlocked">0</span></div>
+</div>
+</details>
+</section>
+
+<div class="two" data-panel="play" hidden>
+<section>
+  <h2>through the boards</h2>
+  <p class="note">endings · selected days</p>
+  <div id="board-funnel" aria-label="eight-board progression chart"></div>
+  <details><summary>board numbers</summary><div class="box"><table><thead><tr><th>board</th><th>ended</th><th>fewer at next</th><th>first moves</th><th>ran out</th></tr></thead><tbody id="funnel"></tbody></table></div></details>
 </section>
 
 <section>
-  <h2>paying and keeping in touch</h2>
-  <p class="note">once a device, counted from the evening of 4 nov.</p>
+  <h2>keeping in touch</h2>
+  <p class="note">eight-week totals</p>
   <dl>
-    <div><dt>saw the unlock offer</dt><dd data-v="offer">0</dd></div>
+    <div><dt>saw offer</dt><dd data-v="offer">0</dd></div>
     <div><dt>pressed unlock</dt><dd data-v="pay">0</dd></div>
     <div><dt>unlocked</dt><dd data-v="unlocked">0</dd></div>
-    <div><dt>turned on the daily reminder</dt><dd data-v="remind">0</dd></div>
-    <div><dt>signed in to an account</dt><dd data-v="account">0</dd></div>
-    <div><dt>pressed "rate features" on the list they came from (from 9 nov)</dt><dd data-v="rate">0</dd></div>
-    <div><dt>opened the collection (once a device a day)</dt><dd data-v="collection">0</dd></div>
+    <div><dt>daily reminder</dt><dd data-v="remind">0</dd></div>
+    <div><dt>signed in</dt><dd data-v="account">0</dd></div>
+    <div><dt>rate pressed</dt><dd data-v="rate">0</dd></div>
+    <div><dt>collection opened</dt><dd data-v="collection">0</dd></div>
   </dl>
-  <h2 style="margin-top:24px">new players by device</h2>
-  <p class="note">counted from 3 nov.</p>
+  <h2 style="margin-top:24px">devices</h2>
+  <p class="note">new devices · from 3 nov</p>
   <div class="dev" id="dev"></div>
   <dl>
     <div><dt><span class="sw" style="background:var(--blue)"></span> phone</dt><dd data-v="phone">0</dd></div>
@@ -147,157 +263,273 @@ a:focus-visible,button:focus-visible{outline:2.5px solid var(--green);outline-of
 </section>
 </div>
 
-<section>
-  <h2>where players came from</h2>
-  <p class="note">visits through each counted link, and the new players each place brought. a new player with no counted link takes the site that sent them (reddit, search, other sites) or "no site". "saw a board" counts from 9 nov.</p>
-  <div class="box"><table><thead><tr><th>place</th><th>visits</th><th>new players</th><th>saw a board</th><th>played</th><th>finished first day</th><th>came back</th><th>unlocked</th></tr></thead><tbody id="places"></tbody></table></div>
+<section data-panel="sources" hidden>
+  <h2>sources</h2>
+  <p class="note">new devices · selected days</p>
+  <div id="source-chart" aria-label="top sources by new devices"></div>
+  <details><summary>source numbers</summary><div class="box"><table><thead><tr><th>place</th><th>visits</th><th>new players</th><th>saw a board</th><th>played</th><th>first-move share</th><th>finished first day</th><th>first next-day return</th><th>unlocked</th></tr></thead><tbody id="places"></tbody></table></div></details>
 </section>
 
-<p class="foot">counts come from the game itself, one per device for each moment; a browser that asks not to be tracked sends nothing. this page reads them again every minute while it is open.</p>
+<details class="metric-key"><summary>about these counts</summary>
+<p>devices, not people · making a move counts as active, including in learn. counts can miss offline play and blocked requests. different browsers and cleared storage can count again. privacy signals stop tracking</p>
+<p>daily activity starts on 2 nov, partly through the day. it counts once per local game day, recorded in utc. the seven-day average uses complete days only</p>
+<p>return tracking starts on 9 nov, also partial. it counts once per utc day in updated browsers. returning includes consecutive-day play; consecutive includes seven-day streaks. the returning share uses this tracked group only</p>
+<p>retention groups devices by first tracked play, including existing players at rollout. day 1, 7 and 30 mean playing exactly that many days later. only completed return days enter the rates; each rate uses the eligible device total. a dash means not measured yet</p>
+<p>funnels and source shares compare milestone counts in the selected period, not joined journeys or acquisition cohorts. first finishes start on 3 nov; board moves, failures and offer counts on 4 nov; board-seen and rate counts on 9 nov. finishes include boards run out of turns</p>
+<p>insights use complete days and at least 20 observations for a rate. they suggest an experiment, not a cause. retention is not split by source. copy a test brief, change one thing, then compare completed cohorts</p>
+<p>eight weeks of anonymous counts · no player identifiers · refreshed every minute</p>
+</details>
 </div>
 </main>
 <script>
 (() => {
-  const $ = (id) => document.getElementById(id);
-  const fmt = (n) => Number(n || 0).toLocaleString('en-GB');
-  const MON = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
-  const dayWords = (d) => `${Number(d.slice(8, 10))} ${MON[Number(d.slice(5, 7)) - 1]}`;
-  const el = (tag, attrs = {}, text) => { const e = document.createElement(tag); for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v); if (text != null) e.textContent = text; return e };
-  const svgEl = (tag, attrs = {}) => { const e = document.createElementNS('http://www.w3.org/2000/svg', tag); for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v); return e };
-  let rows = [], lastGood = 0;
+  const $ = id => document.getElementById(id);
+  const fmt = n => n == null ? '—' : Number(n).toLocaleString('en-GB', { maximumFractionDigits: 1 });
+  const pct = (n, d) => d > 0 ? fmt(100 * n / d) + '%' : '—';
+  const MON = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+  const dayWords = d => `${Number(d.slice(8,10))} ${MON[Number(d.slice(5,7))-1]}`;
+  const el = (tag, attrs = {}, text) => { const e = document.createElement(tag); for (const [k,v] of Object.entries(attrs)) e.setAttribute(k,v); if (text != null) e.textContent = text; return e };
+  const svgEl = (tag, attrs = {}) => { const e = document.createElementNS('http://www.w3.org/2000/svg',tag); for (const [k,v] of Object.entries(attrs)) e.setAttribute(k,v); return e };
 
-  function sum(tag, day) { return rows.reduce((a, r) => a + (r.tag === tag && (!day || r.day === day) ? Number(r.n) : 0), 0) }
-
-  function draw(go) {
-    rows = go.counts || [];
-    const links = go.links || {};
-    const today = new Date().toISOString().slice(0, 10);
-    const ended = [1, 2, 3, 4, 5, 6, 7, 8].map((b) => sum('play.board' + b));
-    let worst = 1, most = -Infinity;
-    ended.forEach((n, i) => { if (i < 7 && n - ended[i + 1] > most) { most = n - ended[i + 1]; worst = i + 1 } });
-    const v = {
-      new: sum('play.new'), played: sum('play.played'), finished: sum('play.finished'), back: sum('play.back'),
-      share: sum('play.share'), unlocked: sum('play.unlocked'), phone: sum('play.phone'), computer: sum('play.computer'),
-      offer: sum('play.offer'), pay: sum('play.pay'), remind: sum('play.remind'), account: sum('play.account'), rate: sum('play.rate'),
-      collection: sum('play.collection'), worst,
+  /*@stats-model*/
+  const shiftDay = (day,n) => new Date(Date.parse(day+'T00:00:00Z')+n*864e5).toISOString().slice(0,10);
+  const validDay = d => typeof d==='string' && /^\d{4}-\d{2}-\d{2}$/.test(d) && Number.isFinite(Date.parse(d)) && new Date(d).toISOString().slice(0,10)===d;
+  const activityTags = ['activefirst','activereturn','activenext','activeweek'];
+  function statsModel(go,today,range) {
+    if (!go || !Array.isArray(go.counts) || !validDay(go.since) || !go.counts.every(r => r && validDay(r.day) && typeof r.tag==='string' && Number.isSafeInteger(r.n) && r.n>=0)) throw new Error('unreadable counts');
+    const start = shiftDay(today,1-range), retained = go.since;
+    const rows = go.counts.filter(r=>r.day>=retained&&r.day<=today);
+    const sum = (tag,day) => rows.reduce((n,r)=>n+(r.tag===tag&&(!day||r.day===day)?r.n:0),0);
+    const period = tag => rows.reduce((n,r)=>n+(r.tag===tag&&r.day>=start?r.n:0),0);
+    const since = validDay(go.activitySince) ? go.activitySince : null;
+    const daily = day => {
+      const buckets = activityTags.map(tag=>sum('play.'+tag,day));
+      const measured = since && day>=since && day>=retained;
+      return { day, played: day>='2026-11-02'&&day>=retained?sum('play.active',day):null,
+        tracked:measured?buckets.reduce((a,b)=>a+b,0):null,
+        returning:measured?buckets[1]+buckets[2]+buckets[3]:null,
+        consecutive:measured&&day>since?buckets[2]+buckets[3]:null,
+        week:measured&&day>=shiftDay(since,6)?buckets[3]:null,
+        new:day>=retained&&day>='2026-10-26'?sum('play.new',day):null,
+        first:day>=retained&&day>='2026-10-26'?sum('play.played',day):null,
+        finished:day>=retained&&day>='2026-11-03'?sum('play.finished',day):null };
     };
-    document.querySelectorAll('[data-v]').forEach((e) => { e.textContent = e.dataset.v === 'worst' ? String(v.worst) : fmt(v[e.dataset.v]) });
-    const t = { new: sum('play.new', today), active: sum('play.active', today), finished: sum('play.finished', today) };
-    document.querySelectorAll('[data-t]').forEach((e) => { e.textContent = fmt(t[e.dataset.t]) });
-
-    // devices
-    const dev = $('dev'); dev.replaceChildren();
-    const all = v.phone + v.computer;
-    if (all) for (const [n, c] of [[v.phone, 'var(--blue)'], [v.computer, 'var(--orange)']]) { const s = el('span'); s.style.width = (n / all) * 100 + '%'; s.style.background = c; dev.append(s) }
-
-    // funnel
-    const fb = $('funnel'); fb.replaceChildren();
-    const max = Math.max(1, ...ended);
-    ended.forEach((n, i) => {
-      const tr = el('tr');
-      tr.append(el('td', {}, String(i + 1)));
-      const td = el('td', { class: 'barcell' }), w = el('div', { class: 'bw' }), track = el('span', { class: 'track' }), bar = el('span', { class: 'bar' });
-      bar.style.width = (n / max) * 100 + '%';
-      track.append(bar); w.append(track, el('span', { class: 'num' }, fmt(n))); td.append(w); tr.append(td);
-      tr.append(el('td', i < 7 && i + 1 === worst ? { class: 'worst' } : {}, i < 7 ? fmt(n - ended[i + 1]) : ''));
-      tr.append(el('td', {}, fmt(sum('play.move' + (i + 1)))), el('td', {}, fmt(sum('play.fail' + (i + 1)))));
-      fb.append(tr);
+    const average = day => {
+      const dates = Array.from({length:7},(_,i)=>shiftDay(day,i-6));
+      if(day>=today || dates[0]<'2026-11-03' || dates[0]<retained) return null;
+      return dates.reduce((n,d)=>n+sum('play.active',d),0)/7;
+    };
+    const days = Array.from({length:range},(_,i)=>{const d=shiftDay(start,i);return {...daily(d),average:average(d)}});
+    const complete = Array.from({length:7},(_,i)=>shiftDay(today,-i-1)).filter(d=>d>='2026-11-03'&&d>=retained);
+    const mean = complete.length?complete.reduce((n,d)=>n+sum('play.active',d),0)/complete.length:null;
+    const cohorts = [...new Set(rows.filter(r=>r.tag==='cohort.started'&&r.day>=start&&r.n>0).map(r=>r.day))].sort().reverse().map(day=>{
+      const n=sum('cohort.started',day);
+      return {day,n,returns:[1,7,30].map(offset=>shiftDay(day,offset)<today?sum('cohort.d'+offset,day):null)};
     });
+    return {today,start,since,rows,sum,period,daily,days,cohorts,mean,complete:complete.length};
+  }
+  function improvementInsights(m,links={}) {
+    const insights=[],start=m.start>'2026-11-05'?m.start:'2026-11-05';
+    const sum=tag=>m.rows.reduce((n,r)=>n+(r.day>=start&&r.day<m.today&&r.tag===tag?r.n:0),0);
+    const percent=(n,d)=>Math.round(100*n/d)+'%';
+    const period=start+' to '+shiftDay(m.today,-1);
+    const eligible=m.cohorts.filter(c=>c.returns[0]!==null),base=eligible.reduce((a,c)=>a+c.n,0),back=eligible.reduce((a,c)=>a+c.returns[0],0);
+    if(base>=20&&back<=base)insights.push({kind:'retention',signal:base<100?'early cohort signal':'measured cohort pattern',title:back/base<.2?'a reason to return':'keep the habit',summary:`${back} / ${base} returned on day 1 · ${percent(back,base)}`,
+      evidence:`${back} of ${base} eligible devices played again on day 1 (${percent(back,base)}). These are first-tracked-play cohorts, including existing players at rollout.`,
+      action:back/base<.2?'Test one clearer next-day invitation on the finished-day screen: show what continues tomorrow, without interrupting play.':'Keep the current return experience as the baseline. Test one change at a time, and check whether new cohorts keep coming back.',
+      measure:'Day-1 retention first, then day-7 retention. Also watch finished sets so a reminder does not get in the way.'});
+    const boards=Array.from({length:8},(_,i)=>({board:i+1,moves:sum('play.move'+(i+1)),ended:sum('play.board'+(i+1)),fails:sum('play.fail'+(i+1))}));
+    const failure=boards.filter(b=>b.ended>=20&&b.fails<=b.ended&&b.fails/b.ended>=.25).sort((a,b)=>b.fails/b.ended-a.fails/a.ended)[0];
+    if(failure)insights.push({kind:'difficulty',signal:'observed board outcomes',title:`board ${failure.board} · turn limit`,summary:`${failure.fails} / ${failure.ended} ran out of turns · ${percent(failure.fails,failure.ended)}`,
+      evidence:`${failure.fails} of ${failure.ended} board-${failure.board} endings ran out of turns (${percent(failure.fails,failure.ended)}), ${period}. This combines different daily boards at the same position.`,
+      action:'Replay the daily boards at this position and inspect the first confusing move. Test a clearer opening or one turn-budget change on comparable future boards.',
+      measure:'Failure share at this board, players reaching the next board, and day-1 retention. A lower failure count alone is not the goal.'});
+    const exits=boards.slice(0,7).map((b,i)=>({...b,next:boards[i+1].moves})).filter(b=>b.moves>=20&&b.next<=b.moves&&b.moves-b.next>=5).sort((a,b)=>(b.moves-b.next)/b.moves-(a.moves-a.next)/a.moves);
+    const exit=exits[0];
+    if(exit&&(!failure||failure.board!==exit.board))insights.push({kind:'progression',signal:'observed progression gap',title:`board ${exit.board} → ${exit.board+1}`,summary:`${exit.moves} → ${exit.next} first moves · ${percent(exit.next,exit.moves)} continue`,
+      evidence:`${exit.moves} first moves on board ${exit.board}, but ${exit.next} on board ${exit.board+1} (${percent(exit.next,exit.moves)} of the count), ${period}. Aggregate counts do not identify who left or why.`,
+      action:'Inspect both the board and its result-to-next-board transition. Test one clearer next action or a smoother difficulty step.',
+      measure:'Next-board first moves / current-board first moves, alongside failure share and finished sets. Compare complete days with similar traffic.'});
+    const tags=[...new Set(m.rows.filter(r=>r.tag.endsWith('.new')&&!r.tag.startsWith('play.')).map(r=>r.tag.split('.')[0]))];
+    const sources=tags.map(tag=>({tag,n:sum(tag+'.new'),played:sum(tag+'.played')})).filter(p=>p.n>=20&&p.played<=p.n).sort((a,b)=>b.played/b.n-a.played/a.n);
+    if(sources.length>=2){const best=sources[0],low=sources.at(-1);if(best.played/best.n-low.played/low.n>=.2)insights.push({kind:'acquisition',signal:'source-count comparison',title:'first moves by source',summary:`${links[best.tag]||best.tag} ${percent(best.played,best.n)} · ${links[low.tag]||low.tag} ${percent(low.played,low.n)}`,
+      evidence:`${links[best.tag]||best.tag}: ${best.played}/${best.n} first moves/new devices (${percent(best.played,best.n)}); ${links[low.tag]||low.tag}: ${low.played}/${low.n} (${percent(low.played,low.n)}), ${period}. These are event ratios, not matched visitor cohorts.`,
+      action:'Compare the lower-performing source’s wording and landing experience with what the game opens on. Test one promise that shows the actual first move before changing the game for everyone.',
+      measure:'First-move share for that source, followed by first finished sets. Retention cohorts currently cover all sources together.'})}
+    const offer=sum('play.offer'),pay=sum('play.pay');
+    if(offer>=20&&pay<=offer&&pay/offer<.15)insights.push({kind:'unlock',signal:'offer milestone counts',title:'the unlock offer',summary:`${pay} / ${offer} pressed unlock · ${percent(pay,offer)}`,evidence:`${pay} unlock presses against ${offer} offer views (${percent(pay,offer)}), ${period}. These are milestone counts, not a joined checkout funnel.`,action:'Test one clearer description or preview of what unlock adds, keeping the price and purchase flow stable.',measure:'Unlock presses / offer views, then successful unlocks. More presses without purchases are not an improvement.'});
+    if(base<20)insights.push({kind:'learning',signal:'collecting evidence',title:'return baseline',summary:`${base} completed day-1 observations · waiting for 20`,evidence:`${base} devices have a completed day-1 observation in this date range. At least 20 are needed before this panel suggests a retention change; day 7 and day 30 need more elapsed time.`,action:'Keep the first tracked cohort as a rollout baseline. Record the date of each game change and compare later, completed cohorts before deciding it helped.',measure:'Day-1 and day-7 retention, with the eligible device count beside each rate.'});
+    return insights.slice(0,4);
+  }
+  /*@end-stats-model*/
 
-    // places
-    // the places that are not a site's own name read in the page's lowercase
-    const extra = { direct: 'no site (typed, an app or a message)', search: 'search engines', web: 'other sites',
-      press: 'writers and newsletters', ads: 'paid ads', share: 'shared days' };
-    const by = {};
-    for (const r of rows) {
-      const [tag, moment] = String(r.tag).split('.');
-      if (tag === 'play') continue;
-      const p = by[tag] || (by[tag] = { name: extra[tag] || links[tag] || tag, visits: 0, new: 0, seen: 0, played: 0, firstday: 0, back: 0, unlocked: 0 });
-      const k = moment || 'visits';
-      if (k in p) p[k] += Number(r.n);
-    }
-    const pb = $('places'); pb.replaceChildren();
-    Object.values(by).sort((a, b) => b.new - a.new || b.visits - a.visits || a.name.localeCompare(b.name)).forEach((p) => {
-      const tr = el('tr'); tr.append(el('td', { class: 'name' }, p.name));
-      for (const k of ['visits', 'new', 'seen', 'played', 'firstday', 'back', 'unlocked']) tr.append(el('td', {}, fmt(p[k])));
-      pb.append(tr);
-    });
-
-    drawDaily();
+  let go = null, model = null, range = 14, lastGood = 0, reading = false;
+  function draw() {
+    if(!go)return;
+    model = statsModel(go,new Date().toISOString().slice(0,10),range);
+    const m=model,t=m.daily(m.today),y=m.daily(shiftDay(m.today,-1)),before=m.daily(shiftDay(m.today,-2));
+    $('headline').textContent=`${fmt(y.played)} devices played yesterday. ${fmt(t.played)} have played today so far.`;
+    const a={today:t.played,yesterday:y.played,average:m.mean};
+    document.querySelectorAll('[data-a]').forEach(e=>e.textContent=fmt(a[e.dataset.a]));
+    $('comparison').textContent=before.played>0?`${y.played>=before.played?'+':''}${fmt(100*(y.played-before.played)/before.played)}% vs previous day`:'complete day';
+    $('average-note').textContent=m.complete===7?'last 7 complete days':`${m.complete} complete days`;
+    $('range-label').textContent=`${dayWords(m.start)} – ${dayWords(m.today)} · utc`;
+    $('return-since').textContent=m.since?`from ${dayWords(m.since)} · first day partial`:'awaiting new tracking';
+    $('return-note').textContent=m.since
+      ?`ongoing returns are tracked from ${dayWords(m.since)} in updated browsers. that first day is partial; earlier history cannot be reconstructed. the old “first next-day return” count below only measured a return after the first visit.`
+      :'ongoing return tracking is not available from the service yet. earlier activity is shown above; retention will appear as the new tracking arrives.';
+    const r={returning:t.tracked?t.returning:null,consecutive:t.tracked?t.consecutive:null,week:t.tracked?t.week:null};
+    document.querySelectorAll('[data-r]').forEach(e=>e.textContent=e.dataset.r==='share'?pct(t.returning,t.tracked):fmt(r[e.dataset.r]));
+    $('return-denominator').textContent=`of ${fmt(t.tracked)} tracked today`;
+    $('week-note').textContent=m.since&&m.today<shiftDay(m.since,6)?`from ${dayWords(shiftDay(m.since,6))}`:'consecutive utc days';
+    drawInsights();
+    drawCharts();
+    const table=$('daily-numbers');table.replaceChildren();
+    [...m.days].reverse().forEach(d=>{const tr=el('tr');tr.append(el('th',{scope:'row'},dayWords(d.day)+(d.day===m.today?' · so far':'')));['played','returning','consecutive','week'].forEach(k=>tr.append(el('td',{},fmt(d[k]))));table.append(tr)});
+    drawCohorts();
+    drawFunnel('acquisition-funnel',[['new devices',m.period('play.new')],['first-ever move',m.period('play.played')],['first finished set',m.period('play.firstday')]],'var(--blue)');
+    drawFunnel('purchase-funnel',[['saw the offer',m.period('play.offer')],['pressed unlock',m.period('play.pay')],['unlocked',m.period('play.unlocked')]],'var(--green)');
+    const ended=Array.from({length:8},(_,i)=>m.period('play.board'+(i+1)));
+    let worst=1,most=-Infinity;ended.forEach((n,i)=>{if(i<7&&n-ended[i+1]>most){most=n-ended[i+1];worst=i+1}});
+    drawFunnel('board-funnel',ended.map((n,i)=>['board '+(i+1),n]),'var(--orange)',false);
+    const v={new:m.sum('play.new'),played:m.sum('play.played'),finished:m.sum('play.finished'),back:m.sum('play.back'),worst};
+    for(const key of ['share','unlocked','phone','computer','offer','pay','remind','account','rate','collection'])v[key]=m.sum('play.'+key);
+    document.querySelectorAll('[data-v]').forEach(e=>e.textContent=fmt(v[e.dataset.v]));
+    document.querySelectorAll('[data-t]').forEach(e=>e.textContent=fmt({new:t.new,active:t.played,finished:t.finished}[e.dataset.t]));
+    const dev=$('dev');dev.replaceChildren();const all=v.phone+v.computer;
+    if(all)for(const [n,c] of [[v.phone,'var(--blue)'],[v.computer,'var(--orange)']]){const s=el('span');s.style.width=n/all*100+'%';s.style.background=c;dev.append(s)}
+    const fb=$('funnel');fb.replaceChildren();
+    ended.forEach((n,i)=>{const tr=el('tr');tr.append(el('th',{scope:'row'},String(i+1)),el('td',{},fmt(n)),el('td',i<7&&i+1===worst?{class:'worst'}:{},i<7?fmt(n-ended[i+1]):'—'),el('td',{},fmt(m.period('play.move'+(i+1)))),el('td',{},fmt(m.period('play.fail'+(i+1)))));fb.append(tr)});
+    drawSources();
+    $('export').disabled=false;
   }
 
-  function drawDaily() {
-    const box = $('daily'); box.replaceChildren();
-    const days = [...new Set(rows.map((r) => r.day))].sort();
-    if (!days.length) return;
-    const series = [['play.new', 'new players', 'var(--blue)'], ['play.active', 'played that day', 'var(--orange)'], ['play.finished', 'finished the day', 'var(--green)']];
-    const data = days.map((d) => ({ day: d, v: series.map(([tag]) => sum(tag, d)) }));
-    const W = Math.max(300, box.clientWidth || 600), H = 220, top = 10, bottom = 26, right = 4;
-    const ymax = Math.max(1, ...data.flatMap((d) => d.v));
-    const step = ymax <= 5 ? 1 : ymax <= 12 ? 2 : ymax <= 30 ? 5 : ymax <= 60 ? 10 : Math.ceil(ymax / 50) * 10;
-    const yTop = Math.ceil(ymax / step) * step;
-    const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'players by day' });
-    box.append(svg);
-    const ticks = []; for (let t = 0; t <= yTop; t += step) ticks.push(t);
-    const labels = ticks.map((t) => { const e = svgEl('text', { 'text-anchor': 'end', 'font-size': 12, fill: 'currentColor', opacity: .6 }); e.textContent = String(t); svg.append(e); return e });
-    const left = Math.ceil(Math.max(...labels.map((e) => e.getComputedTextLength()))) + 10;
-    const y = (n) => H - bottom - (n / yTop) * (H - bottom - top);
-    ticks.forEach((t, i) => {
-      labels[i].setAttribute('x', left - 6); labels[i].setAttribute('y', y(t) + 4);
-      svg.insertBefore(svgEl('line', { x1: left, x2: W - right, y1: y(t), y2: y(t), stroke: 'currentColor', 'stroke-opacity': t === 0 ? .35 : .12 }), svg.firstChild);
+  function drawInsights() {
+    const box=$('insights');box.replaceChildren();
+    for(const insight of improvementInsights(model,go.links||{})){
+      const card=el('article',{class:'insight'});
+      card.append(el('h3',{},insight.title.toLowerCase()),el('p',{},insight.summary.toLowerCase()));
+      const detail=el('details');detail.append(el('summary',{},'next test'),el('p',{},insight.evidence.toLowerCase()));
+      const action=el('p');action.append(el('b',{},'next test · '),insight.action.toLowerCase());detail.append(action);
+      const measure=el('p',{class:'measure'});measure.append(el('b',{},'watch · '),insight.measure.toLowerCase());detail.append(measure);
+      const copy=el('button',{type:'button'},'copy test');
+      copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(`${insight.title}\n\nEvidence: ${insight.evidence}\n\nTest: ${insight.action}\n\nMeasure: ${insight.measure}\n\nSource: https://features.games/stats · ${model.start} to ${model.today}`);copy.textContent='copied'}catch{copy.textContent='select text to copy'}});
+      detail.append(copy);card.append(detail);box.append(card);
+    }
+  }
+
+  function drawFunnel(id,steps,color,ratios=true) {
+    const box=$(id);box.replaceChildren();const max=Math.max(1,...steps.map(s=>s[1]));
+    steps.forEach(([name,n],i)=>{
+      const row=el('div',{class:'funnel-step'}),label=el('span',{class:'funnel-label'},name);
+      if(ratios&&i)label.append(el('small',{},pct(n,steps[i-1][1])+' of previous'));
+      const track=el('div',{class:'funnel-track','aria-hidden':'true'}),fill=el('div',{class:'funnel-fill'});
+      fill.style.width=n/max*100+'%';fill.style.background=color;track.append(fill);
+      row.append(label,track,el('span',{class:'funnel-number'},fmt(n)));box.append(row);
     });
-    const band = (W - right - left) / data.length, inner = band * 0.78, bw = Math.min(28, inner / 3 - 2);
-    data.forEach((d, i) => {
-      const x0 = left + i * band + (band - (bw * 3 + 4)) / 2;
-      d.v.forEach((n, k) => { if (n > 0) svg.append(svgEl('rect', { x: x0 + k * (bw + 2), y: y(n), width: bw, height: Math.max(0, y(0) - y(n)), rx: 2, fill: series[k][2] })) });
+  }
+
+  function drawCohorts() {
+    const box=$('cohorts');box.replaceChildren();
+    model.cohorts.forEach(c=>{
+      const tr=el('tr');tr.append(el('th',{scope:'row'},dayWords(c.day)+(c.day===model.since?' · partial':'')),el('td',{},fmt(c.n)));
+      c.returns.forEach(n=>{const td=el('td',{class:'cohort-cell'},n===null?'—':pct(n,c.n));if(n!==null){td.classList.add('heat');td.style.setProperty('--heat',Math.min(45,45*n/c.n)+'%');td.append(el('small',{},`${fmt(n)} / ${fmt(c.n)}`))}tr.append(td)});box.append(tr);
     });
-    // day labels, thinned so they never meet
-    const probe = svgEl('text', { 'font-size': 12 }); probe.textContent = '30 oct'; svg.append(probe);
-    const lw = probe.getComputedTextLength(); probe.remove();
-    const every = Math.max(1, Math.ceil((lw + 10) / band));
-    data.forEach((d, i) => {
-      if ((data.length - 1 - i) % every) return;
-      const e = svgEl('text', { x: left + i * band + band / 2, y: H - 8, 'text-anchor': 'middle', 'font-size': 12, fill: 'currentColor', opacity: .6 });
-      e.textContent = dayWords(d.day); svg.append(e);
-    });
-    // a tooltip for the day under the pointer
-    const tip = el('div', { class: 'tip' }); tip.hidden = true; box.append(tip);
-    data.forEach((d, i) => {
-      const hit = svgEl('rect', { x: left + i * band, y: top, width: band, height: H - bottom - top, fill: 'transparent' });
-      const show = (ev) => {
-        tip.replaceChildren(el('div', { class: 'h' }, dayWords(d.day)));
-        series.forEach(([, name, c], k) => { const row = el('div'), sw = el('span', { class: 'sw' }); sw.style.background = c; row.append(sw, el('span', {}, `${name} ${fmt(d.v[k])}`)); tip.append(row) });
-        tip.hidden = false;
-        const b = box.getBoundingClientRect(), px = ev.clientX - b.left, py = ev.clientY - b.top;
-        tip.style.left = Math.max(0, Math.min(b.width - tip.offsetWidth, px + 12)) + 'px';
-        tip.style.top = Math.max(0, Math.min(b.height - tip.offsetHeight, py - tip.offsetHeight - 8)) + 'px';
+    $('cohort-empty').textContent=model.cohorts.length?'— not measured yet':'collecting history';
+    const summary=$('cohort-summary');summary.replaceChildren();
+    [1,7,30].forEach((offset,i)=>{const eligible=model.cohorts.filter(c=>c.returns[i]!==null),n=eligible.reduce((a,c)=>a+c.n,0),back=eligible.reduce((a,c)=>a+c.returns[i],0);const div=el('div');div.append(el('span',{},`day ${offset} retention`),el('b',{},pct(back,n)),el('span',{},`${fmt(n)} eligible devices`));summary.append(div)});
+  }
+
+  function drawSources() {
+    const extra={direct:'no site (typed, an app or a message)',search:'search engines',web:'other sites',press:'writers and newsletters',ads:'paid ads',share:'shared days'};
+    const by=new Map();
+    for(const r of model.rows){
+      if(r.day<model.start)continue;
+      const [tag,moment]=r.tag.split('.');if(tag==='play'||tag==='cohort')continue;
+      if(!by.has(tag))by.set(tag,{name:extra[tag]||go.links?.[tag]||tag,visits:0,new:0,seen:0,played:0,firstday:0,back:0,unlocked:0});
+      const p=by.get(tag),k=moment||'visits';if(['visits','new','seen','played','firstday','back','unlocked'].includes(k))p[k]+=r.n;
+    }
+    const sources=[...by.values()].sort((a,b)=>b.new-a.new||b.visits-a.visits||String(a.name).localeCompare(String(b.name)));
+    drawFunnel('source-chart',sources.filter(p=>p.new>0).slice(0,5).map(p=>[p.name,p.new]),'var(--blue)',false);
+    const box=$('places');box.replaceChildren();
+    for(const p of sources){const tr=el('tr');tr.append(el('th',{class:'name',scope:'row'},p.name));for(const k of ['visits','new','seen','played','share','firstday','back','unlocked'])tr.append(el('td',{},k==='share'?pct(p.played,p.new):fmt(p[k])));box.append(tr)}
+    if(!sources.length){const tr=el('tr');tr.append(el('td',{colspan:'9'},'no source events in this period'));box.append(tr)}
+  }
+
+  function drawCharts() {
+    if(!model)return;
+    chart('daily',[['played','played','var(--orange)'],['average','7-day average','var(--ink-soft)']]);
+    chart('returning',[['returning','returning','var(--blue)'],['consecutive','played yesterday too','var(--green)'],['week','7+ days running','var(--orange)']],true);
+    chart('arrivals',[['new','new devices','var(--blue)'],['first','first-ever move','var(--orange)'],['finished','finished sets','var(--green)']]);
+  }
+
+  function chart(id,series,waitForData=false) {
+    const box=$(id);box.replaceChildren();const data=model.days;
+    if(waitForData&&!data.some(d=>d.tracked>0)){box.append(el('div',{class:'empty'},'collecting history'));return}
+    const W=Math.max(280,box.clientWidth||600),H=250,left=42,right=14,top=16,bottom=32;
+    const max=Math.max(1,...data.flatMap(d=>series.map(([key])=>d[key]||0)));
+    const magnitude=10**Math.floor(Math.log10(max/4)),step=[1,2,5,10].map(n=>n*magnitude).find(n=>n>=max/4)||magnitude*10;
+    const yTop=Math.max(1,Math.ceil(max/step)*step),tickStep=Math.max(1,step);
+    const band=(W-left-right)/data.length,x=i=>left+band*(i+.5),y=n=>H-bottom-n/yTop*(H-bottom-top);
+    const svg=svgEl('svg',{viewBox:`0 0 ${W} ${H}`,width:W,height:H,role:'group','aria-label':id==='daily'?'daily active players':id==='returning'?'returning players over time':'new arrivals and finished sets'});box.append(svg);
+    const todayAt=data.findIndex(d=>d.day===model.today);
+    if(todayAt>=0)svg.append(svgEl('rect',{x:left+todayAt*band,y:top,width:band,height:H-bottom-top,fill:'var(--well)'}));
+    for(let n=0;n<=yTop;n+=tickStep){svg.append(svgEl('line',{x1:left,x2:W-right,y1:y(n),y2:y(n),stroke:'currentColor','stroke-opacity':n===0?.3:.1}));const label=svgEl('text',{x:left-8,y:y(n)+4,'text-anchor':'end','font-size':12,fill:'var(--ink-soft)'});label.textContent=fmt(n);svg.append(label)}
+    const every=Math.max(1,Math.ceil(52/band));
+    data.forEach((d,i)=>{if((data.length-1-i)%every)return;const label=svgEl('text',{x:x(i),y:H-9,'text-anchor':'middle','font-size':12,fill:'var(--ink-soft)'});label.textContent=dayWords(d.day);svg.append(label)});
+    for(const [key,,color] of series){
+      let path='',open=false;
+      data.forEach((d,i)=>{if(d[key]==null){open=false;return}path+=(open?'L':'M')+x(i)+','+y(d[key])+' ';open=true});
+      svg.append(svgEl('path',{d:path,fill:'none',stroke:color,'stroke-width':key==='average'?2:2.5,'stroke-linejoin':'round','stroke-linecap':'round',...(key==='average'?{'stroke-dasharray':'5 5'}:{})}));
+      data.forEach((d,i)=>{if(d[key]!=null&&key!=='average')svg.append(svgEl('circle',{cx:x(i),cy:y(d[key]),r:3,fill:color,stroke:'var(--paper)','stroke-width':1.5}))});
+    }
+    const tip=el('div',{class:'tip',role:'status'});tip.hidden=true;box.append(tip);const hits=[];
+    data.forEach((d,i)=>{
+      const words=series.map(([key,name])=>`${name}: ${fmt(d[key])}`).join(', ');
+      const hit=svgEl('rect',{x:left+i*band,y:top,width:band,height:H-bottom-top,fill:'transparent',tabindex:'0',role:'img','aria-label':`${d.day}${d.day===model.today?', day in progress':''}. ${words}`});
+      const show=ev=>{
+        tip.replaceChildren(el('div',{class:'h'},`${dayWords(d.day)}${d.day===model.today?' · so far':''}`));
+        series.forEach(([key,name,color])=>{const row=el('div'),sw=el('span',{class:'sw'});sw.style.background=color;row.append(sw,el('span',{},`${name} ${fmt(d[key])}`));tip.append(row)});tip.hidden=false;
+        const rect=box.getBoundingClientRect(),px=ev.clientX?ev.clientX-rect.left:x(i),py=ev.clientY?ev.clientY-rect.top:70;
+        tip.style.left=Math.max(0,Math.min(rect.width-tip.offsetWidth,px+10))+'px';tip.style.top=Math.max(0,Math.min(rect.height-tip.offsetHeight,py-tip.offsetHeight-8))+'px';
       };
-      hit.addEventListener('pointermove', show); hit.addEventListener('pointerdown', show);
-      hit.addEventListener('pointerleave', () => { tip.hidden = true });
-      svg.append(hit);
+      for(const event of ['pointermove','pointerdown','focus'])hit.addEventListener(event,show);
+      for(const event of ['pointerleave','blur'])hit.addEventListener(event,()=>{tip.hidden=true});
+      hit.addEventListener('keydown',e=>{if(e.key==='Escape'){tip.hidden=true;return}const next=e.key==='ArrowRight'?i+1:e.key==='ArrowLeft'?i-1:-1;if(hits[next]){e.preventDefault();hits[next].focus()}});
+      hits.push(hit);svg.append(hit);
     });
   }
 
   async function read() {
+    if(reading)return;reading=true;$('refresh').disabled=true;
+    const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),15000);
     try {
-      const res = await fetch('/features/api/go', { cache: 'no-store' });
-      if (!res.ok) throw new Error(String(res.status));
-      const go = await res.json();
-      draw(go);
-      lastGood = Date.now();
-      $('page').hidden = false; $('state').hidden = true;
-      const at = new Date(lastGood);
-      $('when').replaceChildren('live from the game · read at ', el('b', {}, at.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })), ' · every minute while open');
-    } catch (e) {
-      $('state').hidden = false;
-      $('state').textContent = lastGood ? 'the counts did not answer just now; these are from the last read. trying again in a minute.' : 'the counts did not answer. check the connection; trying again in a minute.';
-      if (!lastGood) $('when').textContent = 'not read yet';
-    }
+      const res=await fetch('/features/api/go',{cache:'no-store',signal:controller.signal});if(!res.ok)throw new Error(String(res.status));
+      const body=await res.json();statsModel(body,new Date().toISOString().slice(0,10),range);
+      go=body;$('page').hidden=false;draw();lastGood=Date.now();$('state').hidden=true;
+      $('when').replaceChildren('updated ',el('b',{},new Date(lastGood).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'UTC'})),' utc');
+    } catch(e) {
+      $('state').hidden=false;$('state').textContent=lastGood?'offline · showing the last read':'could not read the counts · try refresh';
+      if(!lastGood)$('when').textContent='waiting for the counts';
+    } finally {clearTimeout(timeout);reading=false;$('refresh').disabled=false}
   }
-  read();
-  setInterval(() => { if (document.visibilityState === 'visible') read() }, 60000);
-  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && Date.now() - lastGood > 30000) read() });
-  let w = 0; new ResizeObserver(() => { const n = $('daily').clientWidth; if (n && n !== w) { w = n; if (rows.length) drawDaily() } }).observe($('daily'));
+  document.querySelectorAll('[data-days]').forEach(button=>button.addEventListener('click',()=>{range=Number(button.dataset.days);document.querySelectorAll('[data-days]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));draw()}));
+  document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>{
+    document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));
+    document.querySelectorAll('[data-panel]').forEach(panel=>{panel.hidden=panel.dataset.panel!==button.dataset.view});
+    drawCharts();
+  }));
+  $('refresh').addEventListener('click',read);
+  $('export').addEventListener('click',()=>{
+    if(!model)return;
+    const header=['utc_day','partial_day','daily_active_local_day','utc_tracked_players','returning_players','played_yesterday_too','streak_7_plus','new_devices','first_ever_moves','finished_sets'];
+    const rows=model.days.map(d=>[d.day,d.day===model.today,...['played','tracked','returning','consecutive','week','new','first','finished'].map(k=>d[k]??'')]);
+    const csv=[header,...rows].map(row=>row.join(',')).join('\r\n');
+    const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})),a=el('a',{href:url,download:`features-players-${model.start}-${model.today}.csv`});a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  });
+  read();setInterval(()=>{if(document.visibilityState==='visible')read()},60000);
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&Date.now()-lastGood>30000)read()});
+  let width=0;new ResizeObserver(()=>{const n=$('daily').clientWidth;if(n&&n!==width){width=n;drawCharts()}}).observe($('daily'));
 })();
 </script>
 </body>
