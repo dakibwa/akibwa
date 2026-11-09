@@ -134,6 +134,7 @@ a:focus-visible,button:focus-visible{outline:2.5px solid var(--green);outline-of
     <div><dt>unlocked</dt><dd data-v="unlocked">0</dd></div>
     <div><dt>turned on the daily reminder</dt><dd data-v="remind">0</dd></div>
     <div><dt>signed in to an account</dt><dd data-v="account">0</dd></div>
+    <div><dt>pressed "rate features" on the list they came from (from 9 nov)</dt><dd data-v="rate">0</dd></div>
     <div><dt>opened the collection (once a device a day)</dt><dd data-v="collection">0</dd></div>
   </dl>
   <h2 style="margin-top:24px">new players by device</h2>
@@ -148,8 +149,8 @@ a:focus-visible,button:focus-visible{outline:2.5px solid var(--green);outline-of
 
 <section>
   <h2>where players came from</h2>
-  <p class="note">visits through each counted link, and the new players each place brought. a new player with no counted link takes the site that sent them (reddit, search, other sites) or "no site".</p>
-  <div class="box"><table><thead><tr><th>place</th><th>visits</th><th>new players</th><th>played</th><th>finished first day</th><th>came back</th><th>unlocked</th></tr></thead><tbody id="places"></tbody></table></div>
+  <p class="note">visits through each counted link, and the new players each place brought. a new player with no counted link takes the site that sent them (reddit, search, other sites) or "no site". "saw a board" counts from 9 nov.</p>
+  <div class="box"><table><thead><tr><th>place</th><th>visits</th><th>new players</th><th>saw a board</th><th>played</th><th>finished first day</th><th>came back</th><th>unlocked</th></tr></thead><tbody id="places"></tbody></table></div>
 </section>
 
 <p class="foot">counts come from the game itself, one per device for each moment; a browser that asks not to be tracked sends nothing. this page reads them again every minute while it is open.</p>
@@ -177,7 +178,7 @@ a:focus-visible,button:focus-visible{outline:2.5px solid var(--green);outline-of
     const v = {
       new: sum('play.new'), played: sum('play.played'), finished: sum('play.finished'), back: sum('play.back'),
       share: sum('play.share'), unlocked: sum('play.unlocked'), phone: sum('play.phone'), computer: sum('play.computer'),
-      offer: sum('play.offer'), pay: sum('play.pay'), remind: sum('play.remind'), account: sum('play.account'),
+      offer: sum('play.offer'), pay: sum('play.pay'), remind: sum('play.remind'), account: sum('play.account'), rate: sum('play.rate'),
       collection: sum('play.collection'), worst,
     };
     document.querySelectorAll('[data-v]').forEach((e) => { e.textContent = e.dataset.v === 'worst' ? String(v.worst) : fmt(v[e.dataset.v]) });
@@ -211,14 +212,14 @@ a:focus-visible,button:focus-visible{outline:2.5px solid var(--green);outline-of
     for (const r of rows) {
       const [tag, moment] = String(r.tag).split('.');
       if (tag === 'play') continue;
-      const p = by[tag] || (by[tag] = { name: extra[tag] || links[tag] || tag, visits: 0, new: 0, played: 0, firstday: 0, back: 0, unlocked: 0 });
+      const p = by[tag] || (by[tag] = { name: extra[tag] || links[tag] || tag, visits: 0, new: 0, seen: 0, played: 0, firstday: 0, back: 0, unlocked: 0 });
       const k = moment || 'visits';
       if (k in p) p[k] += Number(r.n);
     }
     const pb = $('places'); pb.replaceChildren();
     Object.values(by).sort((a, b) => b.new - a.new || b.visits - a.visits || a.name.localeCompare(b.name)).forEach((p) => {
       const tr = el('tr'); tr.append(el('td', { class: 'name' }, p.name));
-      for (const k of ['visits', 'new', 'played', 'firstday', 'back', 'unlocked']) tr.append(el('td', {}, fmt(p[k])));
+      for (const k of ['visits', 'new', 'seen', 'played', 'firstday', 'back', 'unlocked']) tr.append(el('td', {}, fmt(p[k])));
       pb.append(tr);
     });
 
