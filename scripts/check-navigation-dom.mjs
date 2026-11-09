@@ -288,8 +288,8 @@ const checkPublicLanding = async () => {
   const ax = await cdp.send("Accessibility.getFullAXTree");
   const mainHeading = ax.nodes.find((node) => node.role?.value === "heading" && node.properties?.some((property) => property.name === "level" && property.value.value === 1));
   check(mainHeading?.name?.value?.startsWith("I’m Daniel. Online as Akibwa."), `the h1 has a meaningful computed accessible name [${mainHeading?.name?.value}]`);
-  check(state.room === "index" && state.frontVisible, "the front page opens on the five things");
-  check(JSON.stringify(state.things) === JSON.stringify([["music", "#music"], ["features", "#features"], ["websites", "#websites"], ["career", "#career"], ["trek", "#trek"]]), `five things, all opening in place [${JSON.stringify(state.things)}]`);
+  check(state.room === "index" && state.frontVisible, "the front page opens on the four things");
+  check(JSON.stringify(state.things) === JSON.stringify([["music", "#music"], ["trek", "#trek"], ["career", "#career"], ["oh life! studios", "https://ohlifestudios.com/"]]), `three personal rooms and the external studio [${JSON.stringify(state.things)}]`);
   check(state.lede === "Building in the age of AI.", "the front page keeps Dan's proposition");
   check(!state.hasPersonalIdentity, "the page does not contain the personal full name");
   check(state.socialLinks.length === 2 && state.socialLinks.every((href) => href.includes("/dakibwa")), "only the two approved social profiles are linked");
@@ -319,8 +319,8 @@ const checkPublicLanding = async () => {
   check(await evaluate(`(() => { const tab = document.querySelector(".bar-tab")?.getBoundingClientRect(); const link = document.querySelector('.bar-rooms [aria-current="page"]')?.getBoundingClientRect(); return Boolean(tab && link) && Math.abs(tab.left - link.left) < 2 && Math.abs(tab.width - link.width) < 2 && link.width > 0; })()`), "the room on show sits on the bar's ink tab");
   await evaluate("history.back()");
   await sleep(900);
-  check(await evaluate("document.documentElement.dataset.room === 'index' && getComputedStyle(document.querySelector('.front')).display !== 'none'"), "Back returns to the five things");
-  await clickThing("websites");
+  check(await evaluate("document.documentElement.dataset.room === 'index' && getComputedStyle(document.querySelector('.front')).display !== 'none'"), "Back returns to the four things");
+  await clickThing("music");
   await sleep(700);
   await cdp.send("Input.dispatchKeyEvent", { type: "keyDown", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
   await cdp.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
@@ -460,7 +460,7 @@ const checkPublicLanding = async () => {
   await evaluate(`document.querySelector(".bar .night-switch").click()`);
   check(await waitFor(`!("paper" in document.documentElement.dataset) && localStorage.getItem("akibwa-paper") === "day" && document.querySelector('meta[name="theme-color"]').content === "#f3ecdf"`), "turning it back restores the day paper");
 
-  section("career, websites and features");
+  section("career, trek and the studio");
   await goto("/#career");
   await sleep(2600);
   const cards = await evaluate(`(() => {
@@ -474,17 +474,12 @@ const checkPublicLanding = async () => {
   await sleep(600);
   check(await evaluate(`new Set([...document.querySelectorAll("#career .career-card")].map((card) => Math.round(card.getBoundingClientRect().left))).size === 1 && document.documentElement.scrollWidth <= innerWidth + 1`), "on a phone the cards stack");
   await setDesktop();
-  await goto("/#websites");
-  await sleep(600);
-  check(await evaluate(`JSON.stringify([...document.querySelectorAll("#websites .concept-project-card")].map((card) => card.getAttribute("href"))) === JSON.stringify(["https://portuguesewithines.com/","https://www.castle-bank.com/",null])`), "the websites room shows Dan's three sites, Butterfly Rose unlinked until it is live");
-  check(await evaluate(`[...document.querySelectorAll("#websites .concept-project-copy")].every((copy) => copy.textContent.trim().split(/\\s+/).length <= 8)`), "every site says what it is in eight words or fewer");
+  await goto("/");
+  check(await evaluate(`document.querySelector('.things a[href="https://ohlifestudios.com/"]')?.textContent.includes("oh life! studios") && document.querySelector('.bar-rooms a[href="https://ohlifestudios.com/"]') !== null`), "both the illustrated studio and navigation link to its own home");
   await goto("/#trek");
   await sleep(1200);
   check(await evaluate(`(() => { const frame = document.querySelector("#trek iframe.room-frame"); return Boolean(frame) && new URL(frame.src).pathname === "/trek/" && frame.getBoundingClientRect().height > innerHeight * 0.6; })()`), "the trek opens in place, its journey filling the room");
   check(await waitFor(`document.querySelector("#trek iframe")?.contentDocument?.documentElement.classList.contains("is-embedded")`, 8000), "the framed trek hides its own way home");
-  await goto("/#features");
-  await sleep(1200);
-  check(await evaluate(`(() => { const frame = document.querySelector("#features iframe.room-frame"); return Boolean(frame) && new URL(frame.src).pathname === "/features/" && new URL(frame.src).search === "?stay=1" && frame.getBoundingClientRect().height > innerHeight * 0.6; })()`), "features opens the game in place, filling the room");
 
   section("without JavaScript");
   await cdp.send("Emulation.setScriptExecutionDisabled", { value: true });
@@ -498,13 +493,13 @@ const checkPublicLanding = async () => {
   const box = await cdp.send("DOM.getBoxModel", { nodeId }).catch(() => null);
   check(Boolean(box), "a room's link still opens the room through :target");
   await setDesktop(320, 568);
-  for (const id of ["music", "features", "websites", "career", "trek"]) {
+  for (const id of ["music", "trek", "career"]) {
     await cdp.send("Emulation.setScriptExecutionDisabled", { value: true });
     await goto(`/#${id}`);
     await cdp.send("Emulation.setScriptExecutionDisabled", { value: false });
     check(await roomVisible(id), `${id} opens without JavaScript`);
     check(await evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), `${id} fits a 320px phone without JavaScript`);
-    if (id === "features" || id === "trek") {
+    if (id === "trek") {
       check(await evaluate(`Boolean(document.querySelector("#${id} iframe.room-frame")?.getBoundingClientRect().width)`), `${id} retains its framed content without JavaScript`);
     }
   }
@@ -516,7 +511,7 @@ const checkPublicLanding = async () => {
   await goto("/");
   await sleep(4200);
   check(await evaluate(`document.querySelector(".name")?.dataset.name === "daniel" && !document.documentElement.dataset.sky`), "reduced motion keeps Daniel still without the change");
-  check(await evaluate(`getComputedStyle(document.querySelector(".thing .t-paper")).opacity === "1"`), "reduced motion shows the five things at once");
+  check(await evaluate(`getComputedStyle(document.querySelector(".thing .t-paper")).opacity === "1"`), "reduced motion shows the four things at once");
   await cdp.send("Emulation.setEmulatedMedia", { features: [] });
 
   section("console");

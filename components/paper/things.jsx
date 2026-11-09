@@ -454,10 +454,26 @@ export function TrekThing() {
   );
 }
 
+export function StudioThing() {
+  const burst = "m130 8 24 30 37-8 8 37 33 18-18 33 18 33-33 18-8 37-37-8-24 30-24-30-37 8-8-37-33-18 18-33-18-33 33-18 8-37 37 8Z";
+  return (
+    <svg className="thing-art thing-studio" viewBox="0 0 160 140" aria-hidden="true" focusable="false">
+      {ground(80, 53)}
+      <Sketch d={burst} transform="translate(24 19) scale(.43)" />
+      <Paper>
+        <g transform="rotate(6 80 75)">
+          <path d={burst} transform="translate(24 19) scale(.43)" fill="#f5623a" stroke="var(--ink)" strokeWidth="1.3" vectorEffect="non-scaling-stroke" />
+          <text x="80" y="67" textAnchor="middle" fill="#262720" fontFamily="Arial, sans-serif" fontSize="23" fontWeight="900" letterSpacing="-1">oh life!</text>
+          <text x="80" y="88" textAnchor="middle" fill="#262720" fontFamily="Arial, sans-serif" fontSize="9" fontWeight="700" letterSpacing="2">STUDIOS</text>
+        </g>
+      </Paper>
+    </svg>
+  );
+}
+
 export const THINGS = {
   music: TasteThing,
-  features: FeaturesThing,
-  websites: WebsitesThing,
+  studio: StudioThing,
   career: CareerThing,
   trek: TrekThing
 };

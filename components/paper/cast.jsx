@@ -25,8 +25,7 @@ const FEET = { x: 50, y: 104 };
 // the hover lift of 7.
 const PERCH = {
   music: [80, 55, true],
-  features: [80, 29, true],
-  websites: [63, 54, true],
+  studio: [80, 23, true],
   career: [26, 128, false],
   trek: [80, 31, true]
 };

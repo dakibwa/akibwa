@@ -54,6 +54,7 @@
   --music: #2e3a7a;
   --features: #24709F;
   --websites: #2b5fb8;
+  --studio: #f5623a;
   --career: #3f7634;
   --trek: #a72d28;
 
@@ -1014,7 +1015,7 @@ html[data-paper="night"] .ns-star {
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: clamp(4px, 1.6vw, 28px);
   margin: 0;
   padding: 0;
@@ -2973,6 +2974,10 @@ html[data-flipping]::view-transition-new(root) {
 
   .thing-websites {
     --art-top: 11;
+  }
+
+  .thing-studio {
+    --art-top: 22;
   }
 
   .thing-career {

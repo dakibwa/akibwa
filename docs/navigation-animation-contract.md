@@ -1,4 +1,6 @@
 # Homepage interaction and privacy contract
+Current navigation, 9 November 2026: Dan asked for music, trek, career and Oh Life! Studios. The three personal rooms keep their existing behaviour; the studio is an external link to https://ohlifestudios.com. Features and Websites no longer have homepage rooms. Their old hashes redirect to `/features/` (for the browser-save handover) and the studio respectively. The standalone game, its API route, and the trek are retained. This supersedes the five-entry layout described in the earlier design record below.
+
 
 Akibwa is one sheet of paper. Run `npm run check:navigation` on every build and `npm run check:navigation:dom` before publication.
 

@@ -4,9 +4,8 @@ import { unpackRanking } from "../components/paper/music-ranking.mjs";
 import { albumSides, albumWeights, drawnOrder, layoutSquares, packSquares, rowOfSquares, tilesFor, GAP } from "../components/paper/music-map.mjs";
 import { indexItems, search } from "../components/paper/music-search.mjs";
 
-/* Build-time contract for the paper homepage: one sheet with five things —
-   music, features, websites, career and the trek — that open in place (the
-   features and trek rooms frame /features/ and /trek/). Named public choices
+/* Build-time contract for the personal homepage: music, trek and career
+   open in place, while Oh Life! Studios has its own website. Named public choices
    do not relax the private-data and search boundaries below. */
 
 const read = (relativePath) =>
@@ -64,7 +63,7 @@ requireText(index, "noimageindex: true", "the public index must opt out of image
 requireText(index, '"max-snippet": 120', "the public index must limit search snippets");
 requireText(layout, 'applicationName: "Akibwa"', "site metadata must be brand-led");
 requireText(layout, 'classList.add("js")', "the layout must mark scripted pages before the first paint");
-requireText(layout, '["music","features","websites","career","trek"]', "the layout's room list must match the rooms that open in place");
+requireText(layout, '["music","trek","career"]', "the layout's room list must match the three personal rooms");
 
 // The approved introduction: a slightly slower Daniel ↔ Akibwa wipe.
 requireText(names, '"Daniel", "Akibwa"', "the name change must alternate Daniel and Akibwa");
@@ -83,15 +82,17 @@ for (const letter of ['id: "k"', 'id: "i"']) forbidText(cast, letter, "the a is 
 requireText(cast, "prefers-reduced-motion", "the mascot must keep still under reduced motion");
 requireRuleText("\nbody {", ["user-select: none"]);
 
-// Five things, five rooms; the trek's frames its journey (Dan, 25 September 2026).
-for (const id of ["music", "features", "websites", "career", "trek"]) {
+// Dan, 9 November 2026: personal interests plus the product studio.
+for (const id of ["music", "trek", "career"]) {
   requireText(home, `id: "${id}"`, `the ${id} room must remain on the front page`);
   requireText(home, `<Room id="${id}"`, `the ${id} room must render`);
 }
 requireText(home, 'path="/trek/"', "the trek room must frame the journey");
-requireText(home, 'path="/features/"', "the features room must frame the game (Dan, 25 September 2026)");
-// The game moves itself to features.games, which cannot be framed here; framed, it stays.
-requireText(home, 'path="/features/" search="?stay=1"', "the framed Features game must be asked to stay on akibwa.com");
+requireText(home, 'id: "studio"', "the personal home must include Oh Life! Studios");
+requireText(home, 'href: "https://ohlifestudios.com/"', "the studio must link to its own product home");
+for (const id of ["features", "websites"]) forbidText(home, `<Room id="${id}"`, "product showcases now belong to the studio");
+requireText(home, 'features: "/features/"', "old shared Features hashes must retain the browser-save transfer path");
+requireText(home, 'websites: "https://ohlifestudios.com/"', "old shared website hashes must lead to the studio");
 forbidText(home, "from=akibwa", "the framed game must not wear the portfolio banner");
 requireText(trekTemplate, 'classList.add("is-embedded")', "the framed trek must hide its own way home");
 requireText(home, "memo(MusicRoom)", "the music room must show the albums and songs mosaics");

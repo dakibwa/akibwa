@@ -1,13 +1,12 @@
 import { PaperHome } from "@/components/paper/paper-home";
 import { musicSeed } from "@/lib/paper-home.mjs";
-import { websites } from "@/data/websites.mjs";
 import ranking from "@/public/music-ranking.json";
 
 export const metadata = {
   title: { absolute: "Akibwa" },
   alternates: { canonical: "/" },
   description:
-    "Daniel, online as Akibwa. The albums and songs I play most, a puzzle I made, websites I’ve built, how I got here, and a walk from Paris to Sofia.",
+    "Daniel, online as Akibwa. My music taste, my career, a walk from Paris to Sofia, and the apps, games and websites I make at Oh Life! Studios.",
   robots: {
     index: true,
     follow: true,
@@ -28,7 +27,6 @@ export default function IndexPage() {
   return (
     <PaperHome
       music={{ initial: musicSeed(ranking) }}
-      websites={websites}
     />
   );
 }

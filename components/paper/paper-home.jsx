@@ -8,7 +8,6 @@ import { NameFlip } from "./name-flip";
 import { THINGS } from "./things";
 import { Contact } from "./contact";
 import { NightSwitch } from "./night-switch";
-import { WebsitesRoom } from "./websites-room";
 import { MusicRoom } from "./music-room";
 import { FramedRoom } from "./framed-room";
 import { CareerCards } from "./career-cards";
@@ -16,17 +15,15 @@ import { CareerCards } from "./career-cards";
 // The rooms stay mounted behind the front page; hovering and the mascot's
 // visits re-render the sheet, so the rooms only redraw when their props do.
 const Music = memo(MusicRoom);
-const Websites = memo(WebsitesRoom);
 const Career = memo(CareerCards);
 const Framed = memo(FramedRoom);
 
-// All five open in place; features and the trek frame their own pages.
+// Three personal rooms open in place; the studio has its own home.
 export const THINGS_ON_PAPER = [
   { id: "music", label: "music", hint: "my taste archive" },
-  { id: "features", label: "features", hint: "untangle a neural net" },
-  { id: "websites", label: "websites", hint: "sites I’ve built" },
+  { id: "trek", label: "trek", hint: "my journey across Europe" },
   { id: "career", label: "career", hint: "how I got here" },
-  { id: "trek", label: "trek", hint: "my journey across Europe" }
+  { id: "studio", label: "oh life! studios", hint: "my apps, games & websites", href: "https://ohlifestudios.com/" }
 ];
 export const ROOMS = THINGS_ON_PAPER.filter((thing) => !thing.href);
 const IDS = ROOMS.map((room) => room.id);
@@ -34,13 +31,13 @@ const isRoom = (value) => IDS.includes(value);
 const still = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /*
- * One sheet of paper. The front page holds five things; choosing one opens its
- * room in place. `<html data-room>` owns what is shown — an inline script in
+ * One sheet of paper. Music, trek and career open in place; the studio links
+ * to its own website. `<html data-room>` owns what is shown — an inline script in
  * the layout sets it from the hash before the first paint, and without
  * JavaScript `:target` opens the room instead. Each room is one history entry
- * carrying its hash, so Back returns to the five things.
+ * carrying its hash, so Back returns to the front page.
  */
-export function PaperHome({ music, websites }) {
+export function PaperHome({ music }) {
   const [room, setRoom] = useState(null);
   const [hovered, setHovered] = useState(null);
   const [visited, setVisited] = useState(null);
@@ -90,6 +87,13 @@ export function PaperHome({ music, websites }) {
   useEffect(() => {
     const root = document.documentElement;
     const initial = location.hash.slice(1);
+    // Keep old shared project links useful. /features/ still owns the browser
+    // save transfer to features.games; its files and API route are unchanged.
+    const legacyProject = { features: "/features/", websites: "https://ohlifestudios.com/" }[initial];
+    if (legacyProject) {
+      location.replace(legacyProject);
+      return;
+    }
     // After the first drawing, the front page is shown at rest.
     const drawn = setTimeout(() => { root.dataset.drawn = ""; }, isRoom(initial) ? 0 : 3400);
     if (isRoom(initial)) {
@@ -143,8 +147,8 @@ export function PaperHome({ music, websites }) {
   return (
     <div className="paper">
       <header className="bar">
-        {/* In a room, a pencil arrow back to the five things. */}
-        <a className="bar-back" href="#hello" onClick={home} aria-label="Back to the five things">
+        {/* In a room, a pencil arrow back to the front page. */}
+        <a className="bar-back" href="#hello" onClick={home} aria-label="Back to the four things">
           <Arrow back size={26} />
         </a>
         <BarRooms room={room} follow={follow} />
@@ -169,7 +173,7 @@ export function PaperHome({ music, websites }) {
         </div>
         <Cast onVisit={setVisited} />
         <div className="front-stage">
-          <ul className="things" aria-label="Five things">
+          <ul className="things" aria-label="Four things">
             {THINGS_ON_PAPER.map(({ id, label, hint, href }, index) => {
               const Art = THINGS[id];
               return (
@@ -197,12 +201,6 @@ export function PaperHome({ music, websites }) {
 
       <Room id="music">
         <Music initial={music.initial} active={room === "music"} />
-      </Room>
-      <Room id="features">
-        <Framed active={room === "features"} name="features" path="/features/" search="?stay=1" title="Features, the daily puzzle" />
-      </Room>
-      <Room id="websites">
-        <Websites sites={websites} />
       </Room>
       <Room id="career">
         <Career />
@@ -238,8 +236,8 @@ function BarRooms({ room, follow }) {
   return (
     <nav className="bar-rooms" aria-label="Rooms" ref={nav}>
       {tab ? <span className="bar-tab" aria-hidden="true" style={{ width: tab.w, transform: `translateX(${tab.x}px)` }} /> : null}
-      {THINGS_ON_PAPER.map(({ id, label }) => (
-        <a key={id} href={`#${id}`} onClick={follow(id)} aria-current={room === id ? "page" : undefined}>
+      {THINGS_ON_PAPER.map(({ id, label, href }) => (
+        <a key={id} href={href ?? `#${id}`} onClick={href ? undefined : follow(id)} aria-current={room === id ? "page" : undefined}>
           {label}
         </a>
       ))}
