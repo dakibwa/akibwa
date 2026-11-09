@@ -468,7 +468,7 @@ const checkPublicLanding = async () => {
     const columns = new Set(cards.map((card) => Math.round(card.getBoundingClientRect().left)));
     return { count: cards.length, first: cards[0]?.querySelector(".career-name")?.textContent, columns: columns.size, statements: cards.every((card) => card.querySelector(".career-statement")?.textContent), years: cards.every((card) => /\\d{4}|Now/.test(card.querySelector(".career-role")?.textContent ?? "")) };
   })()`);
-  check(cards.count === 8 && cards.first === "Freelance", `career keeps its eight roles, the current first [${cards.count}, ${cards.first}]`);
+  check(cards.count === 8 && cards.first === "Oh Life! Studios", `career keeps its eight roles, with Oh Life! Studios first [${cards.count}, ${cards.first}]`);
   check(cards.columns === 3 && cards.statements && cards.years, `every role is a card with its years and statement, three to a row [${cards.columns}]`);
   await setDesktop(390, 844);
   await sleep(600);

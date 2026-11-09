@@ -14,7 +14,7 @@ const logoRevisions = {
   "/brand-logos/leeds-building-society-icon.svg": "contrast",
 };
 
-// The Freelance card shows the bare Akibwa a rather than the favicon's tile.
+// The independent studio card shows the bare Akibwa a rather than the favicon's tile.
 // Logos load eagerly but at low priority: React would otherwise preload the SVG
 // ones in <head>, ahead of the stylesheet, although Career sits below the fold
 // on phones.
