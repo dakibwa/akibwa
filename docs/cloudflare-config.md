@@ -126,6 +126,15 @@ Features continues publishing its stripped and hardened client to
 carried over). That push triggers the Cloudflare workflow, so preserve the
 publication path.
 
+## Oh Life! Studios
+
+`studio/site/` deploys unchanged to the static-only `ohlifestudios` Worker with
+`wrangler-studio.jsonc`, after Features in the same workflow. The dashboard owns
+`ohlifestudios.com` and `www.ohlifestudios.com` on that Worker; like the others, the
+config omits `route` and `routes`. `scripts/check-studio-hosting.mjs <origin>` checks
+the served bytes, the security headers from `studio/site/_headers` and a real 404 on
+the preview (`ohlifestudios.dakibwa.workers.dev`) and the domain. Nothing is built.
+
 ## Features standalone domain
 
 The same verified `out/features/` export also deploys to the static-only

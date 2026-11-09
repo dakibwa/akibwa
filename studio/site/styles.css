@@ -1,0 +1,120 @@
+/* Oh Life! Studios. Every value here comes from the sunset landscapes; see DESIGN.md. */
+@font-face{font-family:"Oh Life Pixel";src:url('/assets/ohlife-pixel.woff2') format('woff2');font-display:block}
+@font-face{font-family:Inter;src:url('/assets/inter-latin.woff2') format('woff2');font-style:normal;font-weight:100 900;font-display:swap}
+
+:root{
+  /* sky */
+  --sky:#fdf6e1;      /* page ground: the top of every sky */
+  --sky-2:#fbeccb;    /* lower sky, raised surfaces */
+  --peach:#f6d5a8;    /* the band above the horizon */
+  --salmon:#eca58c;   /* cloud bodies */
+  /* the bang */
+  --bang:#e07a50;     /* the logo's exclamation, decoration only */
+  --coral:#b84a33;    /* the bang in text: 4.8:1 on --sky */
+  /* land */
+  --haze:#e6d6c0; --mauve:#ab9c8f;
+  --forest:#344925; --leaf:#6a8137; --field:#b5bc5c;
+  --ink:#1b2517;      /* text, frames, shadows: the deepest forest shade */
+  --ink-2:#4d5741;    /* quiet text, 7:1 on --sky */
+
+  --bg:var(--sky); --text:var(--ink); --muted:var(--ink-2); --line:var(--ink); --accent:var(--coral); --raised:var(--sky-2);
+
+  /* type: one pixel of the face is a tenth of its font size, so sizes step in tens */
+  --px:"Oh Life Pixel",ui-monospace,monospace;
+  --sans:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --t-hero:70px; --t-h2:30px; --t-h3:40px; --t-ui:20px; --t-small:10px;
+  --t-body:1.125rem; --t-lede:clamp(1.25rem,1rem + 1vw,1.625rem);
+
+  /* space and pixels */
+  --p:4px;            /* one art pixel on the page */
+  --s1:8px; --s2:16px; --s3:24px; --s4:40px; --s5:64px; --s6:104px;
+  --wrap:1120px; --gutter:clamp(16px,4vw,40px);
+  --frame:var(--p) solid var(--line);
+  --drop:calc(var(--p) * 2) calc(var(--p) * 2) 0 var(--line);
+  color-scheme:light dark;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:var(--ink); --text:var(--sky); --muted:#cfc8ac; --line:#0e150c; --accent:#ec9560; --raised:#26351e}
+}
+@media (max-width:1100px){
+  :root{--t-hero:50px}
+}
+@media (max-width:640px){
+  :root{--t-hero:40px; --t-h3:30px; --t-h2:20px}
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:400 var(--t-body)/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%;height:auto}
+.scene,.window,.logo img,.foot img{image-rendering:pixelated}
+a{color:inherit;text-underline-offset:.2em;text-decoration-thickness:2px}
+a:hover{color:var(--accent)}
+:focus-visible{outline:var(--p) solid currentColor;outline-offset:var(--p)}
+.wrap{width:min(100% - 2 * var(--gutter),var(--wrap));margin-inline:auto}
+.skip{position:absolute;left:var(--s2);top:-100px;background:var(--ink);color:var(--sky);padding:var(--s1) var(--s2);font:var(--t-ui)/1 var(--px);z-index:2}
+.skip:focus{top:var(--s2)}
+
+/* the pixel face: no smoothing, sizes in tens */
+.px{font-family:var(--px);font-weight:400;-webkit-font-smoothing:none;-moz-osx-font-smoothing:unset;letter-spacing:0;line-height:1.2;margin:0}
+.px b{font-weight:400;color:var(--accent)}
+.small{font-size:var(--t-small)}
+.px-link{font:var(--t-ui)/1.2 var(--px);-webkit-font-smoothing:none;text-decoration:none;white-space:nowrap;border-bottom:var(--p) solid currentColor;padding-bottom:2px}
+.px-link:hover{color:var(--accent)}
+
+/* header sits on the sky */
+.bar{position:absolute;inset:0 0 auto;display:flex;justify-content:space-between;align-items:flex-start;padding-top:var(--s3);z-index:1;color:var(--ink)}
+.logo img{width:160px}
+
+/* hero: a whole landscape, the line written in its sky */
+.hero{position:relative;color:var(--ink);background:var(--sky)}
+.hero .scene{width:100%;height:min(100vh,62.5vw);min-height:520px;object-fit:cover;object-position:50% 100%}
+.hero-sky{position:absolute;inset:0;padding-top:clamp(120px,10vw,160px)}
+.hero h1{font-size:var(--t-hero)}
+.hero h1 b{color:var(--coral)}
+.hero .line{display:block}
+.nw{white-space:nowrap}
+
+/* intro */
+.intro{padding-block:var(--s5) var(--s4)}
+.lede{font-size:var(--t-lede);line-height:1.45;max-width:34ch;margin:0;letter-spacing:-.01em}
+
+/* the work: each project is a postcard of a scene with the product held up in front */
+.work{padding-bottom:var(--s6)}
+.kicker{font-size:var(--t-h2);color:var(--muted);margin-bottom:var(--s4)}
+.post{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:var(--s4);align-items:center;margin-bottom:var(--s5)}
+.post.flip{grid-template-columns:minmax(0,5fr) minmax(0,7fr)}
+.post.flip .frame{order:2}
+.frame{position:relative;display:block;border:var(--frame);box-shadow:var(--drop);background:var(--sky);overflow:hidden}
+.frame .scene{width:100%;aspect-ratio:8/5}
+.frame .window{position:absolute;left:12%;right:12%;bottom:10%;width:76%;border:var(--frame);box-shadow:var(--drop);transition:transform .2s steps(2)}
+.frame:hover .window,.frame:focus-visible .window{transform:translate(calc(var(--p) * -1),calc(var(--p) * -2))}
+.note h3{font-size:var(--t-h3);margin-bottom:var(--s2)}
+.note p{margin:0 0 var(--s3);max-width:32ch;color:var(--muted)}
+.note .credit{font-size:.8125rem;margin:var(--s3) 0 0}
+
+@media (max-width:820px){
+  .post,.post.flip{grid-template-columns:1fr;gap:var(--s3)}
+  .post.flip .frame{order:0}
+  .bar{padding-top:var(--s2)}
+  .logo img{width:120px}
+}
+@media (max-width:640px){
+  .hero .scene{height:auto;min-height:0}
+  .hero-sky{padding-top:96px}
+}
+
+/* footer: the ground */
+.foot{background:var(--ink);color:var(--sky);padding-block:var(--s4)}
+.foot-row{display:flex;gap:var(--s2);align-items:center;flex-wrap:wrap}
+.foot p{margin:0}
+.foot .small{margin-left:auto}
+@media (prefers-color-scheme:dark){.foot{background:var(--line)}}
+
+/* 404 */
+.lost{min-height:100vh;display:grid;place-items:center;text-align:center;padding:var(--s4)}
+.lost img{margin:0 auto var(--s3);width:64px}
+.lost h1{font-size:var(--t-h3);margin-bottom:var(--s2)}
+.lost p{margin:0 0 var(--s3);color:var(--muted)}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}

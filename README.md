@@ -12,6 +12,8 @@ The approved career roles, cultural curation and Instagram/X links are restored 
 
 The **Oh Life! Studios** entry links to the studio's own website. Old `#features` links go through `/features/`, preserving the old browser-save transfer; old `#websites` links go to the studio. The standalone game and trek files and the Features API route are unchanged.
 
+Oh Life! Studios' own site is in `studio/` and ships to https://ohlifestudios.com from the same workflow; see [studio/README.md](studio/README.md).
+
 ## Projects
 
 - Features is a playable daily untangling puzzle.
