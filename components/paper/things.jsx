@@ -395,6 +395,9 @@ function Reveal({ id, d, width }) {
 const TRAIL = "M14 122C34 118 44 104 54 94C66 82 78 76 72 64C66 54 52 62 60 72C68 82 90 72 104 58C112 50 118 44 126 40";
 
 // Career: the paper plane flies in along its trail, laying it down behind it.
+// The plane alone is the lightest of the four things, so it is drawn a fifth
+// larger about the end of its trail, where the two meet, its ink kept at the
+// others' weight.
 export function CareerThing() {
   const mask = useMaskId("trail");
   return (
@@ -408,11 +411,13 @@ export function CareerThing() {
       <Paper>
         <g className="t-plane-fly">
           <g className="t-plane">
-            <path d="M152 24L108 40l14 3z" fill="#d9ccb4" />
-            <path d="M152 24l-30 19 2 13z" fill="#bfae90" />
-            <path d="M152 24L112 51l10-8z" fill="#fbf6ec" />
-            <path d="M152 24L96 30l26 13z" fill="#fbf6ec" />
-            <path className="t-ink" d="M152 24L96 30l26 13zM152 24L112 51l10-8M122 43l2 13 28-32" />
+            <g transform="translate(126 40) scale(1.2) translate(-126 -40)">
+              <path d="M152 24L108 40l14 3z" fill="#d9ccb4" />
+              <path d="M152 24l-30 19 2 13z" fill="#bfae90" />
+              <path d="M152 24L112 51l10-8z" fill="#fbf6ec" />
+              <path d="M152 24L96 30l26 13z" fill="#fbf6ec" />
+              <path className="t-ink" d="M152 24L96 30l26 13zM152 24L112 51l10-8M122 43l2 13 28-32" style={{ strokeWidth: 1.25 }} />
+            </g>
           </g>
         </g>
       </Paper>
@@ -454,15 +459,20 @@ export function TrekThing() {
   );
 }
 
+// The studio's badge, turned a little, stands on its shadow like the other
+// things, and its pencil is drawn at the angle it lands at. The burst is drawn
+// at 43%, so its ink is drawn thicker to match theirs.
+const BADGE = "translate(0 11) rotate(6 80 75)";
+
 export function StudioThing() {
   const burst = "m130 8 24 30 37-8 8 37 33 18-18 33 18 33-33 18-8 37-37-8-24 30-24-30-37 8-8-37-33-18 18-33-18-33 33-18 8-37 37 8Z";
   return (
     <svg className="thing-art thing-studio" viewBox="0 0 160 140" aria-hidden="true" focusable="false">
       {ground(80, 53)}
-      <Sketch d={burst} transform="translate(24 19) scale(.43)" />
+      <Sketch d={burst} transform={`${BADGE} translate(24 19) scale(.43)`} />
       <Paper>
-        <g transform="rotate(6 80 75)">
-          <path d={burst} transform="translate(24 19) scale(.43)" fill="#f5623a" stroke="var(--ink)" strokeWidth="1.3" vectorEffect="non-scaling-stroke" />
+        <g transform={BADGE}>
+          <path d={burst} transform="translate(24 19) scale(.43)" fill="#f5623a" stroke="var(--ink)" strokeWidth="3.5" strokeLinejoin="round" />
           <text x="80" y="67" textAnchor="middle" fill="#262720" fontFamily="Arial, sans-serif" fontSize="23" fontWeight="900" letterSpacing="-1">oh life!</text>
           <text x="80" y="88" textAnchor="middle" fill="#262720" fontFamily="Arial, sans-serif" fontSize="9" fontWeight="700" letterSpacing="2">STUDIOS</text>
         </g>
