@@ -180,6 +180,7 @@ export function PaperHome({ music }) {
                 <li key={id} style={{ "--i": index, "--room": `var(--${id})` }}>
                   <a
                     className={`thing${visited === id ? " is-visited" : ""}`}
+                    data-thing={id}
                     href={href ?? `#${id}`}
                     onClick={href ? undefined : follow(id)}
                     onPointerEnter={() => setHovered(id)}

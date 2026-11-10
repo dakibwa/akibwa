@@ -122,7 +122,7 @@ export function Cast({ onVisit }) {
       actor.place = () => {
         const width = front.clientWidth;
         const { w, h } = actor.size;
-        if (width) actor.pos.x = Math.max(w * 0.45, Math.min(width + (actor.peeking ? w * 0.2 : -w * 0.45), actor.pos.x));
+        if (width) actor.pos.x = Math.max(w * 0.45, Math.min(width + (actor.peeking ? w * 0.3 : -w * 0.45), actor.pos.x));
         const x = actor.pos.x - ((FEET.x - view.x) / view.w) * w;
         const y = actor.pos.y - ((FEET.y - view.y) / view.h) * h;
         el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
@@ -388,7 +388,7 @@ export function Cast({ onVisit }) {
 
     const things = () =>
       [...front.querySelectorAll(".things .thing")].map((thing) => ({
-        id: (thing.getAttribute("href") ?? "").replace(/[#/]/g, ""),
+        id: thing.dataset.thing,
         row: thing,
         art: thing.querySelector(".thing-art")
       })).filter((thing) => PERCH[thing.id] && thing.art);
@@ -419,12 +419,23 @@ export function Cast({ onVisit }) {
         onVisit(null);
       }
     };
-    // On a phone it keeps to the right-hand edge and leans in beside a thing.
+    // Where a thing's name and hint end, however they wrap.
+    const wordsEnd = (row) => {
+      const range = document.createRange();
+      return Math.max(...[...row.querySelectorAll(".thing-label, .thing-hint")].map((line) => {
+        range.selectNodeContents(line);
+        return range.getBoundingClientRect().right;
+      }));
+    };
+    // On a phone it keeps to the right-hand edge and leans in beside a thing,
+    // clear of the end of that thing's words (leaning, its ink reaches half
+    // its width to the left of its feet).
     const peek = async (actor, thing, signal) => {
       const sheet = front.getBoundingClientRect();
       const row = thing.row.getBoundingClientRect();
+      const clear = wordsEnd(thing.row) - sheet.left + 4 + actor.size.w * 0.54;
       actor.peeking = true;
-      await actor.hopTo({ x: sheet.width + actor.size.w * 0.1, y: row.top - sheet.top + row.height / 2 + actor.size.h * 0.42 }, signal, { height: 10, stride: 46 });
+      await actor.hopTo({ x: Math.max(sheet.width + actor.size.w * 0.1, clear), y: row.top - sheet.top + row.height / 2 + actor.size.h * 0.42 }, signal, { height: 10, stride: 46 });
       const box = thing.art.getBoundingClientRect();
       actor.lookAt(box.left + box.width / 2, box.top + box.height / 2);
       onVisit(thing.id);

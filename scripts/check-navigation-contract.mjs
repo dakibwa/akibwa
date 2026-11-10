@@ -80,6 +80,8 @@ const cast = read("components/paper/cast.jsx");
 requireText(cast, 'id: "a"', "the mascot must remain the Akibwa a");
 for (const letter of ['id: "k"', 'id: "i"']) forbidText(cast, letter, "the a is the sole mascot");
 requireText(cast, "prefers-reduced-motion", "the mascot must keep still under reduced motion");
+requireText(home, "data-thing={id}", "each thing must carry its name for the mascot to visit it");
+requireText(cast, "id: thing.dataset.thing", "the mascot must find each thing by its name, not its link");
 requireRuleText("\nbody {", ["user-select: none"]);
 
 // Dan, 9 November 2026: personal interests plus the product studio.
