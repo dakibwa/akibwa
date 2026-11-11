@@ -1,0 +1,15 @@
+import { readFileSync } from "node:fs";
+import { albumWeights } from "../components/paper/music-map.mjs";
+import { makeGraph } from "./graph.mjs";
+const ranking = JSON.parse(readFileSync("public/music-ranking.json", "utf8"));
+const yearly = JSON.parse(readFileSync("public/music-years.json", "utf8"));
+const kindOf = JSON.parse(readFileSync("world/kinds.json", "utf8")).kinds;
+const weights = albumWeights(ranking.albums.map((a) => ({ title: a[1], artist: ranking.names[a[2]], minutes: a[5] })));
+const G = makeGraph({ ranking, yearly, kindOf, weights });
+const count = (t) => G.nodes.filter((n) => n.t === t).length;
+const lc = (t) => G.links.filter((l) => l.t === t).length;
+console.log(`artists ${count("artist")} albums ${count("album")} songs ${count("song")} | links: guest ${lc("guest")}, same ${lc("same")}, together ${lc("together")}, second kind ${lc("belongs")}`);
+const name = (i) => G.nodes[i].n;
+console.log("same:", G.links.filter((l) => l.t === "same").slice(0, 12).map((l) => `${name(l.a)} = ${name(l.b)}`).join(" | "));
+console.log("guest:", G.links.filter((l) => l.t === "guest").slice(0, 10).map((l) => `${name(l.a).slice(0, 22)} > ${name(l.b)}`).join(" | "));
+console.log("together:", G.links.filter((l) => l.t === "together").slice(0, 14).map((l) => `${name(l.a)} ~ ${name(l.b)} ${l.s}`).join(" | "));

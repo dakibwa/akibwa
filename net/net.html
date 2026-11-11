@@ -1,0 +1,159 @@
+<title>Akibwa net</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* One screen: AKIBWA in pixel letters in the middle, and every artist, album
+   and song as a net growing out of it. Everything is drawn on one pixel grid
+   in one typeface; the only photographs are the covers, shown when asked for. */
+:root {
+  --bg: #f3ecdf;
+  --bg-2: #faf6ee;
+  --ink: #2a2420;
+  --ink-soft: #5f554b;
+  --ink-faint: #a09382;
+  --me: #c24e1c;
+  --me-light: #e8793f;
+  --me-edge: #2a2420;
+  --k-hiphop: #b8620f;
+  --k-psych: #b93b78;
+  --k-classics: #7d6436;
+  --k-ambient: #2a7399;
+  --k-singles: #6f675c;
+  --k-electronic: #5c49b8;
+  --k-indie: #94760a;
+  --k-folk: #4b7a25;
+  --font: "Pixelify Sans", ui-monospace, "Courier New", monospace;
+  --gutter-l: max(16px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(16px, env(safe-area-inset-right, 0px));
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1e1a17;
+    --bg-2: #2a2521;
+    --ink: #f1e9db;
+    --ink-soft: #bfb5a3;
+    --ink-faint: #82786b;
+    --me: #f0703a;
+    --me-light: #ffa56e;
+    --me-edge: #100d0b;
+    --k-hiphop: #f2a65a;
+    --k-psych: #ee8dbb;
+    --k-classics: #d9c7a1;
+    --k-ambient: #7fc2e4;
+    --k-singles: #b7afa2;
+    --k-electronic: #b9a8f5;
+    --k-indie: #f0d667;
+    --k-folk: #a8d273;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1e1a17;
+  --bg-2: #2a2521;
+  --ink: #f1e9db;
+  --ink-soft: #bfb5a3;
+  --ink-faint: #82786b;
+  --me: #f0703a;
+  --me-light: #ffa56e;
+  --me-edge: #100d0b;
+  --k-hiphop: #f2a65a;
+  --k-psych: #ee8dbb;
+  --k-classics: #d9c7a1;
+  --k-ambient: #7fc2e4;
+  --k-singles: #b7afa2;
+  --k-electronic: #b9a8f5;
+  --k-indie: #f0d667;
+  --k-folk: #a8d273;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); overflow: hidden; }
+button, input { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--me); outline-offset: 2px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+.net { position: relative; height: 100%; overflow: hidden; background: var(--bg); touch-action: none; }
+#web { position: absolute; left: 0; top: 0; max-width: none; image-rendering: pixelated; cursor: grab; }
+#web.is-held { cursor: grabbing; }
+#web.is-over { cursor: pointer; }
+
+.labels { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.label { position: absolute; left: 0; top: 0; font-size: 0.875rem; font-weight: 500; line-height: 1; white-space: nowrap; color: var(--ink); text-shadow: 2px 0 0 var(--bg), -2px 0 0 var(--bg), 0 2px 0 var(--bg), 0 -2px 0 var(--bg), 2px 2px 0 var(--bg), -2px -2px 0 var(--bg), 2px -2px 0 var(--bg), -2px 2px 0 var(--bg); will-change: transform; }
+.label.is-kind { font-size: 1.0625rem; font-weight: 700; }
+.label.is-dim { opacity: 0.35; }
+
+.ui { position: absolute; inset: 0; padding-left: var(--gutter-l); padding-right: var(--gutter-r); pointer-events: none; }
+.ui > * { pointer-events: auto; }
+
+.find { position: absolute; left: 50%; top: 14px; width: min(26rem, 100% - var(--gutter-l) - var(--gutter-r)); transform: translateX(-50%); }
+.find input { box-sizing: border-box; width: 100%; height: 44px; padding: 0 12px; border: 2px solid var(--ink); border-radius: 0; background: var(--bg-2); color: var(--ink); font-size: 1.0625rem; appearance: none; }
+.find input::placeholder { color: var(--ink-soft); opacity: 1; }
+.hits { margin: -2px 0 0; padding: 0; border: 2px solid var(--ink); background: var(--bg-2); list-style: none; max-height: min(60vh, 26rem); overflow-y: auto; }
+.hit { display: flex; align-items: baseline; gap: 10px; min-height: 44px; box-sizing: border-box; padding: 9px 12px; border-top: 2px solid var(--bg); cursor: pointer; }
+.hit:first-child { border-top: 0; }
+.hit[aria-selected="true"], .hit:hover { background: var(--ink); color: var(--bg); }
+.hit-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 1.0625rem; }
+.hit-kind { flex: none; font-size: 0.875rem; opacity: 0.75; }
+
+.panel { position: absolute; right: 0; top: 0; bottom: 0; display: flex; flex-direction: column; box-sizing: border-box; width: min(22.5rem, 100%); border-left: 2px solid var(--ink); background: var(--bg-2); color: var(--ink); overflow: hidden; }
+.panel-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; padding: 14px 8px 0 16px; }
+.panel-type { margin: 0; font-size: 0.9375rem; color: var(--ink-soft); }
+.panel-close { display: flex; align-items: center; justify-content: center; flex: none; width: 44px; height: 44px; margin-top: -8px; padding: 0; border: 0; background: none; cursor: pointer; font-size: 1.5rem; line-height: 1; }
+.panel-body { flex: 1; padding: 0 16px max(16px, env(safe-area-inset-bottom, 0px)); overflow-y: auto; }
+.panel-cover { display: block; width: 100%; max-width: 20rem; aspect-ratio: 1; margin: 6px 0 14px; box-sizing: border-box; border: 2px solid var(--ink); background: var(--bg); object-fit: cover; }
+.panel-thumb { display: block; margin: 6px 0 14px; border: 2px solid var(--ink); background-repeat: no-repeat; }
+.panel h2 { margin: 0; font-size: 1.6rem; font-weight: 700; line-height: 1.1; overflow-wrap: anywhere; }
+.panel-by { margin: 6px 0 0; font-size: 1.0625rem; }
+.panel-fact { margin: 12px 0 0; font-size: 1.0625rem; color: var(--me); font-weight: 600; }
+.panel-note { margin: 10px 0 0; font-size: 0.9375rem; line-height: 1.35; color: var(--ink-soft); }
+.trail { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 0; }
+.chip, .out { display: inline-flex; align-items: center; min-height: 32px; padding: 0 10px; border: 2px solid var(--ink); background: none; font-size: 0.9375rem; text-decoration: none; color: var(--ink); cursor: pointer; }
+.chip:hover, .out:hover { background: var(--ink); color: var(--bg); }
+.outs { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; }
+.out { min-height: 44px; padding: 0 14px; font-weight: 600; }
+.panel h3 { margin: 20px 0 4px; font-size: 0.9375rem; font-weight: 500; color: var(--ink-soft); }
+.rows { margin: 0; padding: 0; list-style: none; }
+.rowb { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; box-sizing: border-box; padding: 6px 0; border: 0; border-top: 2px solid var(--bg); background: none; text-align: left; cursor: pointer; }
+.rowb:hover .rowb-name { text-decoration: underline; text-underline-offset: 3px; }
+.rowb-art { flex: none; width: 32px; height: 32px; box-sizing: border-box; border: 2px solid var(--ink); background-color: var(--bg); background-repeat: no-repeat; }
+.rowb-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 1rem; }
+.rowb-num { flex: none; font-size: 0.875rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+@media (max-width: 719px) {
+  .panel { left: 0; top: auto; width: auto; height: min(58%, 30rem); border-left: 0; border-top: 2px solid var(--ink); }
+  .panel-cover { max-width: 9rem; float: right; margin: 0 0 10px 14px; }
+  .find { top: 10px; }
+}
+
+.foot { position: absolute; left: var(--gutter-l); bottom: max(8px, env(safe-area-inset-bottom, 0px)); display: flex; gap: 4px; margin-left: -8px; }
+.foot a { display: flex; align-items: center; height: 44px; padding: 0 8px; color: var(--ink-soft); font-size: 0.9375rem; text-underline-offset: 4px; }
+.is-open .foot { visibility: hidden; }
+</style>
+
+<main class="net" id="net">
+  <canvas id="web" aria-hidden="true"></canvas>
+  <div class="labels" id="labels" aria-hidden="true"></div>
+  <h1 class="sr">Akibwa</h1>
+  <p class="sr" id="about"></p>
+  <div class="ui">
+    <form class="find" id="find" role="search" autocomplete="off">
+      <label class="sr" for="q">Search an artist, album or song</label>
+      <input id="q" type="search" placeholder="Search an artist, album or song" spellcheck="false" autocomplete="off" aria-controls="hits" aria-expanded="false" role="combobox" aria-autocomplete="list">
+      <ul class="hits" id="hits" role="listbox" hidden></ul>
+    </form>
+    <aside class="panel" id="panel" aria-labelledby="panel-name" hidden>
+      <div class="panel-head">
+        <p class="panel-type" id="panel-type"></p>
+        <button class="panel-close" id="panel-close" type="button" aria-label="Close">×</button>
+      </div>
+      <div class="panel-body" id="panel-body"></div>
+    </aside>
+    <nav class="foot" aria-label="Elsewhere">
+      <a href="https://www.instagram.com/dakibwa/">Instagram</a>
+      <a href="https://x.com/dakibwa">X</a>
+    </nav>
+  </div>
+</main>
+<script>/*DATA*/</script>
+<script>/*CODE*/</script>
