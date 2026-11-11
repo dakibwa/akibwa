@@ -1,0 +1,222 @@
+<title>Akibwa valley</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..800,100;1,9..144,300..800,100&family=Nunito+Sans:wght@400;600;700&display=swap">
+<style>
+/* One full-bleed picture of a valley; every word and control floats over it,
+   16px clear of the screen's edges. The picture sets the light, so the page
+   has one look, chosen by the hour and not by the viewer's theme. */
+:root {
+  --paper: #f6efe2;
+  --paper-edge: #ddd0b8;
+  --ink: #2a2420;
+  --ink-soft: #5f554b;
+  --orange: #b84a1f;
+  --hours: #9a3a14;
+  --night: #151a30;
+  --night-edge: #d9d3c8;
+  --moonlit: #f3ecdf;
+  --ember: #f0915c;
+  --serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --sans: "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+html, body { height: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+
+.world {
+  --sky-ink: var(--ink);
+  --sky-soft: #4d4239;
+  --sky-accent: var(--orange);
+  --tag-bg: var(--paper);
+  --tag-ink: var(--ink);
+  --tag-edge: var(--ink);
+  --tag-count: var(--ink-soft);
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: var(--paper);
+}
+.world.is-dark {
+  --sky-ink: var(--moonlit);
+  --sky-soft: #d9d3c8;
+  --sky-accent: var(--ember);
+  --tag-bg: var(--night);
+  --tag-ink: var(--moonlit);
+  --tag-edge: var(--night-edge);
+  --tag-count: #c2bcb0;
+  background: #0c1022;
+}
+#land {
+  position: absolute;
+  left: 0;
+  top: 0;
+  max-width: none;
+  image-rendering: pixelated;
+  opacity: 0;
+  transition: opacity 0.9s ease;
+  touch-action: manipulation;
+}
+.is-painted #land { opacity: 1; }
+.is-painting.is-painted #land { opacity: 0.55; }
+@media (prefers-reduced-motion: reduce) { #land { transition: none; } }
+
+.ui {
+  position: absolute;
+  inset: 0;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  pointer-events: none;
+}
+.ui > * { pointer-events: auto; }
+
+.name { position: relative; margin: 0 auto; padding-top: clamp(26px, 4.4vh, 40px); max-width: 600px; text-align: center; pointer-events: none; }
+.name h1 { margin: 0; font-family: var(--serif); font-size: clamp(2.6rem, 2rem + 3.2vw, 4rem); font-weight: 600; letter-spacing: -0.02em; line-height: 1; color: var(--sky-ink); text-wrap: balance; }
+.name h1 span { color: var(--sky-accent); }
+.name p { margin: 0.5em 0 0; font-family: var(--serif); font-size: clamp(1.15rem, 1rem + 0.7vw, 1.5rem); font-style: italic; line-height: 1.2; color: var(--sky-soft); }
+
+.hour {
+  position: absolute;
+  top: 12px;
+  right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  min-width: 44px;
+  padding: 0 14px 0 11px;
+  border: 2px solid var(--tag-edge);
+  border-radius: 22px;
+  background: var(--tag-bg);
+  color: var(--tag-ink);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+.hour svg { flex: none; }
+@media (max-width: 620px) {
+  .hour { justify-content: center; width: 44px; padding: 0; }
+  .hour span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .name { padding-top: 34px; }
+}
+
+.tag { position: absolute; display: flex; align-items: center; height: 44px; padding: 0; border: 0; background: none; cursor: pointer; }
+.tag-face {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  box-sizing: border-box;
+  height: 30px;
+  padding: 3px 9px 0;
+  border: 2px solid var(--tag-edge);
+  border-radius: 7px;
+  background: var(--tag-bg);
+  color: var(--tag-ink);
+  font: italic 500 0.9375rem var(--serif);
+  white-space: nowrap;
+}
+.tag-count { font: 600 0.6875rem var(--sans); color: var(--tag-count); }
+.tag[aria-pressed="true"] .tag-face { background: var(--tag-ink); color: var(--tag-bg); }
+.tag[aria-pressed="true"] .tag-count { color: var(--tag-bg); }
+.is-painting .tag { visibility: hidden; }
+
+.card {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-sizing: border-box;
+  max-width: min(300px, 100% - 32px);
+  padding: 11px 16px 11px 11px;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  background: var(--paper);
+  box-shadow: 5px 5px 0 rgb(42 36 32 / 0.28);
+  pointer-events: none !important;
+}
+.cover { display: block; flex: none; box-sizing: content-box; border: 2px solid var(--ink); border-radius: 3px; background-color: var(--paper-edge); background-repeat: no-repeat; }
+.card-words { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.card-title { font: 600 1.3rem/1.1 var(--serif); letter-spacing: -0.01em; color: var(--ink); }
+.card-artist { font-size: 0.9375rem; line-height: 1.3; color: #4d4239; }
+.card-hours { margin-top: 5px; font-weight: 700; font-size: 0.9375rem; color: var(--hours); }
+
+.sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  height: min(60%, 560px);
+  border-top: 2px solid var(--ink);
+  border-radius: 18px 18px 0 0;
+  background: var(--paper);
+  color: var(--ink);
+  overflow: hidden;
+}
+.sheet-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 16px 8px 10px 20px; }
+.sheet-head h2 { margin: 0; font: 600 1.7rem/1.1 var(--serif); letter-spacing: -0.01em; }
+.sheet-head p { margin: 4px 0 0; font-size: 0.9375rem; line-height: 1.3; color: var(--ink-soft); }
+.sheet-close { display: flex; align-items: center; justify-content: center; flex: none; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 22px; background: none; cursor: pointer; }
+.sheet-list { flex: 1; margin: 0; padding: 0 0 max(12px, env(safe-area-inset-bottom, 0px)); overflow-y: auto; list-style: none; }
+.row { display: flex; align-items: center; gap: 14px; min-height: 68px; padding: 0 20px; border-top: 1px solid var(--paper-edge); }
+.row-words { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.row-title { font: 600 1.0625rem/1.2 var(--serif); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row-artist { font-size: 0.875rem; line-height: 1.25; color: var(--ink-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row-hours { flex: none; font-weight: 700; font-size: 0.875rem; color: var(--hours); font-variant-numeric: tabular-nums; }
+@media (min-width: 760px) {
+  .sheet { left: auto; top: 0; width: 392px; height: auto; border-top: 0; border-left: 2px solid var(--ink); border-radius: 0; }
+  .sheet-head { padding-top: 22px; }
+}
+
+.links { position: absolute; left: max(8px, env(safe-area-inset-left, 0px)); bottom: 8px; display: flex; gap: 2px; }
+.links a { display: flex; align-items: center; height: 44px; padding: 0 8px; color: var(--moonlit); font-weight: 600; font-size: 0.9375rem; text-decoration: underline; text-underline-offset: 4px; text-shadow: 0 1px 0 rgb(20 24 20 / 0.55); }
+.is-open .links { visibility: hidden; }
+
+.status { position: absolute; left: 0; right: 0; top: 46%; margin: 0; text-align: center; font: italic 1.15rem var(--serif); color: var(--ink-soft); pointer-events: none; }
+.is-painted .status { display: none; }
+</style>
+
+<main class="world is-painting" id="world">
+  <canvas id="land" role="img" aria-label="A valley drawn in pixels, lit for the hour: a forested ridge and snow mountains, a river winding past a castle and fields to a town and the sea. Album sleeves fly over each part of it, one bunch for each kind of music."></canvas>
+  <p class="status" id="status">Painting the valley…</p>
+  <div class="ui">
+    <header class="name">
+      <h1>I’m <span>Akibwa</span></h1>
+      <p>This is what I listen to.</p>
+    </header>
+    <button class="hour" id="hour" type="button">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="3.6"></circle><path d="M10 1.8v2.2M10 16v2.2M1.8 10H4M16 10h2.2M4.2 4.2l1.5 1.5M14.3 14.3l1.5 1.5M4.2 15.8l1.5-1.5M14.3 5.7l1.5-1.5"></path></svg>
+      <span id="hour-label">now</span>
+    </button>
+    <div id="tags"></div>
+    <div class="card" id="card" hidden>
+      <span class="cover" id="card-cover"></span>
+      <span class="card-words">
+        <span class="card-title" id="card-title"></span>
+        <span class="card-artist" id="card-artist"></span>
+        <span class="card-hours" id="card-hours"></span>
+      </span>
+    </div>
+    <nav class="links" aria-label="Elsewhere">
+      <a href="https://www.instagram.com/dakibwa/">Instagram</a>
+      <a href="https://x.com/dakibwa">X</a>
+    </nav>
+    <section class="sheet" id="sheet" aria-labelledby="sheet-title" hidden>
+      <div class="sheet-head">
+        <div>
+          <h2 id="sheet-title"></h2>
+          <p id="sheet-sum"></p>
+        </div>
+        <button class="sheet-close" id="sheet-close" type="button" aria-label="Close">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4.5 4.5l11 11M15.5 4.5l-11 11"></path></svg>
+        </button>
+      </div>
+      <ul class="sheet-list" id="sheet-list"></ul>
+    </section>
+  </div>
+</main>
+<script>/*DATA*/</script>
+<script>/*CODE*/</script>
