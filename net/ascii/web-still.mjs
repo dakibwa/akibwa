@@ -154,7 +154,6 @@ const say = (n, name, why, colour = INK) => {
   return false;
 };
 let lit = null;
-const footed = [];
 if (args.light) {
   const [sort, ...rest] = args.light.split(":");
   const name = rest.join(":");
@@ -169,16 +168,7 @@ if (args.light) {
       taken.push(boxOf(neurons[id]));
     }
     const albums = k.ids.map((id) => neurons[id]).filter((n) => n.t === "album").sort((p, q) => q.w - p.w);
-    // Name the most played, beside the sleeve where there is room and across its foot where there is not.
-    const seenArtist = new Set();
-    for (const n of albums) {
-      if (seenArtist.has(n.artist) || seenArtist.size >= Number(args.names ?? 9)) continue;
-      seenArtist.add(n.artist);
-      if (say(n, n.by, n.name)) continue;
-      x.font = "20px 'SansBold'";
-      if (x.measureText(n.by).width > n.box[2] - 12) continue;
-      footed.push(n);
-    }
+    // A whole kind is lit without names: there are too many to set without covering the sleeves.
     lit.note = `${albums.length} albums, ${new Set(k.ids.map((id) => neurons[id].artist)).size} artists`;
   } else {
     const f = L.featureOf(name);
@@ -200,14 +190,6 @@ if (args.light) {
     }
     lit.note = `${f.own.length} of their own, ${new Set([...f.notes.values()].map((v) => v.who)).size} tied in`;
   }
-}
-for (const n of footed) {
-  const [bx, by, bw, bh] = n.box;
-  x.fillStyle = "rgba(11,14,16,0.82)";
-  x.fillRect(bx, by + bh - 34, bw, 34);
-  x.font = "20px 'SansBold'";
-  x.fillStyle = INK;
-  x.fillText(n.by, bx + 6, by + bh - 11);
 }
 for (const l of labels) {
   x.font = "26px 'SansBold'";
