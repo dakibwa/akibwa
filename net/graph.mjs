@@ -24,7 +24,10 @@ export const GROUPS = [
 // The two records that ran for days are drawn near the next album's size.
 const NIGHTS = new Set(["043", "lf-dbbd05ddffe94ea5"]);
 
-export function makeGraph({ ranking, yearly, kindOf, weights }) {
+export function makeGraph({ ranking, yearly, kindOf, weights, artistKinds = {} }) {
+  // Artists known through songs alone are sorted by hand into the same kinds.
+  const sorted = new Map();
+  for (const [kind, list] of Object.entries(artistKinds)) for (const name of list) sorted.set(name, kind);
   const names = ranking.names;
   // The same artist can be spelt two ways ("Tyler, The Creator" / "Tyler, the Creator").
   const firstOf = new Map();
@@ -54,7 +57,7 @@ export function makeGraph({ ranking, yearly, kindOf, weights }) {
     const index = same[raw];
     if (artistNode.has(index)) return artistNode.get(index);
     const kinds = kindsOfArtist.get(index);
-    const home = kinds ? [...kinds].sort((p, q) => q[1] - p[1])[0][0] : "singles";
+    const home = kinds ? [...kinds].sort((p, q) => q[1] - p[1])[0][0] : sorted.get(names[index]) ?? "singles";
     artistNode.set(index, nodes.length);
     nodes.push({ t: "artist", n: names[index], p: groupNode.get(home), g: home, w: 0, y: blank(), also: kinds ? [...kinds.keys()].filter((k) => k !== home) : [] });
     return artistNode.get(index);
