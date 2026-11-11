@@ -1,6 +1,6 @@
 // A few sleeves in characters, to judge the look. KIT=… node net/ascii/sleeves-test.mjs <out.png> [cell] [weight] [under]
 import { writeFileSync } from "node:fs";
-import { createCanvas, loadImage, fontFile, makeGlyphs, toCells, drawCells } from "./engine.mjs";
+import { createCanvas, loadImage, fontFile, makeGlyphs, toCells, toNameCells, drawCells } from "./engine.mjs";
 
 const out = process.argv[2] ?? "sleeves.png";
 const cw = Number(process.argv[3] ?? 6);
@@ -29,10 +29,11 @@ for (let n = 0; n < ids.length; n += 1) {
   const src = createCanvas(cols * cw, rows * ch);
   const sx = src.getContext("2d");
   sx.drawImage(img, 0, 0, cols * cw, rows * ch);
-  const cells = toCells(sx.getImageData(0, 0, cols * cw, rows * ch), cols, rows, glyphs, { gamma: 0.9, gain: 1.05, lift, shape: 1.5, vivid });
+  const named = process.argv[10] === "name";
+  const cells = named ? toNameCells(sx.getImageData(0, 0, cols * cw, rows * ch), cols, rows, { lift, vivid, seed: n * 1000 }) : toCells(sx.getImageData(0, 0, cols * cw, rows * ch), cols, rows, glyphs, { gamma: 0.9, gain: 1.05, lift, shape: 1.5, vivid });
   const x = 135 + (n % 3) * (size + 135);
   const y = 80 + Math.floor(n / 3) * (size + 80);
-  drawCells(ctx, cells, cols, rows, cw, ch, font, { x, y, under });
+  drawCells(ctx, cells, cols, rows, cw, ch, font, { x, y, under, light: named ? { family: "Plex400", weight: 400 } : null });
 }
 writeFileSync(out, canvas.toBuffer("image/png"));
 console.log(out);

@@ -161,20 +161,73 @@ export function toCells(image, cols, rows, glyphs, options = {}) {
   return cells;
 }
 
-// Cells drawn as text. `under` lays a faint wash of each cell's colour beneath its character.
-export function drawCells(ctx, cells, cols, rows, cw, ch, font, { x = 0, y = 0, under = 0 } = {}) {
-  ctx.font = `${font.weight ?? 400} ${cw / 0.6}px '${font.family}'`;
-  ctx.textBaseline = "alphabetic";
+// A picture written in one word over and over. The letter in each cell is fixed
+// by the word; the picture comes through in colour, and in how heavy each
+// letter is set: small and light in the dark, capital and bold in the light.
+export function toNameCells(image, cols, rows, options = {}) {
+  const { word = "akibwa", lift = 0.4, vivid = 1.4, gamma = 0.9, seed = 0 } = options;
+  const { data, width, height } = image;
+  const cw = width / cols;
+  const ch = height / rows;
+  const cells = new Array(cols * rows);
+  const rich = (r, g, b, k) => {
+    const y = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    return [Math.max(0, Math.min(255, y + (r - y) * k)), Math.max(0, Math.min(255, y + (g - y) * k)), Math.max(0, Math.min(255, y + (b - y) * k))];
+  };
   for (let r = 0; r < rows; r += 1) {
+    const start = Math.floor(hash(r + seed, 77) * word.length);
     for (let c = 0; c < cols; c += 1) {
-      const cell = cells[r * cols + c];
-      if (!cell) continue;
-      if (under > 0) {
-        ctx.fillStyle = `rgba(${cell.wr | 0},${cell.wg | 0},${cell.wb | 0},${under})`;
-        ctx.fillRect(x + c * cw, y + r * ch, cw, ch);
+      let R = 0;
+      let G = 0;
+      let B = 0;
+      let N = 0;
+      const x0 = Math.round(c * cw);
+      const x1 = Math.round((c + 1) * cw);
+      const y0 = Math.round(r * ch);
+      const y1 = Math.round((r + 1) * ch);
+      for (let y = y0; y < y1; y += 1) {
+        for (let x = x0; x < x1; x += 1) {
+          const p = (y * width + x) * 4;
+          R += data[p];
+          G += data[p + 1];
+          B += data[p + 2];
+          N += 1;
+        }
       }
-      ctx.fillStyle = `rgb(${cell.r | 0},${cell.g | 0},${cell.b | 0})`;
-      ctx.fillText(cell.ch, x + c * cw, y + r * ch + Math.round(ch * BASE));
+      R /= N;
+      G /= N;
+      B /= N;
+      const light = Math.pow((0.2126 * R + 0.7152 * G + 0.0722 * B) / 255, gamma);
+      const letter = word[(c + start) % word.length];
+      const top = Math.max(R, G, B) / 255 || 1e-6;
+      const scale = Math.pow(top, lift) / top;
+      const ink = rich(Math.min(255, R * scale), Math.min(255, G * scale), Math.min(255, B * scale), vivid);
+      const wash = rich(R, G, B, vivid);
+      cells[r * cols + c] = { ch: light > 0.62 ? letter.toUpperCase() : letter, heavy: light > 0.3, r: ink[0], g: ink[1], b: ink[2], wr: wash[0], wg: wash[1], wb: wash[2], l: light };
+    }
+  }
+  return cells;
+}
+
+// Cells drawn as text. `under` lays a faint wash of each cell's colour beneath its character.
+export function drawCells(ctx, cells, cols, rows, cw, ch, font, { x = 0, y = 0, under = 0, light = null } = {}) {
+  ctx.textBaseline = "alphabetic";
+  // Two passes when some letters are set lighter than the rest.
+  for (const pass of light ? ["light", "heavy"] : ["all"]) {
+    const face = pass === "light" ? light : font;
+    ctx.font = `${face.weight ?? 400} ${cw / 0.6}px '${face.family}'`;
+    for (let r = 0; r < rows; r += 1) {
+      for (let c = 0; c < cols; c += 1) {
+        const cell = cells[r * cols + c];
+        if (!cell) continue;
+        if (pass !== "all" && (pass === "heavy") !== Boolean(cell.heavy)) continue;
+        if (under > 0) {
+          ctx.fillStyle = `rgba(${cell.wr | 0},${cell.wg | 0},${cell.wb | 0},${under})`;
+          ctx.fillRect(x + c * cw, y + r * ch, cw, ch);
+        }
+        ctx.fillStyle = `rgb(${cell.r | 0},${cell.g | 0},${cell.b | 0})`;
+        ctx.fillText(cell.ch, x + c * cw, y + r * ch + Math.round(ch * BASE));
+      }
     }
   }
 }
