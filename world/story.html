@@ -1,0 +1,160 @@
+<title>Akibwa valley story</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..800,100;1,9..144,300..800,100&family=Nunito+Sans:wght@400;600;700&display=swap">
+<style>
+/* A column of full-screen pictures of one valley, each pinned while its
+   stretch of years is read. The pictures are pixels; the covers and words
+   over them are sharp. The picture sets the light, so the page keeps one
+   look whatever the viewer's theme. */
+:root {
+  --paper: #f6efe2;
+  --paper-edge: #ddd0b8;
+  --ink: #2a2420;
+  --ink-soft: #5f554b;
+  --orange: #b84a1f;
+  --hours: #9a3a14;
+  --night: #151a30;
+  --night-edge: #d9d3c8;
+  --moonlit: #f3ecdf;
+  --ember: #f0915c;
+  --serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --sans: "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --gutter-l: max(16px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(16px, env(safe-area-inset-right, 0px));
+  color-scheme: light;
+}
+html, body { height: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); overflow-x: hidden; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+
+.scene {
+  --sky-ink: var(--ink);
+  --sky-soft: #43392f;
+  --sky-accent: var(--orange);
+  --cord: rgb(42 36 32 / 0.55);
+  position: relative;
+  height: 180vh;
+  height: 180svh;
+}
+.scene.is-dark {
+  --sky-ink: var(--moonlit);
+  --sky-soft: #e4ddd0;
+  --sky-accent: var(--ember);
+  --cord: rgb(243 236 223 / 0.5);
+}
+.scene-open { height: 135vh; height: 135svh; }
+.scene-night { height: 100vh; height: 100svh; }
+.stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; background: var(--paper); }
+.scene.is-dark .stage { background: #0c1022; }
+.stage canvas { position: absolute; left: 0; top: 0; max-width: none; image-rendering: pixelated; opacity: 0; transition: opacity 0.9s ease; }
+.scene.is-painted canvas { opacity: 1; }
+
+.ui { position: absolute; inset: 0; padding-left: var(--gutter-l); padding-right: var(--gutter-r); pointer-events: none; }
+.ui > * { pointer-events: auto; }
+
+/* The opening */
+.name { margin: 0 auto; padding-top: clamp(30px, 6vh, 56px); max-width: 640px; text-align: center; pointer-events: none; }
+.name h1 { margin: 0; font-family: var(--serif); font-size: clamp(2.8rem, 2rem + 4vw, 4.6rem); font-weight: 600; letter-spacing: -0.02em; line-height: 1; color: var(--sky-ink); text-wrap: balance; }
+.name h1 span { color: var(--sky-accent); }
+.name p { margin: 0.5em 0 0; font-family: var(--serif); font-size: clamp(1.2rem, 1rem + 0.9vw, 1.7rem); font-style: italic; line-height: 1.2; color: var(--sky-soft); }
+.cue { position: absolute; left: 0; right: 0; bottom: max(26px, env(safe-area-inset-bottom, 0px)); margin: 0; text-align: center; font: 600 0.9375rem var(--sans); color: var(--moonlit); text-shadow: 0 1px 0 rgb(20 24 20 / 0.6); pointer-events: none; }
+.cue::after { content: ""; display: block; width: 2px; height: 22px; margin: 8px auto 0; background: currentColor; opacity: 0.8; }
+
+/* A stretch of years */
+.words { position: absolute; left: var(--gutter-l); top: clamp(18px, 4.5vh, 40px); max-width: min(78%, 30rem); pointer-events: none; }
+.year { margin: 0; font-family: var(--serif); font-size: clamp(3.6rem, 2.6rem + 5.2vw, 6.4rem); font-weight: 600; letter-spacing: -0.035em; line-height: 0.92; color: var(--sky-ink); font-variant-numeric: lining-nums; }
+.kind { margin: 0.35em 0 0; font-family: var(--serif); font-size: clamp(1.2rem, 1.02rem + 0.9vw, 1.75rem); font-style: italic; font-weight: 500; line-height: 1.15; color: var(--sky-ink); }
+.fact { margin: 0.45em 0 0; font-size: 0.9375rem; font-weight: 600; line-height: 1.35; color: var(--sky-soft); }
+
+.kites { position: absolute; inset: 0; pointer-events: none; }
+.kite { position: absolute; padding: 0; border: 0; background: none; cursor: pointer; pointer-events: auto; opacity: 0; transform: translateY(34px) scale(0.9); transition: opacity 0.7s ease, transform 1s cubic-bezier(0.2, 0.7, 0.2, 1); transition-delay: calc(var(--i) * 80ms); }
+.scene.is-here .kite { opacity: 1; transform: none; }
+.kite-sway { display: block; width: 100%; height: 100%; box-sizing: border-box; border: 2px solid var(--ink); border-radius: 3px; background: var(--paper-edge); box-shadow: 4px 6px 0 rgb(16 14 12 / 0.32); overflow: hidden; }
+.kite img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.scene.is-night .kite-sway { box-shadow: 0 0 0 1px rgb(255 214 150 / 0.5), 0 0 18px 4px rgb(255 190 110 / 0.42); }
+.strings { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0; transition: opacity 0.9s ease 0.5s; }
+.scene.is-here .strings { opacity: 1; }
+.strings line { stroke: var(--cord); stroke-width: 1.5; }
+@media (prefers-reduced-motion: no-preference) {
+  .scene.is-here .kite-sway { animation: sway 6.5s ease-in-out infinite alternate; animation-delay: calc(var(--i) * -1.1s); }
+  @keyframes sway { from { transform: translate(-2px, 2px) rotate(-0.9deg); } to { transform: translate(2px, -3px) rotate(0.9deg); } }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kite, .strings, .stage canvas { transition: none; }
+}
+
+.songs { position: absolute; left: var(--gutter-l); right: var(--gutter-r); bottom: max(14px, env(safe-area-inset-bottom, 0px)); box-sizing: border-box; padding: 12px 14px 8px; border: 2px solid var(--ink); border-radius: 14px; background: var(--paper); color: var(--ink); box-shadow: 5px 5px 0 rgb(16 14 12 / 0.28); }
+.songs h3 { margin: 0 0 4px; font: italic 500 1.0625rem var(--serif); color: var(--ink-soft); }
+.songs ol { margin: 0; padding: 0; list-style: none; }
+.song { display: flex; align-items: center; gap: 11px; min-height: 42px; border-top: 1px solid var(--paper-edge); }
+.song:first-child { border-top: 0; }
+.song-art { flex: none; width: 34px; height: 34px; box-sizing: border-box; border: 1.5px solid var(--ink); border-radius: 2px; background: var(--paper-edge); object-fit: cover; }
+.song-words { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.song-title { font: 600 0.9375rem/1.2 var(--serif); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.song-artist { font-size: 0.8125rem; line-height: 1.2; color: var(--ink-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.song-plays { flex: none; font-weight: 700; font-size: 0.8125rem; color: var(--hours); font-variant-numeric: tabular-nums; }
+@media (min-width: 760px) {
+  .songs { right: auto; width: 372px; bottom: 24px; }
+}
+
+/* The night */
+.tag { position: absolute; display: flex; align-items: center; height: 44px; padding: 0; border: 0; background: none; cursor: pointer; }
+.tag-face { display: flex; align-items: baseline; gap: 6px; box-sizing: border-box; height: 30px; padding: 3px 9px 0; border: 2px solid var(--night-edge); border-radius: 7px; background: var(--night); color: var(--moonlit); font: italic 500 0.9375rem var(--serif); white-space: nowrap; }
+.tag-count { font: 600 0.6875rem var(--sans); color: #c2bcb0; }
+.nights h3 { margin-bottom: 8px; }
+.night-row { display: flex; align-items: center; gap: 12px; padding: 7px 0; border-top: 1px solid var(--paper-edge); }
+.night-row:first-of-type { border-top: 0; }
+.night-row img { flex: none; width: 58px; height: 58px; box-sizing: border-box; border: 2px solid var(--ink); border-radius: 3px; object-fit: cover; }
+.links { display: flex; gap: 4px; margin: 4px 0 0 -8px; }
+.links a { display: flex; align-items: center; height: 44px; padding: 0 8px; color: var(--ink); font-weight: 600; font-size: 0.9375rem; text-underline-offset: 4px; }
+
+/* The card for one cover, and a kind's whole list */
+.card { position: fixed; z-index: 5; display: flex; align-items: center; gap: 14px; box-sizing: border-box; max-width: min(320px, 100% - 32px); padding: 11px 16px 11px 11px; border: 2px solid var(--ink); border-radius: 12px; background: var(--paper); color: var(--ink); box-shadow: 5px 5px 0 rgb(16 14 12 / 0.3); pointer-events: none; }
+.card img { flex: none; width: 96px; height: 96px; box-sizing: border-box; border: 2px solid var(--ink); border-radius: 3px; object-fit: cover; }
+.card-words { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.card-title { font: 600 1.3rem/1.1 var(--serif); letter-spacing: -0.01em; }
+.card-artist { font-size: 0.9375rem; line-height: 1.3; color: #4d4239; }
+.card-hours { margin-top: 5px; font-weight: 700; font-size: 0.9375rem; color: var(--hours); }
+.sheet { position: fixed; z-index: 6; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; height: min(62%, 580px); border-top: 2px solid var(--ink); border-radius: 18px 18px 0 0; background: var(--paper); color: var(--ink); overflow: hidden; }
+.sheet-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 16px 8px 10px 20px; }
+.sheet-head h2 { margin: 0; font: 600 1.7rem/1.1 var(--serif); letter-spacing: -0.01em; }
+.sheet-head p { margin: 4px 0 0; font-size: 0.9375rem; line-height: 1.3; color: var(--ink-soft); }
+.sheet-close { display: flex; align-items: center; justify-content: center; flex: none; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 22px; background: none; cursor: pointer; }
+.sheet-list { flex: 1; margin: 0; padding: 0 0 max(12px, env(safe-area-inset-bottom, 0px)); overflow-y: auto; list-style: none; }
+.row { display: flex; align-items: center; gap: 14px; min-height: 68px; padding: 0 20px; border-top: 1px solid var(--paper-edge); }
+.cover { display: block; flex: none; box-sizing: content-box; border: 2px solid var(--ink); border-radius: 3px; background-color: var(--paper-edge); background-repeat: no-repeat; }
+.row-words { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.row-title { font: 600 1.0625rem/1.2 var(--serif); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row-artist { font-size: 0.875rem; line-height: 1.25; color: var(--ink-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row-hours { flex: none; font-weight: 700; font-size: 0.875rem; color: var(--hours); font-variant-numeric: tabular-nums; }
+@media (min-width: 760px) {
+  .sheet { left: auto; top: 0; width: 392px; height: auto; border-top: 0; border-left: 2px solid var(--ink); border-radius: 0; }
+  .sheet-head { padding-top: 22px; }
+}
+</style>
+
+<main id="story" aria-label="Akibwa's music, as a walk through a valley"></main>
+<div class="card" id="card" hidden>
+  <img id="card-cover" alt="">
+  <span class="card-words">
+    <span class="card-title" id="card-title"></span>
+    <span class="card-artist" id="card-artist"></span>
+    <span class="card-hours" id="card-hours"></span>
+  </span>
+</div>
+<section class="sheet" id="sheet" aria-labelledby="sheet-title" hidden>
+  <div class="sheet-head">
+    <div>
+      <h2 id="sheet-title"></h2>
+      <p id="sheet-sum"></p>
+    </div>
+    <button class="sheet-close" id="sheet-close" type="button" aria-label="Close">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4.5 4.5l11 11M15.5 4.5l-11 11"></path></svg>
+    </button>
+  </div>
+  <ul class="sheet-list" id="sheet-list"></ul>
+</section>
+<script>/*DATA*/</script>
+<script>/*CODE*/</script>

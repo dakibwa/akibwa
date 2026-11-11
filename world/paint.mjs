@@ -82,20 +82,39 @@ export function atmosphere(time) {
   return out;
 }
 
-export function paintValley({ W, H, seed = 7, time = 19.3, fov = 60, horizon = 0.42, eye = 30 }) {
+/*
+ * `yaw` turns the view to the right of straight down the valley, in degrees;
+ * a narrow `fov` looks through a long lens; `horizon` is where the horizon
+ * falls as a share of the height, and may be above the picture (below zero)
+ * to look down into the valley.
+ * `aim` points the view at a place instead: { x, z } on the land, and `at`,
+ * how far down the picture that place should sit (0 top, 1 bottom).
+ * `clear` thins the haze (2 sees twice as far).
+ */
+export function paintValley({ W, H, seed = 7, time = 19.3, fov = 60, horizon = 0.42, eye = 30, yaw = 0, aim = null, clear = 1 }) {
   const land = makeLand(seed);
   const { hash, noise, fbm } = makeNoise(seed + 1009);
   const A = atmosphere(time);
   const k = (2 * Math.tan((fov * Math.PI) / 360)) / W;
   const f = 1 / k;
-  const hy = Math.round(H * horizon);
-  const o = { h: 0, r: 0, g: 0, b: 0, m: 0, w: 0 };
-  land.sample(0, 0, 1, o);
-  const camH = o.h + eye;
+  let hy = Math.round(H * horizon);
+  const o = { h: 0, r: 0, g: 0, b: 0, m: 0, w: 0, f: 0 };
+  const G0 = {};
+  const camH = land.ground(0, 0, G0).h + eye;
+  if (aim) {
+    yaw = (Math.atan2(aim.x, aim.z) * 180) / Math.PI;
+    land.sample(aim.x, aim.z, 2, o);
+    horizon = (aim.at ?? 0.6) - ((camH - o.h - (aim.lift ?? 0)) * (W / (2 * Math.tan((fov * Math.PI) / 360)))) / (Math.hypot(aim.x, aim.z) * H);
+    hy = Math.round(H * horizon);
+  }
+  // The view's own axes on the land: across (right) and along (ahead).
+  const turn = (yaw * Math.PI) / 180;
+  const cy = Math.cos(turn);
+  const sy = Math.sin(turn);
 
   // The sun (or moon), as a direction and as a place on the screen.
   const el = (A.sunEl * Math.PI) / 180;
-  const az = (A.sunAz * Math.PI) / 180;
+  const az = (A.sunAz * Math.PI) / 180 - turn;
   const Lx = Math.sin(az) * Math.cos(el);
   const Ly = Math.sin(el);
   const Lz = Math.cos(az) * Math.cos(el);
@@ -105,12 +124,24 @@ export function paintValley({ W, H, seed = 7, time = 19.3, fov = 60, horizon = 0
   const lit = clamp((A.sunEl + 2) / 6);
 
   // Depths to sample: close together near the viewer, a steady ratio beyond.
+  // Depths to sample: close enough together that the lowest ground in view
+  // gets a sample for nearly every row it covers.
   const zs = [];
   const reach = eye * f;
-  let z = Math.max(8, (reach / (H - hy)) * 0.7);
-  while (z < ZFAR) {
+  let z = Math.max(8, (reach / Math.max(40, H - hy)) * 0.7);
+  while (z < ZFAR && zs.length < 2600) {
     zs.push(z);
-    z += Math.min((z * z * 0.8) / reach, z * 0.0125);
+    let low = 1e9;
+    let high = -1e9;
+    for (let j = 0; j < 9; j += 1) {
+      const vx = ((j + 0.5) / 9 - 0.5) * W * k * z;
+      const gh = land.ground(vx * cy + z * sy, -vx * sy + z * cy, G0);
+      const hh = gh.sh > 0 ? gh.h : 0;
+      low = Math.min(low, hh);
+      high = Math.max(high, hh);
+    }
+    const drop = Math.max(eye * 0.6, camH - low, (high - camH) * 0.8);
+    z += Math.min((z * z * 0.8) / (drop * f), z * 0.02);
   }
   const nv = zs.length;
   const lnMin = Math.log(zs[0]);
@@ -140,12 +171,15 @@ export function paintValley({ W, H, seed = 7, time = 19.3, fov = 60, horizon = 0
   const M = new Uint8Array(n);
   const Wk = new Uint8Array(n);
   const Hzd = new Float32Array(n);
+  const Fl = new Float32Array(n);
   for (let v = 0; v < nv; v += 1) {
     const zz = zs[v];
     const fp = k * zz;
     for (let x = 0; x < W; x += 1) {
       const i = v * W + x;
-      land.sample((x + 0.5 - W / 2) * fp, zz, fp, o);
+      const vx = (x + 0.5 - W / 2) * fp;
+      land.sample(vx * cy + zz * sy, -vx * sy + zz * cy, fp, o);
+      Fl[i] = o.f;
       Hh[i] = o.h;
       R[i] = o.r;
       G[i] = o.g;
@@ -169,7 +203,7 @@ export function paintValley({ W, H, seed = 7, time = 19.3, fov = 60, horizon = 0
 
   const hazeAt = (x) => {
     // Warmer towards the sun, cooler away from it.
-    const d = (x - sunX) / (W * 0.5);
+    const d = (x - sunX) / (f * 0.58);
     const warm = sunAhead ? Math.exp(-d * d * 2.2) * 0.55 * lit : 0;
     return [mix(A.haze[0], A.glow[0], warm), mix(A.haze[1], A.glow[1], warm), mix(A.haze[2], A.glow[2], warm)];
   };
@@ -242,9 +276,8 @@ export function paintValley({ W, H, seed = 7, time = 19.3, fov = 60, horizon = 0
       }
 
       // Haze with distance, and mist lying in the valley.
-      const hz = 1 - Math.exp(-zz / A.hazeDist);
-      const floor = clamp(2600 - zz, 0, 4200) * 0.011;
-      const mist = A.mist * Math.exp(-Math.max(0, h - floor) / 60) * (1 - Math.exp(-zz / 1100));
+      const hz = 1 - Math.exp(-zz / (A.hazeDist * clear));
+      const mist = A.mist * Math.exp(-Math.max(0, h - Fl[i]) / 60) * (1 - Math.exp(-zz / 1100));
       const a = clamp(hz + mist * (1 - hz));
       const Hz = hazeAt(x);
       Hzd[i] = a;
@@ -256,7 +289,7 @@ export function paintValley({ W, H, seed = 7, time = 19.3, fov = 60, horizon = 0
 
   // Sky and cloud for a pixel.
   const skyAt = (x, y, out) => {
-    const up = clamp((hy - y) / (hy + 0.001));
+    const up = clamp(Math.atan((hy - y) / f) / 0.27);
     const t = Math.pow(up, 0.7);
     let r = t < 0.5 ? mix(A.low[0], A.mid[0], t * 2) : mix(A.mid[0], A.top[0], t * 2 - 1);
     let g = t < 0.5 ? mix(A.low[1], A.mid[1], t * 2) : mix(A.mid[1], A.top[1], t * 2 - 1);
@@ -276,18 +309,18 @@ export function paintValley({ W, H, seed = 7, time = 19.3, fov = 60, horizon = 0
     }
 
     // A bank of cloud over the horizon, flat underneath, heaped on top.
-    const u = x / (W * 0.19) + 3.1;
-    const vv = (hy - y) / (H * 0.085);
+    const u = (Math.atan((x - W / 2) / f) + turn) / 0.215 + 4.2;
+    const vv = Math.atan((hy - y) / f) / 0.0614;
     const shape = fbm(u, vv * 0.9, 5, 91);
     const band = Math.exp(-((vv - 1.25) * (vv - 1.25)) / 0.9) * sstep(0.05, 0.5, vv);
     const dens = shape * 0.6 + band * 0.8 - 0.45;
     // High thin streaks.
-    const streak = fbm(x / (W * 0.4) + 7, (hy - y) / (H * 0.03), 4, 92) * 0.5 + fbm(x / (W * 0.12), (hy - y) / (H * 0.02) + 4, 3, 93) * 0.2;
+    const streak = fbm(u * 0.48 + 7, vv * 2.8, 4, 92) * 0.5 + fbm(u * 1.6, vv * 4.2 + 4, 3, 93) * 0.2;
     const thin = sstep(0.16, 0.34, streak) * sstep(0.25, 0.5, up) * 0.6;
     let cover = sstep(0.0, 0.2, dens);
     if (cover > 0 || thin > 0) {
       // Lit from the sun's side and from below when the sun is low.
-      const toSunX = sunAhead ? clamp((sunX - x) / (W * 0.18), -1, 1) * 0.09 : 0.05;
+      const toSunX = sunAhead ? clamp((sunX - x) / (f * 0.2), -1, 1) * 0.09 : 0.05;
       const lightN = fbm(u + toSunX, vv * 0.9 - 0.14, 5, 91);
       const facing = clamp(0.5 + (shape - lightN) * 3.2 + (1 - clamp(dens * 2.5)) * 0.25);
       const sunny = sunAhead ? Math.exp(-d2 * 1.4) : 0.3;
@@ -320,6 +353,7 @@ export function paintValley({ W, H, seed = 7, time = 19.3, fov = 60, horizon = 0
   const mat = new Uint8Array(W * H).fill(255); // what each pixel shows; 255 is sky, 254 a built wall
   const ybuf = new Int16Array(W).fill(H);
   const lastH = new Float32Array(W).fill(-1e9);
+  const lastC = new Float32Array(W * 3).fill(-1);
   const front = Ly > 0 ? Math.max(0, -Lz) : 0;
   for (let v = 0; v < nv; v += 1) {
     const zz = zs[v];
@@ -346,14 +380,38 @@ export function paintValley({ W, H, seed = 7, time = 19.3, fov = 60, horizon = 0
       }
       // A pitched roof shows as the top of the front.
       const eaves = wall ? y + Math.max(1, Math.round((ybuf[x] - y) * 0.38)) : 0;
+      const rows = ybuf[x] - y;
+      const shade = !wall && rows >= 3 && lastC[x * 3] >= 0 && (m === MAT.ROCK || m === MAT.SNOW);
       for (let yy = y; yy < ybuf[x]; yy += 1) {
         const p = yy * W + x;
+        if (shade) {
+          const t = (yy - y) / (rows - 1);
+          img[p * 3] = cr + (lastC[x * 3] - cr) * t;
+          img[p * 3 + 1] = cg + (lastC[x * 3 + 1] - cg) * t;
+          img[p * 3 + 2] = cb + (lastC[x * 3 + 2] - cb) * t;
+          kind[p] = kd;
+          depth[p] = zz;
+          mat[p] = m;
+          continue;
+        }
         // Lit windows after dark.
+        const down = yy - eaves;
+        const stone = Wk[i] === 7;
+        // Windows in a house front, slits in a stone one, when near enough to count them.
+        const pane = wall && rows >= 5 && down >= 1 && (stone ? x % 9 === 4 && down % 11 >= 4 && down % 11 <= 6 : x % 3 === 1 && down % 4 === 1 && yy < ybuf[x] - 1);
         if (wall && yy < eaves) {
           img[p * 3] = C[i * 3];
           img[p * 3 + 1] = C[i * 3 + 1];
           img[p * 3 + 2] = C[i * 3 + 2];
-        } else if (wall && A.night > 0.3 && hash(x * 3 + Wk[i], yy, 98) < 0.34 * A.night) {
+        } else if (pane && A.night < 0.6) {
+          img[p * 3] = cr * 0.42;
+          img[p * 3 + 1] = cg * 0.45;
+          img[p * 3 + 2] = cb * 0.55;
+        } else if (wall && stone && rows >= 5 && down % 4 === 3) {
+          img[p * 3] = cr * 0.9;
+          img[p * 3 + 1] = cg * 0.9;
+          img[p * 3 + 2] = cb * 0.92;
+        } else if (wall && A.night > 0.3 && (pane || hash(x * 3 + Wk[i], yy, 98) < 0.3 * A.night)) {
           img[p * 3] = mix(1.0, cr, 0.15);
           img[p * 3 + 1] = mix(0.8, cg, 0.15);
           img[p * 3 + 2] = mix(0.44, cb, 0.15);
@@ -367,6 +425,9 @@ export function paintValley({ W, H, seed = 7, time = 19.3, fov = 60, horizon = 0
         mat[p] = wall ? 250 + Math.min(4, Wk[i] === 7 ? 4 : 0) : m;
       }
       ybuf[x] = y;
+      lastC[x * 3] = kd === 1 && !wall ? cr : -1;
+      lastC[x * 3 + 1] = cg;
+      lastC[x * 3 + 2] = cb;
     }
   }
 
@@ -393,12 +454,12 @@ export function paintValley({ W, H, seed = 7, time = 19.3, fov = 60, horizon = 0
       const far = clamp(1 - below / (H - hy));
       const wob = noise(x / 23, y * 0.75, 95) * (1 + 5 * (1 - far));
       const mx = clamp(Math.round(x + wob), 0, W - 1);
-      const my = Math.max(0, Math.round(hy - below * 0.92 - 1));
-      const q = my * W + mx;
+      const my = Math.round(hy - below * 0.92 - 1);
+      const q = Math.max(0, my) * W + mx;
       let r;
       let g;
       let b;
-      if (kind[q] === 1) {
+      if (my >= 0 && kind[q] === 1) {
         r = img[q * 3] * 0.82;
         g = img[q * 3 + 1] * 0.84;
         b = img[q * 3 + 2] * 0.88;
@@ -448,7 +509,7 @@ export function paintValley({ W, H, seed = 7, time = 19.3, fov = 60, horizon = 0
 
   // The sun's disc, where no cloud or land covers it.
   if (sunAhead) {
-    const rad = Math.max(2.2, W * (0.012 + 0.006 * A.night));
+    const rad = Math.max(2.2, f * (0.0139 + 0.007 * A.night));
     for (let y = Math.max(0, Math.floor(sunY - rad)); y <= Math.min(H - 1, Math.ceil(sunY + rad)); y += 1) {
       for (let x = Math.max(0, Math.floor(sunX - rad)); x <= Math.min(W - 1, Math.ceil(sunX + rad)); x += 1) {
         const p = y * W + x;
@@ -465,7 +526,7 @@ export function paintValley({ W, H, seed = 7, time = 19.3, fov = 60, horizon = 0
   // Stars, where the sky is clear. `stars` may give each its place (0 to 1
   // across, 0 to 1 up the sky) and brightness; otherwise they are scattered.
   const starry = [];
-  if (A.stars > 0.02) {
+  if (A.stars > 0.02 && hy > 8) {
     const count = Math.round((W * hy) / 55);
     for (let s = 0; s < count; s += 1) {
       const x = Math.floor(hash(s, 1, 99) * W);
@@ -494,7 +555,11 @@ export function paintValley({ W, H, seed = 7, time = 19.3, fov = 60, horizon = 0
   }
 
   // Where a world point lands on the screen, for placing things later.
-  const project = (wx, wy, wz) => ({ x: W / 2 + wx / (k * wz), y: hy + ((camH - wy) / wz) * f, scale: f / wz });
+  const project = (wx, wy, wz) => {
+    const vx = wx * cy - wz * sy;
+    const vz = wx * sy + wz * cy;
+    return { x: W / 2 + vx / (k * vz), y: hy + ((camH - wy) / vz) * f, scale: f / vz, ahead: vz > 1 };
+  };
 
   return { W, H, img, kind, depth, mat, cloud, stars: starry, hy, f, k, camH, A, project, land, sun: { x: sunX, y: sunY, ahead: sunAhead } };
 }

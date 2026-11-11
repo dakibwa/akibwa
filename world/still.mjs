@@ -29,7 +29,10 @@ const view = paintValley({
   time: Number(args.time ?? 19.3),
   fov: Number(args.fov ?? 60),
   horizon: Number(args.horizon ?? 0.42),
-  eye: Number(args.eye ?? 30)
+  eye: Number(args.eye ?? 30),
+  yaw: Number(args.yaw ?? 0),
+  clear: Number(args.clear ?? 1),
+  aim: args.aim ? { x: Number(args.aim.split(",")[0]), z: Number(args.aim.split(",")[1]), at: Number(args.at ?? 0.6), lift: Number(args.lift ?? 0) } : null
 });
 const painted = performance.now();
 let rgba;

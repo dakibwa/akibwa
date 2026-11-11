@@ -160,10 +160,27 @@ export function makeLand(seed) {
     o.w = 0;
     ground(x, z, G);
     const { sh, floorH, dxr, rw, ridgeL, hillR, mount, fg, edge, cd2 } = G;
+    o.f = floorH;
     let h = G.h;
 
-    // Sea.
+    // Sea, with a few sailing boats off the coast: a dark hull under a pale
+    // sail that comes to a point.
     if (sh <= 0) {
+      if (sh > -1700 && fp < 5) {
+        worley(x, z, 310, 90, cellC, 0.85);
+        const bx = x - cellC.px;
+        if (cellC.id < 0.5 && Math.abs(bx) < 5.5 && Math.abs(z - cellC.pz) < Math.max(1.7, fp * 5)) {
+          const lean = Math.abs(bx + 0.9) / 3.3;
+          const sail = lean < 1 ? 11.5 * (1 - lean) : 0;
+          const pale = sail > 1.2;
+          o.h = 1.7 + sail;
+          o.r = pale ? 0.96 : 0.2;
+          o.g = pale ? 0.93 : 0.17;
+          o.b = pale ? 0.86 : 0.16;
+          o.m = MAT.STONE;
+          return o;
+        }
+      }
       o.h = 0;
       o.r = 0;
       o.g = 0;
@@ -247,7 +264,7 @@ export function makeLand(seed) {
       const tone = 0.84 + 0.32 * cellA.id2;
       // Mowing lines, when near enough to see.
       const ang = cellA.id2 * 3.14159;
-      const stripe = fp < 1.7 ? 1 + 0.035 * Math.sin((x * Math.cos(ang) + z * Math.sin(ang)) / 2.6) : 1;
+      const stripe = fp < 2.4 ? 1 + 0.075 * (1 - fp / 2.4) * Math.sin((x * Math.cos(ang) + z * Math.sin(ang)) / 2.6) : 1;
       r = mix(ROUGH[0], F[0] * tone * stripe, lowland);
       g = mix(ROUGH[1], F[1] * tone * stripe, lowland);
       b = mix(ROUGH[2], F[2] * tone * stripe, lowland);
@@ -310,7 +327,6 @@ export function makeLand(seed) {
           b = 0.76 * cap;
           m = MAT.STONE;
         }
-        if (z > edge - 110 && z < edge - 6 && Math.abs(x) > 0.34 * z) framing = 0.5;
       }
 
       // Trees: broadleaves low down, conifers higher up the ridge.
@@ -343,14 +359,25 @@ export function makeLand(seed) {
         worley(x, z, 46, 88, cellB, 0.8);
         const rad = 13 + 5 * cellB.id2;
         if (cellB.id < framing && cellB.f1 < rad) {
-          const q = cellB.f1 / rad;
-          const crown = Math.sqrt(1 - q * q) * (0.84 + 0.2 * noise(x / 1.7, z / 1.7, 84));
+          let crown = 0;
+          for (let n = 0; n < 5; n += 1) {
+            const turnN = (cellB.id * 7 + n * 1.9) * 2.1;
+            const off = n === 0 ? 0 : rad * 0.5;
+            const lobe = rad * (n === 0 ? 0.7 : 0.42 + 0.1 * ((n * 3) % 4) * 0.5);
+            const dq = Math.hypot(x - cellB.px - Math.cos(turnN) * off, z - cellB.pz - Math.sin(turnN) * off) / lobe;
+            if (dq < 1) crown = Math.max(crown, Math.sqrt(1 - dq * dq) * (n === 0 ? 1 : 0.72 + 0.07 * n));
+          }
+          crown *= 0.86 + 0.18 * noise(x / 1.7, z / 1.7, 84);
+          if (crown <= 0) crown = 0;
           const T = TREES[((cellB.id2 * 97) % TREES.length) | 0];
-          h += (17 + 7 * cellB.id2) * crown;
-          r = T[0] * 1.08;
-          g = T[1] * 1.08;
-          b = T[2] * 1.08;
-          m = MAT.TREE;
+          if (crown > 0) {
+            const leaf = 1.02 + 0.16 * noise(x / 3.1, z / 3.1, 92);
+            h += (17 + 7 * cellB.id2) * crown;
+            r = T[0] * leaf;
+            g = T[1] * leaf;
+            b = T[2] * leaf;
+            m = MAT.TREE;
+          }
         }
       }
 
@@ -360,14 +387,14 @@ export function makeLand(seed) {
         const hw = 4.2 + 4.2 * cellC.id;
         const hd = 4.2 + 4.2 * cellC.id2;
         if (cellC.id2 < 0.22 + town * 0.72 && Math.abs(x - cellC.px) < hw && Math.abs(z - cellC.pz) < hd) {
-          const tower = cellC.id > 0.965;
+          const tower = cellC.id > 0.985;
           const roof = ROOFS[((cellC.id * 53) % ROOFS.length) | 0];
           h += tower ? 34 : 8 + 11 * cellC.id2;
           r = roof[0];
           g = roof[1];
           b = roof[2];
           m = MAT.ROOF;
-          o.w = tower ? 7 : 1 + (((cellC.id2 * 61) % 6) | 0);
+          o.w = tower ? 2 : 1 + (((cellC.id2 * 61) % 6) | 0);
         }
       } else if (m === MAT.FIELD && fp < 10) {
         // A barn or a farmhouse here and there among the fields.
@@ -389,7 +416,10 @@ export function makeLand(seed) {
       if (cdx < 38 && cdz < 28) {
         const corner = cdx > 25 && cdz > 17;
         const curtain = cdx > 32 || cdz > 23;
-        const lift = corner ? 36 : curtain ? 23 : 2;
+        const keep = cdx < 12 && cdz < 9;
+        let lift = corner ? 37 : curtain ? 23 : keep ? 46 : 2;
+        // Battlements: every other stretch of the top stands a little higher.
+        if (lift > 2 && fp < 2.2 && (Math.floor((x + z * 1.37) / 2.6) & 1) === 0) lift += 2.4;
         const cap = 0.94 + 0.1 * hash(Math.floor(x / 3), Math.floor(z / 3), 89);
         h = castleBase + lift;
         r = KEEP[0] * cap;

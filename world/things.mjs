@@ -42,7 +42,7 @@ export function sleeveSide(weight, heaviest, smallest, largest) {
  * Where everything goes. `albums` carry { id, kind, weight } and are taken
  * heaviest first; `perKind` is how many of each kind fly at once.
  */
-export function layoutThings(view, albums, { perKind = 6, smallest = 9, largest = 22, gap = 2, pixel = 3, edge = 16, tagSize = null } = {}) {
+export function layoutThings(view, albums, { perKind = 6, smallest = 9, largest = 22, gap = 2, pixel = 3, edge = 16, tagSize = null, only = null, keepOut = [], tags = true } = {}) {
   const { W, H, depth, kind: kindAt, project, land, sun } = view;
   const o = { h: 0, r: 0, g: 0, b: 0, m: 0, w: 0 };
   const taken = new Uint8Array(W * H);
@@ -60,6 +60,7 @@ export function layoutThings(view, albums, { perKind = 6, smallest = 9, largest 
   const { mat } = view;
   const anchors = [];
   KINDS.forEach((K, order) => {
+    if (only && !only.includes(K.id)) return;
     const P = PLACES[K.id];
     let x = -1;
     let y = -1;
@@ -112,7 +113,7 @@ export function layoutThings(view, albums, { perKind = 6, smallest = 9, largest 
   const margin = Math.ceil(edge / pixel);
   for (const A of anchors) {
     A.count = albums.filter((album) => album.kind === A.kind).length;
-    const size = tagSize ? tagSize(A) : { w: (7.4 * (A.label.length + String(A.count).length) + 46) / pixel, h: 32 / pixel };
+    const size = !tags ? { w: 0, h: 0 } : tagSize ? tagSize(A) : { w: (7.4 * (A.label.length + String(A.count).length) + 46) / pixel, h: 32 / pixel };
     A.tw = Math.ceil(size.w);
     A.th = Math.ceil(size.h);
     A.tx = Math.round(clampN(A.x - A.tw / 2, margin, W - margin - A.tw));
@@ -134,8 +135,10 @@ export function layoutThings(view, albums, { perKind = 6, smallest = 9, largest 
   if (sun.ahead) block(Math.round(sun.x) - 9, Math.round(sun.y) - 9, Math.round(sun.x) + 10, Math.round(sun.y) + 10);
   for (const A of anchors) {
     block(A.x - 7, A.y - 9, A.x + 8, A.y + 3);
-    block(A.tx - 1, A.ty - 1, A.tx + A.tw + 1, A.ty + A.th + 1);
+    if (tags) block(A.tx - 1, A.ty - 1, A.tx + A.tw + 1, A.ty + A.th + 1);
   }
+  // Room kept for words and anything else laid over the picture.
+  for (const [x0, y0, x1, y1] of keepOut) block(Math.floor(x0), Math.floor(y0), Math.ceil(x1), Math.ceil(y1));
 
   const heaviest = Math.max(...albums.map((album) => album.weight));
   const chosen = [];
