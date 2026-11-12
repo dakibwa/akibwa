@@ -117,7 +117,8 @@ KV, R2 or D1 permission. The token is exposed only to the configuration check
 and Wrangler deploy steps; dependency installation, builds and verification do
 not receive it. Never substitute a developer's OAuth token or widen this scope
 for an asset deployment. The existing limited-token workflow was verified
-before the domain cutover.
+before the domain cutover. The optional `INDEXNOW_KEY` secret reaches only the
+two change-notice steps described under the Features standalone domain.
 
 Features publishes its stripped and hardened client to `dakibwa/akibwa` under
 `public/features/` (the repository was renamed from `dakibwa/dakibwa` on 17
@@ -143,6 +144,23 @@ canonical link and carries no `noindex` (today `/`, `/legal` and `/press`;
 `stats.html` asks to stay out), so the Features repository decides which of its
 pages are searchable and a new page is listed with no change here. Akibwa's own
 sitemap is separate (`app/sitemap.js`) and still lists `/` alone.
+
+`scripts/features-search-notices.mjs` tells search engines which of those pages
+a deploy changed, by IndexNow: one notice that Bing, Yandex, Naver, Seznam and
+Yep share, while Google takes none and reads the sitemap. It does nothing until
+the repository holds an `INDEXNOW_KEY` secret of 8 to 128 letters, digits or
+dashes, which only Dan can add. The key proves the sender owns the host, so it
+is never committed or printed; the two workflow steps that run the script are
+the only ones that receive it, and neither can fail a deploy. Before the
+Features deploy the script puts the key's file in the export
+(`https://features.games/<key>.txt`) and compares each page of the new sitemap
+with the one being served, as a search engine reads it: its words, head and
+structured data, without the game's script, styles and policy line, which change
+with almost every release. After the domain is verified it sends the changed
+pages once, with any page the sitemap dropped, and prints the answer. A page the
+live site refuses for any reason but absence stops the notice, so a false one is
+never sent.
+
 `check-features-hosting.mjs` verifies exact
 game/asset bytes, aliases, caching, security and production API health. Its
 workers.dev preview has no account proxy. CI deploys both static Workers using
