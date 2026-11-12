@@ -12,7 +12,8 @@
 const CACHE_NAME = "akibwa-static-v4";
 const CACHE_PREFIX = "akibwa-static-";
 
-/* Other apps share this origin and own their own caching. */
+/* Not ours: /features/ redirects to features.games (12 November 2026), and
+   that redirect must always come from the network. */
 const FOREIGN_PATHS = ["/features/"];
 
 const IMMUTABLE_PATH = "/_next/static/";

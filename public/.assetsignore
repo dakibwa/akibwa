@@ -3,3 +3,6 @@
 CNAME
 .nojekyll
 **/.DS_Store
+# The game's old address redirects to features.games, so akibwa-site does not
+# upload the copy. features-site deploys ./out/features itself and needs it all.
+/features/

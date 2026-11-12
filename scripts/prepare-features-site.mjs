@@ -1,7 +1,7 @@
 import { copyFile, writeFile } from 'node:fs/promises';
 
-// Both domains receive the one verified game export. Only static-host policy
-// differs at the standalone root; the Features publisher still owns the game.
+// features.games serves the verified game export the Features publisher writes
+// to public/features/. This adds only the standalone root's static-host policy.
 const root = new URL('../out/features/', import.meta.url);
 await copyFile(new URL('../public/_headers', import.meta.url), new URL('_headers', root));
 await writeFile(new URL('_redirects', root), '/features / 301\n/features/ / 301\n/features/index.html / 301\n');

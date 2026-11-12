@@ -1438,17 +1438,15 @@ html[data-drawn] .front .t-pin {
 }
 
 html.js[data-room="music"] #music,
-html.js[data-room="features"] #features,
 html.js[data-room="websites"] #websites,
 html.js[data-room="career"] #career,
 html.js[data-room="trek"] #trek {
   display: block;
 }
 
-/* Features and the trek fill what is left of the screen under the bar. */
-html.js[data-room="features"] #features,
+/* The trek fills what is left of the screen under the bar. */
 html.js[data-room="trek"] #trek,
-html:not(.js) :is(#features, #trek):target {
+html:not(.js) #trek:target {
   display: flex;
   flex-direction: column;
   padding-bottom: 16px;
@@ -1471,12 +1469,6 @@ html:not(.js) .framed-room > noscript {
   flex: 1;
 }
 
-.frame-note {
-  margin: 0 0 12px;
-  color: var(--ink-soft);
-  font-size: 14px;
-}
-
 .room-frame {
   display: block;
   flex: 1;
@@ -1487,13 +1479,6 @@ html:not(.js) .framed-room > noscript {
   overflow: hidden;
   background: #e6e8d6;
   box-shadow: 0 3px 0 var(--ink);
-}
-
-/* The game's own dark paper, so it loads without a flash. It sits in the same
-   paper frame as the trek, and fills it to the frame's edges (Dan, 25
-   September 2026; framed-room.jsx trims the game's own inset). */
-.framed-room.is-features .room-frame {
-  background: #0e1214;
 }
 
 html.js[data-room]:not([data-room="index"]) .front {

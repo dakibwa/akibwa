@@ -32,10 +32,13 @@ function checkRevalidation(response, path) {
   assert.doesNotMatch(policy, /immutable/, `${path} must remain replaceable`);
 }
 
+// .assetsignore leaves the game's old /features/ copy out of this upload; it is
+// features-site's own export and is checked by check-features-hosting.mjs.
 async function inventory(directory) {
   const files = [];
   for (const entry of await readdir(directory, { withFileTypes: true })) {
     const path = join(directory, entry.name);
+    if (entry.isDirectory() && relative(root, path) === "features") continue;
     if (entry.isDirectory()) files.push(...await inventory(path));
     else files.push({ path: relative(root, path), bytes: (await stat(path)).size });
   }
@@ -46,14 +49,11 @@ const files = await inventory(root);
 assert.ok(files.length <= 20000, "export exceeds the Workers Free asset count");
 assert.ok(files.every((file) => file.bytes <= 25 * 1024 * 1024), "export contains an asset larger than 25 MiB");
 
-const pages = ["", "features", "trek", "meditator"];
+const pages = ["", "trek", "meditator"];
 for (const page of pages) {
   const path = page ? `/${page}/` : "/";
   const expected = await readFile(join(root, page, "index.html"));
-  const ready = await waitForHostedExport(origin, hash(expected), {
-    path,
-    expectedHeaders: page === "features" ? {"cache-control": "public, max-age=0, must-revalidate"} : {},
-  });
+  const ready = await waitForHostedExport(origin, hash(expected), { path });
   const response = ready.response;
   assert.equal(response.status, 200, `${path} must remain available`);
   assert.match(response.headers.get("content-type") || "", /text\/html/, `${path} MIME type`);
@@ -63,42 +63,33 @@ for (const page of pages) {
   if (preview) assert.equal(response.headers.get("x-robots-tag"), "noindex", "preview must not be indexed");
 }
 
-const features = await readFile(join(root, "features/index.html"), "utf8");
-const browserReady = await waitForHostedExport(origin, hash(features), {path: "/features/", requestHeaders: {
-  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
-}});
-const browserGame = browserReady.response;
-assert.equal(browserGame.status, 200);
-if (origin.protocol === "https:") assert.match(browserGame.headers.get("content-encoding") || "", /^(gzip|br|zstd)$/, "game must stay compressed");
-assert.equal(hash(browserReady.body), hash(features), "browser requests must receive the exact game without analytics injection");
-assert.match(features, /<meta name="features-native-bridge" content="2">/, "keep the native-compatible game");
-const policy = features.match(/http-equiv="Content-Security-Policy"\s+content="([^"]+)"/i)?.[1] || "";
-assert.doesNotMatch(policy, /script-src[^;]*'unsafe-inline'/, "published game must keep its hardened script policy");
-for (const [, script] of features.matchAll(/<script(?![^>]*\ssrc\s*=)[^>]*>([\s\S]*?)<\/script>/gi)) {
-  assert.ok(policy.includes(`'sha256-${createHash("sha256").update(script).digest("base64")}'`), "each game script must match its CSP hash");
+// The game's old address was retired on 12 November 2026: every path under
+// /features moves to the same path on features.games, with its query string.
+const moved = "?hosting-check=moved";
+for (const [path, target] of [
+  ["/features", "https://features.games/"],
+  ["/features/", "https://features.games/"],
+  ["/features/legal.html", "https://features.games/legal.html"],
+]) {
+  const response = await request(path + moved);
+  assert.equal(response.status, 301, `${path} must permanently redirect to features.games`);
+  assert.equal(response.headers.get("location"), target + moved, `${path} redirect target`);
 }
-
-const gameRedirect = await request("/features");
-assert.equal(gameRedirect.status, 301, "keep the established game redirect");
-assert.equal(new URL(gameRedirect.headers.get("location"), origin).pathname, "/features/");
 // Retired pages are deleted; their old links redirect at the edge.
 for (const [path, target] of [
   ["/albums/", "/"], ["/projects/cover-collision/", "/"], ["/personal/", "/"], ["/about/", "/"],
-  ["/probe/", "/features/"], ["/portugal/", "https://portuguesewithines.com/"],
+  ["/probe/", "https://features.games/"], ["/portugal/", "https://portuguesewithines.com/"],
 ]) {
   const response = await request(path);
   assert.equal(response.status, 301, `${path} must permanently redirect`);
   assert.equal(new URL(response.headers.get("location"), origin).href, new URL(target, origin).href, `${path} redirect target`);
 }
-const gameAlias = await waitForHostedExport(origin, hash(features), {path: "/features/index.html", redirect: "follow"});
-assert.equal(gameAlias.response.status, 200, "existing index.html links must still reach the game");
-assert.equal(hash(gameAlias.body), hash(features));
 
-const canonical = await fetch("https://www.akibwa.com/features/?hosting-check=canonical", {
+const canonical = await fetch("https://www.akibwa.com/trek/?hosting-check=canonical", {
   redirect: "manual", signal: AbortSignal.timeout(15000),
 });
 assert.equal(canonical.status, 301, "www must permanently redirect to the apex");
-assert.equal(canonical.headers.get("location"), "https://akibwa.com/features/?hosting-check=canonical",
+assert.equal(canonical.headers.get("location"), "https://akibwa.com/trek/?hosting-check=canonical",
   "www redirect must preserve the path and query string");
 
 for (const path of ["/life-map/", "/hosting-check-missing-page/"]) {
@@ -111,7 +102,7 @@ const samples = [
   files.find((file) => file.path.startsWith("_next/static/") && file.path.endsWith(".css"))?.path,
   files.find((file) => file.path.startsWith("_next/static/") && file.path.endsWith(".js"))?.path,
   files.find((file) => file.path.startsWith("_img/") && file.path.endsWith(".avif"))?.path,
-  "features/manifest.webmanifest", "features/icon-192.png", "trek/route-detail.json", "meditator/sw.js", "sw.js", "robots.txt", "sitemap.xml",
+  "trek/route-detail.json", "meditator/sw.js", "sw.js", "robots.txt", "sitemap.xml",
 ];
 for (const path of samples) {
   assert.ok(path, "representative generated asset exists");
@@ -128,15 +119,14 @@ for (const path of samples) {
   else checkRevalidation(response, path);
 }
 
-// A workers.dev preview has no production zone route and must not become a
-// second authenticated API origin. The existing production route is checked
-// directly; its account/database/provider configuration belongs to Features.
+// Features owns its API at features.games. The static site never answers for
+// it: on a workers.dev preview its old path is only the redirect above.
 if (preview || origin.hostname === "localhost") {
-  assert.equal((await request("/features/api/health")).status, 404, "preview must not proxy production sessions");
+  assert.equal((await request("/features/api/health")).status, 301, "preview must not proxy production sessions");
 }
-const health = await fetch("https://akibwa.com/features/api/health", { signal: AbortSignal.timeout(15000) });
+const health = await fetch("https://features.games/features/api/health", { signal: AbortSignal.timeout(15000) });
 assert.equal(health.status, 200, "production Features API remains available");
 assert.match(health.headers.get("cache-control") || "", /no-store/, "API responses must not enter the static cache");
 assert.equal((await health.json()).ok, true, "production Features API health");
 
-console.log(`hosting checks passed: ${pages.length} pages, ${samples.length} assets, real 404s, retired-page redirects, CSP and production API; ${files.length} exported files; Features SHA256 ${hash(features)}`);
+console.log(`hosting checks passed: ${pages.length} pages, ${samples.length} assets, real 404s, retired-page and features.games redirects, production API; ${files.length} uploaded files`);

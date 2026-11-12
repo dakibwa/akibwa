@@ -17,23 +17,18 @@ Its Single Redirect matches only `www.akibwa.com`; the proxied `www` A record
 uses Cloudflare's reserved originless address `192.0.2.0`.
 
 `wrangler.jsonc` deliberately omits both `route` and `routes`. Asset deployments
-leave the dashboard-managed domain and existing zone routes untouched. Do not
+leave the dashboard-managed domain and any zone routes untouched. Do not
 add domain routing to Wrangler or broaden the deployment token to manage DNS.
 GitHub Pages is retained as a manual fallback; it no longer publishes on push.
 
-One existing route must remain ahead of the static origin:
-
-| Route | Existing Worker |
-| --- | --- |
-| `akibwa.com/features/api/*` | `features-api` |
-
-Cloudflare treats a Worker Custom Domain as the origin, so existing route
-Workers execute before it. Static deployments must not replace this route
-or change its Worker bindings, databases, cookies,
-`PUBLIC_ORIGIN`, provider callbacks, or secrets. The static preview has no API
-proxy: its `/features/api/*` returns 404, and account/purchase flows belong to
-the production origin. Hosting checks probe production API health separately;
-account, cookie and purchase behavior is verified on `akibwa.com/features/`.
+The game's old address, `akibwa.com/features`, was retired on 12 November 2026.
+Features and its API live only at `features.games`. The `features-api` Worker's
+old `akibwa.com/features/api/*` route is removed from the Features repository's
+`worker/wrangler.toml`; Cloudflare treats a Worker Custom Domain as the origin,
+so while a route exists it runs before the static site, and once it is gone
+`/features/api/*` gets the same 301 as the rest of `/features/`. This site never
+serves or proxies the API: on the static preview `/features/api/*` is that
+redirect too. Hosting checks probe `https://features.games/features/api/health`.
 
 ## Build and deploy
 
@@ -48,48 +43,52 @@ npm run check:hosting -- https://akibwa.com
 
 The deployment command uploads the already-checked export once, updating both
 the public site and preview. It does not build a second copy or change domain
-routing. Publish the whole `out/` tree:
-standalone `/features/` and `/trek/`, generated artwork, listening data, fonts
-and the `/meditator/` service-worker retirement files are part of it.
-`.assetsignore` excludes `CNAME` and `.nojekyll` from Cloudflare assets; these
-files remain in the export for the GitHub Pages fallback.
+routing. Publish the `out/` tree: standalone `/trek/`, generated artwork,
+listening data, fonts and the `/meditator/` service-worker retirement files are
+part of it. `.assetsignore` excludes `CNAME` and `.nojekyll`, which remain in
+the export for the GitHub Pages fallback, and the game's `/features/` copy,
+which `features-site` deploys on its own (see below).
 
 `npm run check:hosting -- <origin>` checks exported HTML and representative asset
-bytes, Features' script hashes and native marker, security headers, canonical
-game and `www` redirects, real 404s, caching, preview indexing and production API health.
-The game is also fetched with a browser user agent to catch injected analytics
-and require compression on the hosted origin.
-Keep a direct browser run-through of the affected pages alongside this check.
+bytes, security headers, the `features.games` and retired-page redirects, the
+`www` redirect, real 404s, caching, preview indexing and production API health
+at `features.games`. Keep a direct browser run-through of the affected pages
+alongside this check.
 
 ## Routing and response policy
 
-- Folder index pages keep trailing slashes. `/features` keeps its existing 301
-  to `/features/`. Explicit `index.html` links remain usable through Cloudflare's
-  canonical HTML redirect.
+- Folder index pages keep trailing slashes. Explicit `index.html` links remain
+  usable through Cloudflare's canonical HTML redirect.
+- The game's old address redirects: `/features` and `/features/` 301 to
+  `https://features.games/`, and `/features/*` to the same path there
+  (`/features/legal.html` to `https://features.games/legal.html`). Workers
+  Static Assets keep the query string and apply `_redirects` before any file.
+  `/probe` and `/probe/*`, the game's name until 13 August 2026, 301 straight
+  to `https://features.games/`.
 - Missing paths serve the exported `404.html` with status 404. There is no
   homepage fallback for missing or retired routes such as `/life-map/`.
 - Retired routes are deleted and redirect at the edge from `public/_redirects`:
   `/albums`, `/projects`, `/personal`, `/about`, `/contact`, `/offer`,
   `/professional`, `/systems`, `/work` and `/concept` (and everything beneath
-  them) 301 to `/`; `/probe` 301s to `/features/`; `/portugal` 301s to
-  `https://portuguesewithines.com/`. Static rules sit above splat rules. The
+  them) 301 to `/`; `/portugal` 301s to `https://portuguesewithines.com/`. Static rules sit above splat rules. The
   GitHub Pages fallback cannot apply `_redirects`, so those links 404 there.
 - `public/_headers` preserves the six production security headers and existing
   public asset CORS behavior. Features' additional hardened meta CSP is left
   byte-for-byte intact.
 - The zone's active `security headers` response transform matches
   `(http.host eq "akibwa.com" and not (http.request.uri.path eq "/features/api" or starts_with(http.request.uri.path, "/features/api/")))`.
-  Features API responses own their stricter headers and nonce-based policies;
-  the static-site defaults must not overwrite them. This scope was verified
+  It dates from the retired `akibwa.com/features/api/*` route, whose responses
+  carried their own stricter headers; once that route is gone the exclusion
+  does nothing and Dan may remove it in the dashboard. This scope was verified
   live on 8 September 2026, with all six homepage headers unchanged.
 - Fingerprinted `/_next/static/*` files receive one-year immutable caching.
   HTML, artwork with stable filenames, JSON and service workers retain
   Cloudflare's default `public, max-age=0, must-revalidate` behavior.
-- Features promises no analytics or tracking. Its standalone Web Analytics site
-  is disabled; Akibwa excludes `/features` and `/features/*` with a configuration
-  rule setting `disable_rum: true`. The game's hardened CSP remains unchanged.
+- The zone's configuration rule setting `disable_rum: true` for `/features` and
+  `/features/*` kept analytics out of the game while it was served here. Those
+  paths only redirect now, so the rule does nothing and Dan may remove it.
   Avoid `Cache-Control: no-transform` as a beacon exclusion: it also disables
-  compression and expands the game download. See the
+  compression. See the
   [configuration rule settings](https://developers.cloudflare.com/rules/configuration-rules/settings/#disable-real-user-monitoring-rum).
 - The existing zone-managed robots policy prepends Cloudflare's Content Signals
   and crawler rules to the generated `robots.txt`. Keep that provider policy.
@@ -120,27 +119,24 @@ not receive it. Never substitute a developer's OAuth token or widen this scope
 for an asset deployment. The existing limited-token workflow was verified
 before the domain cutover.
 
-Features continues publishing its stripped and hardened client to
-`dakibwa/akibwa` under `public/features/` (the repository was renamed from
-`dakibwa/dakibwa` on 17 September 2026; its deploy key, secrets and paths
-carried over). That push triggers the Cloudflare workflow, so preserve the
-publication path.
+Features publishes its stripped and hardened client to `dakibwa/akibwa` under
+`public/features/` (the repository was renamed from `dakibwa/dakibwa` on 17
+September 2026; its deploy key, secrets and paths carried over). That push
+triggers the Cloudflare workflow, which is how `features.games` is served, so
+preserve the publication path.
 
 ## Features standalone domain
 
-The same verified `out/features/` export also deploys to the static-only
-`features-site` Worker using `wrangler-features.jsonc`. The dashboard owns
-`features.games` and `www.features.games`; a zone redirect canonicalises `www`.
-The API route `features.games/features/api/*` points to the existing
-`features-api` Worker and database, while its old Akibwa route remains in place.
-The API, account configuration and safe browser-record transfer belong to the
-Features repository. Do not replace the old game with a blanket server redirect:
-its browser storage remains the source of older players' local records.
-Portfolio links open `features.games` directly; Features is an independent
-project link rather than an embedded Akibwa frame.
+`features.games` is the game's only address. The verified `out/features/`
+export deploys to the static-only `features-site` Worker using
+`wrangler-features.jsonc`. The dashboard owns `features.games` and
+`www.features.games`; a zone redirect canonicalises `www`. The API route
+`features.games/features/api/*` points to the `features-api` Worker and
+database, which belong to the Features repository with the client and account
+configuration.
 
 `scripts/prepare-features-site.mjs` adds root-specific headers, old-path aliases,
-robots, sitemap and a real 404 after Akibwa's existing export verification. It
+robots, sitemap and a real 404 after Akibwa's export verification. It
 never rebuilds or edits the game. `check-features-hosting.mjs` verifies exact
 game/asset bytes, aliases, caching, security and production API health. Its
 workers.dev preview has no account proxy. CI deploys both static Workers using
@@ -155,8 +151,8 @@ change the public domain or disable Cloudflare publishing.
 If the static origin needs to return to GitHub Pages, first obtain a successful
 manual Pages deployment. Then coordinate the dashboard Custom Domain and DNS
 rollback (the previous apex used proxied A records `185.199.108.153`,
-`185.199.109.153`, `185.199.110.153` and `185.199.111.153`), preserve both API
-Worker routes and the `www` redirect, and move the main-push trigger back to
+`185.199.109.153`, `185.199.110.153` and `185.199.111.153`), preserve the `www`
+redirect, and move the main-push trigger back to
 Pages in the same operation. Verify the public pages and Features API before
 calling the rollback complete. Do not operate two automatic production
 publishers.

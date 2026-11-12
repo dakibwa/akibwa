@@ -21,11 +21,9 @@ const names = read("components/paper/name-flip.jsx");
 const contact = read("components/paper/contact.jsx");
 const music = read("components/paper/music-room.jsx");
 const career = read("components/career-bar.jsx");
-const features = read("public/features/index.html");
 const trekTemplate = read("scripts/trek-journey-template.html");
 const trekPublished = read("public/trek/index.html");
 const things = read("components/paper/things.jsx");
-const framed = read("components/paper/framed-room.jsx");
 const ranking = JSON.parse(read("public/music-ranking.json"));
 const musicMeta = JSON.parse(read("public/music-meta.json"));
 
@@ -93,9 +91,9 @@ requireText(home, 'path="/trek/"', "the trek room must frame the journey");
 requireText(home, 'id: "studio"', "the personal home must include Oh Life! Studios");
 requireText(home, 'href: "https://ohlifestudios.com/"', "the studio must link to its own product home");
 for (const id of ["features", "websites"]) forbidText(home, `<Room id="${id}"`, "product showcases now belong to the studio");
-requireText(home, 'features: "/features/"', "old shared Features hashes must retain the browser-save transfer path");
+requireText(home, 'features: "https://features.games/"', "old shared Features hashes must lead to the game's own address");
 requireText(home, 'websites: "https://ohlifestudios.com/"', "old shared website hashes must lead to the studio");
-forbidText(home, "from=akibwa", "the framed game must not wear the portfolio banner");
+forbidText(home, "from=akibwa", "old Features links must not ask for the retired portfolio banner");
 requireText(trekTemplate, 'classList.add("is-embedded")', "the framed trek must hide its own way home");
 requireText(home, "memo(MusicRoom)", "the music room must show the albums and songs mosaics");
 requireText(home, 'className="visually-hidden" tabIndex={-1}', "rooms have no title on the page, only a heading for readers");
@@ -134,7 +132,6 @@ requireText(things, "stroke={ROOF.has(thread) ? BLUE : ORANGE}", "the Features r
 requireText(things, "const RINGS = [[BLUE], [BLUE, ORANGE], [ORANGE], [ORANGE], [BLUE, ORANGE]];", "the Features neurons must match their threads, fused at the eaves");
 requireText(things, "<Reveal id={mask} d={TRAIL}", "the career trail must be laid down, not shown from the start");
 requireText(things, "<Reveal id={mask} d={ROUTE}", "the trek route must be walked in on arrival");
-requireText(framed, "#introveil{padding:0!important}", "the Features game must reach the edges of its frame");
 {
   // The map itself, on the real albums: no holes or overlaps, the most
   // listened first, and the two ambient records near Graceland (Dan, 25 September 2026).
@@ -275,10 +272,5 @@ for (const [source, label] of [
   forbidText(source, "akibwa-project-banner", `${label} must not expose the portfolio identity`);
   requireText(source, "24 September to 28 November 2019", `${label} must retain the exact journey date range`);
 }
-
-requireText(features, '<p class="akibwa-project-banner__identity">Akibwa</p>', "Features project view must use only the Akibwa brand");
-const retiredPersonalClass = ["name--", String.fromCharCode(100, 97, 110, 105, 101, 108)].join("");
-forbidText(features, retiredPersonalClass, "Features project view must not carry a personal identity state");
-requireText(features, "Building in the age of AI.", "Features must retain the Akibwa proposition");
 
 console.log("Akibwa public-boundary contract passed.");

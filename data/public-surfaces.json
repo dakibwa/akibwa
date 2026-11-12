@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-22",
+  "updated": "2026-11-12",
   "surfaces": [
     {
       "id": "home",
@@ -8,14 +8,6 @@
       "kind": "page",
       "visibility": "public",
       "fallbackData": "public/listening-catalogue.json"
-    },
-    {
-      "id": "features",
-      "title": "features",
-      "route": "/features",
-      "kind": "static-directory",
-      "visibility": "public",
-      "staticPath": "public/features/index.html"
     },
     {
       "id": "trek",

@@ -10,7 +10,7 @@ The personal homepage is one sheet of warm paper, with four illustrated things: 
 
 The approved career roles, cultural curation and Instagram/X links are restored selectively, not by reverting privacy work. Residential and private life history stay out; the email address is assembled only after activation. Only `/` is advertised in the sitemap. Old pages (the album archive, the wall and the earlier project pages) were deleted; their links 301 to the homepage from `public/_redirects`. See [the interaction and privacy contract](docs/navigation-animation-contract.md).
 
-The **Oh Life! Studios** entry links to the studio's own website. Old `#features` links go through `/features/`, preserving the old browser-save transfer; old `#websites` links go to the studio. The standalone game and trek files and the Features API route are unchanged.
+The **Oh Life! Studios** entry links to the studio's own website. Old `#features` links go straight to https://features.games/; old `#websites` links go to the studio. The game's old address, `akibwa.com/features`, was retired on 12 November 2026 and now 301s to the same path on features.games. The `public/features/` copy stays in this repository because it is what features.games serves.
 
 ## Projects
 

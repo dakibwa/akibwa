@@ -87,9 +87,8 @@ export function PaperHome({ music }) {
   useEffect(() => {
     const root = document.documentElement;
     const initial = location.hash.slice(1);
-    // Keep old shared project links useful. /features/ still owns the browser
-    // save transfer to features.games; its files and API route are unchanged.
-    const legacyProject = { features: "/features/", websites: "https://ohlifestudios.com/" }[initial];
+    // Keep old shared project links useful: Features lives at features.games.
+    const legacyProject = { features: "https://features.games/", websites: "https://ohlifestudios.com/" }[initial];
     if (legacyProject) {
       location.replace(legacyProject);
       return;

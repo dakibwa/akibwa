@@ -1,10 +1,12 @@
 # Static rules come first: Cloudflare matches them faster than splat rules.
 
-# Keep the game's established canonical URL and permanent redirect.
-/features /features/ 301
+# The game's old address was retired on 12 November 2026. Features lives only
+# at features.games; every old link lands on the same path there.
+/features https://features.games/ 301
+/features/ https://features.games/ 301
 
 # The game was called probe until 13 August 2026; links to that name still land on it.
-/probe /features/ 301
+/probe https://features.games/ 301
 
 # The Portuguese lessons live on their own site.
 /portugal https://portuguesewithines.com/ 301
@@ -24,7 +26,8 @@
 # One Bagger was deleted on 13 October 2026.
 /onebagger / 301
 
-/probe/* /features/ 301
+/features/* https://features.games/:splat 301
+/probe/* https://features.games/ 301
 /portugal/* https://portuguesewithines.com/ 301
 /albums/* / 301
 /projects/* / 301
