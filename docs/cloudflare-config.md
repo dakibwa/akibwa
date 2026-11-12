@@ -143,6 +143,17 @@ canonical link and carries no `noindex` (today `/`, `/legal` and `/press`;
 `stats.html` asks to stay out), so the Features repository decides which of its
 pages are searchable and a new page is listed with no change here. Akibwa's own
 sitemap is separate (`app/sitemap.js`) and still lists `/` alone.
+
+Change notices to search engines are left to Cloudflare. Dan chose the
+`features.games` zone's Crawler Hints switch (dashboard: Caching, then
+Configuration) on 12 November 2026, over a script in this deploy that sent the
+same IndexNow notices itself and was closed unmerged as #95. While the switch
+is on, Cloudflare tells Bing and the engines that share IndexNow when a page it
+serves looks changed, judging by its own cache. Nothing in this repository
+sends a notice or holds a key for one, and Google reads the sitemap either way.
+When the notices arrive, the IndexNow page of Bing Webmaster Tools names
+Cloudflare as their source.
+
 `check-features-hosting.mjs` verifies exact
 game/asset bytes, aliases, caching, security and production API health. Its
 workers.dev preview has no account proxy. CI deploys both static Workers using
