@@ -137,7 +137,13 @@ configuration.
 
 `scripts/prepare-features-site.mjs` adds root-specific headers, old-path aliases,
 robots, sitemap and a real 404 after Akibwa's export verification. It
-never rebuilds or edits the game. `check-features-hosting.mjs` verifies exact
+never rebuilds or edits the game. Its sitemap lists the front page and every
+page of the game's copy that names its own `features.games` address in a
+canonical link and carries no `noindex` (today `/`, `/legal` and `/press`;
+`stats.html` asks to stay out), so the Features repository decides which of its
+pages are searchable and a new page is listed with no change here. Akibwa's own
+sitemap is separate (`app/sitemap.js`) and still lists `/` alone.
+`check-features-hosting.mjs` verifies exact
 game/asset bytes, aliases, caching, security and production API health. Its
 workers.dev preview has no account proxy. CI deploys both static Workers using
 the same existing account-scoped Workers Scripts credential, without DNS access.
