@@ -457,6 +457,10 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
       {key:'share',label:'shared a day',n:period('play.share'),d:period('play.finished'),of:'finished sets'},
       {key:'account',label:'signed in',n:period('play.account'),d:period('play.played'),of:'new players'},
       {key:'remind',label:'turned on the reminder',n:period('play.remind'),d:period('play.firstday'),of:'first finished sets'},
+      // a way back the game offers, shown and taken (index.html, homeAsk)
+      {key:'homeask',label:'were offered the home screen',n:period('play.homeask'),d:period('play.firstday'),of:'first finished sets'},
+      {key:'homeyes',label:'pressed add to home screen',n:period('play.homeyes'),d:period('play.homeask'),of:'offers'},
+      {key:'homeplay',label:'played from the home screen',n:period('play.homeplay'),d:period('play.active'),of:'player days'},
       {key:'collection',label:'opened the collection',n:period('play.collection'),d:period('play.active'),of:'player days'},
       {key:'offer',label:'saw the unlock offer',n:period('play.offer'),d:period('play.played'),of:'new players'},
       {key:'unlocked',label:'unlocked',n:period('play.unlocked'),d:period('play.offer'),of:'offers'},
