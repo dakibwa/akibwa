@@ -456,8 +456,16 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
     const hooks = [
       {key:'share',label:'shared a day',n:period('play.share'),d:period('play.finished'),of:'finished sets'},
       {key:'account',label:'signed in',n:period('play.account'),d:period('play.played'),of:'new players'},
-      {key:'remind',label:'turned on the reminder',n:period('play.remind'),d:period('play.firstday'),of:'first finished sets'},
-      // a way back the game offers, shown and taken (index.html, homeAsk)
+      /* the ways back the game offers, each shown and each taken (index.html, showTell, remindMe and
+         homeAsk). the reminder is asked for between two boards and on a finished day's card, so it
+         reads against new players; the mails' own counts are the Worker's (worker/links.js, countOwn) */
+      {key:'told',label:'were told new boards come every day',n:period('play.told'),d:period('play.played'),of:'new players'},
+      {key:'tellyes',label:'pressed remind me when told',n:period('play.tellyes'),d:period('play.told'),of:'told'},
+      {key:'remindask',label:'opened the reminder card',n:period('play.remindask'),d:period('play.played'),of:'new players'},
+      {key:'remind',label:'turned on the reminder',n:period('play.remind'),d:period('play.played'),of:'new players'},
+      {key:'confirm',label:'confirmed it from the first email',n:period('play.confirm'),d:period('play.mailfirst'),of:'first emails'},
+      {key:'mailplay',label:'played from a morning email',n:period('play.mailplay'),d:period('play.mailed'),of:'emails sent'},
+      {key:'mailstop',label:'stopped the email',n:period('play.mailstop'),d:period('play.mailed'),of:'emails sent'},
       {key:'homeask',label:'were offered the home screen',n:period('play.homeask'),d:period('play.firstday'),of:'first finished sets'},
       {key:'homeyes',label:'pressed add to home screen',n:period('play.homeyes'),d:period('play.homeask'),of:'offers'},
       {key:'homeplay',label:'played from the home screen',n:period('play.homeplay'),d:period('play.active'),of:'player days'},
@@ -483,11 +491,12 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
     // the once-a-device counts need no board-by-board history, so they read every full day shown, as the page's own blocks do
     const wide=tag=>m.rows.reduce((n,r)=>n+(r.day>=m.start&&r.day<m.today&&r.tag===tag?r.n:0),0),shown=m.start+' to '+shiftDay(m.today,-1);
     const firstday=wide('play.firstday'),remind=wide('play.remind'),account=wide('play.account'),played=wide('play.played');
-    if(firstday>=20&&remind<=firstday&&remind/firstday<.15)insights.push({kind:'reach',signal:'reminder milestone counts',title:'a way back',summary:`${say(remind)} / ${say(firstday)} turned on the reminder · ${percent(remind,firstday)}`,
-      findings:[{figure:percent(remind,firstday),reading:'of first finished days turned on the daily reminder',sample:`${say(remind)} of ${say(firstday)}`,share:remind/firstday,color:'touch'}],
-      evidence:`Daily reminders turned on: ${say(remind)}, against ${say(firstday)} first finished sets (${percent(remind,firstday)}), ${shown}. Devices signed in: ${say(account)}. The reminder is an email and needs an account. These are milestone counts, not the same players followed.`,
-      action:'Test offering the reminder at the end of a first finished day with one tap and an email field, before any account. Keep sign-in for keeping stamps.',
-      measure:'Reminders turned on / first finished sets, then day-1 and day-7 retention. Watch finished sets so the ask does not get in the way.'});
+    const asked=wide('play.remindask'),told=wide('play.told');
+    if(played>=20&&remind<=played&&remind/played<.05)insights.push({kind:'reach',signal:'reminder milestone counts',title:'a way back',summary:`${say(remind)} / ${say(played)} turned on the reminder · ${percent(remind,played)}`,
+      findings:[{figure:percent(remind,played),reading:'of new players turned on the daily reminder',sample:`${say(remind)} of ${say(played)}`,share:remind/played,color:'touch'}],
+      evidence:`Daily reminders turned on: ${say(remind)}, against ${say(played)} new players (${percent(remind,played)}), ${shown}. Told between two boards that new boards come every day: ${say(told)}. Reminder cards opened: ${say(asked)}. Devices signed in: ${say(account)}. The reminder is an email that asks only for an address, offered between two boards and on a finished day's card. These are milestone counts, not the same players followed.`,
+      action:'Test one change to the ask at a time: its words, or the board it follows. Keep sign-in for keeping stamps.',
+      measure:'Reminders turned on / new players, with cards opened and first emails confirmed beside them, then day-1 and day-7 retention. Watch finished sets so the ask does not get in the way.'});
     const groups=CHANNELS.map(([key,name])=>{const of=moment=>m.rows.reduce((n,r)=>{const cut=r.tag.indexOf('.');return n+(cut>0&&r.day>=m.start&&r.day<m.today&&r.tag.slice(cut+1)===moment&&!['play','cohort'].includes(r.tag.slice(0,cut))&&channelOf(r.tag.slice(0,cut))===key?r.n:0)},0);return {name,n:of('new'),played:of('played')}})
       .filter(g=>g.n>=20&&g.played<=g.n).sort((a,b)=>b.played/b.n-a.played/a.n);
     if(groups.length>=2){const best=groups[0],low=groups.at(-1);if(best.played/best.n-low.played/low.n>=.2)insights.push({kind:'acquisition',signal:'arrival-count comparison',title:'who plays',summary:`${best.name} ${percent(best.played,best.n)} · ${low.name} ${percent(low.played,low.n)}`,
