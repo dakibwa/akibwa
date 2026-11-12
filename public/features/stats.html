@@ -183,6 +183,8 @@ details{font-size:13px}
 .more[open]>summary::after{content:"−"}
 .more{border-top:1px solid var(--rule)}
 #back .more{margin-top:14px}
+#back .more+.more{margin-top:0}
+.named tbody th{white-space:normal}
 .about p{max-width:760px;color:var(--ink-soft);margin:8px 0 16px;line-height:1.6}
 .box{max-width:100%;overflow:auto;scrollbar-width:thin}
 table{width:100%;border-collapse:collapse;font-size:13px}
@@ -283,6 +285,14 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
             <div class="box"><table><caption>devices by the day they were first counted playing</caption><thead><tr><th scope="col">first day</th><th scope="col">devices</th><th scope="col">day 1</th><th scope="col">day 7</th><th scope="col">day 30</th></tr></thead><tbody id="cohorts"></tbody></table></div>
             <p class="under" id="cohort-empty"></p>
           </details>
+          <details class="more"><summary>by where they came from</summary>
+            <div class="box"><table class="named"><caption>new players by the link they first came by, from 12 nov</caption><thead><tr><th scope="col">place</th><th scope="col">devices</th><th scope="col">day 1</th><th scope="col">day 7</th><th scope="col">day 30</th></tr></thead><tbody id="cohort-places"></tbody></table></div>
+            <p class="under" id="cohort-places-empty"></p>
+          </details>
+          <details class="more"><summary>by how far the first day went</summary>
+            <div class="box"><table><caption>new players by how many of their first day's boards they ended, from 13 nov</caption><thead><tr><th scope="col">boards ended</th><th scope="col">devices</th><th scope="col">day 1</th><th scope="col">day 7</th><th scope="col">day 30</th></tr></thead><tbody id="cohort-depths"></tbody></table></div>
+            <p class="under" id="cohort-depths-empty"></p>
+          </details>
         </section>
 
         <section id="boards" aria-labelledby="boards-heading">
@@ -315,7 +325,7 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
         <p>devices, not people · a move counts as playing, in learn too. counts miss offline play and blocked requests; another browser or cleared storage counts again; privacy signals stop the counting. days are utc</p>
         <p>yesterday and each day: arrived is a device's first visit; played is a device's first move of its day, counted from 2 nov; finished all eight counts sets, a replay too, from 3 nov; came back is a day's players less those making their first move ever, so those who had played before, from 3 nov. the average uses full days only</p>
         <p>the first day and where players come from compare once-a-device counts in the days shown: a first visit, a first move, a first finished set and opening the game again the day after the first visit. they are not the same devices followed step by step. a place is the counted link a device arrived by, or the site that sent it</p>
-        <p>coming back groups devices by the day they were first counted playing, from 9 nov in updated browsers, existing players among them on that day. day 1, 7 and 30 mean playing exactly that many days later; a rate appears once that day is over. days running are counted the same way</p>
+        <p>coming back groups devices by the day they were first counted playing, from 9 nov in updated browsers, existing players among them on that day. day 1, 7 and 30 mean playing exactly that many days later; a rate appears once that day is over. days running are counted the same way. by where they came from and by how far the first day went count only devices with no play known before, from 12 and 13 nov: the link a device first came by, and how many of its first day's boards it ended, cleared or out of turns</p>
         <p>through the boards counts a device's first move on each of today's boards and the boards that ran out of turns, from 4 nov. keeping in touch divides each count by the count beside it, in the days shown</p>
         <p>worth a look needs full days and at least 20 in a count before it says anything, and offers a test, never a cause. no player identifiers · the last eight weeks · read again every minute</p>
       </details>
@@ -346,10 +356,12 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
   const activityTags = ['activefirst','activereturn','activenext','activeweek'];
   /* the kind of place a tag is, so nine ads read as one line and forty lists as another. a tag
      that worker/links.js adds lands with the lists unless it is named here: keep the two in step */
-  const SOCIAL = ['instagram','facebook','tiktok','threads','bluesky','x','youtube','linkedin','reddit','rpuzzles','puzzlevideogames','playmygame','lemmy','whatsapp'];
-  const PRESS = ['producthunt','hn','press','mathcarnival','aperiodical','boingboing','roomescape','warpdoor','thinky'];
+  const SOCIAL = ['instagram','facebook','tiktok','threads','bluesky','x','youtube','linkedin','reddit','rpuzzles','puzzlevideogames','playmygame','lemmy','whatsapp','creators'];
+  const PRESS = ['producthunt','hn','press','mathcarnival','aperiodical','boingboing','roomescape','warpdoor','thinky','studio'];
   const CHANNELS = [['lists','daily-game lists'],['ads','paid ads'],['direct','direct and search'],['social','social'],['press','press and launches'],['share','shared days']];
-  const channelOf = tag => tag==='share' ? 'share' : tag==='ads'||tag.startsWith('meta') ? 'ads' : tag==='direct'||tag==='search'||tag==='web' ? 'direct'
+  // bought places: each Meta ad, the Reddit and Google ad trials, and a list's paid top spot
+  const PAID = ['ads','redditads','googleads','listdlespot'];
+  const channelOf = tag => tag==='share' ? 'share' : PAID.includes(tag)||tag.startsWith('meta') ? 'ads' : tag==='direct'||tag==='search'||tag==='web' ? 'direct'
     : SOCIAL.includes(tag) ? 'social' : PRESS.includes(tag) ? 'press' : 'lists';
   // a place's own four counts, each told once a device: its first visit, first move, first finished set and its return the day after
   const STAGES = ['new','played','firstday','back'];
@@ -394,6 +406,22 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
       const eligible=cohorts.filter(c=>c.returns[i]!==null);
       return {offset,n:eligible.reduce((a,c)=>a+c.n,0),back:eligible.reduce((a,c)=>a+c.returns[i],0),from:since?shiftDay(since,offset+1):null};
     });
+    /* the same returns by the link a device first came by and by how far its first day went, for
+       devices with no play known before (worker/links.js, from 12 nov). each line is its first days
+       in the days shown and, of those whose return day is over, how many played on it. a depth's
+       devices are those that reached it less those that reached the next, and those that began
+       (activefirst) less those that ended a board ended none: whole days only, from 13 nov */
+    const cell = new Map(rows.map(r=>[r.day+' '+r.tag,r.n])), at = (tag,day) => cell.get(day+' '+tag)||0;
+    const shown = Array.from({length:range},(_,i)=>shiftDay(start,i)).filter(d=>d>=retained&&d<=today);
+    const split = (days,startedOf,backOf) => ({n:days.reduce((a,d)=>a+startedOf(d),0),returns:[1,7,30].map(offset=>{
+      const due=days.filter(d=>shiftDay(d,offset)<today);
+      return due.length?{of:due.reduce((a,d)=>a+startedOf(d),0),back:due.reduce((a,d)=>a+backOf(d,offset),0)}:null;
+    })});
+    const cohortPlaces = [...new Set(rows.filter(r=>r.day>=start&&r.n>0&&/^cohort\.[a-z0-9]+\.started$/.test(r.tag)).map(r=>r.tag.split('.')[1]))]
+      .map(tag=>({tag,...split(shown,d=>at('cohort.'+tag+'.started',d),(d,o)=>at('cohort.'+tag+'.d'+o,d))})).sort((a,b)=>b.n-a.n||a.tag.localeCompare(b.tag));
+    const depthDays = shown.filter(d=>d>='2026-11-13'&&d<today), reached = (d,k) => k<1?at('play.activefirst',d):k>8?0:at('play.depth'+k,d);
+    const cohortDepths = [['none',0,0],['1 to 3',1,3],['4 to 7',4,7],['all eight',8,8]].map(([name,from,to])=>({name,
+      ...split(depthDays,d=>Math.max(0,reached(d,from)-reached(d,to+1)),(d,o)=>Array.from({length:to-from+1},(_,i)=>at('cohort.depth'+(from+i)+'.d'+o,d)).reduce((a,b)=>a+b,0))}));
     // a new device's way in the days shown: milestone counts side by side, not the same devices followed
     const journey = {arrived:period('play.new'),played:period('play.played'),finished:period('play.firstday'),back:period('play.back')};
     const boards = Array.from({length:8},(_,i)=>({board:i+1,moves:period('play.move'+(i+1)),ended:period('play.board'+(i+1)),fails:period('play.fail'+(i+1))}));
@@ -419,7 +447,7 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
       {key:'offer',label:'saw the unlock offer',n:period('play.offer'),d:period('play.played'),of:'new players'},
       {key:'unlocked',label:'unlocked',n:period('play.unlocked'),d:period('play.offer'),of:'offers'},
     ];
-    return {today,start,since,rows,sum,period,daily,days,cohorts,mean,complete:complete.length,retention,journey,boards,channels,hooks};
+    return {today,start,since,rows,sum,period,daily,days,cohorts,cohortPlaces,cohortDepths,mean,complete:complete.length,retention,journey,boards,channels,hooks};
   }
   /* what is worth a look, most telling first: each names its evidence, one test and what to
      watch. full days only, and never from fewer than 20 in the count it divides by */
@@ -726,11 +754,13 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
     }
   }
 
+  // a place as the page says it: its own words for the ones no link names well, else the link's name (worker/links.js)
+  const OWN={direct:'no site: typed, an app or a message',search:'search engines',web:'other sites',press:'writers and newsletters',ads:'paid ads',share:'shared days'};
+  const placeName=tag=>String(OWN[tag]||go.links?.[tag]||tag).toLowerCase();
   function drawPlaces() {
     const box=$('place-list'),open=new Set([...box.querySelectorAll('details[open]')].map(d=>d.dataset.key));box.replaceChildren();
     const channels=model.channels,all=channels.reduce((n,c)=>n+c.played,0);
     $('places-lede').textContent=channels.length&&all>0?`most players come from ${channels[0].name}: ${fmt(channels[0].played)} of ${fmt(all)}`:'new devices by the place that sent them';
-    const own={direct:'no site: typed, an app or a message',search:'search engines',web:'other sites',press:'writers and newsletters',ads:'paid ads',share:'shared days'};
     // a place's own first day in four bars, each as a share of those it sent: how well its arrivals stick, whatever their number
     const stair=p=>{const s=el('span',{class:p.new<20?'stair few':'stair','aria-hidden':'true'}),whole=Math.max(1,p.new,p.played);for(const [key,c] of [['new','arrived'],['played','played'],['firstday','finished'],['back','back']]){const i=tint(el('i'),c);i.style.width=100*p[key]/whole+'%';if(p[key]>0)i.style.minWidth='3px';s.append(i)}return s};
     const figure=p=>{const f=el('span',{class:'figure'});f.append(el('small',{},p.new>0&&p.played<=p.new?`${pct(p.played,p.new)} of ${fmt(p.new)} played`:`${fmt(p.new)} arrived`),el('b',{},fmt(p.played)));return f};
@@ -740,7 +770,7 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
       s.append(el('span',{},c.name),stair(c),figure(c),el('span',{class:'toggle','aria-hidden':'true'},'+'),el('span',{class:'sr-only'},said(c)));
       d.append(s);d.open=open.has(c.key);
       const list=el('div',{class:'sources'});
-      for(const p of c.sources){const row=el('div',{class:'source'});row.append(el('span',{class:'name'},String(own[p.tag]||go.links?.[p.tag]||p.tag).toLowerCase()),stair(p),figure(p),el('span'),el('span',{class:'sr-only'},said(p)));list.append(row)}
+      for(const p of c.sources){const row=el('div',{class:'source'});row.append(el('span',{class:'name'},placeName(p.tag)),stair(p),figure(p),el('span'),el('span',{class:'sr-only'},said(p)));list.append(row)}
       d.append(list);box.append(d);
     }
     if(!channels.length)box.append(el('div',{class:'empty'},'no arrivals from a known place in these days'));
@@ -787,6 +817,15 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
       c.returns.forEach(n=>{const td=el('td',{},n===null?'—':pct(n,c.n));if(n!==null)td.append(el('small',{},`${fmt(n)} of ${fmt(c.n)}`));tr.append(td)});box.append(tr);
     });
     $('cohort-empty').textContent=model.cohorts.length?'— not measured yet':'collecting history';
+    const line=(name,c)=>{
+      const tr=el('tr');tr.append(el('th',{scope:'row'},name),el('td',{},fmt(c.n)));
+      c.returns.forEach(r=>{const td=el('td',{},r===null||!r.of?'—':pct(r.back,r.of));if(r&&r.of)td.append(el('small',{},`${fmt(r.back)} of ${fmt(r.of)}`));tr.append(td)});return tr;
+    };
+    const places=$('cohort-places'),depths=$('cohort-depths'),some=model.cohortDepths.some(c=>c.n>0);
+    places.replaceChildren(...model.cohortPlaces.map(c=>line(placeName(c.tag),c)));
+    $('cohort-places-empty').textContent=model.cohortPlaces.length?'— not measured yet':'collecting history';
+    depths.replaceChildren(...(some?model.cohortDepths.map(c=>line(c.name,c)):[]));
+    $('cohort-depths-empty').textContent=some?'— not measured yet':'collecting history';
   }
 
   async function read() {
