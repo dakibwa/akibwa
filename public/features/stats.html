@@ -26,9 +26,9 @@
 /* The game's frame, type and colour tokens: design/system/project is the source
    of this page's visual language. One colour for each step of a player's way,
    the wordmark's four (arrived, played, finished, came back) and the other two
-   threads (kept in touch, ran out of turns); a colour never means anything else here. */
+   threads (kept in touch, six turns past perfect); a colour never means anything else here. */
 :root{--paper:#EAE7DF;--surface:#FBFAF6;--surface-2:#F2EFE8;--ink:#15191C;--ink-soft:#5B656B;--rule:#D5D1C7;--silver:#6E7880;--track:#E8E4DB;
-  --arrived:#EFC319;--played:#22A3DD;--finished:#DD700C;--back:#279B57;--touch:#7A68B6;--out:#DA327B;
+  --arrived:#EFC319;--played:#22A3DD;--finished:#DD700C;--back:#279B57;--touch:#7A68B6;--past:#DA327B;
   --played-line:#119BD5;--plate-ink:#15191C;--back-ink:#15191C;
   --shadow-panel:0 1px 2px rgba(28,32,36,.10),0 16px 44px rgba(28,32,36,.14);
   --shadow-float:0 12px 34px rgba(28,32,36,.18);--ease-press:cubic-bezier(.22,1.15,.36,1);--t-press:70ms;--t-lift:210ms;
@@ -38,9 +38,9 @@
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#0E1214;--surface:#161B1F;--surface-2:#12171A;--ink:#F2F0EA;--ink-soft:#9AA6AC;--rule:#272F35;--silver:#5A676E;--track:#20282D;--played-line:var(--played);--shadow-panel:0 1px 2px rgba(0,0,0,.4),0 18px 50px rgba(0,0,0,.45);--shadow-float:0 14px 38px rgba(0,0,0,.55);color-scheme:dark}}
 :root[data-theme="dark"]{--paper:#0E1214;--surface:#161B1F;--surface-2:#12171A;--ink:#F2F0EA;--ink-soft:#9AA6AC;--rule:#272F35;--silver:#5A676E;--track:#20282D;--played-line:var(--played);--shadow-panel:0 1px 2px rgba(0,0,0,.4),0 18px 50px rgba(0,0,0,.45);--shadow-float:0 14px 38px rgba(0,0,0,.55);color-scheme:dark}
 /* the game's colour-blind palette (settings), read from the saved choice and never changed here */
-:root[data-colour-blind="true"]{--arrived:#DBB101;--played:#2E94BE;--played-line:#2E94BE;--finished:#D16027;--back:#014F9B;--touch:#177C5A;--out:#9F4975;--back-ink:#FFFFFF}
-:root[data-theme="dark"][data-colour-blind="true"]{--arrived:#F0E442;--played:#56B4E9;--played-line:#56B4E9;--finished:#E69F00;--back:#0072B2;--touch:#009E73;--out:#CC79A7}
-@media(prefers-color-scheme:dark){:root[data-colour-blind="true"]:not([data-theme="light"]){--arrived:#F0E442;--played:#56B4E9;--played-line:#56B4E9;--finished:#E69F00;--back:#0072B2;--touch:#009E73;--out:#CC79A7}}
+:root[data-colour-blind="true"]{--arrived:#DBB101;--played:#2E94BE;--played-line:#2E94BE;--finished:#D16027;--back:#014F9B;--touch:#177C5A;--past:#9F4975;--back-ink:#FFFFFF}
+:root[data-theme="dark"][data-colour-blind="true"]{--arrived:#F0E442;--played:#56B4E9;--played-line:#56B4E9;--finished:#E69F00;--back:#0072B2;--touch:#009E73;--past:#CC79A7}
+@media(prefers-color-scheme:dark){:root[data-colour-blind="true"]:not([data-theme="light"]){--arrived:#F0E442;--played:#56B4E9;--played-line:#56B4E9;--finished:#E69F00;--back:#0072B2;--touch:#009E73;--past:#CC79A7}}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{background:var(--paper);color:var(--ink);-webkit-text-size-adjust:100%;text-size-adjust:100%}
@@ -224,7 +224,7 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
 @media(max-width:370px){body{padding:8px;--pad:16px}.word{font-size:24px}.ranges button{min-width:32px;padding:0 5px}.plate .n{font-size:48px}.actions svg{display:none}.finding b{font-size:40px}}
 @media(max-height:500px){body{padding:7px}.head{padding-block:6px 8px}.foot{padding-block:0}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
-@media(forced-colors:active){.card,.tip{border-color:CanvasText}.wordrule i,.key,.bar i,.meter i,.stair i,.split i{background:CanvasText!important;forced-color-adjust:none}.key.ring{background:none!important;border-color:CanvasText}.plate{border:1px solid CanvasText;forced-color-adjust:auto}.bar,.meter{outline:1px solid CanvasText}.chart svg{--arrived:CanvasText;--played-line:CanvasText;--finished:CanvasText;--back:CanvasText;--out:CanvasText;--ink-soft:GrayText;--rule:GrayText;--surface:Canvas}}
+@media(forced-colors:active){.card,.tip{border-color:CanvasText}.wordrule i,.key,.bar i,.meter i,.stair i,.split i{background:CanvasText!important;forced-color-adjust:none}.key.ring{background:none!important;border-color:CanvasText}.plate{border:1px solid CanvasText;forced-color-adjust:auto}.bar,.meter{outline:1px solid CanvasText}.chart svg{--arrived:CanvasText;--played-line:CanvasText;--finished:CanvasText;--back:CanvasText;--past:CanvasText;--ink-soft:GrayText;--rule:GrayText;--surface:Canvas}}
 </style>
 </head>
 <body>
@@ -301,9 +301,9 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
         <section id="boards" aria-labelledby="boards-heading">
           <h2 id="boards-heading">through the boards</h2><p class="lede" id="boards-lede"></p>
           <div class="chart" id="board-chart"></div>
-          <ul class="legend" style="margin-top:12px"><li><span class="key ring" style="--c:var(--finished)"></span>started the board</li><li><span class="key" style="--c:var(--out)"></span>ran out of turns</li></ul>
+          <ul class="legend" style="margin-top:12px"><li><span class="key ring" style="--c:var(--finished)"></span>started the board</li><li><span class="key" style="--c:var(--past)"></span>six turns past perfect</li></ul>
           <details class="more"><summary>after a board</summary>
-            <div class="box"><table><caption>boards 1 to 7 by how they ended, and how many players then started the next board, from 13 nov</caption><thead><tr><th scope="col">the board</th><th scope="col">boards</th><th scope="col">started the next</th></tr></thead><tbody id="after-board"></tbody></table></div>
+            <div class="box"><table class="named"><caption>today's boards and what followed each, on full days from 13 nov</caption><thead><tr><th scope="col">the board</th><th scope="col">boards</th><th scope="col">what followed</th></tr></thead><tbody id="after-board"></tbody></table></div>
             <p class="under" id="after-board-empty"></p>
           </details>
         </section>
@@ -332,8 +332,8 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
         <p>devices, not people · a move counts as playing, in learn too. counts miss offline play and blocked requests; another browser or cleared storage counts again; privacy signals stop the counting. days are utc</p>
         <p>yesterday and each day: arrived is a device's first visit; played is a device's first move of its day, counted from 2 nov; finished all eight counts sets, a replay too, from 3 nov; came back is a day's players less those making their first move ever, so those who had played before, from 3 nov. the average uses full days only</p>
         <p>the first day and where players come from compare once-a-device counts in the days shown: a first visit, a first move, a first finished set and opening the game again the day after the first visit. they are not the same devices followed step by step. a place is the counted link a device arrived by, or the site that sent it</p>
-        <p>coming back groups devices by the day they were first counted playing, from 9 nov in updated browsers, existing players among them on that day. day 1, 7 and 30 mean playing exactly that many days later; a rate appears once that day is over. days running are counted the same way. by where they came from and by how far the first day went count only devices with no play known before, from 12 and 13 nov: the link a device first came by, and how many of its first day's boards it ended, cleared or out of turns</p>
-        <p>through the boards counts a device's first move on each of today's boards and the boards that ran out of turns, from 4 nov. after a board sets the boards that ran out of turns, and those cleared, beside the first moves on the next board that followed each, on full days from 13 nov. keeping in touch divides each count by the count beside it, in the days shown</p>
+        <p>coming back groups devices by the day they were first counted playing, from 9 nov in updated browsers, existing players among them on that day. day 1, 7 and 30 mean playing exactly that many days later; a rate appears once that day is over. days running are counted the same way. by where they came from and by how far the first day went count only devices with no play known before, from 12 and 13 nov: the link a device first came by, and how many of its first day's boards it ended</p>
+        <p>through the boards counts a device's first move on each of today's boards, from 4 nov, and the boards taken six turns past perfect while still tangled: a board failed there until 12 nov, and since then a board has no limit on its turns. after a board reads full days from 13 nov: of the boards started, those cleared; of those cleared before the day's last, those whose player started the next; and of the boards taken six turns past perfect, those cleared. keeping in touch divides each count by the count beside it, in the days shown</p>
         <p>worth a look needs full days and at least 20 in a count before it says anything, and offers a test, never a cause. no player identifiers · the last eight weeks · read again every minute</p>
       </details>
     </div>
@@ -359,6 +359,10 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
 
   /*@stats-model*/
   const shiftDay = (day,n) => new Date(Date.parse(day+'T00:00:00Z')+n*864e5).toISOString().slice(0,10);
+  /* how many boards a day's set has: the one place this page is told (the game's own answer is
+     dailyNetsFor in index.html). the board columns run to the longest day shown, and what
+     followed a board reads each day by its own length */
+  const boardsOn = day => 8;
   const validDay = d => typeof d==='string' && /^\d{4}-\d{2}-\d{2}$/.test(d) && Number.isFinite(Date.parse(d)) && new Date(d).toISOString().slice(0,10)===d;
   const activityTags = ['activefirst','activereturn','activenext','activeweek'];
   /* the kind of place a tag is, so nine ads read as one line and forty lists as another. a tag
@@ -433,17 +437,26 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
       ...split(depthDays,d=>Math.max(0,reached(d,from)-reached(d,to+1)),(d,o)=>Array.from({length:to-from+1},(_,i)=>at('cohort.depth'+(from+i)+'.d'+o,d)).reduce((a,b)=>a+b,0))}));
     // a new device's way in the days shown: milestone counts side by side, not the same devices followed
     const journey = {arrived:period('play.new'),played:period('play.played'),finished:period('play.firstday'),back:period('play.back')};
-    const boards = Array.from({length:8},(_,i)=>({board:i+1,moves:period('play.move'+(i+1)),ended:period('play.board'+(i+1)),fails:period('play.fail'+(i+1))}));
-    /* after a board: a first move from the second board on says how the board before it ended
-       (worker/links.js, AFTER A BOARD), so the boards run out of turns and the boards cleared each
-       read beside how many of their players started the next. boards 1 to 7 together, since one
-       board's fails in a day are few; whole days only, from 13 nov. `named` is the first moves that
-       said it, of all first moves on boards 2 to 8: short of all, the shares read low by that much */
+    /* each board's first moves, and the times it was taken six turns past perfect while still
+       tangled. until 12 nov 2026 a board failed at that moment (fail<n>); since then a board has
+       no limit on its turns and the moment is only counted (past<n>). one moment, counted once a
+       device a day either way, so the two add (worker/links.js, NO BOARD FAILS) */
+    const boards = Array.from({length:Math.max(boardsOn(today),...shown.map(boardsOn))},(_,i)=>({board:i+1,moves:period('play.move'+(i+1)),
+      past:period('play.fail'+(i+1))+period('play.past'+(i+1))}));
+    /* after a board, on whole days from 13 nov, the first on which no board could fail: of the
+       boards started, those cleared; of the boards cleared before the day's last, those whose
+       player started the next (a first move from the second board on names the board before it,
+       and the count is kept at that earlier board's place: clearon, worker/links.js, AFTER A
+       BOARD); and of the boards taken six turns past perfect, those cleared. a day's boards
+       together, since one board's count in a day is small. `named` is the first moves that named
+       the board before, of all first moves after a day's first board: short of all, the second
+       line reads low by that much */
     const afterDays = shown.filter(d=>d>='2026-11-13'&&d<today);
-    const over = (tag,from) => afterDays.reduce((a,d)=>a+Array.from({length:7},(_,i)=>at('play.'+tag+(from+i),d)).reduce((x,y)=>x+y,0),0);
-    const afterFails = over('fail',1), afterOn = {fail:over('failon',1),clear:over('clearon',1)};
-    const afterBoard = {days:afterDays.length,named:afterOn.fail+afterOn.clear,moves:over('move',2),
-      lines:[{name:'ran out of turns',n:afterFails,next:afterOn.fail},{name:'cleared',n:Math.max(0,over('board',1)-afterFails),next:afterOn.clear}]};
+    const over = (tag,from,short=0) => afterDays.reduce((a,d)=>{for(let k=from;k<=boardsOn(d)-short;k++)a+=at('play.'+tag+k,d);return a},0);
+    const afterBoard = {days:afterDays.length,named:over('clearon',1,1),moves:over('move',2),lines:[
+      {name:'started',n:over('move',1),then:'cleared',next:over('board',1)},
+      {name:'cleared, not the last',n:over('board',1,1),then:'started the next',next:over('clearon',1,1)},
+      {name:'six turns past perfect',n:over('past',1),then:'cleared',next:over('pastclear',1)}]};
     const places = new Map();
     for (const r of rows) {
       if (r.day<start) continue;
@@ -514,20 +527,24 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
       evidence:`${say(firstday)} first finished sets against ${say(played)} first moves (${percent(firstday,played)}), ${shown}. The day card, with its share and its reminder, only comes after the eighth board.`,
       action:'Test an earlier finish line for a first day: show the day card after fewer boards, with the rest still open to play.',
       measure:'First finished sets / first moves, shares and reminders beside them, and day-1 retention.'});
-    const boards=Array.from({length:8},(_,i)=>({board:i+1,moves:sum('play.move'+(i+1)),ended:sum('play.board'+(i+1)),fails:sum('play.fail'+(i+1))}));
-    const failure=boards.filter(b=>b.ended>=20&&b.fails<=b.ended&&b.fails/b.ended>=.25).sort((a,b)=>b.fails/b.ended-a.fails/a.ended)[0];
-    if(failure)insights.push({kind:'difficulty',signal:'observed board outcomes',title:`board ${failure.board} · turn limit`,summary:`${say(failure.fails)} / ${say(failure.ended)} ran out of turns · ${percent(failure.fails,failure.ended)}`,
-      findings:[{figure:percent(failure.fails,failure.ended),reading:`of board ${failure.board}'s endings ran out of turns`,sample:`${say(failure.fails)} of ${say(failure.ended)}`,share:failure.fails/failure.ended,color:'out'}],
-      evidence:`${say(failure.fails)} of ${say(failure.ended)} board-${failure.board} endings ran out of turns (${percent(failure.fails,failure.ended)}), ${period}. This combines different daily boards at the same position.`,
-      action:'Replay the daily boards at this position and inspect the first confusing move. Test a clearer opening or one turn-budget change on comparable future boards.',
-      measure:'Failure share at this board, players reaching the next board, and day-1 retention. A lower failure count alone is not the goal.'});
-    const exits=boards.slice(0,7).map((b,i)=>({...b,next:boards[i+1].moves})).filter(b=>b.moves>=20&&b.next<=b.moves&&b.moves-b.next>=5&&b.next/b.moves<.75).sort((a,b)=>(b.moves-b.next)/b.moves-(a.moves-a.next)/a.moves);
+    /* a board many of its starters take six turns past perfect. read against its first moves: an
+       ending is always a clear now, so endings no longer hold the boards that went wrong. `late`
+       and `cleared` are those since no board fails, and how many of them were cleared anyway */
+    const boards=m.boards.map((_,i)=>({board:i+1,moves:sum('play.move'+(i+1)),late:sum('play.past'+(i+1)),cleared:sum('play.pastclear'+(i+1)),
+      past:sum('play.fail'+(i+1))+sum('play.past'+(i+1))}));
+    const hard=boards.filter(b=>b.moves>=20&&b.past<=b.moves&&b.past/b.moves>=.25).sort((a,b)=>b.past/b.moves-a.past/a.moves)[0];
+    if(hard)insights.push({kind:'difficulty',signal:'observed board outcomes',title:`board ${hard.board} · six turns past perfect`,summary:`${say(hard.past)} / ${say(hard.moves)} went six turns past perfect · ${percent(hard.past,hard.moves)}`,
+      findings:[{figure:percent(hard.past,hard.moves),reading:`of board ${hard.board}'s starts went six turns past perfect`,sample:`${say(hard.past)} of ${say(hard.moves)}`,share:hard.past/hard.moves,color:'past'}],
+      evidence:`${say(hard.past)} of ${say(hard.moves)} board-${hard.board} starts went six turns past perfect, still tangled (${percent(hard.past,hard.moves)}), ${period}. A board failed there until 12 Nov; since then a board has no limit on its turns${hard.late>=10&&hard.cleared<=hard.late?`, and ${say(hard.cleared)} of the ${say(hard.late)} since were cleared`:''}. This combines different daily boards at the same position.`,
+      action:'Replay the daily boards at this position and inspect the first confusing move. Test a clearer opening on comparable future boards.',
+      measure:'Share of starts going six turns past perfect at this board, how many of those are cleared, players reaching the next board, and day-1 retention. A lower share alone is not the goal.'});
+    const exits=boards.slice(0,-1).map((b,i)=>({...b,next:boards[i+1].moves})).filter(b=>b.moves>=20&&b.next<=b.moves&&b.moves-b.next>=5&&b.next/b.moves<.75).sort((a,b)=>(b.moves-b.next)/b.moves-(a.moves-a.next)/a.moves);
     const exit=exits[0];
-    if(exit&&(!failure||failure.board!==exit.board))insights.push({kind:'progression',signal:'observed progression gap',title:`board ${exit.board} → ${exit.board+1}`,summary:`${say(exit.moves)} → ${say(exit.next)} first moves · ${percent(exit.next,exit.moves)} continue`,
+    if(exit&&(!hard||hard.board!==exit.board))insights.push({kind:'progression',signal:'observed progression gap',title:`board ${exit.board} → ${exit.board+1}`,summary:`${say(exit.moves)} → ${say(exit.next)} first moves · ${percent(exit.next,exit.moves)} continue`,
       findings:[{figure:percent(exit.next,exit.moves),reading:`of those who start board ${exit.board} start board ${exit.board+1}`,sample:`${say(exit.next)} of ${say(exit.moves)}`,share:exit.next/exit.moves,color:'finished'}],
       evidence:`${say(exit.moves)} first moves on board ${exit.board}, but ${say(exit.next)} on board ${exit.board+1} (${percent(exit.next,exit.moves)} of the count), ${period}. Aggregate counts do not identify who left or why.`,
       action:'Inspect both the board and its result-to-next-board transition. Test one clearer next action or a smoother difficulty step.',
-      measure:'Next-board first moves / current-board first moves, alongside failure share and finished sets. Compare complete days with similar traffic.'});
+      measure:'Next-board first moves / current-board first moves, alongside the share going six turns past perfect and finished sets. Compare complete days with similar traffic.'});
     const offer=sum('play.offer'),pay=sum('play.pay');
     if(offer>=20&&pay<=offer&&pay/offer<.15)insights.push({kind:'unlock',signal:'offer milestone counts',title:'the unlock offer',summary:`${say(pay)} / ${say(offer)} pressed unlock · ${percent(pay,offer)}`,
       findings:[{figure:percent(pay,offer),reading:'of those shown the unlock offer pressed unlock',sample:`${say(pay)} of ${say(offer)}`,share:pay/offer,color:'touch'}],
@@ -733,54 +750,54 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
     for(const p of points){const cell=el('span',p.share==null?{class:'wait'}:{},p.name);cell.append(el('span',{},p.note));axis.append(cell)}
   }
 
-  /* through the boards: how many start each of the day's eight, a thread through eight neurons
-     as the head draws the day, and under it the boards that ran out of turns */
+  /* through the boards: how many start each of the day's boards, a thread through their neurons
+     as the head draws the day, and under it the boards taken six turns past perfect */
   function drawBoards() {
     const box=$('board-chart'),focused=box.contains(document.activeElement)?document.activeElement.getAttribute('data-board'):null;box.replaceChildren();
-    const b=model.boards,most=Math.max(...b.map(o=>o.moves));
-    $('boards-lede').textContent=b[0].moves>0?`${pct(b[7].moves,b[0].moves)} of those who start board 1 start board 8`:'a first move on each of the day\'s boards, from 4 nov';
+    const b=model.boards,last=b.length-1,most=Math.max(...b.map(o=>o.moves));
+    $('boards-lede').textContent=b[0].moves>0?`${pct(b[last].moves,b[0].moves)} of those who start board 1 start board ${b[last].board}`:'a first move on each of the day\'s boards, from 4 nov';
     if(!most){box.append(el('div',{class:'empty'},'collecting history'));return}
-    const starts=Math.max(1,...b.map(o=>o.moves)),outs=Math.max(1,...b.map(o=>o.fails));
+    const starts=Math.max(1,...b.map(o=>o.moves)),longs=Math.max(1,...b.map(o=>o.past));
     const W=Math.max(240,box.clientWidth||400),left=12,right=12,top=40,plotH=150,yb=top+plotH,gap=30,stripH=40,sb=yb+gap+stripH,H=sb+26;
-    const band=(W-left-right)/8,x=i=>left+band*(i+.5),y=n=>yb-n/starts*plotH,cw=Math.min(22,band*.44);
-    const svg=svgEl('svg',{viewBox:`0 0 ${W} ${H}`,width:W,height:H,role:'group','aria-label':'first moves and boards run out of turns, board by board'});box.append(svg);
+    const band=(W-left-right)/b.length,x=i=>left+band*(i+.5),y=n=>yb-n/starts*plotH,cw=Math.min(22,band*.44);
+    const svg=svgEl('svg',{viewBox:`0 0 ${W} ${H}`,width:W,height:H,role:'group','aria-label':'first moves, and boards taken six turns past perfect, board by board'});box.append(svg);
     for(const at of [top,top+plotH/2,yb,sb])svg.append(svgEl('line',{x1:left,x2:W-right,y1:at,y2:at,stroke:'var(--rule)'}));
     const words=(cx,cy,text,attrs={},size)=>{const t=svgEl('text',{x:cx,y:cy,'text-anchor':'middle',...attrs});t.textContent=text;if(size)t.style.fontSize=size+'px';svg.append(t)};
     // those still starting each board: the thread, and what is left of the day washed in under it
     const thread=b.map((o,i)=>(i?'L':'M')+x(i)+' '+y(o.moves)).join('');
-    svg.append(svgEl('path',{d:`${thread}L${x(7)} ${yb}L${x(0)} ${yb}Z`,fill:'var(--finished)','fill-opacity':.12}));
+    svg.append(svgEl('path',{d:`${thread}L${x(last)} ${yb}L${x(0)} ${yb}Z`,fill:'var(--finished)','fill-opacity':.12}));
     svg.append(svgEl('path',{d:thread,fill:'none',stroke:'var(--finished)','stroke-width':3,'stroke-linejoin':'round','stroke-linecap':'round'}));
     b.forEach((o,i)=>svg.append(svgEl('circle',{cx:x(i),cy:y(o.moves),r:6,fill:'var(--surface)',stroke:'var(--finished)','stroke-width':3})));
-    for(const i of [0,7])words(x(i),y(b[i].moves)-15,fmt(b[i].moves),{class:'value'},18);
-    // the boards that ran out of turns stand under it on a scale of their own, the most of them numbered
-    const worst=b.reduce((a,o)=>o.fails>a.fails?o:a,b[0]);
+    for(const i of [0,last])words(x(i),y(b[i].moves)-15,fmt(b[i].moves),{class:'value'},18);
+    // the boards taken six turns past perfect stand under it on a scale of their own, the most of them numbered
+    const worst=b.reduce((a,o)=>o.past>a.past?o:a,b[0]);
     b.forEach((o,i)=>{
-      const h=o.fails?Math.max(2,o.fails/outs*stripH):0;
-      if(h)svg.append(svgEl('rect',{x:x(i)-cw/2,y:sb-h,width:cw,height:h,fill:'var(--out)'}));
-      if(o===worst&&o.fails>0)words(x(i),sb-h-6,fmt(o.fails),{class:'value'},14);
+      const h=o.past?Math.max(2,o.past/longs*stripH):0;
+      if(h)svg.append(svgEl('rect',{x:x(i)-cw/2,y:sb-h,width:cw,height:h,fill:'var(--past)'}));
+      if(o===worst&&o.past>0)words(x(i),sb-h-6,fmt(o.past),{class:'value'},14);
       words(x(i),H-7,String(o.board),{fill:'var(--ink)'},13);
     });
     const {say,tip}=tipFor(box),hits=[],hide=()=>{tip.hidden=true};
     b.forEach((o,i)=>{
-      const out=o.ended>0&&o.fails<=o.ended?` · ${pct(o.fails,o.ended)} of ${fmt(o.ended)} endings`:'';
-      const hit=svgEl('rect',{x:left+i*band,y:top-20,width:band,height:sb-top+20,fill:'transparent',tabindex:i===0?'0':'-1','data-board':o.board,role:'img','aria-label':`board ${o.board}. started: ${fmt(o.moves)}, ran out of turns: ${fmt(o.fails)}${out}`});
-      hit.show=()=>say(`board ${o.board}`,[['started',fmt(o.moves),'finished',true],['ran out of turns',fmt(o.fails)+out,'out',false]],x(i));
+      const share=o.moves>0&&o.past<=o.moves?` · ${pct(o.past,o.moves)} of ${fmt(o.moves)} starts`:'';
+      const hit=svgEl('rect',{x:left+i*band,y:top-20,width:band,height:sb-top+20,fill:'transparent',tabindex:i===0?'0':'-1','data-board':o.board,role:'img','aria-label':`board ${o.board}. started: ${fmt(o.moves)}, six turns past perfect: ${fmt(o.past)}${share}`});
+      hit.show=()=>say(`board ${o.board}`,[['started',fmt(o.moves),'finished',true],['six turns past perfect',fmt(o.past)+share,'past',false]],x(i));
       hits.push(hit);svg.append(hit);
     });
     wire(box,hits,hide);
     if(focused)hits.find(h=>h.getAttribute('data-board')===focused)?.focus({preventScroll:true});
   }
 
-  /* under the chart, folded: the boards that ran out of turns and the boards cleared, each beside
-     how many of its players started the next board */
+  /* under the chart, folded: what followed a board started, a board cleared before the day's last
+     and a board taken six turns past perfect, each as a share of those boards */
   function drawAfter() {
     const a=model.afterBoard,some=a.lines.some(l=>l.n>0);
     $('after-board').replaceChildren(...(some?a.lines.map(l=>{
-      const tr=el('tr'),td=el('td',{},l.n>0&&l.next<=l.n?pct(l.next,l.n):'—');
+      const tr=el('tr'),td=el('td',{},(l.n>0&&l.next<=l.n?pct(l.next,l.n):'—')+' '+l.then);
       if(l.n>0)td.append(el('small',{},`${fmt(l.next)} of ${fmt(l.n)}`));
       tr.append(el('th',{scope:'row'},l.name),el('td',{},fmt(l.n)),td);return tr;
     }):[]));
-    $('after-board-empty').textContent=!some?'collecting history':a.named<a.moves?`${fmt(a.named)} of ${fmt(a.moves)} first moves on boards 2 to 8 said how the board before ended`:'';
+    $('after-board-empty').textContent=!some?'collecting history':a.named<a.moves?`${fmt(a.named)} of ${fmt(a.moves)} first moves after a day's first board named the board before`:'';
   }
 
   function drawJourney() {
