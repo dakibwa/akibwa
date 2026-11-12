@@ -12,6 +12,8 @@ The approved career roles, cultural curation and Instagram/X links are restored 
 
 The **Oh Life! Studios** entry links to the studio's own website. Old `#features` links go straight to https://features.games/; old `#websites` links go to the studio. The game's old address, `akibwa.com/features`, was retired on 12 November 2026 and now 301s to the same path on features.games. The `public/features/` copy stays in this repository because it is what features.games serves.
 
+Oh Life! Studios' own site is in `studio/` and ships to https://ohlifestudios.com from the same workflow; see [studio/README.md](studio/README.md).
+
 ## Projects
 
 - Features is a playable daily untangling puzzle.

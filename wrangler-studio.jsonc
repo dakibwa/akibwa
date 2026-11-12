@@ -1,0 +1,14 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "ohlifestudios",
+  "compatibility_date": "2026-11-09",
+  "workers_dev": true,
+  "preview_urls": false,
+  // Oh Life! Studios: the buildless site in studio/site/. The dashboard owns
+  // ohlifestudios.com and www.ohlifestudios.com on this Worker; omit route and
+  // routes so asset deployments never change them.
+  "assets": {
+    "directory": "./studio/site",
+    "not_found_handling": "404-page"
+  }
+}
