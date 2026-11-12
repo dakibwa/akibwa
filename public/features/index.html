@@ -159,7 +159,7 @@ html{-webkit-text-size-adjust:100%;height:100%;overscroll-behavior-y:none}
 body{
 background:var(--paper);
 color:var(--ink);
-font-family:"Univers","Univers Next","Neue Haas Grotesk Text Pro","Helvetica Neue","features sans",Helvetica,Arial,sans-serif;
+font-family:"Helvetica Neue","features sans",Helvetica,Arial,sans-serif;
 font-size:15px;line-height:1.45;
 display:flex;flex-direction:column;align-items:center;height:100dvh;min-height:100dvh;overflow:hidden;
 }
@@ -304,7 +304,7 @@ var(--flag-3) 50% 75%, var(--flag-4) 75% 100%);
 }
 .unit{flex:1 1 0;min-width:0;max-width:320px;display:flex;flex-direction:column;gap:9px}
 .unit-top{display:flex;align-items:baseline;gap:6px;min-width:0;white-space:nowrap}
-.unit-fig{flex:none;display:inline-flex;font-family:"Univers 75 Black","Helvetica Neue","features sans",Helvetica,Arial,sans-serif;font-size:18px;font-weight:800;
+.unit-fig{flex:none;display:inline-flex;font-family:"Helvetica Neue","features sans",Helvetica,Arial,sans-serif;font-size:18px;font-weight:800;
 line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums;color:var(--ink)}
 .unit-label{font-size:12px;line-height:1;color:var(--ink-soft);text-transform:lowercase;overflow:hidden;text-overflow:ellipsis}
 .unit-fig:empty{display:none}
@@ -1205,7 +1205,7 @@ opacity:0;visibility:hidden;pointer-events:none;transition:opacity var(--t-card)
 .strip-fan i:nth-child(3){transform:translateX(-4%) translateY(-6px) rotate(8deg)}
 .strip-fan svg.stamp{display:block;width:100%;height:auto;filter:drop-shadow(0 3px 6px rgba(20,24,28,.18))}
 .strip-mid{min-width:0;container-type:inline-size}
-.strip-name{display:grid;width:max-content;max-width:100%;font-family:"Univers 75 Black","Helvetica Neue","features sans",Helvetica,Arial,sans-serif;font-size:min(24px,12.6cqi);font-weight:900;letter-spacing:-.045em;line-height:1;white-space:nowrap}
+.strip-name{display:grid;width:max-content;max-width:100%;font-family:"Helvetica Neue","features sans",Helvetica,Arial,sans-serif;font-size:min(24px,12.6cqi);font-weight:900;letter-spacing:-.045em;line-height:1;white-space:nowrap}
 .strip-bars{display:block;height:6px;margin-top:7px;background:linear-gradient(90deg,
 var(--hellblau) 0 16.667%,var(--rosa) 16.667% 33.333%,var(--gelb) 33.333% 50%,
 var(--violett) 50% 66.667%,var(--gruen) 66.667% 83.333%,var(--orange) 83.333% 100%)}
@@ -1298,7 +1298,7 @@ clip-path:inset(calc(100% - var(--turn)) 0 0 0)}
 .intro-card{display:flex;flex-direction:column;overflow:hidden;background:var(--surface);border:1px solid var(--rule);box-shadow:var(--shadow-panel);color:var(--ink)}
 .menu-head{flex:none;display:flex;flex-wrap:nowrap;align-items:center;justify-content:space-between;column-gap:10px;padding:14px var(--menu-pad) 4px}
 .menu-mark{flex:none;display:block;padding:6px 0;border:0;background:none;color:var(--ink);font:inherit;text-align:left;cursor:pointer}
-.menu-word{display:block;font-family:"Univers 75 Black","Helvetica Neue","features sans",Helvetica,Arial,sans-serif;font-size:27px;font-weight:900;letter-spacing:-.045em;line-height:1}
+.menu-word{display:block;font-family:"Helvetica Neue","features sans",Helvetica,Arial,sans-serif;font-size:27px;font-weight:900;letter-spacing:-.045em;line-height:1}
 .menu-mark .wordrule{transform-origin:0 50%}
 :is(.menu-mark,.hud-word) .wordrule{position:relative;overflow:hidden}
 :is(.menu-mark,.hud-word) .wordrule::after{content:"";position:absolute;top:0;bottom:0;left:-22%;width:22%;background:#FBFAF6;opacity:0;pointer-events:none}
@@ -1572,7 +1572,7 @@ padding:4px var(--menu-pad) calc(var(--menu-foot) + var(--safe-bottom))}
 .pay-fan svg.stamp{display:block;width:100%;height:auto;filter:drop-shadow(0 4px 10px rgba(20,24,28,.18))}
 .pay-head{display:grid;width:max-content;max-width:100%;margin-inline:auto;text-align:left}
 .pay-title{margin:0;justify-self:start}
-.pay-name{margin:0;font-family:"Univers 75 Black","Helvetica Neue","features sans",Helvetica,Arial,sans-serif;font-size:30px;font-weight:900;letter-spacing:-.045em;line-height:1}
+.pay-name{margin:0;font-family:"Helvetica Neue","features sans",Helvetica,Arial,sans-serif;font-size:30px;font-weight:900;letter-spacing:-.045em;line-height:1}
 .pay-points{display:grid;grid-template-columns:1fr 1fr;gap:12px 0;margin:18px 0 0;padding:0;list-style:none;text-align:left;font-size:15px}
 .pay-points li{display:flex;align-items:center;gap:10px;justify-self:center;width:var(--pt,auto);max-width:100%;white-space:nowrap}
 .pay-points .gm{--d:14px}
@@ -1595,7 +1595,7 @@ padding:4px var(--menu-pad) calc(var(--menu-foot) + var(--safe-bottom))}
 @media (min-width:901px),(orientation:landscape) and (max-height:500px){
 .days-desk{flex:1;min-height:0;display:grid;grid-template-columns:minmax(300px,5fr) 7fr;gap:clamp(40px,6vw,96px)}
 .day-detail{position:relative;isolation:isolate;display:flex;flex-direction:column;justify-content:center;min-width:0}
-.day-name{margin:0;font-family:"Univers 75 Black","Helvetica Neue","features sans",Helvetica,Arial,sans-serif;font-size:34px;font-weight:900;letter-spacing:-.03em;line-height:1;color:var(--ink)}
+.day-name{margin:0;font-family:"Helvetica Neue","features sans",Helvetica,Arial,sans-serif;font-size:34px;font-weight:900;letter-spacing:-.03em;line-height:1;color:var(--ink)}
 .day-long{margin:10px 0 34px;font-size:15px;color:var(--ink-soft)}
 .day-detail>.gmarks{--dd:clamp(40px,4.4vw,56px);--rg:48px;display:grid;grid-template-columns:repeat(4,auto);justify-content:space-between;row-gap:var(--rg)}
 .day-detail>.gmarks::before,.day-detail>.gmarks::after{left:calc(var(--dd) / 2);right:calc(var(--dd) / 2);top:calc(var(--dd) / 2)}
@@ -1661,7 +1661,7 @@ top:calc(var(--dd) * 1.5 + var(--rg))}
 .hud-head .track{height:7px}
 .hud-head>.unit-set{margin-top:0;--set-d:22px}
 .help.hud-menu{margin:0 0 0 -11px}
-.hud-word{font-family:"Univers 75 Black","Helvetica Neue","features sans",Helvetica,Arial,sans-serif;font-size:27px;letter-spacing:-.045em;line-height:1}
+.hud-word{font-family:"Helvetica Neue","features sans",Helvetica,Arial,sans-serif;font-size:27px;letter-spacing:-.045em;line-height:1}
 }
 @media (min-width:901px),(orientation:landscape) and (max-height:500px){
 }
