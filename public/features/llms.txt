@@ -39,3 +39,6 @@ features, including its code, stamp artwork, puzzles and daily boards, is © 202
 - [play features](https://features.games/): the game
 - [terms and privacy](https://features.games/legal): what anyone, including an ai, may and may not do, and what the game keeps
 - [press](https://features.games/press): facts, words and pictures for writing about features
+- [how to play](https://features.games/how-to-play): the rules in plain words, for people
+- [features next to wordle and connections](https://features.games/like-wordle): a daily puzzle with no words
+- [features next to planarity](https://features.games/like-planarity): the older untangle games, and what features adds
