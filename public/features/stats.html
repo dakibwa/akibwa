@@ -474,6 +474,17 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
     const hooks = [
       {key:'share',label:'shared a day',n:period('play.share'),d:period('play.finished'),of:'finished sets'},
       {key:'account',label:'signed in',n:period('play.account'),d:period('play.played'),of:'new players'},
+      /* the steps before a sign-in, each once a device (13 Nov 2026, the onboarding journey: "nobody can
+         tell where the rest stop"): the finished day's "keep your stamps", the account's card opened,
+         and a code asked for or a provider pressed (index.html, showFirstNext, openSignIn, codeStart, goSignIn) */
+      {key:'keepask',label:'were asked to keep their stamps',n:period('play.keepask'),d:period('play.firstday'),of:'first finished sets'},
+      {key:'signopen',label:'opened the account card',n:period('play.signopen'),d:period('play.played'),of:'new players'},
+      // the doors it was first opened by, the main four (worker/links.js, SIGN_DOORS)
+      {key:'signkeep',label:'opened it from keep your stamps',n:period('play.signkeep'),d:period('play.signopen'),of:'cards opened'},
+      {key:'signfreeaccount',label:'from keep your stamps · free account',n:period('play.signfreeaccount'),d:period('play.signopen'),of:'cards opened'},
+      {key:'signyesterday',label:'from play yesterday · free account',n:period('play.signyesterday'),d:period('play.signopen'),of:'cards opened'},
+      {key:'signsettings',label:'from settings',n:period('play.signsettings'),d:period('play.signopen'),of:'cards opened'},
+      {key:'signgo',label:'asked for a code or pressed google',n:period('play.signgo'),d:period('play.signopen'),of:'cards opened'},
       /* the ways back the game offers, each shown and each taken (index.html, showTell, remindMe and
          homeAsk). the reminder is asked for between two boards and on a finished day's card, so it
          reads against new players; the mails' own counts are the Worker's (worker/links.js, countOwn) */
@@ -482,6 +493,9 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
       {key:'remindask',label:'opened the reminder card',n:period('play.remindask'),d:period('play.played'),of:'new players'},
       {key:'remind',label:'turned on the reminder',n:period('play.remind'),d:period('play.played'),of:'new players'},
       {key:'confirm',label:'confirmed it from the first email',n:period('play.confirm'),d:period('play.mailfirst'),of:'first emails'},
+      // and the free account offered in one press from that first email, and made (index.html, askMailAccount)
+      {key:'mailask',label:'were offered the account from it',n:period('play.mailask'),d:period('play.confirm'),of:'confirmed'},
+      {key:'mailaccount',label:'made the account in one press',n:period('play.mailaccount'),d:period('play.mailask'),of:'offers'},
       {key:'mailplay',label:'played from a morning email',n:period('play.mailplay'),d:period('play.mailed'),of:'emails sent'},
       {key:'mailstop',label:'stopped the email',n:period('play.mailstop'),d:period('play.mailed'),of:'emails sent'},
       {key:'homeask',label:'were offered the home screen',n:period('play.homeask'),d:period('play.firstday'),of:'first finished sets'},
