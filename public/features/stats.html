@@ -260,7 +260,7 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
           <ul class="legend">
             <li><span class="key" style="--c:var(--arrived)"></span>arrived</li>
             <li><span class="key ring" style="--c:var(--played-line)"></span>played</li>
-            <li><span class="key ring" style="--c:var(--finished)"></span>finished all eight</li>
+            <li><span class="key ring" style="--c:var(--finished)"></span>finished every board</li>
             <li><span class="key ring" style="--c:var(--back)"></span>came back</li>
             <li id="average-key"><span class="key dash"></span>played, 7-day average</li>
           </ul>
@@ -330,7 +330,7 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
 
       <details class="more about"><summary>about these counts</summary>
         <p>devices, not people · a move counts as playing, in learn too. counts miss offline play and blocked requests; another browser or cleared storage counts again; privacy signals stop the counting. days are utc</p>
-        <p>yesterday and each day: arrived is a device's first visit; played is a device's first move of its day, counted from 2 nov; finished all eight counts sets, a replay too, from 3 nov; came back is a day's players less those making their first move ever, so those who had played before, from 3 nov. the average uses full days only</p>
+        <p>yesterday and each day: arrived is a device's first visit; played is a device's first move of its day, counted from 2 nov; finished every board counts sets, a replay too, from 3 nov; came back is a day's players less those making their first move ever, so those who had played before, from 3 nov. the average uses full days only</p>
         <p>the first day and where players come from compare once-a-device counts in the days shown: a first visit, a first move, a first finished set and opening the game again the day after the first visit. they are not the same devices followed step by step. a place is the counted link a device arrived by, or the site that sent it</p>
         <p>coming back groups devices by the day they were first counted playing, from 9 nov in updated browsers, existing players among them on that day. day 1, 7 and 30 mean playing exactly that many days later; a rate appears once that day is over. days running are counted the same way. by where they came from and by how far the first day went count only devices with no play known before, from 12 and 13 nov: the link a device first came by, and how many of its first day's boards it ended</p>
         <p>through the boards counts a device's first move on each of today's boards, from 4 nov, and the boards taken six turns past perfect while still tangled: a board failed there until 12 nov, and since then a board has no limit on its turns. after a board reads full days from 13 nov: of the boards started, those cleared; of those cleared before the day's last, those whose player started the next; and of the boards taken six turns past perfect, those cleared. keeping in touch divides each count by the count beside it, in the days shown</p>
@@ -360,9 +360,12 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
   /*@stats-model*/
   const shiftDay = (day,n) => new Date(Date.parse(day+'T00:00:00Z')+n*864e5).toISOString().slice(0,10);
   /* how many boards a day's set has: the one place this page is told (the game's own answer is
-     dailyNetsFor in index.html). the board columns run to the longest day shown, and what
-     followed a board reads each day by its own length */
-  const boardsOn = day => 8;
+     dailyNetsFor in index.html). a count is kept by the day it was told, and the game served
+     eight boards a day until every day was rebuilt as six, which it served from SIX_FROM (UTC).
+     the board columns run to the longest day shown, and what followed a board reads each day by
+     its own length */
+  const SIX_FROM = '2026-11-14';
+  const boardsOn = day => day < SIX_FROM ? 8 : 6;
   const validDay = d => typeof d==='string' && /^\d{4}-\d{2}-\d{2}$/.test(d) && Number.isFinite(Date.parse(d)) && new Date(d).toISOString().slice(0,10)===d;
   const activityTags = ['activefirst','activereturn','activenext','activeweek'];
   /* the kind of place a tag is, so nine ads read as one line and forty lists as another. a tag
@@ -432,9 +435,11 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
     })});
     const cohortPlaces = [...new Set(rows.filter(r=>r.day>=start&&r.n>0&&/^cohort\.[a-z0-9]+\.started$/.test(r.tag)).map(r=>r.tag.split('.')[1]))]
       .map(tag=>({tag,...split(shown,d=>at('cohort.'+tag+'.started',d),(d,o)=>at('cohort.'+tag+'.d'+o,d))})).sort((a,b)=>b.n-a.n||a.tag.localeCompare(b.tag));
-    const depthDays = shown.filter(d=>d>='2026-11-13'&&d<today), reached = (d,k) => k<1?at('play.activefirst',d):k>8?0:at('play.depth'+k,d);
-    const cohortDepths = [['none',0,0],['1 to 3',1,3],['4 to 7',4,7],['all eight',8,8]].map(([name,from,to])=>({name,
-      ...split(depthDays,d=>Math.max(0,reached(d,from)-reached(d,to+1)),(d,o)=>Array.from({length:to-from+1},(_,i)=>at('cohort.depth'+(from+i)+'.d'+o,d)).reduce((a,b)=>a+b,0))}));
+    /* how far a first day went, in groups read by each day's own length: all its boards is
+       eight before SIX_FROM and six from it */
+    const depthDays = shown.filter(d=>d>='2026-11-13'&&d<today), reached = (d,k) => k<1?at('play.activefirst',d):k>boardsOn(d)?0:at('play.depth'+k,d);
+    const cohortDepths = [['none',()=>0,()=>0],['1 to 3',()=>1,()=>3],['4 or more, not all',()=>4,d=>boardsOn(d)-1],['all of the day',boardsOn,boardsOn]].map(([name,from,to])=>({name,
+      ...split(depthDays,d=>Math.max(0,reached(d,from(d))-reached(d,to(d)+1)),(d,o)=>Array.from({length:Math.max(0,to(d)-from(d)+1)},(_,i)=>at('cohort.depth'+(from(d)+i)+'.d'+o,d)).reduce((a,b)=>a+b,0))}));
     // a new device's way in the days shown: milestone counts side by side, not the same devices followed
     const journey = {arrived:period('play.new'),played:period('play.played'),finished:period('play.firstday'),back:period('play.back')};
     /* each board's first moves, and the times it was taken six turns past perfect while still
@@ -536,9 +541,9 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
       evidence:`${best.name}: ${say(best.played)} of ${say(best.n)} new devices made a move (${percent(best.played,best.n)}); ${low.name}: ${say(low.played)} of ${say(low.n)} (${percent(low.played,low.n)}), ${shown}. These compare counts by where a device arrived from, not matched visitors.`,
       action:`Put the next effort into ${best.name}. For ${low.name}, test one opening that shows the first drag before changing the game for everyone.`,
       measure:'First moves / new devices for that place, then first finished sets and next-day returns in the list of places.'})}
-    if(played>=20&&firstday<=played&&firstday/played<.5)insights.push({kind:'firstday',signal:'first-day milestone counts',title:'finishing the first day',summary:`${say(firstday)} / ${say(played)} finished all eight · ${percent(firstday,played)}`,
-      findings:[{figure:percent(firstday,played),reading:'of new players finished all eight on their first day',sample:`${say(firstday)} of ${say(played)}`,share:firstday/played,color:'finished'}],
-      evidence:`${say(firstday)} first finished sets against ${say(played)} first moves (${percent(firstday,played)}), ${shown}. The day card, with its share and its reminder, only comes after the eighth board.`,
+    if(played>=20&&firstday<=played&&firstday/played<.5)insights.push({kind:'firstday',signal:'first-day milestone counts',title:'finishing the first day',summary:`${say(firstday)} / ${say(played)} finished every board · ${percent(firstday,played)}`,
+      findings:[{figure:percent(firstday,played),reading:'of new players finished every board on their first day',sample:`${say(firstday)} of ${say(played)}`,share:firstday/played,color:'finished'}],
+      evidence:`${say(firstday)} first finished sets against ${say(played)} first moves (${percent(firstday,played)}), ${shown}. The day card, with its share and its reminder, only comes after the day's last board.`,
       action:'Test an earlier finish line for a first day: show the day card after fewer boards, with the rest still open to play.',
       measure:'First finished sets / first moves, shares and reminders beside them, and day-1 retention.'});
     /* a board many of its starters take six turns past perfect. read against its first moves: an
@@ -607,7 +612,7 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
     const plates=[
       ['arrived',y.new,'new devices','arrived'],
       ['played',y.played,y.first!=null&&y.played!=null?`${fmt(y.first)} for the first time`:'devices','played'],
-      ['finished all eight',y.finished,share(y.finished,y.played)||'sets','finished'],
+      ['finished every board',y.finished,share(y.finished,y.played)||'sets','finished'],
       ['came back',y.back,share(y.back,y.played)||'had played before','back'],
     ];
     const box=$('plates');box.replaceChildren();
@@ -653,7 +658,7 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
      are the scale. the new devices stand above on their own scale, since they are several times the players */
   function drawEachDay() {
     const box=$('each-day'),focused=box.contains(document.activeElement)?document.activeElement.getAttribute('data-day'):null;box.replaceChildren();
-    const lines=[['back','came back','back'],['finished','finished all eight','finished'],['played','played','played-line']];
+    const lines=[['back','came back','back'],['finished','finished every board','finished'],['played','played','played-line']];
     const first=model.days.findIndex(d=>d.new!==null||lines.some(([key])=>d[key]!==null));
     const data=first<0?[]:model.days.slice(first);
     if(!data.length){box.append(el('div',{class:'empty'},'collecting history'));return}
@@ -726,7 +731,7 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
     }
     const guide=svgEl('line',{x1:0,x2:0,y1:top,y2:yb,stroke:'var(--ink-soft)','stroke-width':1,'stroke-dasharray':'2 4',visibility:'hidden','pointer-events':'none'});svg.append(guide);
     const {say,tip}=tipFor(box),hits=[],hide=()=>{tip.hidden=true;guide.setAttribute('visibility','hidden')};
-    const told=[['new','arrived','arrived',false],['played','played','played-line',true],['finished','finished all eight','finished',true],['back','came back','back',true]];
+    const told=[['new','arrived','arrived',false],['played','played','played-line',true],['finished','finished every board','finished',true],['back','came back','back',true]];
     data.forEach((d,i)=>{
       const counting=d.day===model.today;
       const hit=svgEl('rect',{x:left+i*band,y:top,width:band,height:yb-top,fill:'transparent',tabindex:i===0?'0':'-1','data-day':d.day,role:'img','aria-label':`${d.day}${counting?', day in progress':''}. ${told.map(([key,name])=>`${name}: ${fmt(d[key])}`).join(', ')}`});
@@ -819,7 +824,7 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
     $('first-lede').textContent=j.arrived>0?`of every 100 new devices, ${Math.round(100*j.played/j.arrived)} make a move`:'new devices in the days shown';
     const steps=[['arrived','new devices',j.arrived,'arrived'],
       ['made a move',j.arrived>0?`${pct(j.played,j.arrived)} of arrivals`:'',j.played,'played'],
-      ['finished all eight',j.played>0?`${pct(j.finished,j.played)} of those who played`:'',j.finished,'finished'],
+      ['finished every board',j.played>0?`${pct(j.finished,j.played)} of those who played`:'',j.finished,'finished'],
       ['back the next day',j.arrived>0?`${pct(j.back,j.arrived)} of arrivals`:'',j.back,'back']];
     const most=Math.max(1,...steps.map(step=>step[2]));
     for(const [name,note,n,c] of steps){

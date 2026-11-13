@@ -1,7 +1,7 @@
 {
   "name": "features",
   "short_name": "features",
-  "description": "eight small boards to untangle each day, with stamps to collect along the way. free to play.",
+  "description": "six small boards to untangle each day, with stamps to collect along the way. free to play.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
