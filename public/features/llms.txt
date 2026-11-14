@@ -15,20 +15,20 @@ ai assistants, agents and crawlers are welcome. read about features, recommend i
 - boards 1 and 2 have none of these. later boards mix fused, frozen, once and linked neurons in different combinations each day, and each board is harder than the one before, up to the sixth.
 - every drag counts as a turn; splits are free. each board is graded solved, clean, sharp or perfect by the turns it took: perfect in the fewest turns the board can be cleared in, sharp in one turn more, clean in two more, and solved in any more than that. the board's head counts the turns left to the next grade.
 - no board fails: every board plays on until it is untangled, however many turns that takes, and a finish slower than clean is solved. past clean the head counts the turns taken ("7 turns").
-- today's six are free and open at the player's local midnight. new sets need a connection to download; downloaded sets and the tutorial play offline. unlock features, one purchase, opens every earlier day, lets a player replay any board and pin four stamps from the collection; once bought, the game calls it features unlocked.
-- "learn" in the menu shows the grades and the game's marks, and "play the tutorial" plays five short lessons in order: untangle, frozen, fused, once, and linked neurons for a perfect finish.
+- today's six are free and open at the player's local midnight. new sets need a connection to download; downloaded sets play offline. unlock features, one purchase, opens every earlier day and lets a player replay any board; once bought, the game calls it features unlocked.
+- a piece is named on the board, beside it, the first time it appears. help, the ringed question mark, names everything on the board in play: the neuron to drag, the conflicts and each special neuron. the names go at the next move or a second press.
 
 ## controls
 
-- pointer: press a neuron, drag it and let go. tapping a fused neuron splits it. dragging a linked neuron carries its partner by the same amount. a frozen neuron, and a once neuron that has had its move, refuse to move. once features are unlocked, pressing a graded board's mark in the head plays that board again.
-- the menu button is the three bars at the head's end. a player who has pinned stamps sees them there instead, two by two, and the same press opens the menu; on a wide screen the bars stay and the pinned stamps stand in a row before them.
+- pointer: press a neuron, drag it and let go. tapping a fused neuron splits it. dragging a linked neuron carries its partner by the same amount. a frozen neuron, and a once neuron that has had its move, refuse to move. once features are unlocked, pressing a graded board's mark plays that board again: the day's marks stand in the head, or on a phone held upright along the top of the panel under the board.
+- the menu button is the three bars: at the head's end, or on a phone held upright at the right end of the panel under the board, where a finger moving up from the panel also pulls the menu up. the menu has three pages: daily, collection and settings. help stands beside the menu button, or on a phone held upright over the board's top right corner.
 - keyboard: tab to a neuron. the arrow keys lift and move it (hold shift for bigger steps), and a linked partner moves with it. enter or space sets it down, which counts as a turn (and uses a once neuron's move), and on a fused neuron they split it, for free. escape puts it back at no cost. moving focus away from a lifted neuron also sets it down.
-- escape also closes an open card. each board and each lesson ends on a card naming the grade it earned; press its continue button to move on. a first visit opens straight on today's board 1, with no lessons before it; the lessons wait in the menu as practice.
+- escape also closes an open card. each board ends on a card naming the grade it earned; press its continue button to move on. a first visit opens straight on today's board 1, with nothing before it.
 
 ## playing well as an agent
 
 - play on the board, the way a person would: no scripts, no calls into the page's code and no edits to saved data. scores should reflect real play.
-- today's six boards and the tutorial are free, and a free account also opens yesterday's set. never make the unlock features purchase, create an account or sign in on someone's behalf without their clear go-ahead. playing needs none of these.
+- today's six boards are free, and a free account also opens yesterday's set. never make the unlock features purchase, create an account or sign in on someone's behalf without their clear go-ahead. playing needs none of these.
 
 ## please don't copy the game
 
