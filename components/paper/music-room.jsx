@@ -6,7 +6,7 @@ import { useMusicRanking } from "../use-music-ranking";
 import { LARGE_ART } from "./music-art.mjs";
 import { fold } from "./music-ranking.mjs";
 import { indexItems, search } from "./music-search.mjs";
-import { ORDERS, arrange, bounds, listened, peakOf, sideFor, songTitle } from "./music-shelf.mjs";
+import { ORDERS, arrange, listened, peakOf, rowsFor, songTitle } from "./music-shelf.mjs";
 
 /*
  * Music (Dan, 16 November 2026): one shelf of Dan's top 150 albums or all his
@@ -192,8 +192,8 @@ const Tile = memo(function Tile({ kind, item, side, onOpen, onPoint }) {
 });
 
 /*
- * The first thing in the bar: the shelf as a whole, or whatever is under the
- * pointer or the keyboard. It keeps its own state, so pointing at a sleeve
+ * The bar's one line of words: whatever is under the pointer or the
+ * keyboard, and nothing otherwise. It keeps its own state, so pointing at a sleeve
  * does not draw the shelf again.
  */
 function Now({ say, view, order, shownCount, shownMinutes, years, kinds }) {
@@ -221,8 +221,10 @@ function Now({ say, view, order, shownCount, shownMinutes, years, kinds }) {
     }
     side = facts.join(" · ");
   } else {
-    main = `${shownCount.toLocaleString("en-GB")} ${view}`;
-    side = `${listened(shownMinutes)} listened`;
+    // Nothing to say until something is pointed at (Dan, 16 November 2026:
+    // “super minimalist and simple”).
+    main = "";
+    side = "";
   }
   return (
     <output className="music-now" aria-live="polite">
@@ -419,13 +421,13 @@ export function MusicRoom({ initial, active }) {
     return all.filter((entry) => kept.has(key(entry.item)));
   }, [view, lists, albumIndex, songIndex, query]);
 
-  // Sizes come from the whole list, so a search or an order never rescales them.
+  // Sizes come from the whole list, so a search or an order never rescales them;
+  // each row's size comes from its albums' hours (rowsFor in music-shelf.mjs).
   const reference = lists[view][Math.min(2, lists[view].length - 1)]?.item.minutes || 1;
-  const arrangement = useMemo(() => {
-    const limits = bounds(width);
-    const sized = entries.map((entry) => ({ ...entry, side: sideFor(entry.item.minutes, reference, limits) }));
-    return arrange(order, view, sized, { years, kinds });
-  }, [entries, width, reference, order, view, years, kinds]);
+  const arrangement = useMemo(
+    () => arrange(order, view, entries, { years, kinds }).map((group) => ({ ...group, rows: rowsFor(group.entries, width, reference) })),
+    [entries, width, reference, order, view, years, kinds]
+  );
   const flat = useMemo(() => arrangement.flatMap((group) => group.entries), [arrangement]);
   const count = useProgressive(flat);
   useGlide(list, arrangement, view, measured);
@@ -453,6 +455,17 @@ export function MusicRoom({ initial, active }) {
     <div className="room-body music">
       <noscript><p className="music-tracks-note">Enable JavaScript to search music and open track lists.</p></noscript>
       <div className="music-bar">
+        <span className="music-sign" aria-hidden="true">
+          <svg viewBox="-2.7 -2.8 5.4 5.15" focusable="false">
+            <circle cy="-1.8" r="1" />
+            <circle cx="-1.7" r="1" />
+            <circle cx="1.7" r="1" />
+            <rect x="-1.7" y="-0.62" width="3.4" height="1.24" />
+            <rect x="-0.56" y="-1.8" width="1.12" height="1.8" />
+            <path d="M-0.6 0V0.9Q-0.51 1.79 0 2.35Q0.51 1.79 0.6 0.9V0Z" />
+          </svg>
+          Akibwa
+        </span>
         <Now say={say} view={view} order={order} shownCount={entries.length} shownMinutes={shownMinutes} years={years} kinds={kinds} />
         <div className="music-order" role="group" aria-label="Order">
           {ORDERS.map(([name, label]) => (
@@ -485,7 +498,7 @@ export function MusicRoom({ initial, active }) {
                 setQuery("");
               }
             }}
-            placeholder="artist, genre or era"
+            placeholder="search"
             aria-label="Search the albums and songs by artist, genre or era"
             autoComplete="off"
             spellCheck={false}
@@ -503,8 +516,8 @@ export function MusicRoom({ initial, active }) {
           aria-label={`My top ${view}, ${order === "hours" ? "most listened first" : order === "name" ? "a to z" : `by ${order}`}`}
         >
           {arrangement.map((group) => {
-            const shown = group.entries.filter(() => drawn++ < count);
-            if (!shown.length) return null;
+            const rows = group.rows.map((row) => ({ ...row, shown: row.entries.filter(() => drawn++ < count) })).filter((row) => row.shown.length);
+            if (!rows.length) return null;
             return (
               <section key={group.key} className="music-group">
                 {group.label ? (
@@ -513,11 +526,15 @@ export function MusicRoom({ initial, active }) {
                     <span className="music-group-figures">{group.figures}</span>
                   </h3>
                 ) : null}
-                <ol className="music-shelf">
-                  {shown.map(({ item, side }) => (
-                    <Tile key={`${view}-${item.rank}`} kind={view} item={item} side={side} onOpen={onOpen} onPoint={onPoint} />
+                <div className="music-shelf">
+                  {rows.map((row, index) => (
+                    <ol key={index} className="music-row">
+                      {row.shown.map(({ item }) => (
+                        <Tile key={`${view}-${item.rank}`} kind={view} item={item} side={row.side} onOpen={onOpen} onPoint={onPoint} />
+                      ))}
+                    </ol>
                   ))}
-                </ol>
+                </div>
               </section>
             );
           })}

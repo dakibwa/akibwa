@@ -1,7 +1,8 @@
 import "./globals.css";
-import "./archive.css";
 import { ServiceWorkerRegistration } from "@/components/service-worker-registration";
 import { SiteShell } from "@/components/site-shell";
+
+const description = "The music Akibwa plays most: 150 albums and 1,000 songs, each as large as the hours listened.";
 
 export const metadata = {
   metadataBase: new URL("https://akibwa.com"),
@@ -10,33 +11,30 @@ export const metadata = {
     default: "Akibwa",
     template: "Akibwa | %s"
   },
-  description:
-    "Daniel, online as Akibwa. My music taste, my career, a walk from Paris to Sofia, and Oh Life! Studios.",
+  description,
   openGraph: {
     title: "Akibwa",
-    description:
-      "Daniel, online as Akibwa. My music taste, my career, a walk from Paris to Sofia, and Oh Life! Studios.",
+    description,
     url: "https://akibwa.com",
     siteName: "Akibwa",
     type: "website",
     // A new filename, not a replaced image, so link previews stop serving
-    // their cached copy of the old card. It is the front page's first screen,
-    // captured at 1200×630 with reduced motion (see README).
+    // their cached copy of the old card. It is the shelf's first screen,
+    // captured at 1200×630.
     images: [
       {
-        url: "/share-card-studio.jpg",
+        url: "/share-card-music.jpg",
         width: 1200,
         height: 630,
-        alt: "I'm Daniel, building in the age of AI, above music, trek, career and Oh Life! Studios"
+        alt: "Akibwa: album sleeves on a shelf, each as large as the hours listened"
       }
     ]
   },
   twitter: {
     card: "summary_large_image",
     title: "Akibwa",
-    description:
-      "Daniel, online as Akibwa. My music taste, my career, a walk from Paris to Sofia, and Oh Life! Studios.",
-    images: ["/share-card-studio.jpg"]
+    description,
+    images: ["/share-card-music.jpg"]
   },
   // The sized .ico serves browsers without SVG icons and requests that skip
   // the page (feeds, robots.txt); iOS draws its own corners on the touch icon.
@@ -58,20 +56,18 @@ export const viewport = {
   colorScheme: "light"
 };
 
-/* Runs before the first paint: marks the page as scripted and opens the room
-   named in the hash, so a shared room link never flashes the front page. The
-   same three room names live in components/paper/paper-home.jsx. Without
-   JavaScript, rooms open through :target instead. It also lays the night
-   paper when it was chosen on this device, tinting the browser chrome to
-   match (the key and colour live in components/paper/night-switch.jsx). A
-   future hash-based Content-Security-Policy must include this script's hash. */
-const openRoom = `(function(d,r){d.classList.add("js");d.dataset.room=["music","trek","career"].indexOf(r)>-1?r:"index";try{if(localStorage.getItem("akibwa-paper")==="night"){d.dataset.paper="night";var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content","#1e1a17")}}catch(e){}})(document.documentElement,location.hash.slice(1))`;
+/* Runs before the first paint: marks the page as scripted, and keeps old
+   links useful now that Akibwa is one page (16 November 2026): #trek goes to
+   the trek's own page, #features to features.games, #websites to the studio,
+   and #music or #career to the shelf itself. A future hash-based
+   Content-Security-Policy must include this script's hash. */
+const boot = `(function(d,h){d.classList.add("js");var t={trek:"/trek/",features:"https://features.games/",websites:"https://ohlifestudios.com/"}[h];if(t){location.replace(t)}else if(h==="music"||h==="career"){history.replaceState(null,"",location.pathname+location.search)}})(document.documentElement,location.hash.slice(1))`;
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en-GB" suppressHydrationWarning>
       <body>
-        <script dangerouslySetInnerHTML={{ __html: openRoom }} />
+        <script dangerouslySetInnerHTML={{ __html: boot }} />
         <SiteShell>{children}</SiteShell>
         <ServiceWorkerRegistration />
       </body>

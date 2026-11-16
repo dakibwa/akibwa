@@ -133,7 +133,7 @@ most of its plays came from that album or at least 40% of them did, so a few
 stray plays filed under another release (For the First Time's songs under Ants
 From Up There) do not join its track list. The Music room sizes sleeves by
 these minutes; how it draws them is in the
-[navigation contract](navigation-animation-contract.md). The builder takes
+navigation contract (`scripts/check-navigation-contract.mjs`). The builder takes
 the top 150 albums; `scripts/build-music-meta.mjs` records by hand the
 release years MusicBrainz cannot match. The search's genres, related artists and sleeve years
 are public MusicBrainz data (`scripts/build-music-meta.mjs`), never

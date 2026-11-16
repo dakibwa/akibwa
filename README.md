@@ -2,22 +2,12 @@
 
 Public site for [akibwa.com](https://akibwa.com), exported statically with Next.js and deployed from `main` to Cloudflare Workers Static Assets. GitHub hosts the code and runs the deploy workflow; GitHub Pages is only a manual fallback. See [the hosting contract](docs/cloudflare-config.md).
 
-The personal homepage is one sheet of warm paper, with four illustrated things: music, trek, career and Oh Life! Studios. Music, trek and career open in place with a hash and history entry. The studio opens https://ohlifestudios.com, which credits Features, Portudo and Português com a Inês. The Daniel/Akibwa name change, orange `a` mascot, social/contact controls and night paper keep their existing behaviour.
+From 16 November 2026 (Dan) akibwa.com is one page: a shelf of Dan's top 150 albums or all his top 1,000 songs, in the Akibwa signature's style. Every square in a row shares one size, taken from those albums' hours between a floor (big enough to see) and a cap (none dominates), with one gap across and down. One bar at the top holds everything there is to know: the signature, the shelf's count and hours or whatever is under the pointer, the order (hours; the year each was played most; kind of music, from `public/music-kinds.json`; a to z), the albums/songs switch and a smart search (artists and the artists around them, genres and eras, from `public/music-meta.json`). An order sorts the whole shelf with a glide and shows only the headings it needs. An album opens its track list with plays and hours per song and links to Spotify and Apple Music (`public/music-ranking.json`, `public/music-links.json`).
 
-- **music** — Dan's top 150 albums or 1,000 songs: an albums/songs switch and a smart search (artists and the artists around them, genres and eras, from `public/music-meta.json`) over squares packed with no holes (albums as their sleeves, songs typeset on paper tints), each as large as its hours listened, the most listened first, with the hours in its corner and high-resolution art where a sleeve is drawn large; all 1,000 songs show at once, no sleeve is smaller than a grid cell, and a small one grows under the pointer or a tap; an album opens its track list with plays and hours per song (`public/music-ranking.json`);
-- **career** — every role on its own card, three to a row (two, then one, as the sheet narrows), with its logo, role, years and statement;
-- **trek** — the `/trek/` journey framed in place, filling the room under the bar.
+The front page, the trek and career rooms, the mascot, the name change, the contact links and the night paper were retired that day. Old `#trek` links go to the trek's own page, `#features` to https://features.games/, `#websites` to https://ohlifestudios.com/, and `#music` or `#career` to the shelf. Only `/` is advertised in the sitemap. Old pages (the album archive, the wall and the earlier project pages) were deleted; their links 301 to the homepage from `public/_redirects`. The game's old address, `akibwa.com/features`, was retired on 12 November 2026 and now 301s to the same path on features.games. The `public/features/` copy stays in this repository because it is what features.games serves.
 
-The approved career roles, cultural curation and Instagram/X links are restored selectively, not by reverting privacy work. Residential and private life history stay out; the email address is assembled only after activation. Only `/` is advertised in the sitemap. Old pages (the album archive, the wall and the earlier project pages) were deleted; their links 301 to the homepage from `public/_redirects`. See [the interaction and privacy contract](docs/navigation-animation-contract.md).
+## The trek
 
-The **Oh Life! Studios** entry links to the studio's own website. Old `#features` links go straight to https://features.games/; old `#websites` links go to the studio. The game's old address, `akibwa.com/features`, was retired on 12 November 2026 and now 301s to the same path on features.games. The `public/features/` copy stays in this repository because it is what features.games serves.
-
-## Projects
-
-- Features is a playable daily untangling puzzle.
-- Português com a Inês links to its own lesson and booking site.
-- Castle Bank links to castle-bank.com. Its card and Butterfly Rose's are illustrations Dan made on 25 September 2026, in the manner of Português com a Inês's, not screenshots.
-- Butterfly Rose's card is a screenshot of the salon's review build (`--from` a local server) and has no link until the site is live on its domain.
 - `/trek/` is a `noindex` interactive relief of the original Paris-to-Sofia journey. It retains the exact dated route, daily distances, activity metrics, photo capture times and full photograph set. Journal excerpts are limited to neutral route observations: first-person reflection and personal, health, relationship, financial, accommodation and identifying third-party details are excluded. The walk now waits for its landscape: its pace never outruns the map tiles that have arrived.
 
 ## Checks and publishing
@@ -30,6 +20,6 @@ The **Oh Life! Studios** entry links to the studio's own website. Old `#features
 - `npm run trek:build`: rebuild the Trek from the exact route data and privacy-edited journal.
 - `npm run check:trek:dom`: exercise relief, playback, phone layouts and graphics failure paths. See [the Trek design and source contract](docs/trek-design.md).
 - `node scripts/build-music-ranking.mjs --history-root PRIVATE_HISTORY_DIRECTORY`: refresh the public song and artist ranking from the private history's prepared top 1,000.
-- The link-preview card, `public/share-card-studio.jpg`, is the front page's first screen captured at 1200×630 with reduced motion, so the name and four things are at rest. When the first screen changes, capture it again under a new filename so link previews drop their cached copy.
+- The link-preview card, `public/share-card-music.jpg`, is the shelf's first screen captured at 1200×630 with headless Chrome once the sleeves have loaded. When the first screen changes, capture it again under a new filename so link previews drop their cached copy.
 
 Public surface metadata lives in `data/public-surfaces.json`. API-backed refreshes belong in Cloudflare Workers rather than local schedulers or data-mutating GitHub Actions. See [Publication Workflow](docs/publication-workflow.md).

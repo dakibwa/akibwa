@@ -1,29 +1,24 @@
 import { existsSync, readFileSync } from "node:fs";
-import { websites } from "../data/websites.mjs";
 import { unpackRanking } from "../components/paper/music-ranking.mjs";
 import { indexItems, search } from "../components/paper/music-search.mjs";
-import { arrange, bounds, sideFor } from "../components/paper/music-shelf.mjs";
+import { GAP, arrange, bounds, rowsFor, sideFor } from "../components/paper/music-shelf.mjs";
 
-/* Build-time contract for the personal homepage: music, trek and career
-   open in place, while Oh Life! Studios has its own website. Named public choices
-   do not relax the private-data and search boundaries below. */
+/* Build-time contract for akibwa.com. From 16 November 2026 (Dan) the site is
+   one page, the music shelf; the trek keeps its own standalone page for old
+   links. Named public choices do not relax the private-data and search
+   boundaries below. */
 
 const read = (relativePath) =>
   readFileSync(new URL(`../${relativePath}`, import.meta.url), "utf8");
 
-const css = read("app/globals.css") + read("app/archive.css");
+const css = read("app/globals.css");
 const index = read("app/page.jsx");
 const layout = read("app/layout.jsx");
 const sitemap = read("app/sitemap.js");
 const redirects = read("public/_redirects");
-const home = read("components/paper/paper-home.jsx");
-const names = read("components/paper/name-flip.jsx");
-const contact = read("components/paper/contact.jsx");
 const music = read("components/paper/music-room.jsx");
-const career = read("components/career-bar.jsx");
 const trekTemplate = read("scripts/trek-journey-template.html");
 const trekPublished = read("public/trek/index.html");
-const things = read("components/paper/things.jsx");
 const ranking = JSON.parse(read("public/music-ranking.json"));
 const musicMeta = JSON.parse(read("public/music-meta.json"));
 const musicKinds = JSON.parse(read("public/music-kinds.json"));
@@ -55,105 +50,82 @@ const requireRuleText = (selector, declarations) => {
   }
 };
 
-// The root route and its search posture.
-requireText(index, 'import { PaperHome } from "@/components/paper/paper-home"', "the public index must render the paper homepage");
-requireText(index, "<PaperHome", "the paper homepage must own the root route");
+// The root route is the music shelf, and its search posture.
+requireText(index, 'import { MusicRoom } from "@/components/paper/music-room"', "the public index must render the music shelf");
+requireText(index, "<MusicRoom initial={musicSeed(ranking)} active />", "the music shelf must own the root route");
 requireText(index, "noimageindex: true", "the public index must opt out of image indexing");
 requireText(index, '"max-snippet": 120', "the public index must limit search snippets");
 requireText(layout, 'applicationName: "Akibwa"', "site metadata must be brand-led");
 requireText(layout, 'classList.add("js")', "the layout must mark scripted pages before the first paint");
-requireText(layout, '["music","trek","career"]', "the layout's room list must match the three personal rooms");
-
-// The approved introduction: a slightly slower Daniel ↔ Akibwa wipe.
-requireText(names, '"Daniel", "Akibwa"', "the name change must alternate Daniel and Akibwa");
-requireText(names, "4000", "the first name change leaves four seconds to read Daniel");
-requireText(names, "5400", "each name rests for 5.4 seconds between changes");
-requireText(names, "prefers-reduced-motion", "the name change must respect reduced motion");
-requireText(names, "visibilitychange", "the name change must pause in hidden tabs");
-requireText(names, "I’m Daniel. Online as Akibwa.", "the heading must carry both names for assistive technology");
-requireText(home, "Building in the age of AI.", "the front page must preserve Dan's proposition");
-// One Akibwa a, already on the paper, with no portal (Dan, 28 September 2026).
-forbidText(home, "<Hole", "the mascot must not have a separate portal");
-requireText(home, "<Cast onVisit={setVisited} />", "the front page must carry the mascot");
-const cast = read("components/paper/cast.jsx");
-requireText(cast, 'id: "a"', "the mascot must remain the Akibwa a");
-for (const letter of ['id: "k"', 'id: "i"']) forbidText(cast, letter, "the a is the sole mascot");
-requireText(cast, "prefers-reduced-motion", "the mascot must keep still under reduced motion");
-requireText(home, "data-thing={id}", "each thing must carry its name for the mascot to visit it");
-requireText(cast, "id: thing.dataset.thing", "the mascot must find each thing by its name, not its link");
+// Old links stay useful now that there is one page.
+requireText(layout, 'trek:"/trek/"', "old #trek links must reach the trek's own page");
+requireText(layout, 'features:"https://features.games/"', "old #features links must reach the game's own address");
+requireText(layout, 'websites:"https://ohlifestudios.com/"', "old #websites links must reach the studio");
 requireRuleText("\nbody {", ["user-select: none"]);
 
-// Dan, 9 November 2026: personal interests plus the product studio.
-for (const id of ["music", "trek", "career"]) {
-  requireText(home, `id: "${id}"`, `the ${id} room must remain on the front page`);
-  requireText(home, `<Room id="${id}"`, `the ${id} room must render`);
+// Retired with the front page and its rooms (Dan, 16 November 2026): deleted,
+// not hidden.
+for (const file of [
+  "components/paper/paper-home.jsx",
+  "components/paper/cast.jsx",
+  "components/paper/things.jsx",
+  "components/paper/name-flip.jsx",
+  "components/paper/contact.jsx",
+  "components/paper/night-switch.jsx",
+  "components/paper/framed-room.jsx",
+  "components/paper/career-cards.jsx",
+  "components/career-bar.jsx",
+  "components/paper/websites-room.jsx",
+  "app/archive.css"
+]) {
+  if (existsSync(new URL(`../${file}`, import.meta.url))) fail(`${file} was retired with the front page and must not return`);
 }
-requireText(home, 'path="/trek/"', "the trek room must frame the journey");
-requireText(home, 'id: "studio"', "the personal home must include Oh Life! Studios");
-requireText(home, 'href: "https://ohlifestudios.com/"', "the studio must link to its own product home");
-for (const id of ["features", "websites"]) forbidText(home, `<Room id="${id}"`, "product showcases now belong to the studio");
-requireText(home, 'features: "https://features.games/"', "old shared Features hashes must lead to the game's own address");
-requireText(home, 'websites: "https://ohlifestudios.com/"', "old shared website hashes must lead to the studio");
-forbidText(home, "from=akibwa", "old Features links must not ask for the retired portfolio banner");
-requireText(trekTemplate, 'classList.add("is-embedded")', "the framed trek must hide its own way home");
-requireText(home, "memo(MusicRoom)", "the music room must show the albums and songs mosaics");
-requireText(home, 'className="visually-hidden" tabIndex={-1}', "rooms have no title on the page, only a heading for readers");
-forbidText(home, "room-head", "rooms have no title on the page");
-forbidText(home, "bar-home", "the bar has no wordmark");
-requireText(home, "memo(CareerCards)", "the career room must show every role on its own card (Dan, 25 September 2026)");
+for (const room of ["trek", "career", "websites"]) forbidText(index + music, `id="${room}"`, `the ${room} room must not return to the page`);
+
+// Dan, 16 November 2026: one shelf, each row of squares as large as its
+// albums' hours between a floor and a cap, everything to know in the bar.
 requireText(music, "aria-pressed={pressed === name}", "albums and songs must be one switch");
-// Dan, 16 November 2026: one shelf, each square as large as its hours between
-// a floor and a cap, and everything to know in the bar above it.
-requireText(music, "sideFor(entry.item.minutes, reference, limits)", "albums and songs must be squares sized by hours between a floor and a cap");
+requireText(music, "rowsFor(group.entries, width, reference)", "the shelf must be laid out in rows sized by hours between a floor and a cap");
 requireText(music, 'role="group" aria-label="Order"', "the bar must sort the whole shelf by hours, year, kind or name");
 requireText(music, '<output className="music-now"', "the bar must say what the shelf holds and what is under the pointer");
 requireText(music, "startTransition(() => setOrder(name))", "an order must answer before the shelf is sorted again");
 requireText(music, "<AlbumTracks", "an album must open its track list");
 requireText(music, "LARGE_ART[art]", "sleeves drawn large must offer their high-resolution rung");
 // Dan, 25 September 2026: the switch answers at once and resizing is smooth.
-requireText(music, "startTransition(() => setView(name))", "the albums/songs switch must answer before the map redraws");
-requireText(music, "useSettledWidth(", "the music map must scale while resizing and lay out once settled");
-requireText(music, ".animate(", "the music map's sleeves must glide to a new packing");
+requireText(music, "startTransition(() => setView(name))", "the albums/songs switch must answer before the shelf redraws");
+requireText(music, "useSettledWidth(", "the shelf must lay out once the width settles");
+requireText(music, ".animate(", "the shelf's sleeves must glide to a new order");
 requireText(css, ".music-tracks {\n  -webkit-user-select: none;", "the track sheet must not select");
-// Dan, 26 September 2026: a line of years, songs that open their album, and where to hear it.
+// Dan, 26 September 2026: songs that open their album, and where to hear it.
 requireText(music, 'useRoomFile(active, "/music-years.json")', "the year order must place each album or song in the year it was played most");
 requireText(music, 'useRoomFile(active, "/music-kinds.json")', "the kind order must group the shelf by kind of music");
 requireText(music, "picked={song ? song.title : null}", "a song must open its album's track list with the song lit");
 requireText(music, "links={listenLinks(", "every music sheet must link to Spotify and Apple Music");
 requireText(css, "li:hover::after", "track bars must take their own colour under the pointer");
-// The front page: music as large as the rest, everything drawn in.
-requireText(things, 'const CARD = "M-38-84h76', "the music cards must be as large as the other things");
-requireText(things, "CARD_REST.map(", "the music sketch must trace the fanned cards");
-requireText(things, "<CastleBankMark />", "the back websites window must carry Castle Bank's mark");
-// Dan, 26 September 2026: the back window stays its first size, so the mark only peeps out.
-requireText(things, "const BACK = windowShape(34, 38, 96, 90);", "the back websites window must not grow to show Castle Bank's mark");
-// Dan, 26 September 2026: the Features tile is Features' own board; 19 October
-// 2026: in the game's new theme, on its lattice, minting a stamp on hover.
-requireText(things, 'const BAND = ["#22A3DD", "#EFC319", "#279B57", "#DD700C"];', "the Features board must carry the wordmark's four colours");
-requireText(things, 'className="t-lattice"', "the Features board must be the game's lattice paper");
-requireText(things, "RAIL.map(", "the Features board must mint a stamp whose foot fills with the six colours");
-// Dan, 21 October 2026: blue and orange, the circles matching their lines,
-// never a colour each.
-requireText(things, "stroke={ROOF.has(thread) ? BLUE : ORANGE}", "the Features roof must be blue and its walls orange");
-requireText(things, "const RINGS = [[BLUE], [BLUE, ORANGE], [ORANGE], [ORANGE], [BLUE, ORANGE]];", "the Features neurons must match their threads, fused at the eaves");
-requireText(things, "<Reveal id={mask} d={TRAIL}", "the career trail must be laid down, not shown from the start");
-requireText(things, "<Reveal id={mask} d={ROUTE}", "the trek route must be walked in on arrival");
 {
-  // The shelf itself, on the real albums (Dan, 16 November 2026): every square
-  // as large as its hours between a floor and a cap, the most listened first,
-  // and each order placing every album once.
-  const albums = unpackRanking(ranking).albums;
+  // The shelf itself, on the real albums and songs: rows of one size, each as
+  // large as its albums' hours between the floor and the cap, every full row
+  // filling the width, sizes only ever stepping down, and each order placing
+  // every album once.
+  const { albums, songs } = unpackRanking(ranking);
   const byHours = [...albums].sort((a, b) => b.minutes - a.minutes || a.rank - b.rank);
   if (byHours.slice(0, 3).map((album) => album.title).join("|") !== "Music for Psychedelic Therapy|Discreet Music|Graceland") fail("the shelf must start with the most listened");
-  const reference = byHours[2].minutes;
-  for (const width of [343, 1180]) {
-    const limits = bounds(width);
-    const sides = byHours.map((album) => sideFor(album.minutes, reference, limits));
-    if (sides.some((side) => side < limits.floor || side > limits.cap)) fail(`every square at ${width}px must sit between the floor and the cap`);
-    if (limits.floor < 56 || limits.cap > width * 0.5) fail(`squares at ${width}px must be big enough to see and never more than half the width`);
-    if (sides[0] !== limits.cap || sides[1] !== limits.cap) fail(`the two ambient records must stop at the cap at ${width}px`);
-    if (sides.some((side, index) => index && side > sides[index - 1])) fail(`a square must never be larger than one listened to for longer at ${width}px`);
-    if (width > 600 && sides[0] ** 2 < sides.at(-1) ** 2 * 8) fail("the shelf must show the difference in hours");
+  for (const [kind, list] of [["albums", byHours], ["songs", [...songs].sort((a, b) => b.minutes - a.minutes || a.rank - b.rank)]]) {
+    const reference = list[2].minutes;
+    for (const width of [343, 1180, 1312]) {
+      const limits = bounds(width);
+      if (limits.floor < 44 || limits.cap > width * 0.5) fail(`squares at ${width}px must be big enough to see and never more than half the width`);
+      if (sideFor(list[0].minutes, reference, limits) !== limits.cap) fail(`the most listened must reach the cap at ${width}px`);
+      const rows = rowsFor(list.map((item) => ({ item })), width, reference);
+      if (rows.reduce((sum, row) => sum + row.entries.length, 0) !== list.length) fail(`every ${kind} square must be on the shelf at ${width}px`);
+      rows.forEach((row, at) => {
+        if (row.side < limits.floor - 0.01 || row.side > limits.cap + 0.01) fail(`every ${kind} row at ${width}px must sit between the floor and the cap`);
+        if (at && row.side > rows[at - 1].side + 0.01) fail(`a ${kind} row at ${width}px must never be larger than one above it`);
+        const filled = row.entries.length * row.side + (row.entries.length - 1) * GAP;
+        if (at < rows.length - 1 && (filled > width + 0.01 || filled < width - row.entries.length)) fail(`every full ${kind} row at ${width}px must fill the width exactly`);
+      });
+      if (width > 600 && rows[0].side ** 2 < rows.at(-1).side ** 2 * 4) fail("the shelf must show the difference in hours");
+    }
   }
   const entries = byHours.map((item) => ({ item }));
   const years = JSON.parse(read("public/music-years.json"));
@@ -164,28 +136,10 @@ requireText(things, "<Reveal id={mask} d={ROUTE}", "the trek route must be walke
     if (order !== "hours" && groups.some((group) => !group.label || !group.figures)) fail(`the ${order} order must head each group with what it needs`);
   }
 }
-requireText(career, "export function CareerTimeline", "the career timeline must stay available to the room");
-for (const text of ['id="capabilities"', "What Akibwa does", "Make the mess legible"]) forbidText(home, text, "rejected capability content must not return");
 
-// Contact without publishing the address.
-requireText(contact, 'aria-label="Email Akibwa"', "the homepage must retain a private-by-default contact action");
+// The address stays private.
 const personalEmail = ["da", "kibwa", "@", "gmail", ".com"].join("");
-for (const [source, label] of [[contact, "contact"], [home, "the homepage"]]) forbidText(source, personalEmail, `the contact address must not be present in ${label}`);
-requireText(contact, "https://www.instagram.com/dakibwa/", "the approved Instagram profile must remain");
-requireText(contact, "https://x.com/dakibwa", "the approved X profile must remain");
-
-// Websites: the three Dan chose, nothing that names him in full, and a site
-// still in review shown without a link.
-if (JSON.stringify(websites.map((site) => site.id)) !== JSON.stringify(["portuguese", "castle-bank", "butterfly-rose"])) {
-  fail("the websites room lists Português com a Inês, Castle Bank and Butterfly Rose");
-}
-for (const site of websites) {
-  if (!existsSync(new URL(`../public${site.src}`, import.meta.url))) fail(`${site.title} artwork is missing`);
-  if (!site.alt || !site.description) fail(`${site.title} needs alt text and a description`);
-  if (site.inReview && site.href) fail(`${site.title} is in review and must not link yet`);
-  if (site.capture) fail(`${site.title} must be an illustration, not a screenshot of the site`);
-}
-if (/atkinson/i.test(JSON.stringify(websites))) fail("the websites data must not name Dan in full");
+for (const [source, label] of [[index, "the page"], [music, "the music shelf"], [layout, "the layout"]]) forbidText(source, personalEmail, `the contact address must not be present in ${label}`);
 
 // The public music file carries aggregates only (Dan asked for hours listened
 // on 24 September 2026): no dates, URIs, accounts or raw events.
@@ -253,9 +207,6 @@ for (const route of ["albums", "projects", "personal", "about", "contact", "offe
 }
 requireText(redirects, "\n/portugal https://portuguesewithines.com/ 301\n", "the Portuguese short link must keep reaching Inês's site");
 requireText(sitemap, 'const routes = [{ path: "/", priority: 1 }]', "only the Akibwa index belongs in the sitemap");
-
-// The restored career lane keeps its original mechanics.
-requireRuleText(".concept-career-section {", ["transition: padding-bottom 340ms", "--career-open-space: clamp(24px, 3vw, 36px)"]);
 
 if (existsSync(new URL("../public/life-map/index.html", import.meta.url))) {
   fail("the detailed Life in Maps page must not ship");

@@ -1,12 +1,11 @@
-import { PaperHome } from "@/components/paper/paper-home";
+import { MusicRoom } from "@/components/paper/music-room";
 import { musicSeed } from "@/lib/paper-home.mjs";
 import ranking from "@/public/music-ranking.json";
 
 export const metadata = {
   title: { absolute: "Akibwa" },
   alternates: { canonical: "/" },
-  description:
-    "Daniel, online as Akibwa. My music taste, my career, a walk from Paris to Sofia, and the apps, games and websites I make at Oh Life! Studios.",
+  description: "The music Akibwa plays most: 150 albums and 1,000 songs, each as large as the hours listened.",
   robots: {
     index: true,
     follow: true,
@@ -22,11 +21,13 @@ export const metadata = {
   },
 };
 
-// Everything here runs once, during the static export.
+// Akibwa is one page: the music shelf (Dan, 16 November 2026). Everything
+// here runs once, during the static export.
 export default function IndexPage() {
   return (
-    <PaperHome
-      music={{ initial: musicSeed(ranking) }}
-    />
+    <div className="music-page">
+      <h1 className="visually-hidden">Akibwa: the music I play most</h1>
+      <MusicRoom initial={musicSeed(ranking)} active />
+    </div>
   );
 }

@@ -1,4 +1,4 @@
-/* Rendered regression check for Akibwa's paper homepage and, with
+/* Rendered regression check for Akibwa's one page, the music shelf, and, with
  * CHECK_TREK_ONLY=1, the standalone Trek.
  *
  * Usage: npm run build && npm run check:navigation:dom
@@ -245,31 +245,21 @@ const setMobile = async () => {
   });
 };
 
-const frontState = () =>
+const pageState = () =>
   evaluate(`(() => {
     const forbiddenIdentity = String.fromCharCode(68, 97, 110, 105, 101, 108, 32, 65, 116, 107, 105, 110, 115, 111, 110);
     const links = [...document.querySelectorAll("a[href]")].map((link) => link.href);
     return {
-      room: document.documentElement.dataset.room,
-      frontVisible: getComputedStyle(document.querySelector(".front")).display !== "none",
-      things: [...document.querySelectorAll(".thing")].map((thing) => [thing.querySelector(".thing-label").textContent, thing.getAttribute("href")]),
       heading: document.querySelector("h1")?.textContent ?? "",
-      lede: document.querySelector(".front-lede")?.textContent ?? "",
+      tiles: document.querySelectorAll(".music-page .music-tile").length,
+      retired: [...document.querySelectorAll("#trek, #career, #websites, .front, .things, .mascot, .night-switch, .bar-rooms, .contact")].length,
       hasPersonalIdentity: document.body.innerText.includes(forbiddenIdentity),
-      socialLinks: [...new Set(links.filter((href) => /(?:linkedin|instagram|x)\\.com/.test(href)))],
+      links: links.length,
       directEmailLinks: links.filter((href) => href.startsWith("mailto:")),
-      contactLabels: [...document.querySelectorAll(".bar .contact a, .bar .contact button")].map((item) => item.getAttribute("aria-label")),
       googlebot: document.querySelector('meta[name="googlebot"]')?.content ?? "",
       overflow: document.documentElement.scrollWidth - innerWidth
     };
   })()`);
-
-const roomVisible = (id) => evaluate(`(() => {
-  const room = document.getElementById(${JSON.stringify(id)});
-  return Boolean(room) && getComputedStyle(room).display !== "none" && getComputedStyle(document.querySelector(".front")).display === "none";
-})()`);
-
-const clickThing = (label) => evaluate(`[...document.querySelectorAll(".thing")].find((thing) => thing.querySelector(".thing-label").textContent === ${JSON.stringify(label)}).click()`);
 
 const waitFor = async (expression, timeout = 6000) => {
   const start = Date.now();
@@ -281,65 +271,42 @@ const waitFor = async (expression, timeout = 6000) => {
 };
 
 const checkPublicLanding = async () => {
-  section("front page and public boundary");
+  // Dan, 16 November 2026: akibwa.com is one page, the music shelf.
+  section("the page and public boundary");
   await setDesktop();
   await goto("/");
-  let state = await frontState();
+  await sleep(800);
+  let state = await pageState();
   const ax = await cdp.send("Accessibility.getFullAXTree");
   const mainHeading = ax.nodes.find((node) => node.role?.value === "heading" && node.properties?.some((property) => property.name === "level" && property.value.value === 1));
-  check(mainHeading?.name?.value?.startsWith("I’m Daniel. Online as Akibwa."), `the h1 has a meaningful computed accessible name [${mainHeading?.name?.value}]`);
-  check(state.room === "index" && state.frontVisible, "the front page opens on the four things");
-  check(JSON.stringify(state.things) === JSON.stringify([["music", "#music"], ["trek", "#trek"], ["career", "#career"], ["oh life! studios", "https://ohlifestudios.com/"]]), `three personal rooms and the external studio [${JSON.stringify(state.things)}]`);
-  check(state.lede === "Building in the age of AI.", "the front page keeps Dan's proposition");
+  check(mainHeading?.name?.value === "Akibwa: the music I play most", `the h1 names the page for readers [${mainHeading?.name?.value}]`);
+  check(state.tiles === 150, `the page is the shelf of the top 150 albums [${state.tiles}]`);
+  check(state.retired === 0, "the front page, its rooms and its bar are gone");
+  check(state.links === 0 && state.directEmailLinks.length === 0, `the shelf links nowhere until a sheet opens [${state.links}]`);
   check(!state.hasPersonalIdentity, "the page does not contain the personal full name");
-  check(state.socialLinks.length === 2 && state.socialLinks.every((href) => href.includes("/dakibwa")), "only the two approved social profiles are linked");
-  check(state.directEmailLinks.length === 0 && state.contactLabels.includes("Email Akibwa"), "contact is available without publishing the address in HTML");
-  check(JSON.stringify(state.contactLabels) === JSON.stringify(["Instagram — @dakibwa", "X — @dakibwa", "Email Akibwa"]), "the bar keeps three distinct contact controls");
   check(state.googlebot.includes("noimageindex") && state.googlebot.includes("max-snippet:120"), `Google receives the restricted preview policy [${state.googlebot}]`);
   check(await evaluate(`getComputedStyle(document.body).userSelect === "none"`), "the page's text is not selectable");
-  check(await evaluate(`!document.querySelector(".front .hole, .sky-wheel")`), "the front page has no portal or sky wheel");
-  check(await waitFor(`document.querySelector(".name")?.dataset.name === "akibwa"`, 7000), "the name changes from Daniel to Akibwa at the slower pace");
-  await sleep(1700);
-
   for (const width of [320, 390, 560, 800, 1024, 1440, 1920]) {
     await setDesktop(width, width < 700 ? 844 : 900);
-    await sleep(250);
-    state = await frontState();
-    check(state.overflow <= 1, `the front page stays inside ${width}px [${state.overflow}px]`);
+    await sleep(900);
+    state = await pageState();
+    check(state.overflow <= 1, `the page stays inside ${width}px [${state.overflow}px]`);
   }
   await setDesktop();
 
-  section("rooms and history");
-  await goto("/");
-  await clickThing("career");
-  await sleep(900);
-  check(await roomVisible("career"), "choosing career opens its room in place");
-  check(await evaluate("location.hash === '#career'"), "an open room carries its hash");
-  check(await evaluate("document.activeElement?.id === 'room-career'"), "focus moves to the room heading");
-  check(await evaluate(`(() => { const tab = document.querySelector(".bar-tab")?.getBoundingClientRect(); const link = document.querySelector('.bar-rooms [aria-current="page"]')?.getBoundingClientRect(); return Boolean(tab && link) && Math.abs(tab.left - link.left) < 2 && Math.abs(tab.width - link.width) < 2 && link.width > 0; })()`), "the room on show sits on the bar's ink tab");
-  await evaluate("history.back()");
-  await sleep(900);
-  check(await evaluate("document.documentElement.dataset.room === 'index' && getComputedStyle(document.querySelector('.front')).display !== 'none'"), "Back returns to the four things");
-  await clickThing("music");
-  await sleep(700);
-  await cdp.send("Input.dispatchKeyEvent", { type: "keyDown", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
-  await cdp.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
-  await sleep(900);
-  check(await evaluate("document.documentElement.dataset.room === 'index'"), "Escape closes a room");
-  await goto("/#music");
-  await sleep(600);
-  check(await roomVisible("music"), "a room's link opens straight into it");
-  check(await evaluate("scrollY === 0"), "a room's link loads with the bar in view");
-  check(await evaluate("document.activeElement?.id === 'room-music'"), "a shared room link focuses its heading");
-  await evaluate("history.back()");
-  await sleep(900);
-  check(await evaluate("document.documentElement.dataset.room === 'index' && location.pathname === '/'"), "Back from a shared room link lands on the front page");
+  section("old links");
+  await goto("/#trek");
+  check(await waitFor(`location.pathname === "/trek/"`, 6000), "an old #trek link reaches the trek's own page");
+  for (const hash of ["career", "music"]) {
+    await goto(`/#${hash}`);
+    check(await waitFor(`location.pathname === "/" && location.hash === "" && document.querySelectorAll(".music-page .music-tile").length === 150`), `an old #${hash} link lands on the shelf`);
+  }
 
   section("music");
-  await goto("/#music");
+  await goto("/");
   await sleep(1400);
   const albums = await evaluate(`(() => {
-    const map = document.querySelector("#music .music-map.is-albums");
+    const map = document.querySelector(".music-page .music-map.is-albums");
     const tiles = [...map.querySelectorAll(".music-tile")];
     const box = (tile) => tile.getBoundingClientRect();
     const area = (tile) => box(tile).width * box(tile).height;
@@ -348,67 +315,63 @@ const checkPublicLanding = async () => {
       count: tiles.length,
       first: area(tiles[0]),
       last: area(tiles.at(-1)),
-      bounded: tiles.every((tile) => Math.abs(box(tile).width - box(tile).height) < 0.5 && box(tile).width >= 56 && box(tile).width <= frame.width / 2 + 1),
+      bounded: tiles.every((tile) => Math.abs(box(tile).width - box(tile).height) < 0.5 && box(tile).width >= 44 && box(tile).width <= frame.width / 2 + 1),
       inside: tiles.every((tile) => box(tile).left >= frame.left - 1 && box(tile).right <= frame.right + 1),
       lead: tiles[0].querySelector(".music-face").getAttribute("aria-label"),
       large: tiles[0].querySelector("img").srcset.includes("-large.webp"),
-      words: [...document.querySelectorAll("#music p")].filter((p) => !p.closest("dialog")).map((p) => p.textContent).join(""),
-      head: Boolean(document.querySelector("#music .room-head"))
+      words: [...document.querySelectorAll(".music-page p")].filter((p) => !p.closest("dialog")).map((p) => p.textContent).join(""),
+      head: Boolean(document.querySelector(".music-page .room-head"))
     };
   })()`);
   check(albums.count === 150, `the albums map holds the top 150 [${albums.count}]`);
-  check(albums.first > albums.last * 8, `sleeves are sized by hours listened [${Math.round(albums.first)}px² to ${Math.round(albums.last)}px²]`);
+  check(albums.first > albums.last * 6, `sleeves are sized by hours listened [${Math.round(albums.first)}px² to ${Math.round(albums.last)}px²]`);
   check(albums.bounded && albums.inside, "the sleeves are square, between the floor and the cap, and on the shelf");
   check(albums.lead?.startsWith("Music for Psychedelic Therapy"), `the map starts with the most listened [${albums.lead}]`);
   // Dan, 16 November 2026: everything to know is in the bar above the shelf.
-  const pointed = await evaluate(`(() => { const face = [...document.querySelectorAll("#music .is-albums .music-face")].find((button) => button.getAttribute("aria-label").startsWith("Graceland")); face.dispatchEvent(new PointerEvent("pointerover", { bubbles: true, pointerType: "mouse" })); return new Promise((done) => setTimeout(() => done(document.querySelector("#music .music-now")?.textContent ?? ""), 200)); })()`);
+  const pointed = await evaluate(`(() => { const face = [...document.querySelectorAll(".music-page .is-albums .music-face")].find((button) => button.getAttribute("aria-label").startsWith("Graceland")); face.dispatchEvent(new PointerEvent("pointerover", { bubbles: true, pointerType: "mouse" })); return new Promise((done) => setTimeout(() => done(document.querySelector(".music-page .music-now")?.textContent ?? ""), 200)); })()`);
   check(/^Graceland.*\d+ h listened/.test(pointed), `pointing at a sleeve names it and its hours in the bar [${pointed}]`);
   for (const [order, heading] of [["kind", "ambient"], ["year", "2026"], ["a–z", "A"]]) {
-    await evaluate(`[...document.querySelectorAll("#music .music-order button")].find((button) => button.textContent === ${JSON.stringify(order)}).click()`);
-    check(await waitFor(`(() => { const heads = [...document.querySelectorAll("#music .music-group-head")].map((head) => head.firstElementChild.textContent); return heads.includes(${JSON.stringify(heading)}) && document.querySelectorAll("#music .is-albums .music-tile").length === 150; })()`, 4000), `the ${order} order sorts every album under its headings`);
+    await evaluate(`[...document.querySelectorAll(".music-page .music-order button")].find((button) => button.textContent === ${JSON.stringify(order)}).click()`);
+    check(await waitFor(`(() => { const heads = [...document.querySelectorAll(".music-page .music-group-head")].map((head) => head.firstElementChild.textContent); return heads.includes(${JSON.stringify(heading)}) && document.querySelectorAll(".music-page .is-albums .music-tile").length === 150; })()`, 4000), `the ${order} order sorts every album under its headings`);
   }
-  await evaluate(`[...document.querySelectorAll("#music .music-order button")].find((button) => button.textContent === "hours").click()`);
-  check(await waitFor(`!document.querySelector("#music .music-group-head") && document.querySelector("#music .music-face")?.getAttribute("aria-label").startsWith("Music for Psychedelic Therapy")`, 4000), "the hours order puts the shelf back, most listened first");
+  await evaluate(`[...document.querySelectorAll(".music-page .music-order button")].find((button) => button.textContent === "hours").click()`);
+  check(await waitFor(`!document.querySelector(".music-page .music-group-head") && document.querySelector(".music-page .music-face")?.getAttribute("aria-label").startsWith("Music for Psychedelic Therapy")`, 4000), "the hours order puts the shelf back, most listened first");
   check(albums.large, "sleeves drawn large offer the high-resolution rung");
-  check(albums.words === "" && !albums.head, `the room explains nothing it need not [${albums.words}]`);
+  check(albums.words === "" && !albums.head, `the shelf explains nothing it need not [${albums.words}]`);
   // The search knows who plays with whom, and eras.
-  await evaluate(`document.querySelector("#music .music-search input").focus()`);
+  await evaluate(`document.querySelector(".music-page .music-search input").focus()`);
   await cdp.send("Input.insertText", { text: "panda bear" });
-  check(await waitFor(`(() => { const faces = [...document.querySelectorAll("#music .is-albums .music-face")].map((face) => face.getAttribute("aria-label")); return faces.length > 1 && faces.length < 20 && faces.some((label) => label.includes("Animal Collective")); })()`, 8000), "searching Panda Bear also finds Animal Collective");
+  check(await waitFor(`(() => { const faces = [...document.querySelectorAll(".music-page .is-albums .music-face")].map((face) => face.getAttribute("aria-label")); return faces.length > 1 && faces.length < 20 && faces.some((label) => label.includes("Animal Collective")); })()`, 8000), "searching Panda Bear also finds Animal Collective");
   await cdp.send("Input.dispatchKeyEvent", { type: "keyDown", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
   await cdp.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
   await sleep(600);
-  check(await evaluate(`document.querySelectorAll("#music .is-albums .music-tile").length === 150 && document.documentElement.dataset.room === "music"`), "Escape clears the search and leaves the room open");
-  await evaluate(`[...document.querySelectorAll("#music .music-switch button")].find((button) => button.textContent === "songs").click()`);
+  check(await evaluate(`document.querySelectorAll(".music-page .is-albums .music-tile").length === 150`), "Escape clears the search");
+  await evaluate(`[...document.querySelectorAll(".music-page .music-switch button")].find((button) => button.textContent === "songs").click()`);
   await sleep(700);
-  check(await waitFor(`document.querySelectorAll("#music .is-songs .music-tile").length === 1000`, 8000), "the switch shows all thousand songs at once");
-  check(await evaluate(`document.querySelector("#music .is-songs .music-face")?.getAttribute("aria-label")?.startsWith("Thursday Afternoon") && !document.querySelector("#music .music-more button")`), "songs start with the most listened, with no button for more");
-  const smallest = await evaluate(`[...document.querySelectorAll("#music .is-songs .music-tile")].at(-1).offsetWidth`);
-  check(smallest >= 56, `the smallest square is big enough to see [${smallest}px]`);
-  await evaluate(`[...document.querySelectorAll("#music .music-switch button")].find((button) => button.textContent === "albums").click()`);
+  check(await waitFor(`document.querySelectorAll(".music-page .is-songs .music-tile").length === 1000`, 8000), "the switch shows all thousand songs at once");
+  check(await evaluate(`document.querySelector(".music-page .is-songs .music-face")?.getAttribute("aria-label")?.startsWith("Thursday Afternoon") && !document.querySelector(".music-page .music-more button")`), "songs start with the most listened, with no button for more");
+  const smallest = await evaluate(`[...document.querySelectorAll(".music-page .is-songs .music-tile")].at(-1).offsetWidth`);
+  check(smallest >= 44, `the smallest square is big enough to see [${smallest}px]`);
+  await evaluate(`[...document.querySelectorAll(".music-page .music-switch button")].find((button) => button.textContent === "albums").click()`);
   await sleep(700);
-  const graceland = `[...document.querySelectorAll("#music .is-albums .music-face")].find((button) => button.getAttribute("aria-label").startsWith("Graceland"))`;
+  const graceland = `[...document.querySelectorAll(".music-page .is-albums .music-face")].find((button) => button.getAttribute("aria-label").startsWith("Graceland"))`;
   await evaluate(`${graceland}.click()`);
-  check(await waitFor(`Boolean(document.querySelector("#music dialog.music-tracks[open] .music-track-list li"))`, 8000), "an album opens its track list once the file loads");
+  check(await waitFor(`Boolean(document.querySelector(".music-page dialog.music-tracks[open] .music-track-list li"))`, 8000), "an album opens its track list once the file loads");
   check(await evaluate(`document.querySelector("#music-tracks-title")?.textContent === "Graceland" && [...document.querySelectorAll(".music-track-list li")].length > 5`), "the track list shows the album's songs with plays and hours");
   await cdp.send("Input.dispatchKeyEvent", { type: "keyDown", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
   await cdp.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
   await sleep(500);
-  check(await evaluate(`!document.querySelector("dialog.music-tracks[open]") && document.documentElement.dataset.room === "music"`), "Escape closes the track list and leaves the room open");
+  check(await evaluate(`!document.querySelector("dialog.music-tracks[open]")`), "Escape closes the track list");
   check(await evaluate(`document.activeElement?.classList.contains("music-face") && document.activeElement?.getAttribute("aria-label").startsWith("Graceland")`), "closing a sheet returns keyboard focus to its album");
   check(await evaluate(`!document.body.innerHTML.includes("spotify:")`), "no track identifiers reach the page");
   await evaluate(`${graceland}.click()`);
   await waitFor(`Boolean(document.querySelector("dialog:modal"))`);
-  await evaluate("history.back()");
-  check(await waitFor(`document.documentElement.dataset.room === "index" && !document.querySelector("dialog:modal")`), "Back with a sheet open releases the homepage from the modal");
-  await clickThing("career");
-  check(await waitFor(`document.activeElement?.id === "room-career"`), "the homepage accepts focus after leaving an open sheet");
-  await goto("/#music");
-  check(await evaluate(`!document.querySelector("dialog:modal")`), "returning to music does not reopen the previous sheet");
+  await goto("/");
+  check(await evaluate(`!document.querySelector("dialog:modal")`), "loading the page again does not reopen the previous sheet");
   for (const width of [320, 360, 401, 414, 479, 480, 600, 720, 820]) {
     await setDesktop(width, 844);
     await sleep(500);
-    const fit = await evaluate(`(() => { const map = document.querySelector("#music .music-map").getBoundingClientRect(); const wide = [...document.querySelectorAll("body *")].filter((element) => element.getBoundingClientRect().right > innerWidth + 1).map((element) => element.tagName + "." + String(element.className).split(" ")[0]).slice(0, 3); return { ok: document.documentElement.scrollWidth <= innerWidth + 1 && map.right <= innerWidth, wide, right: Math.round(map.right) }; })()`);
+    const fit = await evaluate(`(() => { const map = document.querySelector(".music-page .music-map").getBoundingClientRect(); const wide = [...document.querySelectorAll("body *")].filter((element) => element.getBoundingClientRect().right > innerWidth + 1).map((element) => element.tagName + "." + String(element.className).split(" ")[0]).slice(0, 3); return { ok: document.documentElement.scrollWidth <= innerWidth + 1 && map.right <= innerWidth, wide, right: Math.round(map.right) }; })()`);
     check(fit.ok, `the music map fits ${width}px [${fit.right}px ${fit.wide.join(", ")}]`);
   }
   await setDesktop();
@@ -416,12 +379,12 @@ const checkPublicLanding = async () => {
   section("music loading recovery");
   await cdp.send("Fetch.enable", { patterns: [{ urlPattern: "*music-ranking.json", requestStage: "Request" }] });
   let paused = cdp.waitFor("Fetch.requestPaused");
-  let navigation = goto("/#music");
+  let navigation = goto("/");
   let request = await paused;
   await cdp.send("Fetch.fulfillRequest", { requestId: request.requestId, responseCode: 503, body: Buffer.from("unavailable").toString("base64") });
   await navigation;
-  check(await waitFor(`Boolean(document.querySelector("#music .music-more button"))`), "a failed ranking preserves the seed and offers recovery");
-  await evaluate(`document.querySelector("#music .music-face").click()`);
+  check(await waitFor(`Boolean(document.querySelector(".music-page .music-more button"))`), "a failed ranking preserves the seed and offers recovery");
+  await evaluate(`document.querySelector(".music-page .music-face").click()`);
   check(await waitFor(`Boolean(document.querySelector("dialog[open] .music-tracks-note button"))`), "a failed track list can be retried from inside its modal");
   paused = cdp.waitFor("Fetch.requestPaused");
   await evaluate(`document.querySelector("dialog .music-tracks-note button").click()`);
@@ -432,7 +395,7 @@ const checkPublicLanding = async () => {
 
   await cdp.send("Fetch.enable", { patterns: [{ urlPattern: "*music-ranking.json", requestStage: "Request" }] });
   paused = cdp.waitFor("Fetch.requestPaused");
-  navigation = goto("/#music");
+  navigation = goto("/");
   request = await paused;
   await cdp.send("Fetch.fulfillRequest", {
     requestId: request.requestId,
@@ -441,84 +404,25 @@ const checkPublicLanding = async () => {
     body: Buffer.from(JSON.stringify({ schemaVersion: 2, names: [], songs: [], albums: [] })).toString("base64")
   });
   await navigation;
-  check(await waitFor(`document.querySelectorAll("#music .music-tile").length === 150 && Boolean(document.querySelector("#music .music-more button"))`), "an empty successful response cannot erase the music room");
+  check(await waitFor(`document.querySelectorAll(".music-page .music-tile").length === 150 && Boolean(document.querySelector(".music-page .music-more button"))`), "an empty successful response cannot erase the shelf");
   await cdp.send("Fetch.disable");
 
-  section("mascot");
-  await goto("/");
-  check(await waitFor(`(() => { const cast = [...document.querySelectorAll(".mascot")]; return cast.length === 1 && cast[0].classList.contains("is-a") && cast[0].classList.contains("is-placed"); })()`, 3000), "the sole a appears directly on the paper");
-  await sleep(1200);
-  const mascot = await evaluate(`(() => { const el = document.querySelector(".mascot"); const box = el.getBoundingClientRect(); return { placed: el.classList.contains("is-placed"), x: box.left + box.width / 2, y: box.top + box.height / 2, w: box.width }; })()`);
-  check(mascot.placed && mascot.w > 40, "the mascot is on the front page");
-  await cdp.send("Input.dispatchMouseEvent", { type: "mousePressed", x: mascot.x, y: mascot.y, button: "left", clickCount: 1 });
-  await cdp.send("Input.dispatchMouseEvent", { type: "mouseMoved", x: mascot.x - 120, y: mascot.y - 40, button: "left" });
-  await cdp.send("Input.dispatchMouseEvent", { type: "mouseMoved", x: mascot.x - 240, y: mascot.y - 60, button: "left" });
-  await cdp.send("Input.dispatchMouseEvent", { type: "mouseReleased", x: mascot.x - 240, y: mascot.y - 60, button: "left", clickCount: 1 });
-  await sleep(400);
-  check(await evaluate(`(() => { const box = document.querySelector(".mascot").getBoundingClientRect(); return Math.abs(box.left + box.width / 2 - ${mascot.x - 240}) < 12; })()`), "the mascot can be picked up and set down elsewhere");
-
-  section("night paper");
-  await goto("/");
-  const toggle = await evaluate(`(() => { const toggle = document.querySelector(".front-controls .night-switch"); const state = { paper: document.documentElement.dataset.paper ?? "day", role: toggle?.getAttribute("role"), name: toggle?.getAttribute("aria-label"), checked: toggle?.getAttribute("aria-checked") }; toggle?.click(); return state; })()`);
-  check(toggle.paper === "day" && toggle.role === "switch" && toggle.name === "Night paper" && toggle.checked === "false", "the sheet opens on day paper, with a night switch beside the contact links");
-  check(await waitFor(`document.documentElement.dataset.paper === "night" && localStorage.getItem("akibwa-paper") === "night" && document.querySelector(".front-controls .night-switch").getAttribute("aria-checked") === "true" && getComputedStyle(document.body).backgroundColor === "rgb(30, 26, 23)"`), "the switch lays the night paper and remembers it");
-  await goto("/#career");
-  check(await evaluate(`document.documentElement.dataset.paper === "night" && document.querySelector('meta[name="theme-color"]').content === "#1e1a17" && getComputedStyle(document.querySelector(".bar .night-switch")).display !== "none"`), "a room link opens on the chosen paper, with the switch in the bar");
-  await evaluate(`document.querySelector(".bar .night-switch").click()`);
-  check(await waitFor(`!("paper" in document.documentElement.dataset) && localStorage.getItem("akibwa-paper") === "day" && document.querySelector('meta[name="theme-color"]').content === "#f3ecdf"`), "turning it back restores the day paper");
-
-  section("career, trek and the studio");
-  await goto("/#career");
-  await sleep(2600);
-  const cards = await evaluate(`(() => {
-    const cards = [...document.querySelectorAll("#career .career-card")];
-    const columns = new Set(cards.map((card) => Math.round(card.getBoundingClientRect().left)));
-    return { count: cards.length, first: cards[0]?.querySelector(".career-name")?.textContent, columns: columns.size, statements: cards.every((card) => card.querySelector(".career-statement")?.textContent), years: cards.every((card) => /\\d{4}|Now/.test(card.querySelector(".career-role")?.textContent ?? "")) };
-  })()`);
-  check(cards.count === 8 && cards.first === "Oh Life! Studios", `career keeps its eight roles, with Oh Life! Studios first [${cards.count}, ${cards.first}]`);
-  check(cards.columns === 3 && cards.statements && cards.years, `every role is a card with its years and statement, three to a row [${cards.columns}]`);
-  await setDesktop(390, 844);
-  await sleep(600);
-  check(await evaluate(`new Set([...document.querySelectorAll("#career .career-card")].map((card) => Math.round(card.getBoundingClientRect().left))).size === 1 && document.documentElement.scrollWidth <= innerWidth + 1`), "on a phone the cards stack");
-  await setDesktop();
-  await goto("/");
-  check(await evaluate(`document.querySelector('.things a[href="https://ohlifestudios.com/"]')?.textContent.includes("oh life! studios") && document.querySelector('.bar-rooms a[href="https://ohlifestudios.com/"]') !== null`), "both the illustrated studio and navigation link to its own home");
-  await goto("/#trek");
-  await sleep(1200);
-  check(await evaluate(`(() => { const frame = document.querySelector("#trek iframe.room-frame"); return Boolean(frame) && new URL(frame.src).pathname === "/trek/" && frame.getBoundingClientRect().height > innerHeight * 0.6; })()`), "the trek opens in place, its journey filling the room");
-  check(await waitFor(`document.querySelector("#trek iframe")?.contentDocument?.documentElement.classList.contains("is-embedded")`, 8000), "the framed trek hides its own way home");
-
   section("without JavaScript");
-  await cdp.send("Emulation.setScriptExecutionDisabled", { value: true });
-  await goto("/#career");
-  await sleep(400);
-  check(await evaluate("true").catch(() => true), "pages load with scripts disabled");
-  await cdp.send("Emulation.setScriptExecutionDisabled", { value: false });
-  // Script execution is disabled for page scripts only, so read the layout through CDP.
-  const { root } = await cdp.send("DOM.getDocument", { depth: -1 });
-  const { nodeId } = await cdp.send("DOM.querySelector", { nodeId: root.nodeId, selector: "#career" });
-  const box = await cdp.send("DOM.getBoxModel", { nodeId }).catch(() => null);
-  check(Boolean(box), "a room's link still opens the room through :target");
   await setDesktop(320, 568);
-  for (const id of ["music", "trek", "career"]) {
-    await cdp.send("Emulation.setScriptExecutionDisabled", { value: true });
-    await goto(`/#${id}`);
-    await cdp.send("Emulation.setScriptExecutionDisabled", { value: false });
-    check(await roomVisible(id), `${id} opens without JavaScript`);
-    check(await evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), `${id} fits a 320px phone without JavaScript`);
-    if (id === "trek") {
-      check(await evaluate(`Boolean(document.querySelector("#${id} iframe.room-frame")?.getBoundingClientRect().width)`), `${id} retains its framed content without JavaScript`);
-    }
-  }
-  await setDesktop();
+  await cdp.send("Emulation.setScriptExecutionDisabled", { value: true });
   await goto("/");
+  await cdp.send("Emulation.setScriptExecutionDisabled", { value: false });
+  check(await evaluate(`document.querySelectorAll(".music-page .music-tile").length === 150`), "the shelf is there without JavaScript");
+  check(await evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), "the shelf fits a 320px phone without JavaScript");
+  await setDesktop();
 
   section("reduced motion");
   await cdp.send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
   await goto("/");
-  await sleep(4200);
-  check(await evaluate(`document.querySelector(".name")?.dataset.name === "daniel" && !document.documentElement.dataset.sky`), "reduced motion keeps Daniel still without the change");
-  check(await evaluate(`getComputedStyle(document.querySelector(".thing .t-paper")).opacity === "1"`), "reduced motion shows the four things at once");
+  await sleep(800);
+  await evaluate(`[...document.querySelectorAll(".music-page .music-order button")].find((button) => button.textContent === "kind").click()`);
+  await sleep(300);
+  check(await evaluate(`document.querySelectorAll(".music-page .music-group-head").length > 0 && !document.getAnimations().some((animation) => animation.playState === "running" && animation.effect?.target?.classList?.contains("music-tile"))`), "under reduced motion an order sorts the shelf without gliding");
   await cdp.send("Emulation.setEmulatedMedia", { features: [] });
 
   section("console");

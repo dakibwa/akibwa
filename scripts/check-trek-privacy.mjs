@@ -25,7 +25,8 @@ for (const relative of [
 const lifeMapSources = [
   "app/sitemap.js",
   "components/image-variants.json",
-  "components/paper/paper-home.jsx",
+  "app/page.jsx",
+  "components/paper/music-room.jsx",
   "data/public-surfaces.json",
   "docs/publication-workflow.md",
   "README.md",
