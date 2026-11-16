@@ -216,30 +216,31 @@ main {
    nothing squeezed): the signature, then the orders, albums or songs, and
    the search. One row on a wide screen, two tidy rows below that, and it
    stays in view. */
+/* One row that tightens as the window narrows (Dan, 16 November 2026: "why
+   can't this resize properly"): the gaps, the type and the search all shrink
+   with the width, and only a narrow phone takes a second row. */
 .music-bar {
   position: sticky;
   top: 0;
   z-index: 3;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto auto;
-  grid-template-areas: "sign . order search";
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  column-gap: 40px;
-  padding: 10px 0;
+  column-gap: clamp(14px, 3.2vw, 40px);
+  padding: clamp(4px, 1vw, 10px) 0;
   background: var(--paper);
 }
 
 /* The signature, as at the foot of ohlifestudios.com: the flower from the
    mark's border set like a letter, then the name. */
 .music-sign {
-  grid-area: sign;
   display: inline-flex;
   align-items: baseline;
   gap: 0.5em;
   min-height: 44px;
   padding: 8px 0;
   color: var(--ink);
-  font: 500 24px/1.2 "Alegreya SC", var(--serif);
+  font: 500 clamp(18px, 1.2vw + 13px, 24px)/1.2 "Alegreya SC", var(--serif);
   letter-spacing: 0.22em;
   text-transform: lowercase;
   text-decoration: none;
@@ -314,11 +315,11 @@ main {
 
 .music-order {
   display: flex;
-  gap: 0 22px;
+  gap: 0 clamp(10px, 1.8vw, 22px);
 }
 
 .music-order {
-  grid-area: order;
+  margin-left: auto;
 }
 
 
@@ -329,7 +330,8 @@ main {
   border: 0;
   background: none;
   color: var(--ink-soft);
-  font-size: 13px;
+  font-size: clamp(11px, 0.25vw + 10px, 13px);
+  letter-spacing: clamp(0.1em, 0.5vw - 0.6px, 0.24em);
   cursor: pointer;
   transition: color 180ms ease;
 }
@@ -366,11 +368,10 @@ main {
 }
 
 .music-search {
-  grid-area: search;
   display: flex;
   align-items: center;
   gap: 8px;
-  width: 190px;
+  width: clamp(110px, 16vw, 200px);
   min-height: 44px;
 }
 
@@ -428,55 +429,21 @@ main {
 /* One row down to a small tablet (Dan, 16 November 2026: "it should all be
    on the same row"); on a phone, the signature with the search, then the
    orders. */
-@media (max-width: 899px) {
-  .music-bar {
-    column-gap: 24px;
-  }
-
+/* A narrow phone: the signature with the search, then the orders. */
+@media (max-width: 479px) {
   .music-search {
-    width: 150px;
-  }
-}
-
-@media (max-width: 719px) {
-  .music-bar {
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas:
-      "sign search"
-      "order order";
-    column-gap: 20px;
-    padding: 6px 0 4px;
-  }
-
-  .music-search {
-    width: min(190px, 44vw);
-  }
-}
-
-@media (max-width: 599px) {
-  .music-sign {
-    font-size: 20px;
+    order: 1;
+    margin-left: auto;
+    width: min(170px, 42vw);
   }
 
   .music-order {
-    gap: 0 14px;
-  }
-
-  .music-order button {
-    font-size: 12px;
-    letter-spacing: 0.16em;
+    order: 2;
+    flex: 1 1 100%;
+    margin-left: 0;
   }
 }
 
-@media (max-width: 379px) {
-  .music-order {
-    gap: 0 10px;
-  }
-
-  .music-order button {
-    letter-spacing: 0.1em;
-  }
-}
 
 
 .music-none {
@@ -864,48 +831,48 @@ html:not(.js) .music-tile {
   outline-offset: -4px;
 }
 
-/* The tracks as a poster's lineup: the most listened first, each name as
-   large as its hours (--size), its hours beside it in small capitals and the
-   flower between. Under the pointer a name takes its own colour (Dan, 25
-   September 2026). */
+/* The tracks share out the sheet by how much each was listened to (trackMap
+   in music-shelf.mjs): soft tints with the name and hours inside, a deeper
+   tint under the pointer in the track's own colour (Dan, 25 September 2026). */
+.music-track-frame {
+  margin: 8px -2px 0;
+}
+
 .music-track-list {
-  margin: 6px 0 0;
+  position: relative;
+  margin: 0;
   padding: 0;
   list-style: none;
-  text-align: center;
-  line-height: 1.15;
 }
 
 .music-track-list li {
-  display: inline;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 9px 11px 8px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--bar) 18%, var(--paper-light));
+  transition: background-color 180ms ease;
 }
 
-.music-track-list li + li::before {
-  content: "";
-  display: inline-block;
-  width: 0.5em;
-  height: 0.48em;
-  margin: 0 0.42em 0 0.36em;
-  background: #db552d;
-  font-size: var(--size);
-  vertical-align: 0.06em;
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2.7 -2.8 5.4 5.15'%3E%3Ccircle cy='-1.8' r='1'/%3E%3Ccircle cx='-1.7' r='1'/%3E%3Ccircle cx='1.7' r='1'/%3E%3Crect x='-1.7' y='-0.62' width='3.4' height='1.24'/%3E%3Crect x='-0.56' y='-1.8' width='1.12' height='1.8'/%3E%3Cpath d='M-0.6 0V0.9Q-0.51 1.79 0 2.35Q0.51 1.79 0.6 0.9V0Z'/%3E%3C/svg%3E") center / contain no-repeat;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2.7 -2.8 5.4 5.15'%3E%3Ccircle cy='-1.8' r='1'/%3E%3Ccircle cx='-1.7' r='1'/%3E%3Ccircle cx='1.7' r='1'/%3E%3Crect x='-1.7' y='-0.62' width='3.4' height='1.24'/%3E%3Crect x='-0.56' y='-1.8' width='1.12' height='1.8'/%3E%3Cpath d='M-0.6 0V0.9Q-0.51 1.79 0 2.35Q0.51 1.79 0.6 0.9V0Z'/%3E%3C/svg%3E") center / contain no-repeat;
-  opacity: 0.85;
+.music-track-list li:hover {
+  background: color-mix(in srgb, var(--bar) 36%, var(--paper-light));
 }
 
 .music-track-title {
+  display: -webkit-box;
+  overflow: hidden;
   color: var(--ink);
   font: 400 var(--size)/1.15 "Alegreya", var(--serif);
-  transition: color 180ms ease;
-}
-
-.music-track-list li:hover .music-track-title {
-  color: var(--bar);
+  overflow-wrap: anywhere;
+  -webkit-line-clamp: var(--lines);
+  -webkit-box-orient: vertical;
 }
 
 .music-track-hours {
-  margin-left: 0.3em;
   color: var(--ink-soft);
   font-family: "Alegreya SC", var(--serif);
   font-size: 11px;
@@ -913,7 +880,6 @@ html:not(.js) .music-tile {
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.12em;
   text-transform: lowercase;
-  vertical-align: 0.25em;
   white-space: nowrap;
 }
 

@@ -99,7 +99,7 @@ requireText(css, ".music-tracks {\n  -webkit-user-select: none;", "the track she
 requireText(music, 'useRoomFile(active, "/music-years.json")', "the year order must place each album or song in the year it was played most");
 requireText(music, 'useRoomFile(active, "/music-kinds.json")', "the kind order must group the shelf by kind of music");
 requireText(music, "links={listenLinks(", "every music sheet must link to Spotify and Apple Music");
-requireText(css, ".music-track-list li:hover .music-track-title {\n  color: var(--bar);", "each track must take its own colour under the pointer");
+requireText(css, ".music-track-list li:hover {\n  background: color-mix(in srgb, var(--bar)", "each track must take its own colour under the pointer");
 {
   // The shelf itself, on the real albums and songs (Dan, 16 November 2026):
   // one shelf of records, every album and every song placed once; rows of

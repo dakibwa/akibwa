@@ -74,6 +74,77 @@ export function rowsFor(entries, width, reference, limits = bounds(width)) {
   return rows;
 }
 
+/*
+ * A record's tracks share out a sheet by how much each was listened to
+ * (Dan, 16 November 2026: "the same logic of spacing across page of how
+ * much I've listened to it"): a squarified treemap of the space, each track's
+ * area following the square root of its hours, with a floor of a fifth of
+ * the most listened's weight so every name has room. The box grows taller with
+ * more tracks. Rectangles come back inset by half the gap on every side.
+ */
+export function trackMap(tracks, width) {
+  if (!tracks.length || width <= 0) return { height: 0, cells: [] };
+  const height = Math.round(width * Math.min(1.1, 0.42 + 0.045 * tracks.length));
+  const most = Math.sqrt(Math.max(1, ...tracks.map((track) => track.minutes)));
+  const weighted = tracks
+    .map((track) => ({ track, weight: Math.max(most * 0.2, Math.sqrt(Math.max(0, track.minutes))) }))
+    .sort((a, b) => b.weight - a.weight);
+  const total = weighted.reduce((sum, item) => sum + item.weight, 0);
+  const scale = (width * height) / total;
+  const items = weighted.map((item) => ({ ...item, area: item.weight * scale }));
+  const cells = [];
+  let x = 0;
+  let y = 0;
+  let w = width;
+  let h = height;
+  const sum = (row) => row.reduce((total, item) => total + item.area, 0);
+  const worst = (row, side) => {
+    const s = sum(row);
+    const most = Math.max(...row.map((item) => item.area));
+    const least = Math.min(...row.map((item) => item.area));
+    return Math.max((side * side * most) / (s * s), (s * s) / (side * side * least));
+  };
+  const lay = (row) => {
+    const s = sum(row);
+    if (w >= h) {
+      const across = s / h;
+      let down = y;
+      for (const item of row) {
+        const tall = item.area / across;
+        cells.push({ ...item, x, y: down, w: across, h: tall });
+        down += tall;
+      }
+      x += across;
+      w -= across;
+    } else {
+      const tall = s / w;
+      let along = x;
+      for (const item of row) {
+        const across = item.area / tall;
+        cells.push({ ...item, x: along, y, w: across, h: tall });
+        along += across;
+      }
+      y += tall;
+      h -= tall;
+    }
+  };
+  let row = [];
+  for (const item of items) {
+    const side = Math.min(w, h);
+    if (!row.length || worst([...row, item], side) <= worst(row, side)) row.push(item);
+    else {
+      lay(row);
+      row = [item];
+    }
+  }
+  if (row.length) lay(row);
+  const half = GAP / 2;
+  return {
+    height,
+    cells: cells.map((cell) => ({ track: cell.track, x: cell.x + half, y: cell.y + half, w: Math.max(0, cell.w - GAP), h: Math.max(0, cell.h - GAP) }))
+  };
+}
+
 export const ORDERS = [
   ["hours", "hours"],
   ["year", "year"],

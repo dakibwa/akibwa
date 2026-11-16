@@ -6,7 +6,7 @@ import { useMusicRanking } from "../use-music-ranking";
 import { LARGE_ART } from "./music-art.mjs";
 import { fold } from "./music-ranking.mjs";
 import { indexItems, search } from "./music-search.mjs";
-import { ORDERS, arrange, listened, mergeShelf, peakOf, rowsFor, songTitle, yearPairs } from "./music-shelf.mjs";
+import { ORDERS, arrange, listened, mergeShelf, peakOf, rowsFor, songTitle, trackMap, yearPairs } from "./music-shelf.mjs";
 
 /*
  * Music (Dan, 16 November 2026): one shelf of Dan's top 150 albums or all his
@@ -320,19 +320,17 @@ function Sheet({ cover, title, byline, totals, links, label, onClose, children }
 const sameSong = (a, b) => fold(songTitle(a)).trim() === fold(songTitle(b)).trim();
 
 /*
- * A record's tracks, set as a poster's lineup (Dan, 16 November 2026: "more
- * beautiful inventive ways"): the most listened first, each name as large as
- * its hours, the hours beside it in small capitals and the flower between.
- * Under the pointer a name takes its own colour.
+ * A record's tracks share out the sheet by how much each was listened to,
+ * as the shelf does (trackMap in music-shelf.mjs): soft tints, the name and
+ * hours inside, a deeper tint under the pointer.
  */
-const LINEUP = { least: 14, most: 34 };
-
 function AlbumTracks({ album, year, found, loading, loadError, retry, onClose }) {
+  const frame = useRef(null);
+  const [width] = useSettledWidth(frame, 518);
   // An album's own tracks, or once the ranking has loaded without them, the
   // songs of it among the top 1,000.
   const known = album.tracks ?? (loading || loadError ? null : album.fallback ?? null);
-  const tracks = useMemo(() => [...(known ?? [])].sort((a, b) => b.minutes - a.minutes || b.plays - a.plays), [known]);
-  const most = Math.max(1, tracks[0]?.minutes ?? 1);
+  const map = useMemo(() => trackMap(known ?? [], width), [known, width]);
   return (
     <Sheet
       cover={album.id}
@@ -344,23 +342,34 @@ function AlbumTracks({ album, year, found, loading, loadError, retry, onClose })
       onClose={onClose}
     >
       {known ? (
-        <ol className="music-track-list">
-          {tracks.map((track, index) => (
-            <li
-              key={track.title}
-              style={{
-                "--size": `${(LINEUP.least + (LINEUP.most - LINEUP.least) * Math.sqrt(track.minutes / most)).toFixed(1)}px`,
-                "--bar": BARS[index % BARS.length]
-              }}
-            >
-              <span className="music-track-title">{track.title}</span>
-              <span className="music-track-hours">
-                {listened(track.minutes)}
-                <span className="visually-hidden">, {plays(track.plays)}</span>
-              </span>
-            </li>
-          ))}
-        </ol>
+        <div className="music-track-frame" ref={frame}>
+          <ol className="music-track-list" style={{ height: map.height }}>
+            {map.cells.map(({ track, x, y, w, h }, index) => {
+              const size = Math.max(12, Math.min(24, Math.min(w, h * 1.8) * 0.085));
+              return (
+                <li
+                  key={track.title}
+                  title={track.title}
+                  style={{
+                    left: x,
+                    top: y,
+                    width: w,
+                    height: h,
+                    "--size": `${size.toFixed(1)}px`,
+                    "--lines": Math.max(1, Math.floor((h - 34) / (size * 1.15))),
+                    "--bar": BARS[index % BARS.length]
+                  }}
+                >
+                  <span className="music-track-title">{songTitle(track.title)}</span>
+                  <span className="music-track-hours">
+                    {listened(track.minutes)}
+                    <span className="visually-hidden">, {plays(track.plays)}</span>
+                  </span>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
       ) : (
         <div className="music-tracks-note">
           <p role="status">{loading ? "Fetching the tracks…" : "The tracks could not be loaded."}</p>
