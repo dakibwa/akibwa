@@ -2716,6 +2716,719 @@
           "wall.webp": "931c5dc0d46a19f5"
         }
       }
+    },
+    {
+      "id": "history-4163bafc9656006a",
+      "artist": "Harpers Bizarre",
+      "album": "Feelin' Groovy: The Best Of Harpers Bizarre Featuring The 59th Street Bridge Song",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/witchi-tai-to/342265313",
+        "artist": "Harpers Bizarre",
+        "album": "Feelin' Groovy: The Best of Harpers Bizarre",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/b1/ab/d7/b1abd7a5-f7a5-6fa4-6604-908b0e0d3f35/093624626121.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "The same release under a longer or shorter title on Apple Music.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/b1/ab/d7/b1abd7a5-f7a5-6fa4-6604-908b0e0d3f35/093624626121.jpg/760x760bb.jpg",
+        "sourceHash": "abbda1e4617e8664",
+        "files": {
+          "wall.avif": "83370aa0bfab360c",
+          "wall.webp": "584c0ca74542ae7b"
+        }
+      }
+    },
+    {
+      "id": "history-2e197b18e6453a80",
+      "artist": "Car Seat Headrest",
+      "album": "Twin Fantasy",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/famous-prophets-stars/1586483380",
+        "artist": "Car Seat Headrest",
+        "album": "Twin Fantasy",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/64/53/71/645371f6-e75a-f5b1-f0f8-0ce1b6ee08fe/744861109259.png/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/64/53/71/645371f6-e75a-f5b1-f0f8-0ce1b6ee08fe/744861109259.png/760x760bb.jpg",
+        "sourceHash": "0f9f2a5c0ad216ae",
+        "files": {
+          "wall.avif": "e454f1a01d0ff8df",
+          "wall.webp": "0e4d13ecbd67cbc6"
+        }
+      }
+    },
+    {
+      "id": "history-b5b437ba060dc0df",
+      "artist": "David Bowie",
+      "album": "Young Americans",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/win/1195107061",
+        "artist": "David Bowie",
+        "album": "Young Americans (2016 Remaster)",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/0a/a7/0c/0aa70c09-e325-3900-6a5e-1557ff7ce710/190295990329.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/0a/a7/0c/0aa70c09-e325-3900-6a5e-1557ff7ce710/190295990329.jpg/760x760bb.jpg",
+        "sourceHash": "0f8a91803f70de97",
+        "files": {
+          "wall.avif": "30018fcb33f4a720",
+          "wall.webp": "857b4d783f6841ef"
+        }
+      }
+    },
+    {
+      "id": "history-b238187080872bc0",
+      "artist": "Bryson Tiller",
+      "album": "T R A P S O U L",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/dont/1533743775",
+        "artist": "Bryson Tiller",
+        "album": "T R A P S O U L (Deluxe)",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/87/b1/2f/87b12f45-de6b-fb0e-870a-8323004321fb/886448804413.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/87/b1/2f/87b12f45-de6b-fb0e-870a-8323004321fb/886448804413.jpg/760x760bb.jpg",
+        "sourceHash": "519649e085290652",
+        "files": {
+          "wall.avif": "0441fcb12c3764e7",
+          "wall.webp": "d862e8e44e98e65f"
+        }
+      }
+    },
+    {
+      "id": "history-ad21d014815394fa",
+      "artist": "Genesis",
+      "album": "The Lamb Lies Down On Broadway",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/the-carpet-crawlers-2025-remaster/1841939786",
+        "artist": "Genesis",
+        "album": "The Lamb Lies Down On Broadway (50th Anniversary Deluxe Edition)",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/dd/cb/d1/ddcbd1a3-ce3e-83c8-82c1-3d55b63004f1/603497808410.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/dd/cb/d1/ddcbd1a3-ce3e-83c8-82c1-3d55b63004f1/603497808410.jpg/760x760bb.jpg",
+        "sourceHash": "7cb96d718601f1bb",
+        "files": {
+          "wall.avif": "c93f631b14223a86",
+          "wall.webp": "397e5eaceb73d3b2"
+        }
+      }
+    },
+    {
+      "id": "history-0ffa3f6b41ad7d06",
+      "artist": "James Blake",
+      "album": "Life Round Here",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/life-round-here-feat-chance-the-rapper/1445291275",
+        "artist": "James Blake",
+        "album": "Life Round Here (feat. Chance The Rapper) - Single",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/3d/32/0f/3d320f05-a593-a2e9-259c-88a4e22a9148/00602537599417.rgb.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "The same release under a longer or shorter title on Apple Music.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/3d/32/0f/3d320f05-a593-a2e9-259c-88a4e22a9148/00602537599417.rgb.jpg/760x760bb.jpg",
+        "sourceHash": "28cde7493badaf7f",
+        "files": {
+          "wall.avif": "2d93b353241f4768",
+          "wall.webp": "fe1838c959f117a3"
+        }
+      }
+    },
+    {
+      "id": "history-a76c04bdb550c596",
+      "artist": "Jhené Aiko",
+      "album": "Sail Out",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/bed-peace-feat-childish-gambino/1443200234",
+        "artist": "Jhené Aiko",
+        "album": "Sail Out - EP",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/09/17/ff/0917fffd-b0a7-f88b-96b2-473219fc3e74/00602537583188.rgb.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/09/17/ff/0917fffd-b0a7-f88b-96b2-473219fc3e74/00602537583188.rgb.jpg/760x760bb.jpg",
+        "sourceHash": "875d53ff44c17ffd",
+        "files": {
+          "wall.avif": "d9405997632d913d",
+          "wall.webp": "6f66597f71d1ae27"
+        }
+      }
+    },
+    {
+      "id": "history-f242c31cd2c50b19",
+      "artist": "The West Coast Pop Art Experimental Band",
+      "album": "Part One",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/i-wont-hurt-you/204721326",
+        "artist": "The West Coast Pop Art Experimental Band",
+        "album": "Part One",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/26/b9/7d/26b97db4-7438-db82-5486-afd8633908d9/mzi.ytjhgxvl.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/26/b9/7d/26b97db4-7438-db82-5486-afd8633908d9/mzi.ytjhgxvl.jpg/760x760bb.jpg",
+        "sourceHash": "ce3c1b56fce62e2f",
+        "files": {
+          "wall.avif": "81bbdbda5e4e9b6c",
+          "wall.webp": "250931d13f3c19d0"
+        }
+      }
+    },
+    {
+      "id": "history-888ca458e533fc03",
+      "artist": "ARTHUR",
+      "album": "Woof Woof",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/sweet-memory/1895051003",
+        "artist": "ARTHUR",
+        "album": "Woof Woof",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/0f/61/e4/0f61e4c1-5ac7-a1ce-38cc-e557e0817269/5060263726685_cover.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/0f/61/e4/0f61e4c1-5ac7-a1ce-38cc-e557e0817269/5060263726685_cover.jpg/760x760bb.jpg",
+        "sourceHash": "10fdb1da142f7f12",
+        "files": {
+          "wall.avif": "5aaa75a620992f22",
+          "wall.webp": "246342f67172b13f"
+        }
+      }
+    },
+    {
+      "id": "history-8455270ea5f5ed66",
+      "artist": "Raury",
+      "album": "All We Need",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/crystal-express/1037433944",
+        "artist": "Raury",
+        "album": "All We Need",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music6/v4/7b/5a/93/7b5a9307-9aa4-c744-ac41-d0a71bc9ebbf/dj.pqsflnfh.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music6/v4/7b/5a/93/7b5a9307-9aa4-c744-ac41-d0a71bc9ebbf/dj.pqsflnfh.jpg/760x760bb.jpg",
+        "sourceHash": "e1f0970cdacf4089",
+        "files": {
+          "wall.avif": "7e411249e31295fc",
+          "wall.webp": "7c41411811d4c603"
+        }
+      }
+    },
+    {
+      "id": "history-637389a0c8332d7f",
+      "artist": "Thom Yorke",
+      "album": "Ciao My Shining Star - The Songs of Mark Mulcahy",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/all-for-the-best/1210814917",
+        "artist": "Various Artists",
+        "album": "Ciao My Shining Star: The Songs of Mark Mulcahy",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/ec/a4/ac/eca4ac16-5ca3-b4e6-ba43-381964a2decf/613667132139.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/ec/a4/ac/eca4ac16-5ca3-b4e6-ba43-381964a2decf/613667132139.jpg/760x760bb.jpg",
+        "sourceHash": "f5d61b90adb8840e",
+        "files": {
+          "wall.avif": "f35c2fc51d2989ef",
+          "wall.webp": "21ecac0be4cbfe3f"
+        }
+      }
+    },
+    {
+      "id": "history-b9bf81293c00f57c",
+      "artist": "Explosions In The Sky",
+      "album": "Manglehorn",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/hello/1003481864",
+        "artist": "Explosions In the Sky & David Wingo",
+        "album": "Manglehorn (Original Motion Picture Soundtrack)",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music7/v4/9a/00/0c/9a000c16-f8b3-4090-ed9a-921622f9ea6c/859714951166_cover.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music7/v4/9a/00/0c/9a000c16-f8b3-4090-ed9a-921622f9ea6c/859714951166_cover.jpg/760x760bb.jpg",
+        "sourceHash": "829d917f06b6da21",
+        "files": {
+          "wall.avif": "4d8a8a48c1d3fb67",
+          "wall.webp": "3c5c5cf4c9f85d3c"
+        }
+      }
+    },
+    {
+      "id": "history-fc9a20965d72f454",
+      "artist": "AF13",
+      "album": "Starlight",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/starlight-feat-tyesha-blount/1735315675",
+        "artist": "AF13",
+        "album": "Starlight - Single",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/ec/9d/97/ec9d97aa-18cd-4ea9-edc9-541ca73f1fe1/artwork.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/ec/9d/97/ec9d97aa-18cd-4ea9-edc9-541ca73f1fe1/artwork.jpg/760x760bb.jpg",
+        "sourceHash": "bccc337397174971",
+        "files": {
+          "wall.avif": "1fd8dad5d47ed542",
+          "wall.webp": "2d96af12c55fa4d9"
+        }
+      }
+    },
+    {
+      "id": "history-b9f42d6a211d2b91",
+      "artist": "John Cale",
+      "album": "Paris 1919",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/paris-1919-remastered-2024/1762855432",
+        "artist": "John Cale",
+        "album": "Paris 1919 (Deluxe Edition)",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/c8/d2/6f/c8d26f75-fb10-f138-626a-db3168215d62/887830013994.png/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/c8/d2/6f/c8d26f75-fb10-f138-626a-db3168215d62/887830013994.png/760x760bb.jpg",
+        "sourceHash": "436ed34c3f0e086e",
+        "files": {
+          "wall.avif": "e664420683ad7539",
+          "wall.webp": "84174c6439a93a7d"
+        }
+      }
+    },
+    {
+      "id": "history-6d06d6596a0a16b0",
+      "artist": "Tune-Yards",
+      "album": "W H O K I L L",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/bizness/427937498",
+        "artist": "Tune-Yards",
+        "album": "W H O K I L L",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/b0/2c/1b/b02c1b32-6dba-e873-3b82-f3fea3931adf/652637310641.png/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/b0/2c/1b/b02c1b32-6dba-e873-3b82-f3fea3931adf/652637310641.png/760x760bb.jpg",
+        "sourceHash": "3e046220608e9f6b",
+        "files": {
+          "wall.avif": "02022967a4df4dfc",
+          "wall.webp": "30f27721338ac1d8"
+        }
+      }
+    },
+    {
+      "id": "history-9c75676d7767ae61",
+      "artist": "DJ Sabrina The Teenage DJ",
+      "album": "Call You",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/call-you/1620669043",
+        "artist": "DJ Sabrina The Teenage DJ",
+        "album": "Call You - Single",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/84/40/46/844046b3-9741-a083-e441-380fef0b8275/195729666238_cover.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/84/40/46/844046b3-9741-a083-e441-380fef0b8275/195729666238_cover.jpg/760x760bb.jpg",
+        "sourceHash": "e32569734dfa6e8e",
+        "files": {
+          "wall.avif": "fab84fe69ddb204f",
+          "wall.webp": "f464df1f96874819"
+        }
+      }
+    },
+    {
+      "id": "history-a9554a2fc78caf29",
+      "artist": "Chance the Rapper",
+      "album": "The Big Day",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/all-day-long-feat-john-legend/1474378343",
+        "artist": "Chance the Rapper",
+        "album": "The Big Day",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/dd/df/88/dddf8836-2443-f8aa-5951-7211313fbc24/5059033580312.png/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/dd/df/88/dddf8836-2443-f8aa-5951-7211313fbc24/5059033580312.png/760x760bb.jpg",
+        "sourceHash": "831d4789a5c897e2",
+        "files": {
+          "wall.avif": "7fca078ade893f73",
+          "wall.webp": "7690ce9f6031a3d3"
+        }
+      }
+    },
+    {
+      "id": "history-dc592a18cae63b98",
+      "artist": "Tiger",
+      "album": "Straighten Up, Vol. 2",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/guilty/1514419891",
+        "artist": "Various Artists",
+        "album": "Straighten up, Vol. 2",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/a7/99/7c/a7997c85-3404-169b-7b95-8045febd146f/5055283445494.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/a7/99/7c/a7997c85-3404-169b-7b95-8045febd146f/5055283445494.jpg/760x760bb.jpg",
+        "sourceHash": "22ccd8b727cab681",
+        "files": {
+          "wall.avif": "b2d13aa7db1a5abe",
+          "wall.webp": "6e53c2518d5887f9"
+        }
+      }
+    },
+    {
+      "id": "history-0d2532f9f419aea6",
+      "artist": "The Specials",
+      "album": "The Specials",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/a-message-to-you-rudy-2015-remaster/1631051353",
+        "artist": "The Specials",
+        "album": "The Specials (Deluxe Version)",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/9b/72/04/9b720417-a897-df83-5919-d0558fda67fc/0810098501088.png/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/9b/72/04/9b720417-a897-df83-5919-d0558fda67fc/0810098501088.png/760x760bb.jpg",
+        "sourceHash": "1b27ed7ba737a471",
+        "files": {
+          "wall.avif": "d88cd9834242c030",
+          "wall.webp": "dd3314c78642d767"
+        }
+      }
+    },
+    {
+      "id": "history-a0a115bf440fcf44",
+      "artist": "Rocks and Waves Song Circle",
+      "album": "Songs I-V",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/i-rocks-waves/1508038960",
+        "artist": "Rocks & Waves Song Circle",
+        "album": "Songs I-V",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/ad/d0/28/add028c0-94e6-064d-8e60-e0e2ebae9efb/7393210547018.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "The same release; Apple credits Rocks & Waves Song Circle.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/ad/d0/28/add028c0-94e6-064d-8e60-e0e2ebae9efb/7393210547018.jpg/760x760bb.jpg",
+        "sourceHash": "c78fd04c4e17c9f1",
+        "files": {
+          "wall.avif": "b71890a6ca33b81f",
+          "wall.webp": "07c2eb39ba6102c7"
+        }
+      }
+    },
+    {
+      "id": "history-5a1b34402c60416b",
+      "artist": "Nick Cave & The Bad Seeds",
+      "album": "Abattoir Blues / The Lyre of Orpheus",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/breathless/1528515334",
+        "artist": "Nick Cave & The Bad Seeds",
+        "album": "Abattoir Blues / The Lyre of Orpheus",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/7b/43/46/7b434664-a1f1-8c98-bab3-3145fe9d1c7b/5099962629829.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/7b/43/46/7b434664-a1f1-8c98-bab3-3145fe9d1c7b/5099962629829.jpg/760x760bb.jpg",
+        "sourceHash": "082a1a3d9d5f6a24",
+        "files": {
+          "wall.avif": "085c005292e92f52",
+          "wall.webp": "092a4f48403c3dc5"
+        }
+      }
+    },
+    {
+      "id": "history-e7b8c59b0c7ca5db",
+      "artist": "Yes",
+      "album": "Close to the Edge",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/and-you-and-i-promo-radio-edit-2025-remaster/1785769827",
+        "artist": "Yes",
+        "album": "Close to the Edge (Super Deluxe Edition)",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/b0/0d/1d/b00d1dc7-92fe-0d81-9162-7b68801ae6b0/603497816149.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/b0/0d/1d/b00d1dc7-92fe-0d81-9162-7b68801ae6b0/603497816149.jpg/760x760bb.jpg",
+        "sourceHash": "245d4459e3705497",
+        "files": {
+          "wall.avif": "33396611b9b003f4",
+          "wall.webp": "49ec376ea9e1e604"
+        }
+      }
+    },
+    {
+      "id": "history-9cff02ad4c23aa27",
+      "artist": "Drake",
+      "album": "Laugh Now Cry Later (feat. Lil Durk)",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/laugh-now-cry-later-feat-lil-durk/1527579776",
+        "artist": "Drake",
+        "album": "Laugh Now Cry Later (feat. Lil Durk) - Single",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/46/05/c9/4605c970-fb01-689f-893f-5c35209d00ed/20UMGIM71042.rgb.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/46/05/c9/4605c970-fb01-689f-893f-5c35209d00ed/20UMGIM71042.rgb.jpg/760x760bb.jpg",
+        "sourceHash": "67044abfc621c55e",
+        "files": {
+          "wall.avif": "31cac57e7f5fb6c3",
+          "wall.webp": "6cc2e7961dbf9723"
+        }
+      }
+    },
+    {
+      "id": "history-bd96361cbb6d3d47",
+      "artist": "Philip Glass",
+      "album": "Glass: Einstein On The Beach",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/einstein-on-the-beach-knee-play-5/347496489",
+        "artist": "Michael Riesman, The Philip Glass Ensemble, Marc Jacoby & Philip Gavin Smith",
+        "album": "Glass: Einstein On The Beach",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/f9/50/ab/f950ab40-1b21-45b0-dc6e-312f009f0abf/074643887526.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/f9/50/ab/f950ab40-1b21-45b0-dc6e-312f009f0abf/074643887526.jpg/760x760bb.jpg",
+        "sourceHash": "2a1d350574708871",
+        "files": {
+          "wall.avif": "eaf5a24e81978af5",
+          "wall.webp": "30d6f07a38e0d7b1"
+        }
+      }
+    },
+    {
+      "id": "history-6dd1c6fe02337d6c",
+      "artist": "André Laplante",
+      "album": "Call Me By Your Name",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/une-barque-sur-loc%C3%A9an-from-miroirs/1304615360",
+        "artist": "Various Artists",
+        "album": "Call Me By Your Name (Original Motion Picture Soundtrack)",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/ef/bc/94/efbc94fd-c571-bba4-1df9-dc95f123c786/886446703435.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/ef/bc/94/efbc94fd-c571-bba4-1df9-dc95f123c786/886446703435.jpg/760x760bb.jpg",
+        "sourceHash": "01c9bb6fcf267d3d",
+        "files": {
+          "wall.avif": "b59c34ae16f7b88f",
+          "wall.webp": "7e4d959caef46b49"
+        }
+      }
+    },
+    {
+      "id": "history-e45806f5e245b0b9",
+      "artist": "Choir Boy",
+      "album": "Passive with Desire",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/leave-me-be/1473858007",
+        "artist": "Choir Boy",
+        "album": "Passive with Desire",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/73/e0/24/73e02449-6c26-daea-56a2-1b721ccc1920/cover.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/73/e0/24/73e02449-6c26-daea-56a2-1b721ccc1920/cover.jpg/760x760bb.jpg",
+        "sourceHash": "8e720ef940bf93fd",
+        "files": {
+          "wall.avif": "0b8d391e9ab2c81a",
+          "wall.webp": "336c9b07dea081f7"
+        }
+      }
+    },
+    {
+      "id": "history-7ad5cc0f65d09dd9",
+      "artist": "John Lennon",
+      "album": "Imagine",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/imagine/1440853752",
+        "artist": "John Lennon",
+        "album": "Imagine",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/21/e3/b0/21e3b048-c917-92c4-bd7d-ace44797b388/13UABIM52808.rgb.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/21/e3/b0/21e3b048-c917-92c4-bd7d-ace44797b388/13UABIM52808.rgb.jpg/760x760bb.jpg",
+        "sourceHash": "80305e7170b147fe",
+        "files": {
+          "wall.avif": "5718d9ee7f5b5c03",
+          "wall.webp": "2a48de9feeb9bd20"
+        }
+      }
+    },
+    {
+      "id": "history-f582943aef1a6de2",
+      "artist": "Future Islands",
+      "album": "Singles",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/seasons-waiting-on-you/791124020",
+        "artist": "Future Islands",
+        "album": "Singles",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/47/43/80/47438060-5bc3-6068-9117-93613414aec9/652637340259.png/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/47/43/80/47438060-5bc3-6068-9117-93613414aec9/652637340259.png/760x760bb.jpg",
+        "sourceHash": "3838757536974394",
+        "files": {
+          "wall.avif": "b7566196b342a20e",
+          "wall.webp": "7f0f7fbb6d83b86b"
+        }
+      }
+    },
+    {
+      "id": "history-fb2deb6779451255",
+      "artist": "The Mamas & The Papas",
+      "album": "People Like Us",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/snowqueen-of-texas/1423331817",
+        "artist": "The Mamas & The Papas",
+        "album": "People Like Us",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/6f/93/e1/6f93e1aa-75cf-5a11-d868-dd7c4d9eb445/00602567824046.rgb.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/6f/93/e1/6f93e1aa-75cf-5a11-d868-dd7c4d9eb445/00602567824046.rgb.jpg/760x760bb.jpg",
+        "sourceHash": "6a9f97fb7e63cf57",
+        "files": {
+          "wall.avif": "fbffb088543c6fb5",
+          "wall.webp": "51902c9e425cb0e1"
+        }
+      }
+    },
+    {
+      "id": "history-4184a6673457b39d",
+      "artist": "Tame Impala",
+      "album": "Currents",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/let-it-happen/1440838039",
+        "artist": "Tame Impala",
+        "album": "Currents",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/a8/2e/b4/a82eb490-f30a-a321-461a-0383c88fec95/15UMGIM23316.rgb.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/a8/2e/b4/a82eb490-f30a-a321-461a-0383c88fec95/15UMGIM23316.rgb.jpg/760x760bb.jpg",
+        "sourceHash": "2d90292208e47dfe",
+        "files": {
+          "wall.avif": "44592225ce48fdab",
+          "wall.webp": "df0d55a4ac4c239d"
+        }
+      }
+    },
+    {
+      "id": "history-ccf4578b0e06385a",
+      "artist": "Akron/Family",
+      "album": "Akron/Family",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/ill-be-on-the-water/895627134",
+        "artist": "Akron/Family",
+        "album": "Akron/Family",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/42/6a/fd/426afd1b-8406-e757-7288-4d2ce0a248b6/cover.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/42/6a/fd/426afd1b-8406-e757-7288-4d2ce0a248b6/cover.jpg/760x760bb.jpg",
+        "sourceHash": "c68e91c612e91980",
+        "files": {
+          "wall.avif": "d6a2b912d3e37b98",
+          "wall.webp": "456c9897eb761f6a"
+        }
+      }
     }
   ]
 }
