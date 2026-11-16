@@ -101,7 +101,7 @@ for (const path of ["/life-map/", "/hosting-check-missing-page/"]) {
 const samples = [
   files.find((file) => file.path.startsWith("_next/static/") && file.path.endsWith(".css"))?.path,
   files.find((file) => file.path.startsWith("_next/static/") && file.path.endsWith(".js"))?.path,
-  files.find((file) => file.path.startsWith("_img/") && file.path.endsWith(".avif"))?.path,
+  files.find((file) => file.path.startsWith("album-art/") && file.path.endsWith(".avif"))?.path,
   "trek/route-detail.json", "meditator/sw.js", "sw.js", "robots.txt", "sitemap.xml",
 ];
 for (const path of samples) {

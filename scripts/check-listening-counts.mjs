@@ -1,9 +1,8 @@
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { buildListeningCounts, mergeAlbumObservations, deduplicateSpotifyPlaybacks } from "../lib/listening-counts.mjs";
-import { albumIdentity, youtubePodcast } from "../lib/listening-identity.mjs";
-import { acceptsListeningCatalogue, listeningSeed } from "../components/listening-catalogue.mjs";
-import { listeningLabel, rankPodcasts } from "../components/listening-label.mjs";
+import { albumIdentity } from "../lib/listening-identity.mjs";
+import { acceptsListeningCatalogue } from "../components/listening-catalogue.mjs";
 import { applyListeningArtwork } from "../lib/listening-artwork.mjs";
 
 assert.deepEqual(mergeAlbumObservations({ before: 10, during: 8, after: 3, historical: 5 }), { plays: 21, atLeast: true });
@@ -11,10 +10,6 @@ assert.deepEqual(mergeAlbumObservations({ before: 10, during: 4, after: 3, histo
 assert.deepEqual(mergeAlbumObservations({ before: 10, during: 4, after: 3, historical: null }), { plays: 17, atLeast: false });
 assert.notEqual(albumIdentity("Artist One", "Shared title"), albumIdentity("Artist Two", "Shared title"));
 assert.notEqual(albumIdentity("宇多田ヒカル", "初恋"), albumIdentity("宇多田ヒカル", "光"));
-assert.equal(youtubePodcast({ eventType: "search", creator: "Lex Fridman", title: "Podcast" }), null);
-assert.equal(youtubePodcast({ eventType: "watch", creator: "Stripe", title: "A Cheeky Pint with a guest" }), "Cheeky Pint");
-assert.equal(youtubePodcast({ eventType: "watch", creator: "Stripe", title: "A product launch" }), null);
-assert.equal(youtubePodcast({ eventType: "watch", creator: "Random uploader", title: "A Cheeky Pint with a guest" }), null);
 
 const track = (id, time, overrides = {}) => ({ id, occurredAt: time, mediaType: "track", creator: "Artist One", collection: "First", name: "Song", msPlayed: 60000, ...overrides });
 const before = track("before", "2024-12-01T12:00:00Z");
@@ -28,17 +23,14 @@ const fixture = buildListeningCounts({
     { id: "first", artist: "Artist One", album: "First", plays: 5 },
     unknown("unknown-one"), unknown("unknown-two"),
   ], played: [] },
-  curation: { podcasts: [{ title: "Lex Fridman Podcast" }] },
   spotify: [before, during, after, after, track("short", "2025-02-01T13:00:00Z", { msPlayed: 2000 }),
     track("ambig-one", "2025-02-01T14:00:00Z", { name: "Ambiguous" }),
     track("ambig-two", "2025-02-01T14:05:00Z", { name: "Ambiguous", collection: "Second" }),
-    track("podcast", "2025-02-03T12:00:00Z", { mediaType: "video_episode", collection: "Lex Fridman Podcast", name: "Episode" }),
   ],
   youtube: [
     { id: "watch", eventType: "watch", occurredAt: "2025-02-02T12:00:00Z" },
     { id: "ambiguous", eventType: "watch", occurredAt: "2025-02-02T13:00:00Z" },
-    { id: "pod-view", eventType: "watch", occurredAt: "2025-02-04T12:00:00Z", creator: "Lex Fridman", title: "An interview" },
-    { id: "search", eventType: "search", occurredAt: "2025-02-04T12:00:00Z", creator: "Lex Fridman", title: "An interview" },
+    { id: "search", eventType: "search", occurredAt: "2025-02-04T12:00:00Z", creator: "Artist One", title: "Song" },
   ],
   youtubeAnnotations: [
     { id: "watch", musicClassification: { status: "identified_music", identity: { artist: "Artist One", track: "Song" } } },
@@ -49,11 +41,6 @@ const fixture = buildListeningCounts({
     { id: "extra", creator: "Artist One", name: "Song", occurredAt: "2025-02-05T12:00:00Z" },
   ],
   lastfmAnnotations: [{ id: "proxy", reconciliation: { match: { direct: { id: "watch" } } } }],
-  apple: { episodes: [
-    { showTitle: "Lex Fridman Podcast", episodeTitle: "Older episode", playCount: 4, lastPlayedAt: "2023-01-01T12:00:00Z" },
-    { showTitle: "Lex Fridman Podcast", episodeTitle: "Episode", playCount: 1, lastPlayedAt: "2025-02-03T12:00:30Z" },
-    { showTitle: "Lex Fridman Podcast", episodeTitle: "Marker", playCount: 0, playheadSeconds: 0, status: "activity_marker_only" },
-  ] },
   asOf: "2025-02-06",
 });
 assert.equal(fixture.albums.find((row) => row.id === "first").plays, 10, "disjoint history is added, historical overlap is bounded, and a YouTube scrobble counts once");
@@ -62,15 +49,13 @@ assert.equal(fixture.diagnostics.youtubeUnresolvedAlbum, 1, "ambiguous songs are
 assert.equal(fixture.diagnostics.lastfmProxiesSuppressed, 1);
 assert.equal(fixture.albums.filter((row) => row.id.startsWith("unknown-")).length, 2);
 assert(fixture.albums.filter((row) => row.id.startsWith("unknown-")).every((row) => row.plays === null));
-assert.equal(fixture.podcasts[0].plays, 3, "one Spotify start, one YouTube view and one independent Apple occurrence");
-assert.equal(fixture.diagnostics.appleOverlapsSuppressed, 1);
-assert.equal(fixture.diagnostics.appleMarkersExcluded, 1);
+assert(!("podcasts" in fixture), "the listening history counts albums only");
 
 const snapshotFixture = (spotify, latestLastfmSnapshot) => buildListeningCounts({
   wall: { scrobblingSince: "2025-01-01", refreshedAt: "2025-01-10T12:00:00Z",
     sleeves: [{ id: "first", artist: "Artist One", album: "First", plays: 5 }], latestLastfmSnapshot },
-  curation: { podcasts: [] }, spotify, youtube: [], youtubeAnnotations: [],
-  lastfm: [], lastfmAnnotations: [], apple: { episodes: [] }, asOf: "2025-02-08",
+  spotify, youtube: [], youtubeAnnotations: [],
+  lastfm: [], lastfmAnnotations: [], asOf: "2025-02-08",
 });
 const crossing = snapshotFixture([
   track("crossing-start", "2025-01-01T00:01:00Z", { msPlayed: 360000 }),
@@ -95,7 +80,6 @@ assert.deepEqual(applyListeningArtwork([missingCover], coverFixture), [{ ...miss
 assert.equal(missingCover.artwork, false, "the saved input is not mutated");
 assert.throws(() => applyListeningArtwork([{ ...missingCover, artist: "Artist Two" }], coverFixture), /Artwork identity changed/, "the same title by another artist cannot borrow a cover");
 assert.throws(() => applyListeningArtwork([missingCover], { ...coverFixture, entries: [...coverFixture.entries, ...coverFixture.entries] }), /Duplicate artwork/);
-const curation = JSON.parse(readFileSync(new URL("../data/taste-curation.json", import.meta.url)));
 assert(acceptsListeningCatalogue(packet, packet.asOf), "the public packet must satisfy the browser schema");
 assert(!acceptsListeningCatalogue({ refreshedAt: "2026-09-05", plays: { first: 9000 } }, packet.asOf), "legacy Last.fm packets cannot replace reconciled counts");
 assert(!acceptsListeningCatalogue({ ...packet, asOf: "2001-01-01" }, packet.asOf));
@@ -103,29 +87,13 @@ assert(!acceptsListeningCatalogue({ ...packet, asOf: "2099-01-01" }, packet.asOf
 assert(!acceptsListeningCatalogue({ ...packet, albums: [null] }, packet.asOf));
 assert(!acceptsListeningCatalogue({ ...packet, albums: packet.albums.slice(0, 1) }, packet.asOf, packet.albums.slice(0, 2)), "partial packets cannot erase known identities");
 assert(packet.albums.length > 13000, "older Spotify albums remain available");
-assert(curation.albumIds.every((id) => packet.albums.some((row) => row.id === id)), "all curated identities, including unknown sleeves, survive");
 assert(packet.albums.every((row, index) => !index || (row.plays ?? -1) <= (packet.albums[index - 1].plays ?? -1)));
 assert(packet.albums.every((row) => row.plays === null || row.plays >= row.sources.spotify));
 for (const row of packet.albums.filter((album) => album.artwork))
   assert(existsSync(new URL(`../public/album-art/${row.id}-wall.webp`, import.meta.url)), `missing album art ${row.id}`);
-assert.equal(new Set(packet.podcasts.map((show) => show.title)).size, packet.podcasts.length);
-const showFields = new Set(["title", "creator", "art", "plays", "atLeast", "sources"]);
-for (const show of packet.podcasts) {
-  assert(Object.keys(show).every((key) => showFields.has(key)));
-  assert.deepEqual(Object.keys(show.sources).sort(), ["apple", "spotify", "youtube"]);
-  assert(Object.values(show.sources).every((value) => Number.isSafeInteger(value) && value >= 0));
-  assert.equal(show.plays, show.sources.apple + show.sources.spotify + show.sources.youtube || null);
-  if (show.art) assert(existsSync(new URL(`../public${show.art}`, import.meta.url)));
-}
+assert(!("podcasts" in packet), "the public packet carries albums only");
 assert(packet.diagnostics.spotifyMusic === 187176 && packet.diagnostics.youtubeMusic > 1000);
-assert(packet.diagnostics.spotifyPodcast === 3275 && packet.diagnostics.youtubePodcast > 900 && packet.diagnostics.appleEvidence > 0);
 assert.equal(packet.diagnostics.spotifyQualifiedDuplicatesSuppressed, 548);
 const publicJson = JSON.stringify(packet);
 assert(!/(?:[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}|\/Users\/|sourceArchiveId|accountScope|publicVideoId|occurredAt|lastPlayedAt|incognitoMode)/i.test(publicJson), "the aggregate packet contains no private identifiers or event fields");
-assert(listeningSeed(packet, curation.albumIds).length < 400, "the full history does not bloat the initial homepage payload");
-assert.equal(listeningLabel({ kind: "music", plays: 125, atLeast: true }).value, "125+");
-assert.equal(listeningLabel({ kind: "music", plays: null }).label, "No recorded count");
-assert.equal(listeningLabel({ kind: "podcasts", plays: 12, sources: { youtube: 4 } }).label, "plays");
-assert(!Object.hasOwn(listeningLabel({ kind: "music", plays: 12 }), "source"));
-assert.deepEqual(rankPodcasts([{ title: "Unknown", plays: null }, { title: "Low", plays: 2 }, { title: "High", plays: 10 }]).map((row) => row.title), ["High", "Low", "Unknown"]);
-console.log(`Listening history passed: ${packet.albums.length} albums, ${packet.podcasts.length} shows; overlap bounds, identity matching, source-safe schema and compact homepage seed.`);
+console.log(`Listening history passed: ${packet.albums.length} albums; overlap bounds, identity matching and source-safe schema.`);

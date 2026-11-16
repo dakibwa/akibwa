@@ -7,17 +7,12 @@
  * reads the masters from outside the repo and writes only the small derived
  * rungs into `public/album-art/`, which are committed.
  *
- * That keeps the GitHub Pages build hermetic in the same way the slot system in
- * generate-image-variants.mjs does — the variants are committed, the toolchain
- * only ever runs here — but without dragging half a gigabyte of masters along
- * for the ride. It is deliberately NOT a slot in that script: every source
- * there is a committed file in `public/`, and these sources are not committed
- * and never should be.
+ * That keeps the build hermetic: the rungs are committed and the toolchain
+ * only ever runs here, without dragging half a gigabyte of masters along for
+ * the ride. The masters are not committed and never should be.
  *
- * Output goes to `public/album-art/`, NOT `public/_img/`. The latter belongs to
- * generate-image-variants.mjs, which clears the whole directory on every run —
- * so anything else living there is silently destroyed the next time artwork is
- * regenerated. That already happened once.
+ * Output goes to `public/album-art/`, the only artwork on the site since
+ * 16 November 2026.
  *
  * This script used to make the same mistake in its own directory. It shares
  * `public/album-art/` with fetch-lastfm-art.mjs, whose ~4,200 `lf-*` files are

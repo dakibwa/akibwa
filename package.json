@@ -12,11 +12,9 @@
     "check:trek-privacy": "node scripts/check-trek-privacy.mjs && node scripts/check-trek-journey.mjs && node scripts/check-trek-prepared.mjs",
     "check:navigation:dom": "node scripts/check-navigation-dom.mjs",
     "check:worker": "node --test scripts/service-worker.test.mjs",
-    "check:images": "node scripts/generate-image-variants.mjs --check",
-    "images:generate": "node scripts/generate-image-variants.mjs",
     "build": "npm run check:navigation && npm run check:trek-privacy && NEXT_TELEMETRY_DISABLED=1 next build",
     "publish:check": "node scripts/check-publication.mjs",
-    "publish:ready": "npm run build && npm run check:images && npm run albums:art:check && npm run publish:check",
+    "publish:ready": "npm run build && npm run albums:art:check && npm run publish:check",
     "start": "next start",
     "albums:art": "node scripts/build-album-art.mjs",
     "music:refresh": "node scripts/refresh-music.mjs",
@@ -31,7 +29,6 @@
     "trek:prepare": "node scripts/build-trek-prepared.mjs"
   },
   "dependencies": {
-    "lucide-react": "^0.511.0",
     "next": "^15.5.25",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"

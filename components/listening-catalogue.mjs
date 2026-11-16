@@ -1,3 +1,5 @@
+// The public listening catalogue (public/listening-catalogue.json) as the
+// music tools accept it: albums only, with source counts and no private fields.
 const safeCount = (value) => value === null || Number.isSafeInteger(value) && value >= 0;
 const albumFields = new Set(["id", "artist", "album", "year", "printed", "artwork", "plays", "atLeast", "sources"]);
 export function acceptsListeningCatalogue(packet, baselineAt, knownCatalogue = []) {
@@ -17,12 +19,4 @@ export function acceptsListeningCatalogue(packet, baselineAt, knownCatalogue = [
       album.sources && Object.keys(album.sources).length === 3 &&
       ["spotify", "youtube", "lastfm"].every((source) => Number.isSafeInteger(album.sources[source]) && album.sources[source] >= 0),
     );
-}
-
-// Render the opening shelf and printed curation immediately. Fetch the whole
-// available catalogue separately, rather than serializing 13,000 albums into
-// the homepage before a visitor opens Music.
-export function listeningSeed(packet, curatedIds) {
-  const wanted = new Set([...curatedIds, ...packet.albums.slice(0, 72).map((album) => album.id)]);
-  return packet.albums.filter((album) => wanted.has(album.id));
 }

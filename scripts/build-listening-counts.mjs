@@ -14,15 +14,13 @@ const rows = (path) => readFileSync(resolve(root, path), "utf8").split(/\r?\n/).
 const spotify = rows("private/spotify/extended-streaming-history.jsonl");
 const packet = buildListeningCounts({
   wall: json(new URL("../data/album-wall.json", import.meta.url)),
-  curation: json(new URL("../data/taste-curation.json", import.meta.url)),
   spotify,
   youtube: rows("private/youtube/history.jsonl"),
   youtubeAnnotations: rows("private/youtube/music-reconciliation.jsonl"),
   lastfm: rows("private/lastfm/scrobbles.jsonl"),
   lastfmAnnotations: rows("private/lastfm/media-reconciliation.jsonl"),
-  apple: json(resolve(root, "data/apple-podcasts.json")),
   asOf: new Date().toISOString().slice(0, 10),
 });
 packet.albums = applyListeningArtwork(packet.albums, json(new URL("../data/listening-artwork.json", import.meta.url)));
 writeFileSync(new URL("../public/listening-catalogue.json", import.meta.url), JSON.stringify(packet) + "\n");
-console.log(JSON.stringify({ albums: packet.albums.length, podcasts: packet.podcasts.length, diagnostics: packet.diagnostics }, null, 2));
+console.log(JSON.stringify({ albums: packet.albums.length, diagnostics: packet.diagnostics }, null, 2));

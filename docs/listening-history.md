@@ -1,8 +1,10 @@
 # Listening history on Akibwa
 
-The album and podcast shelves use all available listening history, as requested
-on 5 September 2026. The public artifact is `public/listening-catalogue.json`:
-album/show identity, artwork references, source counts, reconciled counts,
+The album counts use all available listening history, as requested on 5
+September 2026; the podcast counts were removed on 16 November 2026, when
+akibwa.com became the music shelf alone. The public artifact is
+`public/listening-catalogue.json`: album identity, artwork references, source
+counts, reconciled counts,
 uncertainty flags and coarse methodology only. It contains no provider event
 IDs, timestamps, account identifiers, watch titles, source paths or raw exports.
 
@@ -11,7 +13,7 @@ IDs, timestamps, account identifiers, watch titles, source paths or raw exports.
 - Read the already normalized private history. Do not run its importers,
   reconciliation builders, datastore rebuild or daily automation from this repo.
 - Spotify audio and music-video records contribute one track play after 30
-  seconds. Podcast audio/video records use the same threshold. Duplicate source
+  seconds. Duplicate source
   IDs and identical account/track/platform/stop-time/duration playbacks count once,
   even when offline, shuffle or reason flags differ. Short events inform
   identity without adding plays.
@@ -23,10 +25,6 @@ IDs, timestamps, account identifiers, watch titles, source paths or raw exports.
   single-song identities, then require one unambiguous album in the Spotify
   catalogue. Full performances, unmatched songs and ambiguous album assignments
   do not acquire invented counts. A watch has no known listened duration.
-- Podcast videos require an exact recognized show channel or a named show in
-  the title on its owning mixed channel. Clips count as views of that show and
-  are explicitly described as such; arbitrary mentions by other uploaders do not
-  establish a show match. Channel/title rules live in `lib/listening-identity.mjs`.
 - The retained historical Last.fm album snapshot has no row-level timestamps.
   Split native observations into before, during and after its known coverage.
   The recorded-play lower bound is `before + max(during, Last.fm) + after`.
@@ -40,13 +38,9 @@ IDs, timestamps, account identifiers, watch titles, source paths or raw exports.
 - Recent Last.fm scrobbles after that snapshot may add a track observation when
   its album is unambiguous. Suppress available timestamped proxies matched to an
   already-counted Spotify/YouTube record; ambiguous proxies remain unadded.
-- Apple contributes one observed last-played occurrence for an episode with
-  actual playback evidence. Suppress a nearby Spotify/YouTube occurrence of the
-  same show conservatively. Do not add undated cumulative repeats or activity-only
-  markers. Apple-supported show counts carry a lower-bound marker.
 
 These are bounds on recorded observations across the delivered archives, not
-complete lifetime listening, completed songs/episodes or commercial streams.
+complete lifetime listening, completed songs or commercial streams.
 Listening time is published only in the Music room's file (see below), as
 minutes of Spotify playback per song, album and album track.
 
