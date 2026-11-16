@@ -344,14 +344,12 @@ const checkPublicLanding = async () => {
     const box = (tile) => tile.getBoundingClientRect();
     const area = (tile) => box(tile).width * box(tile).height;
     const frame = map.getBoundingClientRect();
-    const roomy = tiles.filter((tile) => Math.min(box(tile).width, box(tile).height) >= 58);
     return {
       count: tiles.length,
       first: area(tiles[0]),
       last: area(tiles.at(-1)),
-      covered: tiles.reduce((sum, tile) => sum + (box(tile).width + 4) * (box(tile).height + 4), 0) / ((frame.width + 4) * (frame.height + 4)),
-      square: tiles.every((tile) => Math.abs(box(tile).width - box(tile).height) < 0.5),
-      hours: roomy.length > 40 && roomy.every((tile) => /\\d+ (h|min)$/.test(tile.querySelector(".music-hours")?.textContent ?? "")),
+      bounded: tiles.every((tile) => Math.abs(box(tile).width - box(tile).height) < 0.5 && box(tile).width >= 56 && box(tile).width <= frame.width / 2 + 1),
+      inside: tiles.every((tile) => box(tile).left >= frame.left - 1 && box(tile).right <= frame.right + 1),
       lead: tiles[0].querySelector(".music-face").getAttribute("aria-label"),
       large: tiles[0].querySelector("img").srcset.includes("-large.webp"),
       words: [...document.querySelectorAll("#music p")].filter((p) => !p.closest("dialog")).map((p) => p.textContent).join(""),
@@ -360,9 +358,17 @@ const checkPublicLanding = async () => {
   })()`);
   check(albums.count === 150, `the albums map holds the top 150 [${albums.count}]`);
   check(albums.first > albums.last * 8, `sleeves are sized by hours listened [${Math.round(albums.first)}px² to ${Math.round(albums.last)}px²]`);
-  check(albums.covered > 0.97 && albums.square, `the sleeves are square and leave no holes [${albums.covered.toFixed(3)} covered]`);
+  check(albums.bounded && albums.inside, "the sleeves are square, between the floor and the cap, and on the shelf");
   check(albums.lead?.startsWith("Music for Psychedelic Therapy"), `the map starts with the most listened [${albums.lead}]`);
-  check(albums.hours, "every sleeve with room for it carries its hours listened");
+  // Dan, 16 November 2026: everything to know is in the bar above the shelf.
+  const pointed = await evaluate(`(() => { const face = [...document.querySelectorAll("#music .is-albums .music-face")].find((button) => button.getAttribute("aria-label").startsWith("Graceland")); face.dispatchEvent(new PointerEvent("pointerover", { bubbles: true, pointerType: "mouse" })); return new Promise((done) => setTimeout(() => done(document.querySelector("#music .music-now")?.textContent ?? ""), 200)); })()`);
+  check(/^Graceland.*\d+ h listened/.test(pointed), `pointing at a sleeve names it and its hours in the bar [${pointed}]`);
+  for (const [order, heading] of [["kind", "ambient"], ["year", "2026"], ["a–z", "A"]]) {
+    await evaluate(`[...document.querySelectorAll("#music .music-order button")].find((button) => button.textContent === ${JSON.stringify(order)}).click()`);
+    check(await waitFor(`(() => { const heads = [...document.querySelectorAll("#music .music-group-head")].map((head) => head.firstElementChild.textContent); return heads.includes(${JSON.stringify(heading)}) && document.querySelectorAll("#music .is-albums .music-tile").length === 150; })()`, 4000), `the ${order} order sorts every album under its headings`);
+  }
+  await evaluate(`[...document.querySelectorAll("#music .music-order button")].find((button) => button.textContent === "hours").click()`);
+  check(await waitFor(`!document.querySelector("#music .music-group-head") && document.querySelector("#music .music-face")?.getAttribute("aria-label").startsWith("Music for Psychedelic Therapy")`, 4000), "the hours order puts the shelf back, most listened first");
   check(albums.large, "sleeves drawn large offer the high-resolution rung");
   check(albums.words === "" && !albums.head, `the room explains nothing it need not [${albums.words}]`);
   // The search knows who plays with whom, and eras.
@@ -377,11 +383,12 @@ const checkPublicLanding = async () => {
   await sleep(700);
   check(await waitFor(`document.querySelectorAll("#music .is-songs .music-tile").length === 1000`, 8000), "the switch shows all thousand songs at once");
   check(await evaluate(`document.querySelector("#music .is-songs .music-face")?.getAttribute("aria-label")?.startsWith("Thursday Afternoon") && !document.querySelector("#music .music-more button")`), "songs start with the most listened, with no button for more");
-  const small = await evaluate(`(() => { const tile = [...document.querySelectorAll("#music .is-songs .music-tile")].at(-1); const face = tile.querySelector(".music-face"); face.focus(); return new Promise((done) => setTimeout(() => done({ before: tile.offsetWidth, after: face.getBoundingClientRect().width }), 400)); })()`);
-  check(small.before >= 14 && small.after >= 120, `the smallest sleeve is still visible and grows when chosen [${Math.round(small.before)}px to ${Math.round(small.after)}px]`);
+  const smallest = await evaluate(`[...document.querySelectorAll("#music .is-songs .music-tile")].at(-1).offsetWidth`);
+  check(smallest >= 56, `the smallest square is big enough to see [${smallest}px]`);
   await evaluate(`[...document.querySelectorAll("#music .music-switch button")].find((button) => button.textContent === "albums").click()`);
   await sleep(700);
-  await evaluate(`document.querySelectorAll("#music .is-albums .music-face")[1].click()`);
+  const graceland = `[...document.querySelectorAll("#music .is-albums .music-face")].find((button) => button.getAttribute("aria-label").startsWith("Graceland"))`;
+  await evaluate(`${graceland}.click()`);
   check(await waitFor(`Boolean(document.querySelector("#music dialog.music-tracks[open] .music-track-list li"))`, 8000), "an album opens its track list once the file loads");
   check(await evaluate(`document.querySelector("#music-tracks-title")?.textContent === "Graceland" && [...document.querySelectorAll(".music-track-list li")].length > 5`), "the track list shows the album's songs with plays and hours");
   await cdp.send("Input.dispatchKeyEvent", { type: "keyDown", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
@@ -390,7 +397,7 @@ const checkPublicLanding = async () => {
   check(await evaluate(`!document.querySelector("dialog.music-tracks[open]") && document.documentElement.dataset.room === "music"`), "Escape closes the track list and leaves the room open");
   check(await evaluate(`document.activeElement?.classList.contains("music-face") && document.activeElement?.getAttribute("aria-label").startsWith("Graceland")`), "closing a sheet returns keyboard focus to its album");
   check(await evaluate(`!document.body.innerHTML.includes("spotify:")`), "no track identifiers reach the page");
-  await evaluate(`document.querySelectorAll("#music .is-albums .music-face")[1].click()`);
+  await evaluate(`${graceland}.click()`);
   await waitFor(`Boolean(document.querySelector("dialog:modal"))`);
   await evaluate("history.back()");
   check(await waitFor(`document.documentElement.dataset.room === "index" && !document.querySelector("dialog:modal")`), "Back with a sheet open releases the homepage from the modal");

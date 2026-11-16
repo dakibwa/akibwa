@@ -1,8 +1,8 @@
 import { existsSync, readFileSync } from "node:fs";
 import { websites } from "../data/websites.mjs";
 import { unpackRanking } from "../components/paper/music-ranking.mjs";
-import { albumSides, albumWeights, drawnOrder, layoutSquares, packSquares, rowOfSquares, tilesFor, GAP } from "../components/paper/music-map.mjs";
 import { indexItems, search } from "../components/paper/music-search.mjs";
+import { arrange, bounds, sideFor } from "../components/paper/music-shelf.mjs";
 
 /* Build-time contract for the personal homepage: music, trek and career
    open in place, while Oh Life! Studios has its own website. Named public choices
@@ -26,6 +26,7 @@ const trekPublished = read("public/trek/index.html");
 const things = read("components/paper/things.jsx");
 const ranking = JSON.parse(read("public/music-ranking.json"));
 const musicMeta = JSON.parse(read("public/music-meta.json"));
+const musicKinds = JSON.parse(read("public/music-kinds.json"));
 
 const fail = (message) => {
   throw new Error(`Navigation contract failed: ${message}`);
@@ -101,8 +102,12 @@ forbidText(home, "room-head", "rooms have no title on the page");
 forbidText(home, "bar-home", "the bar has no wordmark");
 requireText(home, "memo(CareerCards)", "the career room must show every role on its own card (Dan, 25 September 2026)");
 requireText(music, "aria-pressed={pressed === name}", "albums and songs must be one switch");
-requireText(music, "packSquares(", "albums and songs must be square sleeves packed with no holes");
-requireText(music, "music-hours", "every sleeve must carry its hours listened");
+// Dan, 16 November 2026: one shelf, each square as large as its hours between
+// a floor and a cap, and everything to know in the bar above it.
+requireText(music, "sideFor(entry.item.minutes, reference, limits)", "albums and songs must be squares sized by hours between a floor and a cap");
+requireText(music, 'role="group" aria-label="Order"', "the bar must sort the whole shelf by hours, year, kind or name");
+requireText(music, '<output className="music-now"', "the bar must say what the shelf holds and what is under the pointer");
+requireText(music, "startTransition(() => setOrder(name))", "an order must answer before the shelf is sorted again");
 requireText(music, "<AlbumTracks", "an album must open its track list");
 requireText(music, "LARGE_ART[art]", "sleeves drawn large must offer their high-resolution rung");
 // Dan, 25 September 2026: the switch answers at once and resizing is smooth.
@@ -111,7 +116,8 @@ requireText(music, "useSettledWidth(", "the music map must scale while resizing 
 requireText(music, ".animate(", "the music map's sleeves must glide to a new packing");
 requireText(css, ".music-tracks {\n  -webkit-user-select: none;", "the track sheet must not select");
 // Dan, 26 September 2026: a line of years, songs that open their album, and where to hear it.
-requireText(music, "<YearLine years={years.years}", "the music room must offer its line of years");
+requireText(music, 'useRoomFile(active, "/music-years.json")', "the year order must place each album or song in the year it was played most");
+requireText(music, 'useRoomFile(active, "/music-kinds.json")', "the kind order must group the shelf by kind of music");
 requireText(music, "picked={song ? song.title : null}", "a song must open its album's track list with the song lit");
 requireText(music, "links={listenLinks(", "every music sheet must link to Spotify and Apple Music");
 requireText(css, "li:hover::after", "track bars must take their own colour under the pointer");
@@ -133,29 +139,29 @@ requireText(things, "const RINGS = [[BLUE], [BLUE, ORANGE], [ORANGE], [ORANGE], 
 requireText(things, "<Reveal id={mask} d={TRAIL}", "the career trail must be laid down, not shown from the start");
 requireText(things, "<Reveal id={mask} d={ROUTE}", "the trek route must be walked in on arrival");
 {
-  // The map itself, on the real albums: no holes or overlaps, the most
-  // listened first, and the two ambient records near Graceland (Dan, 25 September 2026).
+  // The shelf itself, on the real albums (Dan, 16 November 2026): every square
+  // as large as its hours between a floor and a cap, the most listened first,
+  // and each order placing every album once.
   const albums = unpackRanking(ranking).albums;
-  const weights = albumWeights(albums);
-  const order = drawnOrder(albums, weights);
-  const find = (title) => weights[albums.findIndex((album) => album.title === title)];
-  const graceland = find("Graceland");
-  if (find("Music for Psychedelic Therapy") !== Math.round(graceland * 1.1) || find("Discreet Music") !== Math.round(graceland * 0.9)) {
-    fail("Music for Psychedelic Therapy and Discreet Music must be drawn near Graceland's size");
+  const byHours = [...albums].sort((a, b) => b.minutes - a.minutes || a.rank - b.rank);
+  if (byHours.slice(0, 3).map((album) => album.title).join("|") !== "Music for Psychedelic Therapy|Discreet Music|Graceland") fail("the shelf must start with the most listened");
+  const reference = byHours[2].minutes;
+  for (const width of [343, 1180]) {
+    const limits = bounds(width);
+    const sides = byHours.map((album) => sideFor(album.minutes, reference, limits));
+    if (sides.some((side) => side < limits.floor || side > limits.cap)) fail(`every square at ${width}px must sit between the floor and the cap`);
+    if (limits.floor < 56 || limits.cap > width * 0.5) fail(`squares at ${width}px must be big enough to see and never more than half the width`);
+    if (sides[0] !== limits.cap || sides[1] !== limits.cap) fail(`the two ambient records must stop at the cap at ${width}px`);
+    if (sides.some((side, index) => index && side > sides[index - 1])) fail(`a square must never be larger than one listened to for longer at ${width}px`);
+    if (width > 600 && sides[0] ** 2 < sides.at(-1) ** 2 * 8) fail("the shelf must show the difference in hours");
   }
-  if (order.slice(0, 3).map((entry) => entry.item.title).join("|") !== "Music for Psychedelic Therapy|Graceland|Discreet Music") {
-    fail("the map must start with the most listened");
-  }
-  // Square sleeves, no holes or overlaps, at phone and desktop widths
-  // (Dan, 25 September 2026: the covers keep their shape).
-  const adjust = albumSides(order.map((entry) => entry.item));
-  for (const [width, plan] of [[343, { cell: 24, aspect: 3, range: [0.35, 0.8], tries: 12, spread: 3 }], [1180, { cell: 32, aspect: 0.9, range: [0.14, 0.26] }]]) {
-    const { height, tiles } = layoutSquares(order.map((entry) => entry.weight), width, { ...plan, adjust });
-    const covered = tiles.reduce((sum, tile) => sum + (tile.w + GAP) * (tile.h + GAP), 0) / ((width + GAP) * (height + GAP));
-    const overlap = tiles.some((a, i) => tiles.some((b, j) => j > i && a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h));
-    if (!height || overlap || covered < 0.97 || tiles.some((tile) => tile.w !== tile.h || tile.w < plan.cell - GAP - 1 || tile.x < 0 || tile.x + tile.w > width || tile.y + tile.h > height)) {
-      fail(`the albums at ${width}px must be square sleeves, none under a cell, with no holes or overlaps`);
-    }
+  const entries = byHours.map((item) => ({ item }));
+  const years = JSON.parse(read("public/music-years.json"));
+  for (const order of ["hours", "year", "kind", "name"]) {
+    const groups = arrange(order, "albums", entries, { years, kinds: musicKinds });
+    const placed = groups.flatMap((group) => group.entries.map((entry) => entry.item.id));
+    if (placed.length !== albums.length || new Set(placed).size !== albums.length) fail(`the ${order} order must place every album once`);
+    if (order !== "hours" && groups.some((group) => !group.label || !group.figures)) fail(`the ${order} order must head each group with what it needs`);
   }
 }
 requireText(career, "export function CareerTimeline", "the career timeline must stay available to the room");
@@ -212,6 +218,10 @@ for (const [name, facts] of Object.entries(musicMeta.artists)) {
   if (JSON.stringify(Object.keys(facts).sort()) !== JSON.stringify(["genres", "related"]) || ![...facts.genres, ...facts.related].every((value) => typeof value === "string")) fail(`${name}'s search facts must be genres and related artists only`);
 }
 if (!Object.values(musicMeta.years).every((year) => Number.isInteger(year) && year > 1900 && year < 2100)) fail("sleeve years must be plain years");
+if (JSON.stringify(Object.keys(musicKinds).sort()) !== JSON.stringify(["artists", "kinds", "note", "schemaVersion"])) fail("the music kinds file has unexpected fields");
+for (const name of ranking.names) {
+  if (!Number.isInteger(musicKinds.artists[name]) || !musicKinds.kinds[musicKinds.artists[name]]) fail(`${name} must have a kind of music`);
+}
 {
   const albums = unpackRanking(ranking).albums;
   const index = indexItems(albums, { meta: musicMeta, yearOf: (album) => Number(album.year) || musicMeta.years[album.id] || null });
@@ -233,17 +243,6 @@ if (!Object.values(musicMeta.years).every((year) => Number.isInteger(year) && ye
   if (search(songIndex, "sammy 70s")?.length) fail("a credited artist excluded by an era must not fall back to a different member's band");
   if (!search(songIndex, "dream job")?.some((song) => song.title === "Dream Job")) fail("song titles must remain searchable");
   if (!search(songIndex, "ambient")?.some((song) => song.artist === "Brian Eno")) fail("genres must remain searchable");
-  const small = search(songIndex, "yard act").map((song) => song.minutes).sort((a, b) => b - a);
-  const grid = packSquares(small, 16, { aspect: 2.4, range: [0.08, 0.9], tries: 40, spread: 8 });
-  if (!grid) fail("a small search must produce a packing");
-  for (const width of [360, 820, 1900]) {
-    const { height, tiles } = tilesFor(grid, width, 180);
-    if (tiles.length !== small.length || tiles.some((tile) => tile.w > 180 || tile.w !== tile.h || tile.w <= 0 || tile.x + tile.w > width || tile.y + tile.h > height)) fail(`small search tiles must stay square, compact and inside ${width}px`);
-    const row = rowOfSquares(sammySongs.length, width, 180);
-    if (row.height > 180 || row.tiles.some((tile) => tile.w > 180 || tile.x + tile.w > width)) fail(`a handful of search results must stay compact at ${width}px`);
-  }
-  const empty = rowOfSquares(0, 1900);
-  if (empty.height || empty.tiles.length) fail("an empty search must not leave a blank map before its message");
 }
 
 // Retired pages are deleted, not hidden. The site is one page; old links 301

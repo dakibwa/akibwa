@@ -3,30 +3,32 @@
 import { memo, startTransition, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { AlbumArtImage } from "../site-image";
 import { useMusicRanking } from "../use-music-ranking";
-import { albumSides, albumWeights, drawnOrder, packSquares, rowOfSquares, targetColumns, tilesFor } from "./music-map.mjs";
 import { LARGE_ART } from "./music-art.mjs";
 import { fold } from "./music-ranking.mjs";
 import { indexItems, search } from "./music-search.mjs";
+import { ORDERS, arrange, bounds, listened, peakOf, sideFor, songTitle } from "./music-shelf.mjs";
 
 /*
- * Music: Dan's top 150 albums or all his top 1,000 songs, one or the other,
- * as squares laid edge to edge with no holes (music-map.mjs), each as large as
- * the hours he listened to it, the most listened first, with those hours
- * pinned in its corner. Albums are their sleeves; songs are typeset, since a
- * sleeve is the album's and not the song's (Dan, 25 September 2026). No square
- * is smaller than a grid cell, and a small one grows to a readable size under
- * the pointer or a tap. A search box finds artists and the artists around
- * them, genres and eras (music-search.mjs) and packs just what it finds, and
- * a line of years redraws the map as one year's listening (music-years.json).
- * Choosing an album opens its track list: the songs he played from it, most
- * played first, with plays and hours. Choosing a song opens its album's list
- * with the song lit, or the song alone when its album is not among these.
- * Each sheet links to the release on Spotify and Apple Music (Dan, 26
- * September 2026).
+ * Music (Dan, 16 November 2026): one shelf of Dan's top 150 albums or all his
+ * top 1,000 songs, one or the other. Each square is as large as the hours he
+ * listened to it, its area following the hours, between a floor that keeps
+ * every sleeve big enough to see and a cap that stops any one dominating.
+ * The bar at the top holds everything there is to know: what is under the
+ * pointer, how the shelf is ordered (by hours, by the year he played it most,
+ * by kind of music, or a to z), albums or songs, and a search for artists,
+ * the artists around them, genres and eras (music-search.mjs). Choosing an
+ * order sorts the whole shelf into it, every sleeve gliding to its new place,
+ * and shows only the headings that order needs. Albums are their sleeves;
+ * songs are typeset, since a sleeve is the album's and not the song's (Dan,
+ * 25 September 2026). Choosing an album opens its track list: the songs he
+ * played from it, most played first, with plays and hours. Choosing a song
+ * opens its album's list with the song lit, or the song alone when its album
+ * is not among these. Each sheet links to the release on Spotify and Apple
+ * Music (Dan, 26 September 2026).
  */
 
 // A public file the room fetches once it opens: the search's genres and
-// years, the hours by year, or where each album can be heard.
+// years, the hours by year, the kinds, or where each album can be heard.
 function useRoomFile(active, path) {
   const [packet, setPacket] = useState(null);
   useEffect(() => {
@@ -45,77 +47,6 @@ function useRoomFile(active, path) {
   return packet;
 }
 
-/*
- * One year's albums or songs: those played in it, each at its hours that
- * year, the most listened first. A year's list is kept, so scrubbing back to
- * it finds the same list and, with it, the same packing.
- */
-function useYearLists(albums, songs, years) {
-  return useMemo(() => {
-    const kept = new Map();
-    const inYear = (pairs, year) => pairs?.find(([at]) => at === year)?.[1] ?? 0;
-    return (view, year) => {
-      if (!years || year === null) return null;
-      const key = `${view}|${year}`;
-      if (!kept.has(key)) {
-        if (view === "albums") {
-          const played = albums.map((album) => ({ ...album, minutes: inYear(years.albums[album.id], year) })).filter((album) => album.minutes > 0);
-          kept.set(key, drawnOrder(played, albumWeights(played)));
-        } else {
-          const played = songs.map((song) => ({ ...song, minutes: inYear(years.songs[song.rank - 1], year) })).filter((song) => song.minutes > 0);
-          kept.set(key, played.sort((a, b) => b.minutes - a.minutes || a.rank - b.rank).map((item) => ({ item, weight: item.minutes })));
-        }
-      }
-      return kept.get(key);
-    };
-  }, [albums, songs, years]);
-}
-
-/*
- * The years: an ink pill carrying the year, sliding along a pencil line with a
- * tick for each year, over a native range so it takes the keys and reads as
- * one control. All time is the right-hand end, where it starts.
- */
-function YearLine({ years, value, onChange }) {
-  const rail = useRef(null);
-  useLayoutEffect(() => {
-    const element = rail.current;
-    const pill = element.querySelector(".music-years-pill");
-    const measure = () => element.style.setProperty("--travel", `${Math.max(0, element.clientWidth - pill.offsetWidth)}px`);
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, []);
-  const stops = years.length;
-  const index = value === null ? stops : years.indexOf(value);
-  return (
-    <label className="music-years" ref={rail} style={{ "--at": index / stops }}>
-      <input
-        type="range"
-        min={0}
-        max={stops}
-        step={1}
-        value={index}
-        onChange={(event) => {
-          const next = Number(event.target.value);
-          onChange(next >= stops ? null : years[next]);
-        }}
-        aria-label="Year"
-        aria-valuetext={value === null ? "all time" : String(value)}
-      />
-      <span className="music-years-line" aria-hidden="true">
-        {[...years, null].map((year, at) => (
-          <i key={year ?? "all"} style={{ "--x": at / stops }} />
-        ))}
-      </span>
-      <span className="music-years-pill" aria-hidden="true">
-        {value ?? "all time"}
-      </span>
-    </label>
-  );
-}
-
 // Where to hear it: the release found on each service, or a search there.
 function listenLinks(found, artist, title) {
   const term = encodeURIComponent(`${artist} ${title}`);
@@ -125,82 +56,32 @@ function listenLinks(found, artist, title) {
   ];
 }
 
-// How far a sleeve grows under the pointer, at least.
-const POP = 136;
-const SEARCH_SIDE = 180;
-
 // Paper tints for the songs, one to an artist.
 const TINTS = ["#f6efdd", "#f1dcd4", "#dfe8ef", "#e3ead6", "#f4e3b8", "#e8dff0", "#f0d9c2", "#d9e6e0"];
 const tintFor = (artist) => TINTS[[...artist].reduce((hash, letter) => (hash * 31 + letter.charCodeAt(0)) >>> 0, 7) % TINTS.length];
 
-// A song's name as set on its square: without a reissue note or its guests.
-const songTitle = (title) =>
-  title
-    .replace(/\s+-\s+(\d{4}\s+)?(digital\s+)?remaster(ed)?.*$/i, "")
-    .replace(/\s*[([]feat\.[^)\]]*[)\]]/i, "")
-    .trim();
-
-export const listened = (minutes) => {
-  if (minutes >= 600) return `${Math.round(minutes / 60)} h`;
-  if (minutes >= 60) return `${(minutes / 60).toFixed(1).replace(/\.0$/, "")} h`;
-  return `${Math.max(1, minutes)} min`;
-};
-
 const plays = (count) => `${count.toLocaleString("en-GB")} ${count === 1 ? "play" : "plays"}`;
 
 /*
- * Grid cells (the smallest a sleeve can be), the shape to aim for and the
- * range the largest sleeve's side is searched in, as fractions of the width.
- * If nothing packs exactly, a wider search follows.
- */
-const PLANS = {
-  albums: (phone) => (phone ? { cell: 24, aspect: 3, range: [0.35, 0.8], tries: 12, spread: 3 } : { cell: 32, aspect: 0.9, range: [0.14, 0.26], tries: 10, spread: 3 }),
-  songs: (phone) => (phone ? { cell: 22, aspect: 6, range: [0.4, 0.62], tries: 6, spread: 1 } : { cell: 23, aspect: 2.4, range: [0.18, 0.26], tries: 5, spread: 1 })
-};
-
-/*
- * Packings are kept per list and column count, so turning the switch back, or
- * returning to a width seen before, costs nothing.
- */
-const packings = new WeakMap();
-
-function packFor(kind, values, target, phone, adjust, listKey) {
-  let byTarget = packings.get(listKey);
-  if (!byTarget) packings.set(listKey, (byTarget = new Map()));
-  const key = `${kind}|${target}|${phone}`;
-  if (byTarget.has(key)) return byTarget.get(key);
-  const base = PLANS[kind](phone);
-  let grid = packSquares(values, target, { ...base, adjust });
-  // If nothing packs exactly, a wider search follows.
-  if (!grid) grid = packSquares(values, target, { ...base, adjust, range: [0.08, 0.9], tries: 40, spread: 8 });
-  byTarget.set(key, grid);
-  return grid;
-}
-
-// Fewer sleeves (a search) get bigger cells, so they still fill the width.
-function columnsFor(kind, count, width) {
-  const base = PLANS[kind](width < 600);
-  const cell = Math.max(base.cell, width / Math.max(8, Math.round(Math.sqrt(count) * 6.5)));
-  return targetColumns(width, cell);
-}
-
-/*
- * Resizing is smooth because the sleeves are not laid out again at every
- * pixel. While the window moves, the map drawn at the last settled width is
- * scaled to fit in one GPU transform (`live`, each frame, before paint); once
- * it has been still for a moment the settled width changes, the map is laid
- * out afresh at it, and the sleeves glide there (useGlide).
+ * The width the shelf is laid out at. A room opening is laid out at once; a
+ * resize waits until the window has been still for a moment, so the sleeves
+ * are not sized again at every pixel, then they glide to their new sizes.
  */
 const SETTLE = 160;
 
-function useSettledWidth(ref, live) {
+function useSettledWidth(ref) {
+  // Laid out for a laptop until the shelf has been measured.
   const [width, setWidth] = useState(1100);
+  const [measured, setMeasured] = useState(false);
   useLayoutEffect(() => {
     const element = ref.current;
     if (!element) return undefined;
     const read = () => Math.floor(element.clientWidth);
     let last = read();
-    if (last > 0) setWidth(last);
+    if (last > 0) {
+      setWidth(last);
+      setMeasured(true);
+    }
     let timer = 0;
     const observer = new ResizeObserver(() => {
       const next = read();
@@ -208,12 +89,11 @@ function useSettledWidth(ref, live) {
       last = next;
       if (next <= 0) return;
       clearTimeout(timer);
-      // A room opening is laid out at once; only a resize waits to settle.
       if (!shown) {
         setWidth(next);
+        setMeasured(true);
         return;
       }
-      live.current?.(next);
       timer = setTimeout(() => setWidth(read()), SETTLE);
     });
     observer.observe(element);
@@ -221,131 +101,47 @@ function useSettledWidth(ref, live) {
       observer.disconnect();
       clearTimeout(timer);
     };
-  }, [ref, live]);
-  return width;
+  }, [ref]);
+  return [width, measured];
 }
 
 /*
- * FLIP: after a new layout is committed, each sleeve on screen is put back
- * where it was seen (a transform, so the compositor does the work) and
+ * FLIP: after the shelf is sorted or sized again, each sleeve on screen is put
+ * back where it was seen (a transform, so the compositor does the work) and
  * released to glide to its new place. Sleeves off screen just move.
  */
-const GLIDE = { duration: 440, easing: "cubic-bezier(0.22, 1, 0.36, 1)" };
+const GLIDE = { duration: 520, easing: "cubic-bezier(0.22, 1, 0.36, 1)" };
 
-function useGlide(list, layout, view, count) {
+function useGlide(list, arrangement, view, measured) {
   const seen = useRef(null);
   useLayoutEffect(() => {
-    const was = seen.current;
-    seen.current = { view, scale: 1, rects: new Map() };
     const element = list.current;
     if (!element) return;
-    const tiles = [...element.children];
-    const top = element.getBoundingClientRect().top;
-    tiles.forEach((tile) => seen.current.rects.set(tile.dataset.key, { x: tile.offsetLeft, y: tile.offsetTop, w: tile.offsetWidth }));
-    if (!was || was.view !== view || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const origin = element.getBoundingClientRect();
+    const tiles = [...element.querySelectorAll(".music-tile")];
+    const rects = new Map();
+    for (const tile of tiles) {
+      const box = tile.getBoundingClientRect();
+      rects.set(tile.dataset.key, { x: box.left - origin.left, y: box.top - origin.top, w: box.width });
+    }
+    const was = seen.current;
+    seen.current = { view, measured, rects };
+    // Nothing glides into the first measured layout, only between layouts seen.
+    if (!was || !was.measured || was.view !== view || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     for (const tile of tiles) {
       const from = was.rects.get(tile.dataset.key);
-      if (!from) continue;
-      const to = seen.current.rects.get(tile.dataset.key);
-      const k = was.scale;
-      const onScreen = [from.y * k, to.y].some((y) => top + y < innerHeight && top + y + Math.max(from.w * k, to.w) > 0);
+      const to = rects.get(tile.dataset.key);
+      if (!from || !to) continue;
+      const onScreen = [from.y, to.y].some((y) => origin.top + y < innerHeight && origin.top + y + Math.max(from.w, to.w) > 0);
       if (!onScreen) continue;
-      const dx = from.x * k + (from.w * k) / 2 - (to.x + to.w / 2);
-      const dy = from.y * k + (from.w * k) / 2 - (to.y + to.w / 2);
-      const size = (from.w * k) / to.w;
+      const dx = from.x + from.w / 2 - (to.x + to.w / 2);
+      const dy = from.y + from.w / 2 - (to.y + to.w / 2);
+      const size = from.w / to.w;
       if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5 && Math.abs(size - 1) < 0.01) continue;
       tile.animate([{ transform: `translate(${dx}px, ${dy}px) scale(${size})` }, { transform: "none" }], GLIDE);
     }
-  }, [layout, view, list, count]);
-  // The last scale the map was shown at while the window moved.
-  return useCallback((scale) => {
-    if (seen.current) seen.current.scale = scale;
-  }, []);
+  }, [list, arrangement, view, measured]);
 }
-
-/*
- * Room to grow into under the pointer, kept inside the map's edges, measured
- * when the pointer arrives rather than on every resize.
- */
-function grow(event) {
-  const tile = event.currentTarget;
-  const map = tile.parentElement;
-  if (!map) return;
-  const width = map.clientWidth;
-  const height = map.clientHeight;
-  const x = tile.offsetLeft;
-  const y = tile.offsetTop;
-  const side = tile.offsetWidth;
-  const more = Math.max(0, POP - side);
-  const left = Math.min(more / 2, x);
-  const right = Math.min(more - left, Math.max(0, width - x - side));
-  const top = Math.min(more / 2, y);
-  const bottom = Math.min(more - top, Math.max(0, height - y - side));
-  // Whatever one side cannot take, the other does, so it stays square.
-  tile.style.setProperty("--pop-l", `${more - right}px`);
-  tile.style.setProperty("--pop-r", `${right}px`);
-  tile.style.setProperty("--pop-t", `${more - bottom}px`);
-  tile.style.setProperty("--pop-b", `${bottom}px`);
-}
-
-const Tiles = memo(function Tiles({ kind, entries, tiles, count, onOpen }) {
-  return entries.slice(0, count).map(({ item }, index) => {
-    const tile = tiles[index];
-    if (!tile) return null;
-    const side = tile.w;
-    const art = item.art ?? (kind === "albums" ? item.id : null);
-    const described = `${item.title}, ${item.artist}. ${listened(item.minutes)} listened, ${plays(item.plays)}.`;
-    const roomy = side >= 116;
-    const face = kind === "songs" ? (
-      <>
-        <span className="music-type" aria-hidden="true">
-          <b className="music-initial">{songTitle(item.title).charAt(0)}</b>
-          <strong>{songTitle(item.title)}</strong>
-          <span>{item.artist}</span>
-        </span>
-        <span className="music-hours" aria-hidden="true">
-          {listened(item.minutes)}
-        </span>
-      </>
-    ) : (
-      <>
-        {art ? (
-          <AlbumArtImage id={art} alt="" large={LARGE_ART[art]} sizes={`${Math.max(side, POP)}px`} />
-        ) : (
-          <span className="music-blank" aria-hidden="true">
-            {side >= 56 ? item.title : null}
-          </span>
-        )}
-        <span className="music-hours" aria-hidden="true">
-          {listened(item.minutes)}
-        </span>
-        <span className="music-label" aria-hidden="true">
-          <strong>{item.title}</strong>
-          <span>{item.artist}</span>
-        </span>
-      </>
-    );
-    return (
-      <li
-        key={`${kind}-${item.rank}`}
-        data-key={`${kind}-${item.rank}`}
-        className={`music-tile${roomy ? " is-roomy" : ""}${side >= (kind === "songs" ? 88 : 58) ? " has-hours" : ""}${side < 40 ? " is-tiny" : ""}`}
-        style={{ left: tile.x, top: tile.y, width: tile.w, height: tile.w, "--i": Math.min(index, 120), "--side": side, "--tint": kind === "songs" ? tintFor(item.artist) : undefined }}
-        onPointerEnter={grow}
-        onFocus={grow}
-      >
-        <button
-          type="button"
-          className="music-face"
-          onClick={(event) => onOpen(kind, item, event.currentTarget)}
-          aria-label={`${described} ${kind === "songs" ? "Show it" : "Show its tracks"}.`}
-        >
-          {face}
-        </button>
-      </li>
-    );
-  });
-});
 
 /*
  * The first screenful of a list is drawn at once and the rest a frame later,
@@ -363,6 +159,77 @@ function useProgressive(list) {
     return () => cancelAnimationFrame(frame);
   }, [list, current.count]);
   return current.count;
+}
+
+const Tile = memo(function Tile({ kind, item, side, onOpen, onPoint }) {
+  const art = item.art ?? (kind === "albums" ? item.id : null);
+  const described = `${item.title}, ${item.artist}. ${listened(item.minutes)} listened, ${plays(item.plays)}.`;
+  return (
+    <li className="music-tile" data-key={`${kind}-${item.rank}`} style={{ width: side, height: side, "--tint": kind === "songs" ? tintFor(item.artist) : undefined }}>
+      <button
+        type="button"
+        className="music-face"
+        onClick={(event) => onOpen(kind, item, event.currentTarget)}
+        onPointerEnter={() => onPoint(item)}
+        onFocus={() => onPoint(item)}
+        aria-label={`${described} ${kind === "songs" ? "Show it" : "Show its tracks"}.`}
+      >
+        {kind === "songs" ? (
+          <span className="music-type" aria-hidden="true">
+            <b className="music-initial">{songTitle(item.title).charAt(0)}</b>
+            {side >= 112 ? <strong>{songTitle(item.title)}</strong> : null}
+          </span>
+        ) : art ? (
+          <AlbumArtImage id={art} alt="" large={LARGE_ART[art]} sizes={`${side}px`} />
+        ) : (
+          <span className="music-blank" aria-hidden="true">
+            {side >= 56 ? item.title : null}
+          </span>
+        )}
+      </button>
+    </li>
+  );
+});
+
+/*
+ * The first thing in the bar: the shelf as a whole, or whatever is under the
+ * pointer or the keyboard. It keeps its own state, so pointing at a sleeve
+ * does not draw the shelf again.
+ */
+function Now({ say, view, order, shownCount, shownMinutes, years, kinds }) {
+  const [item, setItem] = useState(null);
+  useEffect(() => {
+    say.current = setItem;
+    return () => {
+      say.current = null;
+    };
+  }, [say]);
+  useEffect(() => setItem(null), [view]);
+  let main;
+  let side;
+  if (item) {
+    main = view === "songs" ? songTitle(item.title) : item.title;
+    const facts = [item.artist, `${listened(item.minutes)} listened`];
+    if (order === "year" && years) {
+      const peak = peakOf(view === "albums" ? years.albums?.[item.id] : years.songs?.[item.rank - 1]);
+      if (peak) facts.push(`most in ${peak[0]}`);
+    } else if (order === "kind" && kinds) {
+      const name = kinds.kinds?.[kinds.artists?.[item.artist]];
+      if (name) facts.push(name);
+    } else if (view === "albums" && item.year) {
+      facts.push(item.year);
+    }
+    side = facts.join(" · ");
+  } else {
+    main = `${shownCount.toLocaleString("en-GB")} ${view}`;
+    side = `${listened(shownMinutes)} listened`;
+  }
+  return (
+    <output className="music-now" aria-live="polite">
+      <strong>{main}</strong>
+      <span>{side}</span>
+    </output>
+  );
 }
 
 // The colours the track bars take under the pointer, one after another: the
@@ -424,13 +291,13 @@ function Sheet({ cover, title, byline, totals, links, label, onClose, children }
   );
 }
 
-// The same song on a sheet as on the map, whatever its reissue note.
+// The same song on a sheet as on the shelf, whatever its reissue note.
 const sameSong = (a, b) => fold(songTitle(a)).trim() === fold(songTitle(b)).trim();
 
 function AlbumTracks({ album, year, picked, found, loading, loadError, retry, onClose }) {
   const lit = useRef(null);
   const most = Math.max(1, ...(album.tracks ?? []).map((track) => track.plays));
-  // A song chosen on the map is brought into view on its album's list.
+  // A song chosen on the shelf is brought into view on its album's list.
   useEffect(() => {
     lit.current?.scrollIntoView({ block: "center" });
   }, [album.tracks]);
@@ -493,12 +360,13 @@ export function MusicRoom({ initial, active }) {
   const music = useMusicRanking(initial, active);
   const meta = useRoomFile(active, "/music-meta.json");
   const years = useRoomFile(active, "/music-years.json");
+  const kinds = useRoomFile(active, "/music-kinds.json");
   const links = useRoomFile(active, "/music-links.json");
-  // The switch and the years answer at once; the map follows as a transition.
+  // The switch and the orders answer at once; the shelf follows as a transition.
   const [pressed, setPressed] = useState("albums");
   const [view, setView] = useState("albums");
-  const [pressedYear, setPressedYear] = useState(null);
-  const [year, setYear] = useState(null);
+  const [pressedOrder, setPressedOrder] = useState("hours");
+  const [order, setOrder] = useState("hours");
   const [query, setQuery] = useState("");
   // What a sheet shows: an album (with a song lit) or a song alone.
   const [open, setOpen] = useState(null);
@@ -508,82 +376,60 @@ export function MusicRoom({ initial, active }) {
       setOpen(null);
       opener.current = null;
     } else if (!open) {
-      // Wait until the modal has been removed and the map accepts focus.
+      // Wait until the modal has been removed and the shelf accepts focus.
       opener.current?.focus({ preventScroll: true });
       opener.current = null;
     }
   }, [active, open]);
   const map = useRef(null);
   const list = useRef(null);
-  const live = useRef(null);
-  const width = useSettledWidth(map, live);
+  const say = useRef(null);
+  const [width, measured] = useSettledWidth(map);
   const choose = (name) => {
     setPressed(name);
     startTransition(() => setView(name));
   };
-  const chooseYear = (next) => {
-    setPressedYear(next);
-    startTransition(() => setYear(next));
+  const sort = (name) => {
+    setPressedOrder(name);
+    startTransition(() => setOrder(name));
   };
 
-  // Albums by the hours they are drawn at; songs by their hours.
-  const albums = useMemo(() => drawnOrder(music.albums, albumWeights(music.albums)), [music.albums]);
-  const songs = useMemo(
-    () => [...music.songs].sort((a, b) => b.minutes - a.minutes || a.rank - b.rank).map((item) => ({ item, weight: Math.max(1, item.minutes) })),
-    [music.songs]
-  );
+  // Each list by its hours, the most listened first.
+  const lists = useMemo(() => {
+    const byHours = (items) => [...items].sort((a, b) => b.minutes - a.minutes || a.rank - b.rank).map((item) => ({ item }));
+    return { albums: byHours(music.albums), songs: byHours(music.songs) };
+  }, [music.albums, music.songs]);
   const albumIndex = useMemo(
     () =>
-      indexItems(albums.map((entry) => entry.item), {
+      indexItems(lists.albums.map((entry) => entry.item), {
         meta,
         yearOf: (album) => Number(album.year) || meta?.years?.[album.id] || null,
         extraText: (album) => (album.tracks ?? []).map((track) => track.title).join(" ")
       }),
-    [albums, meta]
+    [lists.albums, meta]
   );
-  const songIndex = useMemo(() => indexItems(songs.map((entry) => entry.item), { meta, yearOf: (song) => meta?.years?.[song.art] ?? null }), [songs, meta]);
-  const yearList = useYearLists(music.albums, music.songs, years);
-  // One year's listening or all of it, then what the search finds in it.
+  const songIndex = useMemo(() => indexItems(lists.songs.map((entry) => entry.item), { meta, yearOf: (song) => meta?.years?.[song.art] ?? null }), [lists.songs, meta]);
+  // All of the list, or what the search finds in it.
   const entries = useMemo(() => {
-    const all = yearList(view, year) ?? (view === "albums" ? albums : songs);
+    const all = lists[view];
     const found = search(view === "albums" ? albumIndex : songIndex, query);
     if (!found) return all;
     const key = (item) => (view === "albums" ? item.id : item.rank);
     const kept = new Set(found.map(key));
     return all.filter((entry) => kept.has(key(entry.item)));
-  }, [view, year, yearList, albums, songs, albumIndex, songIndex, query]);
+  }, [view, lists, albumIndex, songIndex, query]);
 
-  // A packing for the settled width, packed again only when the column count
-  // changes; a handful found by a search stand in a row instead.
-  const phone = width < 600;
-  const row = entries.length <= 3;
-  const target = columnsFor(view, entries.length, width);
-  const grid = useMemo(() => {
-    if (row) return null;
-    const adjust = view === "albums" ? albumSides(entries.map((entry) => entry.item)) : undefined;
-    return packFor(view, entries.map((entry) => entry.weight), target, phone, adjust, entries);
-  }, [view, entries, target, phone, row]);
-  const layout = useMemo(() => {
-    const maxSide = query.trim() ? SEARCH_SIDE : undefined;
-    if (row) return { width, ...rowOfSquares(entries.length, width, maxSide) };
-    return grid ? { width, ...tilesFor(grid, width, maxSide) } : { width, height: 0, tiles: [] };
-  }, [row, grid, entries.length, width, query]);
-  const count = useProgressive(entries);
-  const shownAt = useGlide(list, layout, view, count);
-
-  // Between settled widths, the map as laid out is scaled to the window.
-  useLayoutEffect(() => {
-    const element = list.current;
-    const frame = map.current;
-    if (element) element.style.transform = "";
-    if (frame) frame.style.height = "";
-    live.current = (now) => {
-      const scale = now / layout.width;
-      if (element) element.style.transform = Math.abs(scale - 1) < 0.001 ? "" : `scale(${scale})`;
-      if (frame) frame.style.height = `${Math.round(layout.height * scale)}px`;
-      shownAt(scale);
-    };
-  }, [layout, shownAt]);
+  // Sizes come from the whole list, so a search or an order never rescales them.
+  const reference = lists[view][Math.min(2, lists[view].length - 1)]?.item.minutes || 1;
+  const arrangement = useMemo(() => {
+    const limits = bounds(width);
+    const sized = entries.map((entry) => ({ ...entry, side: sideFor(entry.item.minutes, reference, limits) }));
+    return arrange(order, view, sized, { years, kinds });
+  }, [entries, width, reference, order, view, years, kinds]);
+  const flat = useMemo(() => arrangement.flatMap((group) => group.entries), [arrangement]);
+  const count = useProgressive(flat);
+  useGlide(list, arrangement, view, measured);
+  const shownMinutes = useMemo(() => entries.reduce((sum, entry) => sum + entry.item.minutes, 0), [entries]);
 
   const onOpen = useMemo(
     () => (kind, item, button) => {
@@ -592,6 +438,7 @@ export function MusicRoom({ initial, active }) {
     },
     []
   );
+  const onPoint = useCallback((item) => say.current?.(item), []);
   const song = open?.song ? music.songs.find((entry) => entry.rank === open.song) ?? null : null;
   // A song opens its album's list when the album is among these.
   const albumId = open?.album ?? (song?.art && music.albums.some((entry) => entry.id === song.art) ? song.art : null);
@@ -601,21 +448,28 @@ export function MusicRoom({ initial, active }) {
     setOpen(null);
   };
 
+  let drawn = 0;
   return (
     <div className="room-body music">
       <noscript><p className="music-tracks-note">Enable JavaScript to search music and open track lists.</p></noscript>
       <div className="music-bar">
+        <Now say={say} view={view} order={order} shownCount={entries.length} shownMinutes={shownMinutes} years={years} kinds={kinds} />
+        <div className="music-order" role="group" aria-label="Order">
+          {ORDERS.map(([name, label]) => (
+            <button key={name} type="button" aria-pressed={pressedOrder === name} onClick={() => sort(name)}>
+              {label}
+            </button>
+          ))}
+        </div>
         <div className="music-switch" role="group" aria-label="Albums or songs" data-view={pressed}>
-          <span className="music-switch-thumb" aria-hidden="true" />
           {["albums", "songs"].map((name) => (
             <button key={name} type="button" aria-pressed={pressed === name} onClick={() => choose(name)}>
               {name}
             </button>
           ))}
         </div>
-        {years?.years?.length ? <YearLine years={years.years} value={pressedYear} onChange={chooseYear} /> : null}
         <label className="music-search">
-          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
             <circle cx="10.5" cy="10.5" r="6.2" />
             <path d="M15.2 15.4l5 5" />
           </svg>
@@ -639,17 +493,35 @@ export function MusicRoom({ initial, active }) {
         </label>
       </div>
 
-      {/* Measured here, outside the list the switch replaces. */}
-      <div className="music-map-frame" ref={map}>
-        <ol
+      {/* Measured here, outside the shelf the switch replaces. */}
+      <div className="music-map-frame" ref={map} onPointerLeave={() => say.current?.(null)}>
+        <div
           key={view}
           ref={list}
-          className={`music-map is-${view}`}
-          style={{ height: layout.height }}
-          aria-label={`My top ${view === "albums" ? "albums" : "songs"}${year === null ? "" : ` in ${year}`}, most listened first`}
+          className={`music-map is-${view} is-by-${order}`}
+          role="region"
+          aria-label={`My top ${view}, ${order === "hours" ? "most listened first" : order === "name" ? "a to z" : `by ${order}`}`}
         >
-          <Tiles kind={view} entries={entries} tiles={layout.tiles} count={count} onOpen={onOpen} />
-        </ol>
+          {arrangement.map((group) => {
+            const shown = group.entries.filter(() => drawn++ < count);
+            if (!shown.length) return null;
+            return (
+              <section key={group.key} className="music-group">
+                {group.label ? (
+                  <h3 className="music-group-head">
+                    <span>{group.label}</span>
+                    <span className="music-group-figures">{group.figures}</span>
+                  </h3>
+                ) : null}
+                <ol className="music-shelf">
+                  {shown.map(({ item, side }) => (
+                    <Tile key={`${view}-${item.rank}`} kind={view} item={item} side={side} onOpen={onOpen} onPoint={onPoint} />
+                  ))}
+                </ol>
+              </section>
+            );
+          })}
+        </div>
       </div>
 
       {query && !entries.length ? <p className="music-none">Nothing matches.</p> : null}
