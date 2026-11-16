@@ -10,6 +10,8 @@ test("the published ranking decodes all albums, songs and track lists", () => {
   assert.equal(result.albums.length, 150);
   assert.equal(result.songs.length, 1000);
   assert.ok(result.albums.every((album) => album.artist && album.tracks));
+  // The other records the songs come from, each with its tracks.
+  assert.ok(result.sleeves.length > 0 && result.sleeves.every((record) => record.artist && record.tracks.length));
 });
 
 test("empty, partial and unsupported responses cannot replace the music seed", () => {

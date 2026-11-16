@@ -164,12 +164,14 @@ export function peakOf(pairs) {
  * songs that should effectively merge both", since a record can matter for
  * one song, such as King Krule's Hey World!). Every top album is a record
  * as large as its own hours; every top song from another record joins that
- * record's sleeve, as large as those songs together, named by its most
- * listened song; a song with no sleeve stands alone, typeset. Each record
- * keeps the songs that brought it, which fill its track list when the
- * album's own is not published. The most listened come first.
+ * record's sleeve, which carries the record's own name and every track he
+ * played from it (`sleeves`, 16 November 2026), or failing those, is named by
+ * its most listened song and as large as its songs together; a song with no
+ * sleeve stands alone, typeset. Each record keeps the songs that brought it,
+ * which fill its track list until the record's own has loaded. The most
+ * listened come first.
  */
-export function mergeShelf(albums, songs) {
+export function mergeShelf(albums, songs, sleeves = []) {
   const ids = new Set(albums.map((album) => album.id));
   const ofAlbum = new Map();
   const bySleeve = new Map();
@@ -191,8 +193,14 @@ export function mergeShelf(albums, songs) {
     const own = ofAlbum.get(album.id) ?? [];
     return { ...album, key: `album-${album.id}`, kind: "album", art: album.id, songs: own, fallback: own.length ? tracksOf(own) : null };
   });
+  const recordOf = new Map(sleeves.map((record) => [record.id, record]));
   for (const [art, list] of bySleeve) {
     const sorted = [...list].sort((a, b) => b.minutes - a.minutes || a.rank - b.rank);
+    const own = recordOf.get(art);
+    if (own) {
+      records.push({ ...own, key: `sleeve-${art}`, kind: "sleeve", art, songs: sorted, fallback: tracksOf(sorted) });
+      continue;
+    }
     records.push({
       key: `sleeve-${art}`,
       kind: "sleeve",
@@ -228,7 +236,7 @@ export function mergeShelf(albums, songs) {
 // A record's listening by calendar year: an album's own, or its songs'.
 export function yearPairs(record, years) {
   if (!years) return null;
-  if (record.kind === "album" && years.albums?.[record.id]) return years.albums[record.id];
+  if (record.kind !== "song" && years.albums?.[record.id]) return years.albums[record.id];
   const by = new Map();
   for (const song of record.songs ?? []) {
     for (const [year, minutes] of years.songs?.[song.rank - 1] ?? []) by.set(year, (by.get(year) ?? 0) + minutes);

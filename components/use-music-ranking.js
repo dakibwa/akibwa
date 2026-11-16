@@ -26,7 +26,7 @@ export function useMusicRanking(seed, enabled) {
         if (cancelled) return;
         const full = unpackRanking(packet);
         loaded.current = true;
-        setRanking({ asOf: full.asOf, songs: full.songs, albums: full.albums });
+        setRanking({ asOf: full.asOf, songs: full.songs, albums: full.albums, sleeves: full.sleeves });
         setLoading(false);
       })
       .catch(() => {

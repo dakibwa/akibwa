@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
-import { unpackRanking } from "../components/paper/music-ranking.mjs";
+import { fold, unpackRanking } from "../components/paper/music-ranking.mjs";
 import { indexItems, search } from "../components/paper/music-search.mjs";
-import { GAP, arrange, bounds, mergeShelf, rowsFor, sideFor } from "../components/paper/music-shelf.mjs";
+import { GAP, arrange, bounds, mergeShelf, rowsFor, sideFor, songTitle } from "../components/paper/music-shelf.mjs";
 
 /* Build-time contract for akibwa.com. From 16 November 2026 (Dan) the site is
    one page, the music shelf; the trek keeps its own standalone page for old
@@ -84,7 +84,9 @@ for (const room of ["trek", "career", "websites"]) forbidText(index + music, `id
 
 // Dan, 16 November 2026: one shelf, each row of squares as large as its
 // albums' hours between a floor and a cap, everything to know in the bar.
-requireText(music, "mergeShelf(music.albums, music.songs)", "albums and songs must be one shelf of records (Dan, 16 November 2026)");
+requireText(music, "mergeShelf(music.albums, music.songs, music.sleeves)", "albums and songs must be one shelf of records (Dan, 16 November 2026)");
+requireText(music, '<span className="music-tracks-cover">', "a sheet must open with its sleeve at the top left (Dan, 16 November 2026)");
+requireText(music, '<div className="music-tracks-card">\n            <button type="button" className="music-tracks-close"', "a sheet's way out must sit in its card, beside the sleeve");
 requireText(music, "rowsFor(group.entries, width, reference)", "the shelf must be laid out in rows sized by hours between a floor and a cap");
 requireText(music, 'role="group" aria-label="Order"', "the bar must sort the whole shelf by hours, year, kind or name");
 requireText(music, '<output className="music-now"', "the bar must say what the shelf holds and what is under the pointer");
@@ -106,13 +108,17 @@ requireText(css, ".music-track-list li:hover {\n  background: color-mix(in srgb,
   // one size, each as large as its records' hours between the floor and the
   // cap, every full row filling the width, sizes only ever stepping down;
   // and each order placing every record once.
-  const { albums, songs } = unpackRanking(ranking);
-  const records = mergeShelf(albums, songs);
+  const { albums, songs, sleeves } = unpackRanking(ranking);
+  const records = mergeShelf(albums, songs, sleeves);
   if (records.slice(0, 3).map((record) => record.title).join("|") !== "Music for Psychedelic Therapy|Discreet Music|Graceland") fail("the shelf must start with the most listened");
   if (records.filter((record) => record.kind === "album").length !== albums.length) fail("every top album must be a record on the shelf");
   const placedSongs = records.flatMap((record) => record.songs.map((song) => song.rank));
   if (placedSongs.length !== songs.length || new Set(placedSongs).size !== songs.length) fail("every top song must belong to exactly one record");
   if (!records.some((record) => record.title === "Hey World!" && record.artist === "King Krule")) fail("a record loved for one song, such as King Krule's Hey World!, must be on the shelf");
+  // Dan, 16 November 2026: such a record lists every track he played from it.
+  const trex = records.find((record) => record.title === "T. Rex" && record.artist === "T. Rex");
+  if (!trex || trex.tracks.length < 10 || !trex.tracks.some((track) => track.title === "Diamond Meadows")) fail("a record brought by one song, such as T. Rex's Diamond Meadows, must list every track he played from it");
+  if (records.some((record) => record.kind === "sleeve" && record.tracks && record.songs.some((song) => !record.tracks.some((track) => fold(songTitle(track.title)).trim() === fold(songTitle(song.title)).trim())))) fail("a record's track list must include every top song that brought it");
   const reference = records[2].minutes;
   for (const width of [343, 1180, 1312]) {
     const limits = bounds(width);
@@ -152,15 +158,17 @@ for (const [title, artist, plays, youtube, art, minutes] of ranking.songs) {
   if (!whole(plays) || !whole(youtube) || youtube > plays || !whole(minutes)) fail("song counts must be whole plays and minutes");
   if (art !== null && !existsSync(new URL(`../public/album-art/${art}-wall.webp`, import.meta.url))) fail(`missing sleeve ${art}`);
 }
-for (const [id, title, artist, year, plays, minutes, tracks] of ranking.albums) {
+// The other records the top songs come from carry the same public fields as
+// the albums (Dan, 16 November 2026).
+for (const [id, title, artist, year, plays, minutes, tracks] of [...ranking.albums, ...ranking.sleeves]) {
   if (!existsSync(new URL(`../public/album-art/${id}-wall.webp`, import.meta.url))) fail(`missing sleeve ${id}`);
   if (typeof title !== "string" || !ranking.names[artist] || !(year === null || /^\d{4}$/.test(year))) fail("every album needs a title, artist and year or none");
   if (!whole(plays) || !whole(minutes) || !Array.isArray(tracks) || !tracks.length) fail(`${title} needs plays, minutes and its tracks`);
   if (tracks.some((track) => track.length !== 3 || typeof track[0] !== "string" || !whole(track[1]) || !whole(track[2]))) fail(`${title}'s tracks must be [title, plays, minutes]`);
 }
 // Only these fields, in fixed-length rows.
-if (JSON.stringify(Object.keys(ranking).sort()) !== JSON.stringify(["albums", "asOf", "counts", "hours", "names", "schemaVersion", "songs"])) fail("the public music file has unexpected fields");
-if (ranking.songs.some((row) => row.length !== 6) || ranking.albums.some((row) => row.length !== 7)) fail("music rows must keep their public fields");
+if (JSON.stringify(Object.keys(ranking).sort()) !== JSON.stringify(["albums", "asOf", "counts", "hours", "names", "schemaVersion", "sleeves", "songs"])) fail("the public music file has unexpected fields");
+if (ranking.songs.some((row) => row.length !== 6) || [...ranking.albums, ...ranking.sleeves].some((row) => row.length !== 7)) fail("music rows must keep their public fields");
 const rankingText = JSON.stringify(ranking);
 for (const [pattern, what] of [[/spotify:/i, "track URIs"], [/\d{4}-\d{2}-\d{2}T\d/, "timestamps"]]) {
   if (pattern.test(rankingText)) fail(`the public music file must not include ${what}`);

@@ -132,7 +132,15 @@ the top 150 albums; `scripts/build-music-meta.mjs` records by hand the
 release years MusicBrainz cannot match. The search's genres, related artists and sleeve years
 are public MusicBrainz data (`scripts/build-music-meta.mjs`), never
 listening history. Covers reuse the committed album sleeves
-where artist and album match. First and last listen dates, track URIs, raw
+where artist and album match, or failing that an album of the same title on
+which the song's artist is credited (Panda Bear's songs on Panda Bear & Sonic
+Boom's Reset) or a various-artists record. Every other record a top song comes
+from is in `sleeves`, in the same row shape as the albums: its catalogue
+title, year and plays, every track Dan played from it (its top songs always
+among them), and the artist of its best-loved song, so its kind follows that
+artist (Dan, 16 November 2026: "surely I have listened to other songs from
+this album"). Its years join the albums' in `music-years.json`, though only
+the top albums decide which years are offered. First and last listen dates, track URIs, raw
 events, account splits and source paths never leave the private history;
 `check:navigation` fails if the packet gains a field.
 

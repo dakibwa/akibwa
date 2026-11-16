@@ -253,8 +253,10 @@ const SERVICE_MARKS = {
   )
 };
 
-// A sheet over the shelf: a heading, the numbers, where to hear it and the sleeve.
-function Sheet({ cover, title, byline, totals, links, label, onClose, children }) {
+// A sheet over the shelf, set as a mosaic like the shelf (Dan, 16 November
+// 2026): the sleeve first at the top left, a card with everything about the
+// record and the way out beside it, then the listens.
+function Sheet({ cover, title, byline, hours, count, links, label, onClose, children }) {
   const panel = useRef(null);
   useEffect(() => {
     const dialog = panel.current;
@@ -281,34 +283,33 @@ function Sheet({ cover, title, byline, totals, links, label, onClose, children }
         if (event.target === panel.current) onClose();
       }}
     >
-      <button type="button" className="music-tracks-close" onClick={onClose} aria-label={label}>
-        ×
-      </button>
       <div className="music-tracks-sheet">
-        {/* The title hugs the top left and the sleeve the top right (Dan, 16
-            November 2026); where to hear it is the services' own marks. */}
         <header className="music-tracks-head">
-          <div>
-            <h3 id="music-tracks-title">{title}</h3>
-            <p className="music-tracks-artist">{byline}</p>
-            <p className="music-tracks-totals">{totals}</p>
-            <p className="music-listen">
-              {links.map(([service, href]) => (
-                <a key={service} href={href} target="_blank" rel="noopener noreferrer" aria-label={`Listen on ${service}`} title={service}>
-                  {SERVICE_MARKS[service]}
-                </a>
-              ))}
-            </p>
-          </div>
-          {/* The record slides out of its sleeve as the sheet opens. */}
-          <span className="music-tracks-sleeve">
-            <span className="music-tracks-record" aria-hidden="true">
-              <span className="music-tracks-disc" />
-            </span>
-            <span className="music-tracks-cover">
-              {cover ? <AlbumArtImage id={cover} alt="" large={LARGE_ART[cover]} sizes="140px" /> : <span className="music-blank" aria-hidden="true" />}
-            </span>
+          <span className="music-tracks-cover">
+            {cover ? <AlbumArtImage id={cover} alt="" large={LARGE_ART[cover]} sizes="200px" /> : <span className="music-blank" aria-hidden="true" />}
           </span>
+          <div className="music-tracks-card">
+            <button type="button" className="music-tracks-close" onClick={onClose} aria-label={label}>
+              <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                <path d="M3.5 3.5l9 9M12.5 3.5l-9 9" />
+              </svg>
+            </button>
+            <h3 id="music-tracks-title" title={title}>{title}</h3>
+            <p className="music-tracks-artist">{byline}</p>
+            <div className="music-tracks-foot">
+              <p className="music-listen">
+                {links.map(([service, href]) => (
+                  <a key={service} href={href} target="_blank" rel="noopener noreferrer" aria-label={`Listen on ${service}`} title={service}>
+                    {SERVICE_MARKS[service]}
+                  </a>
+                ))}
+              </p>
+              <p className="music-tracks-totals">
+                {hours}
+                <span className="visually-hidden"> listened</span> · {count}
+              </p>
+            </div>
+          </div>
         </header>
         {children}
       </div>
@@ -326,7 +327,7 @@ const sameSong = (a, b) => fold(songTitle(a)).trim() === fold(songTitle(b)).trim
  */
 function AlbumTracks({ album, year, found, loading, loadError, retry, onClose }) {
   const frame = useRef(null);
-  const [width] = useSettledWidth(frame, 518);
+  const [width] = useSettledWidth(frame, 550);
   // An album's own tracks, or once the ranking has loaded without them, the
   // songs of it among the top 1,000.
   const known = album.tracks ?? (loading || loadError ? null : album.fallback ?? null);
@@ -336,7 +337,8 @@ function AlbumTracks({ album, year, found, loading, loadError, retry, onClose })
       cover={album.id}
       title={album.title}
       byline={`${album.artist}${year ? ` · ${year}` : ""}`}
-      totals={`${plays(album.plays)} · ${listened(album.minutes)} listened`}
+      hours={listened(album.minutes)}
+      count={plays(album.plays)}
       links={listenLinks(found, album.artist, album.title)}
       label="Close the track list"
       onClose={onClose}
@@ -346,17 +348,22 @@ function AlbumTracks({ album, year, found, loading, loadError, retry, onClose })
           <ol className="music-track-list" style={{ height: map.height }}>
             {map.cells.map(({ track, x, y, w, h }, index) => {
               const size = Math.max(12, Math.min(24, Math.min(w, h * 1.8) * 0.085));
+              const lines = Math.floor((h - 34) / (size * 1.15));
+              // A box too short for the name above its hours sets both on one line.
+              const tight = lines < 1;
               return (
                 <li
                   key={track.title}
                   title={track.title}
+                  className={tight ? "is-tight" : undefined}
                   style={{
                     left: x,
                     top: y,
                     width: w,
                     height: h,
-                    "--size": `${size.toFixed(1)}px`,
-                    "--lines": Math.max(1, Math.floor((h - 34) / (size * 1.15))),
+                    "--size": `${(tight ? Math.min(size, 14) : size).toFixed(1)}px`,
+                    "--lines": Math.max(1, lines),
+                    "--pad": `${Math.round(Math.max(6, Math.min(11, w * 0.09)))}px`,
                     "--bar": BARS[index % BARS.length]
                   }}
                 >
@@ -419,7 +426,7 @@ export function MusicRoom({ initial, active }) {
 
   // One shelf of records, albums and the records his songs come from, the
   // most listened first (mergeShelf in music-shelf.mjs).
-  const records = useMemo(() => mergeShelf(music.albums, music.songs).map((item) => ({ item })), [music.albums, music.songs]);
+  const records = useMemo(() => mergeShelf(music.albums, music.songs, music.sleeves).map((item) => ({ item })), [music.albums, music.songs, music.sleeves]);
   const index = useMemo(
     () =>
       indexItems(records.map((entry) => entry.item), {
