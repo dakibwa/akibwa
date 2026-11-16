@@ -85,6 +85,8 @@ for (const room of ["trek", "career", "websites"]) forbidText(index + music, `id
 // Dan, 16 November 2026: one shelf, each row of squares as large as its
 // albums' hours between a floor and a cap, everything to know in the bar.
 requireText(music, "mergeShelf(music.albums, music.songs, music.sleeves)", "albums and songs must be one shelf of records (Dan, 16 November 2026)");
+requireText(music, 'className="music-find"', "on a phone the bar must keep one row, the search waiting behind its mark (Dan, 16 November 2026)");
+requireText(css, ".music-tools[data-finding=\"true\"] .music-search {", "the phone's search must slide out over the orders");
 requireText(music, '<span className="music-tracks-cover">', "a sheet must open with its sleeve at the top left (Dan, 16 November 2026)");
 requireText(music, '<div className="music-tracks-card">\n            <button type="button" className="music-tracks-close"', "a sheet's way out must sit in its card, beside the sleeve");
 requireText(music, "rowsFor(group.entries, width, reference)", "the shelf must be laid out in rows sized by hours between a floor and a cap");

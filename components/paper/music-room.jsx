@@ -2,6 +2,7 @@
 
 import { memo, startTransition, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { AlbumArtImage } from "../site-image";
+import { flushSync } from "react-dom";
 import { useMusicRanking } from "../use-music-ranking";
 import { LARGE_ART } from "./music-art.mjs";
 import { fold } from "./music-ranking.mjs";
@@ -397,6 +398,14 @@ export function MusicRoom({ initial, active }) {
   const [pressedOrder, setPressedOrder] = useState("hours");
   const [order, setOrder] = useState("hours");
   const [query, setQuery] = useState("");
+  // On a phone the search waits behind its mark and slides out over the
+  // orders (Dan, 16 November 2026), so everything fits in one row.
+  const [finding, setFinding] = useState(false);
+  const finder = useRef(null);
+  const endSearch = () => {
+    setQuery("");
+    setFinding(false);
+  };
   // The record a sheet shows, by its key.
   const [open, setOpen] = useState(null);
   const opener = useRef(null);
@@ -485,6 +494,7 @@ export function MusicRoom({ initial, active }) {
             if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
             event.preventDefault();
             sort("hours");
+            setFinding(false);
             window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
           }}
         >
@@ -499,6 +509,7 @@ export function MusicRoom({ initial, active }) {
           Akibwa
         </a>
         <Now say={say} order={shown} years={years} kinds={kinds} />
+        <div className="music-tools" data-finding={finding || Boolean(query)}>
         <div className="music-order" role="group" aria-label="Order">
           {ORDERS.map(([name, label]) => (
             <button key={name} type="button" aria-pressed={!searching && pressedOrder === name} onClick={() => sort(name)}>
@@ -506,21 +517,44 @@ export function MusicRoom({ initial, active }) {
             </button>
           ))}
         </div>
-        <label className="music-search">
+        <button
+          type="button"
+          className="music-find"
+          aria-label="Search"
+          aria-expanded={finding}
+          onClick={() => {
+            // Shown at once, so the phone's keyboard opens with the tap.
+            flushSync(() => setFinding(true));
+            finder.current?.focus();
+          }}
+        >
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+            <circle cx="10.5" cy="10.5" r="6.2" />
+            <path d="M15.2 15.4l5 5" />
+          </svg>
+        </button>
+        <label
+          className="music-search"
+          onBlur={(event) => {
+            // Leaving an empty search puts it away again.
+            if (!query && !event.currentTarget.contains(event.relatedTarget)) setFinding(false);
+          }}
+        >
           <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
             <circle cx="10.5" cy="10.5" r="6.2" />
             <path d="M15.2 15.4l5 5" />
           </svg>
           <input
+            ref={finder}
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             onKeyDown={(event) => {
               // Escape clears the search.
-              if (event.key === "Escape" && query) {
+              if (event.key === "Escape" && (query || finding)) {
                 event.preventDefault();
                 event.stopPropagation();
-                setQuery("");
+                endSearch();
               }
             }}
             placeholder="search"
@@ -528,12 +562,15 @@ export function MusicRoom({ initial, active }) {
             autoComplete="off"
             spellCheck={false}
           />
-          {query ? (
-            <button type="button" className="music-search-clear" onClick={() => setQuery("")} aria-label="Clear the search">
-              ×
+          {query || finding ? (
+            <button type="button" className="music-search-clear" onClick={endSearch} aria-label="Clear the search">
+              <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                <path d="M3.5 3.5l9 9M12.5 3.5l-9 9" />
+              </svg>
             </button>
           ) : null}
         </label>
+        </div>
       </div>
 
       {/* Measured here, around the shelf. */}

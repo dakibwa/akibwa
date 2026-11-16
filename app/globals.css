@@ -318,8 +318,17 @@ main {
   gap: 0 clamp(10px, 1.8vw, 22px);
 }
 
-.music-order {
+/* The orders and the search, kept to the right of the signature. */
+.music-tools {
+  position: relative;
+  display: flex;
+  align-items: center;
+  column-gap: clamp(14px, 3.2vw, 40px);
   margin-left: auto;
+}
+
+.music-find {
+  display: none;
 }
 
 
@@ -414,37 +423,121 @@ main {
   flex: none;
   width: 32px;
   height: 44px;
+  margin-right: -8px;
   padding: 0;
   border: 0;
   background: none;
   color: var(--ink-soft);
-  font: 400 20px/1 "Alegreya", var(--serif);
   cursor: pointer;
+  transition: color 180ms ease;
+}
+
+.music-search-clear svg,
+.music-find svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+}
+
+.music-search-clear svg {
+  width: 13px;
+  height: 13px;
+  stroke-width: 1.5;
 }
 
 .music-search-clear:hover {
   color: var(--ink);
 }
 
-/* One row down to a small tablet (Dan, 16 November 2026: "it should all be
-   on the same row"); on a phone, the signature with the search, then the
-   orders. */
-/* A narrow phone: the signature with the search, then the orders. */
-@media (max-width: 479px) {
-  .music-search {
-    order: 1;
-    margin-left: auto;
-    width: min(170px, 42vw);
+/* A phone keeps everything in one row (Dan, 16 November 2026: "we can have
+   it all at the top"): the signature, the orders, and the search's mark,
+   which slides the search out over the orders; its cross puts it away. */
+@media (max-width: 559px) {
+  .music-bar {
+    flex-wrap: nowrap;
+    column-gap: 10px;
+  }
+
+  .music-sign {
+    font-size: clamp(15px, 5vw, 21px);
+    letter-spacing: 0.2em;
+  }
+
+  .music-tools {
+    flex: 1 1 auto;
+    justify-content: flex-end;
+    min-width: 0;
+    column-gap: clamp(2px, 1.2vw, 8px);
   }
 
   .music-order {
-    order: 2;
-    flex: 1 1 100%;
-    margin-left: 0;
+    gap: 0 clamp(8px, 2.6vw, 14px);
+  }
+
+  .music-order button {
+    font-size: clamp(10px, 3vw, 12.5px);
+    letter-spacing: clamp(0.08em, 0.9vw - 1.6px, 0.16em);
+  }
+
+  .music-order,
+  .music-find {
+    transition: opacity 180ms ease, transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .music-find {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 36px;
+    height: 44px;
+    margin-right: -8px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+
+  .music-find svg {
+    stroke-width: 2;
+  }
+
+  .music-find:hover {
+    color: var(--ink);
+  }
+
+  .music-find:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: -4px;
+  }
+
+  .music-search {
+    position: absolute;
+    inset: 0 0 0 0;
+    width: auto;
+    padding-left: 2px;
+    background: var(--paper);
+    /* Drawn out from the right edge, never past it. */
+    clip-path: inset(0 0 0 100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: clip-path 320ms cubic-bezier(0.16, 1, 0.3, 1), opacity 180ms ease, visibility 0s linear 320ms;
+  }
+
+  .music-tools[data-finding="true"] .music-search {
+    clip-path: inset(0);
+    opacity: 1;
+    visibility: visible;
+    transition: clip-path 320ms cubic-bezier(0.16, 1, 0.3, 1), opacity 180ms ease, visibility 0s;
+  }
+
+  .music-tools[data-finding="true"] .music-order,
+  .music-tools[data-finding="true"] .music-find {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-14px);
   }
 }
-
-
 
 .music-none {
   margin: 0;
