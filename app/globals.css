@@ -221,8 +221,8 @@ main {
   top: 0;
   z-index: 3;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto auto auto;
-  grid-template-areas: "sign . order switch search";
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  grid-template-areas: "sign . order search";
   align-items: center;
   column-gap: 40px;
   padding: 10px 0;
@@ -242,14 +242,23 @@ main {
   font: 500 24px/1.2 "Alegreya SC", var(--serif);
   letter-spacing: 0.22em;
   text-transform: lowercase;
+  text-decoration: none;
   white-space: nowrap;
 }
 
+.music-sign:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* The flower is centred on the small capitals, point and all (Dan, 16
+   November 2026): its box is its outline, 0.62em tall against the letters'
+   0.508em, let down a little from the baseline so the overhang is even. */
 .music-sign svg {
   position: relative;
-  top: 0.18em;
-  width: 0.722em;
-  height: 0.689em;
+  top: 0.056em;
+  width: 0.65em;
+  height: 0.62em;
   fill: #db552d;
 }
 
@@ -272,8 +281,13 @@ main {
   pointer-events: none;
 }
 
+.music-now {
+  transition: opacity 160ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 .music-now[data-empty="true"] {
-  display: none;
+  opacity: 0;
+  transform: translateY(6px);
 }
 
 .music-now strong {
@@ -284,7 +298,6 @@ main {
 
 .music-now span,
 .music-order button,
-.music-switch button,
 .music-group-head {
   font-family: "Alegreya SC", var(--serif);
   font-weight: 500;
@@ -299,8 +312,7 @@ main {
   text-overflow: ellipsis;
 }
 
-.music-order,
-.music-switch {
+.music-order {
   display: flex;
   gap: 0 22px;
 }
@@ -309,12 +321,8 @@ main {
   grid-area: order;
 }
 
-.music-switch {
-  grid-area: switch;
-}
 
-.music-order button,
-.music-switch button {
+.music-order button {
   position: relative;
   min-height: 44px;
   padding: 0;
@@ -323,12 +331,11 @@ main {
   color: var(--ink-soft);
   font-size: 13px;
   cursor: pointer;
-  transition: color 300ms ease;
+  transition: color 180ms ease;
 }
 
 /* The chosen order and the chosen list carry a dot in the flower's red. */
-.music-order button::after,
-.music-switch button::after {
+.music-order button::after {
   content: "";
   position: absolute;
   left: 50%;
@@ -339,23 +346,21 @@ main {
   border-radius: 50%;
   background: #db552d;
   opacity: 0;
-  transition: opacity 300ms ease;
+  transform: scale(0.4);
+  transition: opacity 200ms ease, transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .music-order button:hover,
-.music-switch button:hover,
-.music-order button[aria-pressed="true"],
-.music-switch button[aria-pressed="true"] {
+.music-order button[aria-pressed="true"] {
   color: var(--ink);
 }
 
-.music-order button[aria-pressed="true"]::after,
-.music-switch button[aria-pressed="true"]::after {
+.music-order button[aria-pressed="true"]::after {
   opacity: 1;
+  transform: none;
 }
 
-.music-order button:focus-visible,
-.music-switch button:focus-visible {
+.music-order button:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 2px;
 }
@@ -397,14 +402,48 @@ main {
   color: var(--ink-soft);
 }
 
-/* Below a wide screen: the signature with the search, then the orders with
-   albums or songs. */
-@media (max-width: 999px) {
+.music-search input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.music-search-clear {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 32px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink-soft);
+  font: 400 20px/1 "Alegreya", var(--serif);
+  cursor: pointer;
+}
+
+.music-search-clear:hover {
+  color: var(--ink);
+}
+
+/* One row down to a small tablet (Dan, 16 November 2026: "it should all be
+   on the same row"); on a phone, the signature with the search, then the
+   orders. */
+@media (max-width: 899px) {
+  .music-bar {
+    column-gap: 24px;
+  }
+
+  .music-search {
+    width: 150px;
+  }
+}
+
+@media (max-width: 719px) {
   .music-bar {
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:
       "sign search"
-      "order switch";
+      "order order";
     column-gap: 20px;
     padding: 6px 0 4px;
   }
@@ -419,26 +458,22 @@ main {
     font-size: 20px;
   }
 
-  .music-order,
-  .music-switch {
+  .music-order {
     gap: 0 14px;
   }
 
-  .music-order button,
-  .music-switch button {
+  .music-order button {
     font-size: 12px;
     letter-spacing: 0.16em;
   }
 }
 
 @media (max-width: 379px) {
-  .music-order,
-  .music-switch {
+  .music-order {
     gap: 0 10px;
   }
 
-  .music-order button,
-  .music-switch button {
+  .music-order button {
     letter-spacing: 0.1em;
   }
 }
@@ -514,14 +549,25 @@ main {
   background: var(--paper-deep);
   color: var(--ink);
   cursor: pointer;
-  transition: outline-color 300ms ease, outline-offset 600ms var(--ease-out);
-  outline: 2px solid transparent;
-  outline-offset: 0;
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.music-face:hover,
+/* Under the pointer a sleeve lifts a little off the shelf. */
+.music-tile {
+  position: relative;
+}
+
+.music-tile:hover {
+  z-index: 1;
+}
+
+.music-face:hover {
+  transform: scale(1.04);
+  box-shadow: 0 10px 22px -10px rgb(42 36 32 / 0.55);
+}
+
 .music-face:focus-visible {
-  outline-color: var(--ink);
+  outline: 2px solid var(--ink);
   outline-offset: 3px;
 }
 
@@ -608,6 +654,11 @@ main {
 
 .music-tracks::backdrop {
   background: rgb(42 36 32 / 0.34);
+  animation: backdrop-in 220ms ease both;
+}
+
+@keyframes backdrop-in {
+  from { opacity: 0; }
 }
 
 .music-tracks-sheet {
@@ -618,11 +669,11 @@ main {
   border: 1px solid var(--ink);
   border-radius: 2px;
   background: var(--paper);
-  animation: tracks-in 300ms var(--ease-out) both;
+  animation: tracks-in 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes tracks-in {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(10px) scale(0.985); }
 }
 
 /* The way out sits just outside the sheet's top right corner, on its own
@@ -657,13 +708,57 @@ main {
   margin-bottom: 14px;
 }
 
-.music-tracks-cover {
+/* The sleeve, with its record sliding out to the left as the sheet opens
+   and its label turning slowly. */
+.music-tracks-sleeve {
+  --sleeve: clamp(96px, 26vw, 136px);
+  position: relative;
   display: block;
-  width: clamp(96px, 26vw, 136px);
+  width: calc(var(--sleeve) * 1.42);
+  height: var(--sleeve);
+}
+
+.music-tracks-cover {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  display: block;
+  width: var(--sleeve);
   aspect-ratio: 1;
   overflow: hidden;
   border: 1px solid var(--ink);
   border-radius: 2px;
+}
+
+.music-tracks-record {
+  position: absolute;
+  top: 3%;
+  right: 3%;
+  width: calc(var(--sleeve) * 0.94);
+  aspect-ratio: 1;
+  animation: record-out 760ms cubic-bezier(0.16, 1, 0.3, 1) 120ms both;
+}
+
+.music-tracks-disc {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #f3ecdf 0 2.2%, #db552d 2.6% 17%, #1b1714 17.4% 19%, transparent 19.4%),
+    conic-gradient(from 20deg, rgb(255 255 255 / 0.1), transparent 12% 40%, rgb(255 255 255 / 0.08) 50%, transparent 62% 90%, rgb(255 255 255 / 0.1)),
+    repeating-radial-gradient(circle, #1b1714 0 1.1px, #2a2420 1.1px 2.6px);
+  animation: record-turn 7s linear infinite;
+}
+
+@keyframes record-out {
+  from { transform: translateX(0); }
+  to { transform: translateX(-42%); }
+}
+
+@keyframes record-turn {
+  to { transform: rotate(1turn); }
 }
 
 .music-tracks-cover img {
@@ -751,7 +846,7 @@ html:not(.js) .music-tile {
   width: 44px;
   height: 44px;
   color: var(--ink);
-  transition: color 300ms ease;
+  transition: color 180ms ease;
 }
 
 .music-listen a:hover {
@@ -769,72 +864,48 @@ html:not(.js) .music-tile {
   outline-offset: -4px;
 }
 
-/* The tracks, set out as the shelf is: rows of boxes of one size, each as
-   large as its track's hours, the name and hours inside. */
+/* The tracks as a poster's lineup: the most listened first, each name as
+   large as its hours (--size), its hours beside it in small capitals and the
+   flower between. Under the pointer a name takes its own colour (Dan, 25
+   September 2026). */
 .music-track-list {
-  display: grid;
-  gap: 4px;
-}
-
-.music-track-row {
-  display: flex;
-  gap: 4px;
-  margin: 0;
+  margin: 6px 0 0;
   padding: 0;
   list-style: none;
+  text-align: center;
+  line-height: 1.15;
 }
 
 .music-track-list li {
-  position: relative;
-  display: flex;
-  flex: none;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 4px;
-  padding: 8px 9px 7px;
-  overflow: hidden;
-  border: 1px solid var(--ink);
-  border-radius: 2px;
-  background: var(--paper-light);
-  isolation: isolate;
+  display: inline;
 }
 
-/* Under the pointer a box fills with its own colour (Dan, 25 September
-   2026); the song chosen on the shelf is lit so once the sheet is up. */
-.music-track-list li::after {
+.music-track-list li + li::before {
   content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: color-mix(in srgb, var(--bar) 32%, var(--paper-light));
-  opacity: 0;
-  transition: opacity 300ms ease;
-}
-
-.music-track-list li:hover::after,
-.music-track-list li.is-picked::after {
-  opacity: 1;
-}
-
-.music-track-list li.is-picked::after {
-  animation: picked 700ms ease 200ms both;
-}
-
-@keyframes picked {
-  from { opacity: 0; }
+  display: inline-block;
+  width: 0.5em;
+  height: 0.48em;
+  margin: 0 0.42em 0 0.36em;
+  background: #db552d;
+  font-size: var(--size);
+  vertical-align: 0.06em;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2.7 -2.8 5.4 5.15'%3E%3Ccircle cy='-1.8' r='1'/%3E%3Ccircle cx='-1.7' r='1'/%3E%3Ccircle cx='1.7' r='1'/%3E%3Crect x='-1.7' y='-0.62' width='3.4' height='1.24'/%3E%3Crect x='-0.56' y='-1.8' width='1.12' height='1.8'/%3E%3Cpath d='M-0.6 0V0.9Q-0.51 1.79 0 2.35Q0.51 1.79 0.6 0.9V0Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2.7 -2.8 5.4 5.15'%3E%3Ccircle cy='-1.8' r='1'/%3E%3Ccircle cx='-1.7' r='1'/%3E%3Ccircle cx='1.7' r='1'/%3E%3Crect x='-1.7' y='-0.62' width='3.4' height='1.24'/%3E%3Crect x='-0.56' y='-1.8' width='1.12' height='1.8'/%3E%3Cpath d='M-0.6 0V0.9Q-0.51 1.79 0 2.35Q0.51 1.79 0.6 0.9V0Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  opacity: 0.85;
 }
 
 .music-track-title {
-  display: -webkit-box;
-  overflow: hidden;
-  font: 400 clamp(13px, calc(var(--side, 120) * 0.1px), 20px)/1.2 "Alegreya", var(--serif);
-  overflow-wrap: anywhere;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
+  color: var(--ink);
+  font: 400 var(--size)/1.15 "Alegreya", var(--serif);
+  transition: color 180ms ease;
+}
+
+.music-track-list li:hover .music-track-title {
+  color: var(--bar);
 }
 
 .music-track-hours {
-  align-self: flex-end;
+  margin-left: 0.3em;
   color: var(--ink-soft);
   font-family: "Alegreya SC", var(--serif);
   font-size: 11px;
@@ -842,13 +913,23 @@ html:not(.js) .music-tile {
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.12em;
   text-transform: lowercase;
+  vertical-align: 0.25em;
   white-space: nowrap;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .music-tracks-sheet,
-  .music-track-list li.is-picked::after {
+  .music-tracks-disc {
     animation: none;
+  }
+
+  .music-tracks-record {
+    animation: none;
+    transform: translateX(-42%);
+  }
+
+  .music-face:hover {
+    transform: none;
   }
 }
 

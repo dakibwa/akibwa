@@ -6,7 +6,7 @@ import { useMusicRanking } from "../use-music-ranking";
 import { LARGE_ART } from "./music-art.mjs";
 import { fold } from "./music-ranking.mjs";
 import { indexItems, search } from "./music-search.mjs";
-import { GAP, ORDERS, arrange, listened, mergeShelf, peakOf, rowsFor, songTitle, yearPairs } from "./music-shelf.mjs";
+import { ORDERS, arrange, listened, mergeShelf, peakOf, rowsFor, songTitle, yearPairs } from "./music-shelf.mjs";
 
 /*
  * Music (Dan, 16 November 2026): one shelf of Dan's top 150 albums or all his
@@ -110,7 +110,11 @@ function useSettledWidth(ref, initial = 1100) {
  * back where it was seen (a transform, so the compositor does the work) and
  * released to glide to its new place. Sleeves off screen just move.
  */
-const GLIDE = { duration: 520, easing: "cubic-bezier(0.22, 1, 0.36, 1)" };
+// Quick to start and soft to land, a slight wave from the top of the screen
+// down; covers that arrive (a search widening) fade in rather than pop.
+const EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
+const GLIDE = { duration: 420, easing: EASE };
+const ARRIVE = { duration: 280, easing: EASE };
 
 function useGlide(list, arrangement, view, measured) {
   const seen = useRef(null);
@@ -131,14 +135,20 @@ function useGlide(list, arrangement, view, measured) {
     for (const tile of tiles) {
       const from = was.rects.get(tile.dataset.key);
       const to = rects.get(tile.dataset.key);
-      if (!from || !to) continue;
+      if (!to) continue;
+      const top = origin.top + to.y;
+      const delay = Math.round(Math.min(1, Math.max(0, top / innerHeight)) * 90);
+      if (!from) {
+        if (top < innerHeight && top + to.w > 0) tile.animate([{ opacity: 0, transform: "scale(0.96)" }, { opacity: 1, transform: "none" }], { ...ARRIVE, delay, fill: "backwards" });
+        continue;
+      }
       const onScreen = [from.y, to.y].some((y) => origin.top + y < innerHeight && origin.top + y + Math.max(from.w, to.w) > 0);
       if (!onScreen) continue;
       const dx = from.x + from.w / 2 - (to.x + to.w / 2);
       const dy = from.y + from.w / 2 - (to.y + to.w / 2);
       const size = from.w / to.w;
       if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5 && Math.abs(size - 1) < 0.01) continue;
-      tile.animate([{ transform: `translate(${dx}px, ${dy}px) scale(${size})` }, { transform: "none" }], GLIDE);
+      tile.animate([{ transform: `translate(${dx}px, ${dy}px) scale(${size})` }, { transform: "none" }], { ...GLIDE, delay, fill: "backwards" });
     }
   }, [list, arrangement, view, measured]);
 }
@@ -290,8 +300,14 @@ function Sheet({ cover, title, byline, totals, links, label, onClose, children }
               ))}
             </p>
           </div>
-          <span className="music-tracks-cover">
-            {cover ? <AlbumArtImage id={cover} alt="" large={LARGE_ART[cover]} sizes="140px" /> : <span className="music-blank" aria-hidden="true" />}
+          {/* The record slides out of its sleeve as the sheet opens. */}
+          <span className="music-tracks-sleeve">
+            <span className="music-tracks-record" aria-hidden="true">
+              <span className="music-tracks-disc" />
+            </span>
+            <span className="music-tracks-cover">
+              {cover ? <AlbumArtImage id={cover} alt="" large={LARGE_ART[cover]} sizes="140px" /> : <span className="music-blank" aria-hidden="true" />}
+            </span>
           </span>
         </header>
         {children}
@@ -304,28 +320,19 @@ function Sheet({ cover, title, byline, totals, links, label, onClose, children }
 const sameSong = (a, b) => fold(songTitle(a)).trim() === fold(songTitle(b)).trim();
 
 /*
- * An album's tracks, set out as the shelf is (Dan, 16 November 2026): rows of
- * boxes of one size, each as large as its track's hours, the name and hours
- * inside, three to a row at most. Under the pointer a box
- * fills with its own colour; the song chosen on the shelf is lit so.
+ * A record's tracks, set as a poster's lineup (Dan, 16 November 2026: "more
+ * beautiful inventive ways"): the most listened first, each name as large as
+ * its hours, the hours beside it in small capitals and the flower between.
+ * Under the pointer a name takes its own colour.
  */
-function AlbumTracks({ album, year, picked, found, loading, loadError, retry, onClose }) {
-  const lit = useRef(null);
-  const frame = useRef(null);
-  const [width] = useSettledWidth(frame, 518);
+const LINEUP = { least: 14, most: 34 };
+
+function AlbumTracks({ album, year, found, loading, loadError, retry, onClose }) {
   // An album's own tracks, or once the ranking has loaded without them, the
   // songs of it among the top 1,000.
   const known = album.tracks ?? (loading || loadError ? null : album.fallback ?? null);
   const tracks = useMemo(() => [...(known ?? [])].sort((a, b) => b.minutes - a.minutes || b.plays - a.plays), [known]);
-  const rows = useMemo(() => {
-    if (!tracks.length) return [];
-    const limits = { floor: Math.max(76, Math.round(width * 0.17)), cap: Math.max(110, Math.floor((width - 2 * GAP) / 3)) };
-    return rowsFor(tracks.map((track, index) => ({ item: track, index })), width, tracks[0].minutes || 1, limits);
-  }, [tracks, width]);
-  // A song chosen on the shelf is brought into view on its album's list.
-  useEffect(() => {
-    lit.current?.scrollIntoView({ block: "center" });
-  }, [known]);
+  const most = Math.max(1, tracks[0]?.minutes ?? 1);
   return (
     <Sheet
       cover={album.id}
@@ -337,30 +344,23 @@ function AlbumTracks({ album, year, picked, found, loading, loadError, retry, on
       onClose={onClose}
     >
       {known ? (
-        <div className="music-track-list" ref={frame}>
-          {rows.map((row, at) => (
-            <ol key={at} className="music-track-row">
-              {row.entries.map(({ item: track, index }) => {
-                const chosen = picked !== null && sameSong(track.title, picked);
-                return (
-                  <li
-                    key={track.title}
-                    ref={chosen ? lit : undefined}
-                    className={chosen ? "is-picked" : undefined}
-                    aria-current={chosen ? "true" : undefined}
-                    style={{ width: row.side, height: row.side, "--side": row.side, "--bar": BARS[index % BARS.length] }}
-                  >
-                    <span className="music-track-title">{track.title}</span>
-                    <span className="music-track-hours">
-                      {listened(track.minutes)}
-                      <span className="visually-hidden">, {plays(track.plays)}</span>
-                    </span>
-                  </li>
-                );
-              })}
-            </ol>
+        <ol className="music-track-list">
+          {tracks.map((track, index) => (
+            <li
+              key={track.title}
+              style={{
+                "--size": `${(LINEUP.least + (LINEUP.most - LINEUP.least) * Math.sqrt(track.minutes / most)).toFixed(1)}px`,
+                "--bar": BARS[index % BARS.length]
+              }}
+            >
+              <span className="music-track-title">{track.title}</span>
+              <span className="music-track-hours">
+                {listened(track.minutes)}
+                <span className="visually-hidden">, {plays(track.plays)}</span>
+              </span>
+            </li>
           ))}
-        </div>
+        </ol>
       ) : (
         <div className="music-tracks-note">
           <p role="status">{loading ? "Fetching the tracks…" : "The tracks could not be loaded."}</p>
@@ -398,10 +398,15 @@ export function MusicRoom({ initial, active }) {
   const list = useRef(null);
   const say = useRef(null);
   const [width, measured] = useSettledWidth(map);
+  // Choosing an order ends a search; while searching, the shelf is one
+  // plain group, most listened first (Dan, 16 November 2026).
+  const searching = Boolean(query.trim());
   const sort = (name) => {
+    setQuery("");
     setPressedOrder(name);
     startTransition(() => setOrder(name));
   };
+  const shown = searching ? "hours" : order;
 
   // One shelf of records, albums and the records his songs come from, the
   // most listened first (mergeShelf in music-shelf.mjs).
@@ -428,8 +433,8 @@ export function MusicRoom({ initial, active }) {
   // music-shelf.mjs).
   const reference = records[Math.min(2, records.length - 1)]?.item.minutes || 1;
   const arrangement = useMemo(
-    () => arrange(order, entries, { years, kinds }).map((group) => ({ ...group, rows: rowsFor(group.entries, width, reference) })),
-    [entries, width, reference, order, years, kinds]
+    () => arrange(shown, entries, { years, kinds }).map((group) => ({ ...group, rows: rowsFor(group.entries, width, reference) })),
+    [entries, width, reference, shown, years, kinds]
   );
   const flat = useMemo(() => arrangement.flatMap((group) => group.entries), [arrangement]);
   const count = useProgressive(flat);
@@ -454,8 +459,20 @@ export function MusicRoom({ initial, active }) {
     <div className="room-body music">
       <noscript><p className="music-tracks-note">Enable JavaScript to search music and open track lists.</p></noscript>
       <div className="music-bar">
-        <span className="music-sign" aria-hidden="true">
-          <svg viewBox="-2.7 -2.8 5.4 5.15" focusable="false">
+        {/* The signature returns to the shelf as it opens (Dan, 16 November
+            2026): no search, most listened first, at the top. */}
+        <a
+          className="music-sign"
+          href="/"
+          aria-label="Akibwa, back to the start"
+          onClick={(event) => {
+            if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+            event.preventDefault();
+            sort("hours");
+            window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+          }}
+        >
+          <svg viewBox="-2.7 -2.8 5.4 5.15" aria-hidden="true" focusable="false">
             <circle cy="-1.8" r="1" />
             <circle cx="-1.7" r="1" />
             <circle cx="1.7" r="1" />
@@ -464,11 +481,11 @@ export function MusicRoom({ initial, active }) {
             <path d="M-0.6 0V0.9Q-0.51 1.79 0 2.35Q0.51 1.79 0.6 0.9V0Z" />
           </svg>
           Akibwa
-        </span>
-        <Now say={say} order={order} years={years} kinds={kinds} />
+        </a>
+        <Now say={say} order={shown} years={years} kinds={kinds} />
         <div className="music-order" role="group" aria-label="Order">
           {ORDERS.map(([name, label]) => (
-            <button key={name} type="button" aria-pressed={pressedOrder === name} onClick={() => sort(name)}>
+            <button key={name} type="button" aria-pressed={!searching && pressedOrder === name} onClick={() => sort(name)}>
               {label}
             </button>
           ))}
@@ -495,6 +512,11 @@ export function MusicRoom({ initial, active }) {
             autoComplete="off"
             spellCheck={false}
           />
+          {query ? (
+            <button type="button" className="music-search-clear" onClick={() => setQuery("")} aria-label="Clear the search">
+              ×
+            </button>
+          ) : null}
         </label>
       </div>
 
@@ -502,9 +524,9 @@ export function MusicRoom({ initial, active }) {
       <div className="music-map-frame" ref={map} onPointerLeave={() => say.current?.(null)}>
         <div
           ref={list}
-          className={`music-map is-by-${order}`}
+          className={`music-map is-by-${shown}`}
           role="region"
-          aria-label={`The records I play most, ${order === "hours" ? "most listened first" : order === "name" ? "a to z" : `by ${order}`}`}
+          aria-label={`The records I play most, ${shown === "hours" ? "most listened first" : shown === "name" ? "a to z" : `by ${shown}`}`}
         >
           {arrangement.map((group) => {
             const rows = group.rows.map((row) => ({ ...row, shown: row.entries.filter(() => drawn++ < count) })).filter((row) => row.shown.length);
@@ -546,7 +568,6 @@ export function MusicRoom({ initial, active }) {
         <AlbumTracks
           album={record}
           year={record.year || meta?.years?.[record.art] || null}
-          picked={null}
           found={record.kind === "album" ? links?.albums?.[record.id] : null}
           loading={music.loading}
           loadError={music.loadError}

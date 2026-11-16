@@ -250,7 +250,7 @@ const setMobile = async () => {
 const pageState = () =>
   evaluate(`(() => {
     const forbiddenIdentity = String.fromCharCode(68, 97, 110, 105, 101, 108, 32, 65, 116, 107, 105, 110, 115, 111, 110);
-    const links = [...document.querySelectorAll("a[href]")].map((link) => link.href);
+    const links = [...document.querySelectorAll("a[href]")].map((link) => link.href).filter((href) => href !== location.origin + "/");
     return {
       heading: document.querySelector("h1")?.textContent ?? "",
       tiles: document.querySelectorAll(".music-page .music-tile").length,
@@ -287,7 +287,7 @@ const checkPublicLanding = async () => {
   check(mainHeading?.name?.value === "Akibwa: the music I play most", `the h1 names the page for readers [${mainHeading?.name?.value}]`);
   check(state.tiles === RECORDS, `the page is the shelf of every record [${state.tiles} of ${RECORDS}]`);
   check(state.retired === 0, "the front page, its rooms and its bar are gone");
-  check(state.links === 0 && state.directEmailLinks.length === 0, `the shelf links nowhere until a sheet opens [${state.links}]`);
+  check(state.links === 0 && state.directEmailLinks.length === 0, `the shelf links nowhere but home until a sheet opens [${state.links}]`);
   check(!state.hasPersonalIdentity, "the page does not contain the personal full name");
   check(state.googlebot.includes("noimageindex") && state.googlebot.includes("max-snippet:120"), `Google receives the restricted preview policy [${state.googlebot}]`);
   check(await evaluate(`getComputedStyle(document.body).userSelect === "none"`), "the page's text is not selectable");
