@@ -12,6 +12,8 @@ import { extname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 import { checkTrekPaths } from "./check-trek-paths-dom.mjs";
+import { unpackRanking } from "../components/paper/music-ranking.mjs";
+import { mergeShelf } from "../components/paper/music-shelf.mjs";
 
 const outDir = fileURLToPath(new URL("../out", import.meta.url));
 const externalOrigin = process.env.CHECK_NAV_URL || null;
@@ -271,6 +273,9 @@ const waitFor = async (expression, timeout = 6000) => {
 };
 
 const checkPublicLanding = async () => {
+  // One record for every top album and every other sleeve or song (mergeShelf).
+  const published = unpackRanking(JSON.parse(readFileSync(new URL("../public/music-ranking.json", import.meta.url), "utf8")));
+  const RECORDS = mergeShelf(published.albums, published.songs).length;
   // Dan, 16 November 2026: akibwa.com is one page, the music shelf.
   section("the page and public boundary");
   await setDesktop();
@@ -280,7 +285,7 @@ const checkPublicLanding = async () => {
   const ax = await cdp.send("Accessibility.getFullAXTree");
   const mainHeading = ax.nodes.find((node) => node.role?.value === "heading" && node.properties?.some((property) => property.name === "level" && property.value.value === 1));
   check(mainHeading?.name?.value === "Akibwa: the music I play most", `the h1 names the page for readers [${mainHeading?.name?.value}]`);
-  check(state.tiles === 150, `the page is the shelf of the top 150 albums [${state.tiles}]`);
+  check(state.tiles === RECORDS, `the page is the shelf of every record [${state.tiles} of ${RECORDS}]`);
   check(state.retired === 0, "the front page, its rooms and its bar are gone");
   check(state.links === 0 && state.directEmailLinks.length === 0, `the shelf links nowhere until a sheet opens [${state.links}]`);
   check(!state.hasPersonalIdentity, "the page does not contain the personal full name");
@@ -299,14 +304,14 @@ const checkPublicLanding = async () => {
   check(await waitFor(`location.pathname === "/trek/"`, 6000), "an old #trek link reaches the trek's own page");
   for (const hash of ["career", "music"]) {
     await goto(`/#${hash}`);
-    check(await waitFor(`location.pathname === "/" && location.hash === "" && document.querySelectorAll(".music-page .music-tile").length === 150`), `an old #${hash} link lands on the shelf`);
+    check(await waitFor(`location.pathname === "/" && location.hash === "" && document.querySelectorAll(".music-page .music-tile").length === ${RECORDS}`), `an old #${hash} link lands on the shelf`);
   }
 
   section("music");
   await goto("/");
   await sleep(1400);
   const albums = await evaluate(`(() => {
-    const map = document.querySelector(".music-page .music-map.is-albums");
+    const map = document.querySelector(".music-page .music-map");
     const tiles = [...map.querySelectorAll(".music-tile")];
     const box = (tile) => tile.getBoundingClientRect();
     const area = (tile) => box(tile).width * box(tile).height;
@@ -323,16 +328,17 @@ const checkPublicLanding = async () => {
       head: Boolean(document.querySelector(".music-page .room-head"))
     };
   })()`);
-  check(albums.count === 150, `the albums map holds the top 150 [${albums.count}]`);
+  check(albums.count === RECORDS, `the shelf holds every record, albums and songs merged [${albums.count}]`);
+  check(await evaluate(`[...document.querySelectorAll(".music-page .music-face")].some((face) => face.getAttribute("aria-label").startsWith("Hey World!, King Krule"))`), "a record loved for one song is on the shelf (King Krule's Hey World!)");
   check(albums.first > albums.last * 6, `sleeves are sized by hours listened [${Math.round(albums.first)}px² to ${Math.round(albums.last)}px²]`);
   check(albums.bounded && albums.inside, "the sleeves are square, between the floor and the cap, and on the shelf");
   check(albums.lead?.startsWith("Music for Psychedelic Therapy"), `the map starts with the most listened [${albums.lead}]`);
   // Dan, 16 November 2026: everything to know is in the bar above the shelf.
-  const pointed = await evaluate(`(() => { const face = [...document.querySelectorAll(".music-page .is-albums .music-face")].find((button) => button.getAttribute("aria-label").startsWith("Graceland")); face.dispatchEvent(new PointerEvent("pointerover", { bubbles: true, pointerType: "mouse" })); return new Promise((done) => setTimeout(() => done(document.querySelector(".music-page .music-now")?.textContent ?? ""), 200)); })()`);
+  const pointed = await evaluate(`(() => { const face = [...document.querySelectorAll(".music-page .music-face")].find((button) => button.getAttribute("aria-label").startsWith("Graceland")); face.dispatchEvent(new PointerEvent("pointerover", { bubbles: true, pointerType: "mouse" })); return new Promise((done) => setTimeout(() => done(document.querySelector(".music-page .music-now")?.textContent ?? ""), 200)); })()`);
   check(/^Graceland.*\d+ h listened/.test(pointed), `pointing at a sleeve names it and its hours in the bar [${pointed}]`);
   for (const [order, heading] of [["kind", "ambient"], ["year", "2026"], ["a–z", "A"]]) {
     await evaluate(`[...document.querySelectorAll(".music-page .music-order button")].find((button) => button.textContent === ${JSON.stringify(order)}).click()`);
-    check(await waitFor(`(() => { const heads = [...document.querySelectorAll(".music-page .music-group-head")].map((head) => head.firstElementChild.textContent); return heads.includes(${JSON.stringify(heading)}) && document.querySelectorAll(".music-page .is-albums .music-tile").length === 150; })()`, 4000), `the ${order} order sorts every album under its headings`);
+    check(await waitFor(`(() => { const heads = [...document.querySelectorAll(".music-page .music-group-head")].map((head) => head.firstElementChild.textContent); return heads.includes(${JSON.stringify(heading)}) && document.querySelectorAll(".music-page .music-tile").length === ${RECORDS}; })()`, 4000), `the ${order} order sorts every record under its headings`);
   }
   await evaluate(`[...document.querySelectorAll(".music-page .music-order button")].find((button) => button.textContent === "hours").click()`);
   check(await waitFor(`!document.querySelector(".music-page .music-group-head") && document.querySelector(".music-page .music-face")?.getAttribute("aria-label").startsWith("Music for Psychedelic Therapy")`, 4000), "the hours order puts the shelf back, most listened first");
@@ -341,20 +347,14 @@ const checkPublicLanding = async () => {
   // The search knows who plays with whom, and eras.
   await evaluate(`document.querySelector(".music-page .music-search input").focus()`);
   await cdp.send("Input.insertText", { text: "panda bear" });
-  check(await waitFor(`(() => { const faces = [...document.querySelectorAll(".music-page .is-albums .music-face")].map((face) => face.getAttribute("aria-label")); return faces.length > 1 && faces.length < 20 && faces.some((label) => label.includes("Animal Collective")); })()`, 8000), "searching Panda Bear also finds Animal Collective");
+  check(await waitFor(`(() => { const faces = [...document.querySelectorAll(".music-page .music-face")].map((face) => face.getAttribute("aria-label")); return faces.length > 1 && faces.length < 60 && faces.some((label) => label.includes("Animal Collective")); })()`, 8000), "searching Panda Bear also finds Animal Collective");
   await cdp.send("Input.dispatchKeyEvent", { type: "keyDown", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
   await cdp.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
   await sleep(600);
-  check(await evaluate(`document.querySelectorAll(".music-page .is-albums .music-tile").length === 150`), "Escape clears the search");
-  await evaluate(`[...document.querySelectorAll(".music-page .music-switch button")].find((button) => button.textContent === "songs").click()`);
-  await sleep(700);
-  check(await waitFor(`document.querySelectorAll(".music-page .is-songs .music-tile").length === 1000`, 8000), "the switch shows all thousand songs at once");
-  check(await evaluate(`document.querySelector(".music-page .is-songs .music-face")?.getAttribute("aria-label")?.startsWith("Thursday Afternoon") && !document.querySelector(".music-page .music-more button")`), "songs start with the most listened, with no button for more");
-  const smallest = await evaluate(`[...document.querySelectorAll(".music-page .is-songs .music-tile")].at(-1).offsetWidth`);
+  check(await evaluate(`document.querySelectorAll(".music-page .music-tile").length === ${RECORDS}`), "Escape clears the search");
+  const smallest = await evaluate(`Math.min(...[...document.querySelectorAll(".music-page .music-tile")].map((tile) => tile.offsetWidth))`);
   check(smallest >= 44, `the smallest square is big enough to see [${smallest}px]`);
-  await evaluate(`[...document.querySelectorAll(".music-page .music-switch button")].find((button) => button.textContent === "albums").click()`);
-  await sleep(700);
-  const graceland = `[...document.querySelectorAll(".music-page .is-albums .music-face")].find((button) => button.getAttribute("aria-label").startsWith("Graceland"))`;
+  const graceland = `[...document.querySelectorAll(".music-page .music-face")].find((button) => button.getAttribute("aria-label").startsWith("Graceland"))`;
   await evaluate(`${graceland}.click()`);
   check(await waitFor(`Boolean(document.querySelector(".music-page dialog.music-tracks[open] .music-track-list li"))`, 8000), "an album opens its track list once the file loads");
   check(await evaluate(`document.querySelector("#music-tracks-title")?.textContent === "Graceland" && [...document.querySelectorAll(".music-track-list li")].length > 5`), "the track list shows the album's songs with plays and hours");
@@ -404,7 +404,7 @@ const checkPublicLanding = async () => {
     body: Buffer.from(JSON.stringify({ schemaVersion: 2, names: [], songs: [], albums: [] })).toString("base64")
   });
   await navigation;
-  check(await waitFor(`document.querySelectorAll(".music-page .music-tile").length === 150 && Boolean(document.querySelector(".music-page .music-more button"))`), "an empty successful response cannot erase the shelf");
+  check(await waitFor(`document.querySelectorAll(".music-page .music-tile").length === ${RECORDS} && Boolean(document.querySelector(".music-page .music-more button"))`), "an empty successful response cannot erase the shelf");
   await cdp.send("Fetch.disable");
 
   section("without JavaScript");
@@ -412,7 +412,7 @@ const checkPublicLanding = async () => {
   await cdp.send("Emulation.setScriptExecutionDisabled", { value: true });
   await goto("/");
   await cdp.send("Emulation.setScriptExecutionDisabled", { value: false });
-  check(await evaluate(`document.querySelectorAll(".music-page .music-tile").length === 150`), "the shelf is there without JavaScript");
+  check(await evaluate(`document.querySelectorAll(".music-page .music-tile").length === ${RECORDS}`), "the shelf is there without JavaScript");
   check(await evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), "the shelf fits a 320px phone without JavaScript");
   await setDesktop();
 

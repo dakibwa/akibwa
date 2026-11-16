@@ -625,11 +625,12 @@ main {
   from { opacity: 0; transform: translateY(8px); }
 }
 
-/* The way out sits on the sleeve's corner, on its own paper. */
+/* The way out sits just outside the sheet's top right corner, on its own
+   paper, clear of the sleeve. */
 .music-tracks-close {
   position: absolute;
-  top: 14px;
-  right: 14px;
+  top: -48px;
+  right: -6px;
   z-index: 1;
   display: grid;
   place-items: center;
@@ -637,19 +638,15 @@ main {
   height: 44px;
   padding: 0;
   border: 0;
-  background: none;
+  border-radius: 50%;
+  background: var(--paper);
   color: var(--ink);
-  font: 400 22px/1 "Alegreya", var(--serif);
+  font: 400 24px/1 "Alegreya", var(--serif);
   cursor: pointer;
 }
 
-.music-tracks-close::before {
-  content: "";
-  position: absolute;
-  inset: 9px;
-  z-index: -1;
-  border-radius: 50%;
-  background: var(--paper);
+.music-tracks-close:hover {
+  color: #db552d;
 }
 
 .music-tracks-head {
@@ -772,8 +769,16 @@ html:not(.js) .music-tile {
   outline-offset: -4px;
 }
 
+/* The tracks, set out as the shelf is: rows of boxes of one size, each as
+   large as its track's hours, the name and hours inside. */
 .music-track-list {
   display: grid;
+  gap: 4px;
+}
+
+.music-track-row {
+  display: flex;
+  gap: 4px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -781,61 +786,56 @@ html:not(.js) .music-tile {
 
 .music-track-list li {
   position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
-  gap: 14px;
-  align-items: baseline;
-  padding: 7px 0 9px;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 8px 9px 7px;
+  overflow: hidden;
+  border: 1px solid var(--ink);
+  border-radius: 2px;
+  background: var(--paper-light);
+  isolation: isolate;
 }
 
-/* A thin line as long as the track's share of the plays; under the pointer
-   it fills with its own colour (Dan, 25 September 2026). */
-.music-track-list li::before,
+/* Under the pointer a box fills with its own colour (Dan, 25 September
+   2026); the song chosen on the shelf is lit so once the sheet is up. */
 .music-track-list li::after {
   content: "";
   position: absolute;
-  left: 0;
-  bottom: 2px;
-  width: calc(var(--share) * 100%);
-  min-width: 6px;
-  height: 2px;
-  background: color-mix(in srgb, var(--ink) 18%, transparent);
+  inset: 0;
+  z-index: -1;
+  background: color-mix(in srgb, var(--bar) 32%, var(--paper-light));
+  opacity: 0;
+  transition: opacity 300ms ease;
 }
 
-.music-track-list li::after {
-  background: var(--bar);
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform 500ms var(--ease-out);
-}
-
-.music-track-list li:hover::after {
-  transform: scaleX(1);
-}
-
-/* The song chosen on the shelf is lit in its colour once the sheet is up. */
+.music-track-list li:hover::after,
 .music-track-list li.is-picked::after {
-  transform: scaleX(1);
-  animation: picked 700ms var(--ease-out) 200ms both;
+  opacity: 1;
 }
 
-.music-track-list li.is-picked .music-track-title {
-  font-style: italic;
+.music-track-list li.is-picked::after {
+  animation: picked 700ms ease 200ms both;
 }
 
 @keyframes picked {
-  from { transform: scaleX(0); }
+  from { opacity: 0; }
 }
 
 .music-track-title {
+  display: -webkit-box;
   overflow: hidden;
-  font: 400 16px/1.3 "Alegreya", var(--serif);
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font: 400 clamp(13px, calc(var(--side, 120) * 0.1px), 20px)/1.2 "Alegreya", var(--serif);
+  overflow-wrap: anywhere;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
 }
 
-.music-track-plays,
 .music-track-hours {
+  align-self: flex-end;
+  color: var(--ink-soft);
   font-family: "Alegreya SC", var(--serif);
   font-size: 11px;
   font-weight: 500;
@@ -843,16 +843,6 @@ html:not(.js) .music-tile {
   letter-spacing: 0.12em;
   text-transform: lowercase;
   white-space: nowrap;
-}
-
-.music-track-plays {
-  color: var(--ink-soft);
-}
-
-.music-track-hours {
-  min-width: 3.6em;
-  color: var(--ink);
-  text-align: right;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { unpackRanking } from "../components/paper/music-ranking.mjs";
 import { indexItems, search } from "../components/paper/music-search.mjs";
-import { GAP, arrange, bounds, rowsFor, sideFor } from "../components/paper/music-shelf.mjs";
+import { GAP, arrange, bounds, mergeShelf, rowsFor, sideFor } from "../components/paper/music-shelf.mjs";
 
 /* Build-time contract for akibwa.com. From 16 November 2026 (Dan) the site is
    one page, the music shelf; the trek keeps its own standalone page for old
@@ -84,55 +84,56 @@ for (const room of ["trek", "career", "websites"]) forbidText(index + music, `id
 
 // Dan, 16 November 2026: one shelf, each row of squares as large as its
 // albums' hours between a floor and a cap, everything to know in the bar.
-requireText(music, "aria-pressed={pressed === name}", "albums and songs must be one switch");
+requireText(music, "mergeShelf(music.albums, music.songs)", "albums and songs must be one shelf of records (Dan, 16 November 2026)");
 requireText(music, "rowsFor(group.entries, width, reference)", "the shelf must be laid out in rows sized by hours between a floor and a cap");
 requireText(music, 'role="group" aria-label="Order"', "the bar must sort the whole shelf by hours, year, kind or name");
 requireText(music, '<output className="music-now"', "the bar must say what the shelf holds and what is under the pointer");
 requireText(music, "startTransition(() => setOrder(name))", "an order must answer before the shelf is sorted again");
 requireText(music, "<AlbumTracks", "an album must open its track list");
-requireText(music, "LARGE_ART[art]", "sleeves drawn large must offer their high-resolution rung");
-// Dan, 25 September 2026: the switch answers at once and resizing is smooth.
-requireText(music, "startTransition(() => setView(name))", "the albums/songs switch must answer before the shelf redraws");
+requireText(music, "LARGE_ART[item.art]", "sleeves drawn large must offer their high-resolution rung");
+// Dan, 25 September 2026: resizing is smooth.
 requireText(music, "useSettledWidth(", "the shelf must lay out once the width settles");
 requireText(music, ".animate(", "the shelf's sleeves must glide to a new order");
 requireText(css, ".music-tracks {\n  -webkit-user-select: none;", "the track sheet must not select");
-// Dan, 26 September 2026: songs that open their album, and where to hear it.
+// Dan, 26 September 2026: where to hear it.
 requireText(music, 'useRoomFile(active, "/music-years.json")', "the year order must place each album or song in the year it was played most");
 requireText(music, 'useRoomFile(active, "/music-kinds.json")', "the kind order must group the shelf by kind of music");
-requireText(music, "picked={song ? song.title : null}", "a song must open its album's track list with the song lit");
 requireText(music, "links={listenLinks(", "every music sheet must link to Spotify and Apple Music");
 requireText(css, "li:hover::after", "track bars must take their own colour under the pointer");
 {
-  // The shelf itself, on the real albums and songs: rows of one size, each as
-  // large as its albums' hours between the floor and the cap, every full row
-  // filling the width, sizes only ever stepping down, and each order placing
-  // every album once.
+  // The shelf itself, on the real albums and songs (Dan, 16 November 2026):
+  // one shelf of records, every album and every song placed once; rows of
+  // one size, each as large as its records' hours between the floor and the
+  // cap, every full row filling the width, sizes only ever stepping down;
+  // and each order placing every record once.
   const { albums, songs } = unpackRanking(ranking);
-  const byHours = [...albums].sort((a, b) => b.minutes - a.minutes || a.rank - b.rank);
-  if (byHours.slice(0, 3).map((album) => album.title).join("|") !== "Music for Psychedelic Therapy|Discreet Music|Graceland") fail("the shelf must start with the most listened");
-  for (const [kind, list] of [["albums", byHours], ["songs", [...songs].sort((a, b) => b.minutes - a.minutes || a.rank - b.rank)]]) {
-    const reference = list[2].minutes;
-    for (const width of [343, 1180, 1312]) {
-      const limits = bounds(width);
-      if (limits.floor < 44 || limits.cap > width * 0.5) fail(`squares at ${width}px must be big enough to see and never more than half the width`);
-      if (sideFor(list[0].minutes, reference, limits) !== limits.cap) fail(`the most listened must reach the cap at ${width}px`);
-      const rows = rowsFor(list.map((item) => ({ item })), width, reference);
-      if (rows.reduce((sum, row) => sum + row.entries.length, 0) !== list.length) fail(`every ${kind} square must be on the shelf at ${width}px`);
-      rows.forEach((row, at) => {
-        if (row.side < limits.floor - 0.01 || row.side > limits.cap + 0.01) fail(`every ${kind} row at ${width}px must sit between the floor and the cap`);
-        if (at && row.side > rows[at - 1].side + 0.01) fail(`a ${kind} row at ${width}px must never be larger than one above it`);
-        const filled = row.entries.length * row.side + (row.entries.length - 1) * GAP;
-        if (at < rows.length - 1 && (filled > width + 0.01 || filled < width - row.entries.length)) fail(`every full ${kind} row at ${width}px must fill the width exactly`);
-      });
-      if (width > 600 && rows[0].side ** 2 < rows.at(-1).side ** 2 * 4) fail("the shelf must show the difference in hours");
-    }
+  const records = mergeShelf(albums, songs);
+  if (records.slice(0, 3).map((record) => record.title).join("|") !== "Music for Psychedelic Therapy|Discreet Music|Graceland") fail("the shelf must start with the most listened");
+  if (records.filter((record) => record.kind === "album").length !== albums.length) fail("every top album must be a record on the shelf");
+  const placedSongs = records.flatMap((record) => record.songs.map((song) => song.rank));
+  if (placedSongs.length !== songs.length || new Set(placedSongs).size !== songs.length) fail("every top song must belong to exactly one record");
+  if (!records.some((record) => record.title === "Hey World!" && record.artist === "King Krule")) fail("a record loved for one song, such as King Krule's Hey World!, must be on the shelf");
+  const reference = records[2].minutes;
+  for (const width of [343, 1180, 1312]) {
+    const limits = bounds(width);
+    if (limits.floor < 44 || limits.cap > width * 0.5) fail(`squares at ${width}px must be big enough to see and never more than half the width`);
+    if (sideFor(records[0].minutes, reference, limits) !== limits.cap) fail(`the most listened must reach the cap at ${width}px`);
+    const rows = rowsFor(records.map((item) => ({ item })), width, reference);
+    if (rows.reduce((sum, row) => sum + row.entries.length, 0) !== records.length) fail(`every record must be on the shelf at ${width}px`);
+    rows.forEach((row, at) => {
+      if (row.side < limits.floor - 0.01 || row.side > limits.cap + 0.01) fail(`every row at ${width}px must sit between the floor and the cap`);
+      if (at && row.side > rows[at - 1].side + 0.01) fail(`a row at ${width}px must never be larger than one above it`);
+      const filled = row.entries.length * row.side + (row.entries.length - 1) * GAP;
+      if (at < rows.length - 1 && (filled > width + 0.01 || filled < width - row.entries.length)) fail(`every full row at ${width}px must fill the width exactly`);
+    });
+    if (width > 600 && rows[0].side ** 2 < rows.at(-1).side ** 2 * 4) fail("the shelf must show the difference in hours");
   }
-  const entries = byHours.map((item) => ({ item }));
+  const entries = records.map((item) => ({ item }));
   const years = JSON.parse(read("public/music-years.json"));
   for (const order of ["hours", "year", "kind", "name"]) {
-    const groups = arrange(order, "albums", entries, { years, kinds: musicKinds });
-    const placed = groups.flatMap((group) => group.entries.map((entry) => entry.item.id));
-    if (placed.length !== albums.length || new Set(placed).size !== albums.length) fail(`the ${order} order must place every album once`);
+    const groups = arrange(order, entries, { years, kinds: musicKinds });
+    const placed = groups.flatMap((group) => group.entries.map((entry) => entry.item.key));
+    if (placed.length !== records.length || new Set(placed).size !== records.length) fail(`the ${order} order must place every record once`);
     if (order !== "hours" && groups.some((group) => !group.label || !group.figures)) fail(`the ${order} order must head each group with what it needs`);
   }
 }

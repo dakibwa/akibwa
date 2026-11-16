@@ -45,10 +45,10 @@ export const sideFor = (minutes, reference, { floor, cap }) => Math.round(Math.m
  * and each full row fills the width exactly. A row's size comes from the
  * hours of the albums in it: as many are taken as make the row's size
  * closest to their own average size, between the floor and the cap. The
- * last row keeps its size and stands at the left.
+ * last row keeps its size and stands at the left. A sheet's tracks pass
+ * their own floor and cap.
  */
-export function rowsFor(entries, width, reference) {
-  const limits = bounds(width);
+export function rowsFor(entries, width, reference, limits = bounds(width)) {
   const fit = (count) => (width - (count - 1) * GAP) / count;
   const most = Math.max(1, Math.floor((width + GAP) / (limits.floor + GAP)));
   const least = Math.min(most, Math.max(1, Math.ceil((width + GAP) / (limits.cap + GAP))));
@@ -88,7 +88,83 @@ export function peakOf(pairs) {
   return best;
 }
 
-const nameOf = (kind, item) => (kind === "songs" ? songTitle(item.title) : item.title);
+/*
+ * One shelf of records (Dan, 16 November 2026: "by combining albums and
+ * songs that should effectively merge both", since a record can matter for
+ * one song, such as King Krule's Hey World!). Every top album is a record
+ * as large as its own hours; every top song from another record joins that
+ * record's sleeve, as large as those songs together, named by its most
+ * listened song; a song with no sleeve stands alone, typeset. Each record
+ * keeps the songs that brought it, which fill its track list when the
+ * album's own is not published. The most listened come first.
+ */
+export function mergeShelf(albums, songs) {
+  const ids = new Set(albums.map((album) => album.id));
+  const ofAlbum = new Map();
+  const bySleeve = new Map();
+  const alone = [];
+  for (const song of songs) {
+    if (song.art && ids.has(song.art)) {
+      if (!ofAlbum.has(song.art)) ofAlbum.set(song.art, []);
+      ofAlbum.get(song.art).push(song);
+    } else if (song.art) {
+      if (!bySleeve.has(song.art)) bySleeve.set(song.art, []);
+      bySleeve.get(song.art).push(song);
+    } else {
+      alone.push(song);
+    }
+  }
+  const tracksOf = (list) => list.map((song) => ({ title: song.title, plays: song.plays, minutes: song.minutes }));
+  const sum = (list, field) => list.reduce((total, song) => total + song[field], 0);
+  const records = albums.map((album) => {
+    const own = ofAlbum.get(album.id) ?? [];
+    return { ...album, key: `album-${album.id}`, kind: "album", art: album.id, songs: own, fallback: own.length ? tracksOf(own) : null };
+  });
+  for (const [art, list] of bySleeve) {
+    const sorted = [...list].sort((a, b) => b.minutes - a.minutes || a.rank - b.rank);
+    records.push({
+      key: `sleeve-${art}`,
+      kind: "sleeve",
+      id: art,
+      art,
+      title: songTitle(sorted[0].title),
+      artist: sorted[0].artist,
+      year: null,
+      plays: sum(sorted, "plays"),
+      minutes: sum(sorted, "minutes"),
+      songs: sorted,
+      tracks: tracksOf(sorted)
+    });
+  }
+  for (const song of alone) {
+    records.push({
+      key: `song-${song.rank}`,
+      kind: "song",
+      id: null,
+      art: null,
+      title: songTitle(song.title),
+      artist: song.artist,
+      year: null,
+      plays: song.plays,
+      minutes: song.minutes,
+      songs: [song],
+      tracks: tracksOf([song])
+    });
+  }
+  return records.sort((a, b) => b.minutes - a.minutes || a.key.localeCompare(b.key));
+}
+
+// A record's listening by calendar year: an album's own, or its songs'.
+export function yearPairs(record, years) {
+  if (!years) return null;
+  if (record.kind === "album" && years.albums?.[record.id]) return years.albums[record.id];
+  const by = new Map();
+  for (const song of record.songs ?? []) {
+    for (const [year, minutes] of years.songs?.[song.rank - 1] ?? []) by.set(year, (by.get(year) ?? 0) + minutes);
+  }
+  return [...by];
+}
+
 const letterOf = (text) => {
   const first = fold(text).trim().replace(/^the\s+/, "").charAt(0).toUpperCase();
   return /[A-Z]/.test(first) ? first : "#";
@@ -99,9 +175,7 @@ const letterOf = (text) => {
  * for hours), the most listened first inside each, except a to z. Entries
  * arrive most listened first, as `{ item, ... }`.
  */
-export function arrange(order, kind, entries, { years, kinds } = {}) {
-  const word = kind === "songs" ? ["song", "songs"] : ["album", "albums"];
-  const count = (n) => `${n.toLocaleString("en-GB")} ${n === 1 ? word[0] : word[1]}`;
+export function arrange(order, entries, { years, kinds } = {}) {
   const total = entries.reduce((sum, entry) => sum + entry.item.minutes, 0) || 1;
   const grouped = (keyOf) => {
     const map = new Map();
@@ -113,26 +187,26 @@ export function arrange(order, kind, entries, { years, kinds } = {}) {
     return map;
   };
   if (order === "name") {
-    const sorted = [...entries].sort((a, b) => fold(nameOf(kind, a.item)).localeCompare(fold(nameOf(kind, b.item)), "en"));
+    const sorted = [...entries].sort((a, b) => fold(a.item.title).localeCompare(fold(b.item.title), "en"));
     const map = new Map();
     for (const entry of sorted) {
-      const letter = letterOf(nameOf(kind, entry.item));
+      const letter = letterOf(entry.item.title);
       if (!map.has(letter)) map.set(letter, []);
       map.get(letter).push(entry);
     }
     return [...map]
       .sort(([a], [b]) => (a === "#" ? -1 : b === "#" ? 1 : a.localeCompare(b)))
-      .map(([letter, list]) => ({ key: letter, label: letter, figures: count(list.length), entries: list }));
+      .map(([letter, list]) => ({ key: letter, label: letter, figures: String(list.length), entries: list }));
   }
   if (order === "year" && years) {
-    const peaks = new Map(entries.map((entry) => [entry, peakOf(kind === "albums" ? years.albums?.[entry.item.id] : years.songs?.[entry.item.rank - 1])]));
+    const peaks = new Map(entries.map((entry) => [entry, peakOf(yearPairs(entry.item, years))]));
     const map = grouped((entry) => peaks.get(entry)?.[0] ?? "undated");
     return [...map]
       .sort(([a], [b]) => (a === "undated" ? 1 : b === "undated" ? -1 : b - a))
       .map(([year, list]) => ({
         key: String(year),
         label: String(year),
-        figures: `${count(list.length)} · ${listened(list.reduce((sum, entry) => sum + (peaks.get(entry)?.[1] ?? 0), 0))} that year`,
+        figures: `${listened(list.reduce((sum, entry) => sum + (peaks.get(entry)?.[1] ?? 0), 0))} that year`,
         entries: list
       }));
   }

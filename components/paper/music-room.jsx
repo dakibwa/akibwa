@@ -6,7 +6,7 @@ import { useMusicRanking } from "../use-music-ranking";
 import { LARGE_ART } from "./music-art.mjs";
 import { fold } from "./music-ranking.mjs";
 import { indexItems, search } from "./music-search.mjs";
-import { ORDERS, arrange, listened, peakOf, rowsFor, songTitle } from "./music-shelf.mjs";
+import { GAP, ORDERS, arrange, listened, mergeShelf, peakOf, rowsFor, songTitle, yearPairs } from "./music-shelf.mjs";
 
 /*
  * Music (Dan, 16 November 2026): one shelf of Dan's top 150 albums or all his
@@ -69,9 +69,9 @@ const plays = (count) => `${count.toLocaleString("en-GB")} ${count === 1 ? "play
  */
 const SETTLE = 160;
 
-function useSettledWidth(ref) {
-  // Laid out for a laptop until the shelf has been measured.
-  const [width, setWidth] = useState(1100);
+function useSettledWidth(ref, initial = 1100) {
+  // Laid out for a laptop (or the given width) until it has been measured.
+  const [width, setWidth] = useState(initial);
   const [measured, setMeasured] = useState(false);
   useLayoutEffect(() => {
     const element = ref.current;
@@ -144,10 +144,10 @@ function useGlide(list, arrangement, view, measured) {
 }
 
 /*
- * The first screenful of a list is drawn at once and the rest a frame later,
- * so the switch answers before a thousand songs are laid down.
+ * The shelf is drawn in one pass, so the page holds every record before
+ * scripting runs; a longer list would draw the rest a frame later.
  */
-const FIRST = 160;
+const FIRST = 640;
 
 function useProgressive(list) {
   const [shown, setShown] = useState({ list, count: Math.min(list.length, FIRST) });
@@ -161,29 +161,24 @@ function useProgressive(list) {
   return current.count;
 }
 
-const Tile = memo(function Tile({ kind, item, side, onOpen, onPoint }) {
-  const art = item.art ?? (kind === "albums" ? item.id : null);
+const Tile = memo(function Tile({ item, side, onOpen, onPoint }) {
   const described = `${item.title}, ${item.artist}. ${listened(item.minutes)} listened, ${plays(item.plays)}.`;
   return (
-    <li className="music-tile" data-key={`${kind}-${item.rank}`} style={{ width: side, height: side, "--tint": kind === "songs" ? tintFor(item.artist) : undefined }}>
+    <li className="music-tile" data-key={item.key} style={{ width: side, height: side, "--side": side, "--tint": item.art ? undefined : tintFor(item.artist) }}>
       <button
         type="button"
         className="music-face"
-        onClick={(event) => onOpen(kind, item, event.currentTarget)}
+        onClick={(event) => onOpen(item, event.currentTarget)}
         onPointerEnter={() => onPoint(item)}
         onFocus={() => onPoint(item)}
-        aria-label={`${described} ${kind === "songs" ? "Show it" : "Show its tracks"}.`}
+        aria-label={`${described} ${item.kind === "album" ? "Show its tracks" : "Show it"}.`}
       >
-        {kind === "songs" ? (
-          <span className="music-type" aria-hidden="true">
-            <b className="music-initial">{songTitle(item.title).charAt(0)}</b>
-            {side >= 112 ? <strong>{songTitle(item.title)}</strong> : null}
-          </span>
-        ) : art ? (
-          <AlbumArtImage id={art} alt="" large={LARGE_ART[art]} sizes={`${side}px`} />
+        {item.art ? (
+          <AlbumArtImage id={item.art} alt="" large={LARGE_ART[item.art]} sizes={`${Math.ceil(side)}px`} />
         ) : (
-          <span className="music-blank" aria-hidden="true">
-            {side >= 56 ? item.title : null}
+          <span className="music-type" aria-hidden="true">
+            <b className="music-initial">{item.title.charAt(0)}</b>
+            {side >= 96 ? <strong>{item.title}</strong> : null}
           </span>
         )}
       </button>
@@ -196,7 +191,7 @@ const Tile = memo(function Tile({ kind, item, side, onOpen, onPoint }) {
  * keyboard, and nothing otherwise. It keeps its own state, so pointing at a sleeve
  * does not draw the shelf again.
  */
-function Now({ say, view, order, shownCount, shownMinutes, years, kinds }) {
+function Now({ say, order, years, kinds }) {
   const [item, setItem] = useState(null);
   useEffect(() => {
     say.current = setItem;
@@ -204,28 +199,24 @@ function Now({ say, view, order, shownCount, shownMinutes, years, kinds }) {
       say.current = null;
     };
   }, [say]);
-  useEffect(() => setItem(null), [view]);
-  let main;
-  let side;
+  let main = "";
+  let side = "";
   if (item) {
-    main = view === "songs" ? songTitle(item.title) : item.title;
+    main = item.title;
     const facts = [item.artist, `${listened(item.minutes)} listened`];
     if (order === "year" && years) {
-      const peak = peakOf(view === "albums" ? years.albums?.[item.id] : years.songs?.[item.rank - 1]);
+      const peak = peakOf(yearPairs(item, years));
       if (peak) facts.push(`most in ${peak[0]}`);
     } else if (order === "kind" && kinds) {
       const name = kinds.kinds?.[kinds.artists?.[item.artist]];
       if (name) facts.push(name);
-    } else if (view === "albums" && item.year) {
+    } else if (item.year) {
       facts.push(item.year);
     }
     side = facts.join(" · ");
-  } else {
-    // Nothing to say until something is pointed at (Dan, 16 November 2026:
-    // “super minimalist and simple”).
-    main = "";
-    side = "";
   }
+  // Nothing to say until something is pointed at (Dan, 16 November 2026:
+  // “super minimalist and simple”).
   return (
     <output className="music-now" aria-live="polite" data-empty={item ? "false" : "true"}>
       <strong>{main}</strong>
@@ -280,10 +271,10 @@ function Sheet({ cover, title, byline, totals, links, label, onClose, children }
         if (event.target === panel.current) onClose();
       }}
     >
+      <button type="button" className="music-tracks-close" onClick={onClose} aria-label={label}>
+        ×
+      </button>
       <div className="music-tracks-sheet">
-        <button type="button" className="music-tracks-close" onClick={onClose} aria-label={label}>
-          ×
-        </button>
         {/* The title hugs the top left and the sleeve the top right (Dan, 16
             November 2026); where to hear it is the services' own marks. */}
         <header className="music-tracks-head">
@@ -312,13 +303,29 @@ function Sheet({ cover, title, byline, totals, links, label, onClose, children }
 // The same song on a sheet as on the shelf, whatever its reissue note.
 const sameSong = (a, b) => fold(songTitle(a)).trim() === fold(songTitle(b)).trim();
 
+/*
+ * An album's tracks, set out as the shelf is (Dan, 16 November 2026): rows of
+ * boxes of one size, each as large as its track's hours, the name and hours
+ * inside, three to a row at most. Under the pointer a box
+ * fills with its own colour; the song chosen on the shelf is lit so.
+ */
 function AlbumTracks({ album, year, picked, found, loading, loadError, retry, onClose }) {
   const lit = useRef(null);
-  const most = Math.max(1, ...(album.tracks ?? []).map((track) => track.plays));
+  const frame = useRef(null);
+  const [width] = useSettledWidth(frame, 518);
+  // An album's own tracks, or once the ranking has loaded without them, the
+  // songs of it among the top 1,000.
+  const known = album.tracks ?? (loading || loadError ? null : album.fallback ?? null);
+  const tracks = useMemo(() => [...(known ?? [])].sort((a, b) => b.minutes - a.minutes || b.plays - a.plays), [known]);
+  const rows = useMemo(() => {
+    if (!tracks.length) return [];
+    const limits = { floor: Math.max(76, Math.round(width * 0.17)), cap: Math.max(110, Math.floor((width - 2 * GAP) / 3)) };
+    return rowsFor(tracks.map((track, index) => ({ item: track, index })), width, tracks[0].minutes || 1, limits);
+  }, [tracks, width]);
   // A song chosen on the shelf is brought into view on its album's list.
   useEffect(() => {
     lit.current?.scrollIntoView({ block: "center" });
-  }, [album.tracks]);
+  }, [known]);
   return (
     <Sheet
       cover={album.id}
@@ -329,25 +336,31 @@ function AlbumTracks({ album, year, picked, found, loading, loadError, retry, on
       label="Close the track list"
       onClose={onClose}
     >
-      {album.tracks ? (
-        <ol className="music-track-list">
-          {album.tracks.map((track, index) => {
-            const chosen = picked !== null && sameSong(track.title, picked);
-            return (
-              <li
-                key={track.title}
-                ref={chosen ? lit : undefined}
-                className={chosen ? "is-picked" : undefined}
-                aria-current={chosen ? "true" : undefined}
-                style={{ "--share": track.plays / most, "--bar": BARS[index % BARS.length] }}
-              >
-                <span className="music-track-title">{track.title}</span>
-                <span className="music-track-plays">{plays(track.plays)}</span>
-                <span className="music-track-hours">{listened(track.minutes)}</span>
-              </li>
-            );
-          })}
-        </ol>
+      {known ? (
+        <div className="music-track-list" ref={frame}>
+          {rows.map((row, at) => (
+            <ol key={at} className="music-track-row">
+              {row.entries.map(({ item: track, index }) => {
+                const chosen = picked !== null && sameSong(track.title, picked);
+                return (
+                  <li
+                    key={track.title}
+                    ref={chosen ? lit : undefined}
+                    className={chosen ? "is-picked" : undefined}
+                    aria-current={chosen ? "true" : undefined}
+                    style={{ width: row.side, height: row.side, "--side": row.side, "--bar": BARS[index % BARS.length] }}
+                  >
+                    <span className="music-track-title">{track.title}</span>
+                    <span className="music-track-hours">
+                      {listened(track.minutes)}
+                      <span className="visually-hidden">, {plays(track.plays)}</span>
+                    </span>
+                  </li>
+                );
+              })}
+            </ol>
+          ))}
+        </div>
       ) : (
         <div className="music-tracks-note">
           <p role="status">{loading ? "Fetching the tracks…" : "The tracks could not be loaded."}</p>
@@ -358,35 +371,17 @@ function AlbumTracks({ album, year, picked, found, loading, loadError, retry, on
   );
 }
 
-// A song whose album is not among the albums: the song alone.
-function SongSheet({ song, onClose }) {
-  const title = songTitle(song.title);
-  return (
-    <Sheet
-      cover={song.art}
-      title={title}
-      byline={song.artist}
-      totals={`${plays(song.plays)} · ${listened(song.minutes)} listened`}
-      links={listenLinks(null, song.artist, title)}
-      label="Close the song"
-      onClose={onClose}
-    />
-  );
-}
-
 export function MusicRoom({ initial, active }) {
   const music = useMusicRanking(initial, active);
   const meta = useRoomFile(active, "/music-meta.json");
   const years = useRoomFile(active, "/music-years.json");
   const kinds = useRoomFile(active, "/music-kinds.json");
   const links = useRoomFile(active, "/music-links.json");
-  // The switch and the orders answer at once; the shelf follows as a transition.
-  const [pressed, setPressed] = useState("albums");
-  const [view, setView] = useState("albums");
+  // The orders answer at once; the shelf follows as a transition.
   const [pressedOrder, setPressedOrder] = useState("hours");
   const [order, setOrder] = useState("hours");
   const [query, setQuery] = useState("");
-  // What a sheet shows: an album (with a song lit) or a song alone.
+  // The record a sheet shows, by its key.
   const [open, setOpen] = useState(null);
   const opener = useRef(null);
   useEffect(() => {
@@ -403,64 +398,52 @@ export function MusicRoom({ initial, active }) {
   const list = useRef(null);
   const say = useRef(null);
   const [width, measured] = useSettledWidth(map);
-  const choose = (name) => {
-    setPressed(name);
-    startTransition(() => setView(name));
-  };
   const sort = (name) => {
     setPressedOrder(name);
     startTransition(() => setOrder(name));
   };
 
-  // Each list by its hours, the most listened first.
-  const lists = useMemo(() => {
-    const byHours = (items) => [...items].sort((a, b) => b.minutes - a.minutes || a.rank - b.rank).map((item) => ({ item }));
-    return { albums: byHours(music.albums), songs: byHours(music.songs) };
-  }, [music.albums, music.songs]);
-  const albumIndex = useMemo(
+  // One shelf of records, albums and the records his songs come from, the
+  // most listened first (mergeShelf in music-shelf.mjs).
+  const records = useMemo(() => mergeShelf(music.albums, music.songs).map((item) => ({ item })), [music.albums, music.songs]);
+  const index = useMemo(
     () =>
-      indexItems(lists.albums.map((entry) => entry.item), {
+      indexItems(records.map((entry) => entry.item), {
         meta,
-        yearOf: (album) => Number(album.year) || meta?.years?.[album.id] || null,
-        extraText: (album) => (album.tracks ?? []).map((track) => track.title).join(" ")
+        yearOf: (record) => Number(record.year) || meta?.years?.[record.art] || null,
+        extraText: (record) => [...(record.tracks ?? []), ...(record.songs ?? [])].map((track) => track.title).join(" ")
       }),
-    [lists.albums, meta]
+    [records, meta]
   );
-  const songIndex = useMemo(() => indexItems(lists.songs.map((entry) => entry.item), { meta, yearOf: (song) => meta?.years?.[song.art] ?? null }), [lists.songs, meta]);
-  // All of the list, or what the search finds in it.
+  // All of the shelf, or what the search finds in it.
   const entries = useMemo(() => {
-    const all = lists[view];
-    const found = search(view === "albums" ? albumIndex : songIndex, query);
-    if (!found) return all;
-    const key = (item) => (view === "albums" ? item.id : item.rank);
-    const kept = new Set(found.map(key));
-    return all.filter((entry) => kept.has(key(entry.item)));
-  }, [view, lists, albumIndex, songIndex, query]);
+    const found = search(index, query);
+    if (!found) return records;
+    const kept = new Set(found.map((record) => record.key));
+    return records.filter((entry) => kept.has(entry.item.key));
+  }, [records, index, query]);
 
-  // Sizes come from the whole list, so a search or an order never rescales them;
-  // each row's size comes from its albums' hours (rowsFor in music-shelf.mjs).
-  const reference = lists[view][Math.min(2, lists[view].length - 1)]?.item.minutes || 1;
+  // Sizes come from the whole shelf, so a search or an order never rescales
+  // them; each row's size comes from its records' hours (rowsFor in
+  // music-shelf.mjs).
+  const reference = records[Math.min(2, records.length - 1)]?.item.minutes || 1;
   const arrangement = useMemo(
-    () => arrange(order, view, entries, { years, kinds }).map((group) => ({ ...group, rows: rowsFor(group.entries, width, reference) })),
-    [entries, width, reference, order, view, years, kinds]
+    () => arrange(order, entries, { years, kinds }).map((group) => ({ ...group, rows: rowsFor(group.entries, width, reference) })),
+    [entries, width, reference, order, years, kinds]
   );
   const flat = useMemo(() => arrangement.flatMap((group) => group.entries), [arrangement]);
   const count = useProgressive(flat);
-  useGlide(list, arrangement, view, measured);
-  const shownMinutes = useMemo(() => entries.reduce((sum, entry) => sum + entry.item.minutes, 0), [entries]);
+  useGlide(list, arrangement, "shelf", measured);
 
   const onOpen = useMemo(
-    () => (kind, item, button) => {
+    () => (item, button) => {
       opener.current = button;
-      setOpen(kind === "albums" ? { album: item.id } : { song: item.rank });
+      setOpen(item.key);
     },
     []
   );
   const onPoint = useCallback((item) => say.current?.(item), []);
-  const song = open?.song ? music.songs.find((entry) => entry.rank === open.song) ?? null : null;
-  // A song opens its album's list when the album is among these.
-  const albumId = open?.album ?? (song?.art && music.albums.some((entry) => entry.id === song.art) ? song.art : null);
-  const album = albumId ? music.albums.find((entry) => entry.id === albumId) ?? null : null;
+  const record = open ? records.find((entry) => entry.item.key === open)?.item ?? null : null;
 
   const close = () => {
     setOpen(null);
@@ -482,18 +465,11 @@ export function MusicRoom({ initial, active }) {
           </svg>
           Akibwa
         </span>
-        <Now say={say} view={view} order={order} shownCount={entries.length} shownMinutes={shownMinutes} years={years} kinds={kinds} />
+        <Now say={say} order={order} years={years} kinds={kinds} />
         <div className="music-order" role="group" aria-label="Order">
           {ORDERS.map(([name, label]) => (
             <button key={name} type="button" aria-pressed={pressedOrder === name} onClick={() => sort(name)}>
               {label}
-            </button>
-          ))}
-        </div>
-        <div className="music-switch" role="group" aria-label="Albums or songs" data-view={pressed}>
-          {["albums", "songs"].map((name) => (
-            <button key={name} type="button" aria-pressed={pressed === name} onClick={() => choose(name)}>
-              {name}
             </button>
           ))}
         </div>
@@ -507,7 +483,7 @@ export function MusicRoom({ initial, active }) {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             onKeyDown={(event) => {
-              // Escape clears the search, not the room.
+              // Escape clears the search.
               if (event.key === "Escape" && query) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -515,21 +491,20 @@ export function MusicRoom({ initial, active }) {
               }
             }}
             placeholder="search"
-            aria-label="Search the albums and songs by artist, genre or era"
+            aria-label="Search the records by artist, song, genre or era"
             autoComplete="off"
             spellCheck={false}
           />
         </label>
       </div>
 
-      {/* Measured here, outside the shelf the switch replaces. */}
+      {/* Measured here, around the shelf. */}
       <div className="music-map-frame" ref={map} onPointerLeave={() => say.current?.(null)}>
         <div
-          key={view}
           ref={list}
-          className={`music-map is-${view} is-by-${order}`}
+          className={`music-map is-by-${order}`}
           role="region"
-          aria-label={`My top ${view}, ${order === "hours" ? "most listened first" : order === "name" ? "a to z" : `by ${order}`}`}
+          aria-label={`The records I play most, ${order === "hours" ? "most listened first" : order === "name" ? "a to z" : `by ${order}`}`}
         >
           {arrangement.map((group) => {
             const rows = group.rows.map((row) => ({ ...row, shown: row.entries.filter(() => drawn++ < count) })).filter((row) => row.shown.length);
@@ -543,10 +518,10 @@ export function MusicRoom({ initial, active }) {
                   </h3>
                 ) : null}
                 <div className="music-shelf">
-                  {rows.map((row, index) => (
-                    <ol key={index} className="music-row">
+                  {rows.map((row, at) => (
+                    <ol key={at} className="music-row">
                       {row.shown.map(({ item }) => (
-                        <Tile key={`${view}-${item.rank}`} kind={view} item={item} side={row.side} onOpen={onOpen} onPoint={onPoint} />
+                        <Tile key={item.key} item={item} side={row.side} onOpen={onOpen} onPoint={onPoint} />
                       ))}
                     </ol>
                   ))}
@@ -567,19 +542,17 @@ export function MusicRoom({ initial, active }) {
         </div>
       ) : null}
 
-      {active && album ? (
+      {active && record ? (
         <AlbumTracks
-          album={album}
-          year={album.year || meta?.years?.[album.id] || null}
-          picked={song ? song.title : null}
-          found={links?.albums?.[album.id]}
+          album={record}
+          year={record.year || meta?.years?.[record.art] || null}
+          picked={null}
+          found={record.kind === "album" ? links?.albums?.[record.id] : null}
           loading={music.loading}
           loadError={music.loadError}
           retry={music.retry}
           onClose={close}
         />
-      ) : active && song ? (
-        <SongSheet song={song} onClose={close} />
       ) : null}
     </div>
   );
