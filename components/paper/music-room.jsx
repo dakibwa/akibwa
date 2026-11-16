@@ -227,7 +227,7 @@ function Now({ say, view, order, shownCount, shownMinutes, years, kinds }) {
     side = "";
   }
   return (
-    <output className="music-now" aria-live="polite">
+    <output className="music-now" aria-live="polite" data-empty={item ? "false" : "true"}>
       <strong>{main}</strong>
       <span>{side}</span>
     </output>
@@ -238,7 +238,21 @@ function Now({ say, view, order, shownCount, shownMinutes, years, kinds }) {
 // cast's orange, periwinkle and raspberry among the rooms' inks.
 const BARS = ["#fe7735", "#7d7afb", "#eb5772", "#2b5fb8", "#3f7634", "#e3a21a", "#24709f", "#a72d28"];
 
-// A sheet over the room: a sleeve, a heading, the numbers and where to hear it.
+// The services' marks, drawn in the page's ink.
+const SERVICE_MARKS = {
+  Spotify: (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M12 1.5a10.5 10.5 0 1 0 0 21 10.5 10.5 0 0 0 0-21Zm4.8 15.2a.65.65 0 0 1-.9.2c-2.5-1.5-5.6-1.9-9.3-1a.65.65 0 1 1-.3-1.3c4-.9 7.5-.5 10.3 1.2.3.2.4.6.2.9Zm1.3-2.9a.8.8 0 0 1-1.1.3c-2.8-1.7-7.2-2.3-10.6-1.2a.8.8 0 1 1-.5-1.6c3.9-1.2 8.7-.6 11.9 1.4.4.2.5.7.3 1.1Zm.1-3c-3.4-2-9-2.2-12.2-1.2a1 1 0 1 1-.6-1.9c3.7-1.1 9.9-.9 13.8 1.4a1 1 0 0 1-1 1.7Z" />
+    </svg>
+  ),
+  "Apple Music": (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M19 3.2v11.6a3 3 0 1 1-1.6-2.7V7.4l-8 1.8v7.9a3 3 0 1 1-1.6-2.7V6.6c0-.4.3-.8.7-.9l9.5-2.2c.5-.1 1 .2 1 .7Z" />
+    </svg>
+  )
+};
+
+// A sheet over the shelf: a heading, the numbers, where to hear it and the sleeve.
 function Sheet({ cover, title, byline, totals, links, label, onClose, children }) {
   const panel = useRef(null);
   useEffect(() => {
@@ -270,22 +284,24 @@ function Sheet({ cover, title, byline, totals, links, label, onClose, children }
         <button type="button" className="music-tracks-close" onClick={onClose} aria-label={label}>
           ×
         </button>
+        {/* The title hugs the top left and the sleeve the top right (Dan, 16
+            November 2026); where to hear it is the services' own marks. */}
         <header className="music-tracks-head">
-          <span className="music-tracks-cover">
-            {cover ? <AlbumArtImage id={cover} alt="" large={LARGE_ART[cover]} sizes="150px" /> : <span className="music-blank" aria-hidden="true" />}
-          </span>
           <div>
             <h3 id="music-tracks-title">{title}</h3>
             <p className="music-tracks-artist">{byline}</p>
             <p className="music-tracks-totals">{totals}</p>
             <p className="music-listen">
               {links.map(([service, href]) => (
-                <a key={service} href={href} target="_blank" rel="noopener noreferrer">
-                  {service} <span aria-hidden="true">↗</span>
+                <a key={service} href={href} target="_blank" rel="noopener noreferrer" aria-label={`Listen on ${service}`} title={service}>
+                  {SERVICE_MARKS[service]}
                 </a>
               ))}
             </p>
           </div>
+          <span className="music-tracks-cover">
+            {cover ? <AlbumArtImage id={cover} alt="" large={LARGE_ART[cover]} sizes="140px" /> : <span className="music-blank" aria-hidden="true" />}
+          </span>
         </header>
         {children}
       </div>
