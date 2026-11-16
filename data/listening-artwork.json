@@ -1704,6 +1704,1018 @@
         },
         "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/0c/b5/3c/0cb53cfe-5992-6288-0f52-844243c380f2/796441817726.jpg/760x760bb.jpg"
       }
+    },
+    {
+      "id": "history-6e9ec0a9ce2c96d1",
+      "artist": "Frank Ocean",
+      "album": "Provider",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/provider-single/1276055312",
+        "artist": "Frank Ocean",
+        "album": "Provider - Single",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/35/e3/83/35e383f9-324f-2ce6-09ae-82f98dd3e33c/FOprovider2-1.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/35/e3/83/35e383f9-324f-2ce6-09ae-82f98dd3e33c/FOprovider2-1.jpg/760x760bb.jpg",
+        "sourceHash": "0171c482b01c5bc3",
+        "files": {
+          "wall.avif": "577350fe600c3ed4",
+          "wall.webp": "5923e713f179dd94"
+        }
+      }
+    },
+    {
+      "id": "history-5cf0bde5a25f5d06",
+      "artist": "Sam Amidon",
+      "album": "All Is Well",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/all-is-well/274355833",
+        "artist": "Sam Amidon",
+        "album": "All Is Well",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music/v4/38/d1/a2/38d1a2bc-2f00-a55a-0b82-1d2ef03332b0/dj.sxdektbm.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music/v4/38/d1/a2/38d1a2bc-2f00-a55a-0b82-1d2ef03332b0/dj.sxdektbm.jpg/760x760bb.jpg",
+        "sourceHash": "843d37faa0312f3d",
+        "files": {
+          "wall.avif": "217850158255fdf3",
+          "wall.webp": "ba6677186390c593"
+        }
+      }
+    },
+    {
+      "id": "history-0428095137d7f365",
+      "artist": "Robert Palmer",
+      "album": "Clues",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/clues-expanded-edition/1646555583",
+        "artist": "Robert Palmer",
+        "album": "Clues (Expanded Edition)",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/8d/b8/8e/8db88ed8-1404-e869-43c8-25f4d080e015/22UM1IM04950.rgb.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/8d/b8/8e/8db88ed8-1404-e869-43c8-25f4d080e015/22UM1IM04950.rgb.jpg/760x760bb.jpg",
+        "sourceHash": "e6e80f210b3501f5",
+        "files": {
+          "wall.avif": "a651e3d4766a0b15",
+          "wall.webp": "9d551c70b1e739df"
+        }
+      }
+    },
+    {
+      "id": "history-3c8d7e9cfab67304",
+      "artist": "Death Grips",
+      "album": "Guillotine",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/guillotine-single/454986803",
+        "artist": "Death Grips",
+        "album": "Guillotine - Single",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music/f9/f7/f3/mzi.utdswkdx.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music/f9/f7/f3/mzi.utdswkdx.jpg/760x760bb.jpg",
+        "sourceHash": "ead26b9dbf082b5c",
+        "files": {
+          "wall.avif": "4a9910c26491ba4d",
+          "wall.webp": "7d7fcc082e7ac731"
+        }
+      }
+    },
+    {
+      "id": "history-2972b6c8899926c3",
+      "artist": "Kath Bloom",
+      "album": "Finally",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/finally/1329216186",
+        "artist": "Kath Bloom",
+        "album": "Finally",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/97/23/a6/9723a612-874f-39e8-f8d1-a5266afb161d/cover.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/97/23/a6/9723a612-874f-39e8-f8d1-a5266afb161d/cover.jpg/760x760bb.jpg",
+        "sourceHash": "2aa1fe37d15590d1",
+        "files": {
+          "wall.avif": "053a016c9d4b38c2",
+          "wall.webp": "c98699ebdd2fb90f"
+        }
+      }
+    },
+    {
+      "id": "history-7553322d5d9f69bb",
+      "artist": "Burt Bacharach",
+      "album": "What The World Needs Now: Burt Bacharach Classics",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/what-the-world-needs-now-burt-bacharach-classics/1434890081",
+        "artist": "Burt Bacharach",
+        "album": "What the World Needs Now: Burt Bacharach Classics",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/99/82/5c/99825c3f-73b1-882d-6c38-e5e801c4c81e/00602567821885.rgb.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/99/82/5c/99825c3f-73b1-882d-6c38-e5e801c4c81e/00602567821885.rgb.jpg/760x760bb.jpg",
+        "sourceHash": "c2a2cca48c551661",
+        "files": {
+          "wall.avif": "169c81f1fff3a529",
+          "wall.webp": "1022854e6e0e1c66"
+        }
+      }
+    },
+    {
+      "id": "history-6dfe0d54d7a1fecf",
+      "artist": "LCD Soundsystem",
+      "album": "new body rhumba (from the film White Noise)",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/new-body-rhumba-from-the-film-white-noise-single/1644779579",
+        "artist": "LCD Soundsystem",
+        "album": "new body rhumba (from the film White Noise) - Single",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/00/29/cc/0029cc83-981f-105f-4a4c-6f27db80c878/dj.cpaseyzq.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/00/29/cc/0029cc83-981f-105f-4a4c-6f27db80c878/dj.cpaseyzq.jpg/760x760bb.jpg",
+        "sourceHash": "7d500ec1e69659e7",
+        "files": {
+          "wall.avif": "b6b0cbb470b8cb08",
+          "wall.webp": "69302ff4920d2a39"
+        }
+      }
+    },
+    {
+      "id": "history-1a99141d7db3e1e0",
+      "artist": "Future Islands",
+      "album": "Wave Like Home",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/wave-like-home/1451371913",
+        "artist": "Future Islands",
+        "album": "Wave Like Home",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/87/64/f2/8764f2bd-cfc2-da09-bfe1-a18fd4a2b410/680750887078_cover.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/87/64/f2/8764f2bd-cfc2-da09-bfe1-a18fd4a2b410/680750887078_cover.jpg/760x760bb.jpg",
+        "sourceHash": "4220e203cccae84f",
+        "files": {
+          "wall.avif": "b7864916c48573be",
+          "wall.webp": "9055a72e7556c8e4"
+        }
+      }
+    },
+    {
+      "id": "history-cf416de000eeb870",
+      "artist": "Cass McCombs",
+      "album": "Dropping The Writ",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/dropping-the-writ/264704350",
+        "artist": "Cass McCombs",
+        "album": "Dropping the Writ",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music/12/8e/c5/mzi.jxcwzsvr.tif/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music/12/8e/c5/mzi.jxcwzsvr.tif/760x760bb.jpg",
+        "sourceHash": "d2fb78bf982d0226",
+        "files": {
+          "wall.avif": "c3c768efcab00dc7",
+          "wall.webp": "4961e5268a35703a"
+        }
+      }
+    },
+    {
+      "id": "history-eb9d84123fb25b73",
+      "artist": "Dr. Hook",
+      "album": "Pleasure & Pain",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/pleasure-pain/723503197",
+        "artist": "Dr. Hook",
+        "album": "Pleasure & Pain",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/9b/fe/90/9bfe9007-9218-92b2-2763-1e46a038755a/00724383820955.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/9b/fe/90/9bfe9007-9218-92b2-2763-1e46a038755a/00724383820955.jpg/760x760bb.jpg",
+        "sourceHash": "35f1d5b5a72d814d",
+        "files": {
+          "wall.avif": "606919e8675ea134",
+          "wall.webp": "379d5f16a3661c5f"
+        }
+      }
+    },
+    {
+      "id": "history-c253c752459df9a7",
+      "artist": "Jon Hopkins",
+      "album": "Immunity",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/immunity/1688995695",
+        "artist": "Jon Hopkins",
+        "album": "Immunity",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/78/c7/d5/78c7d516-d9a7-0cb9-1fee-0b53dfc74d96/887830017664.png/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/78/c7/d5/78c7d516-d9a7-0cb9-1fee-0b53dfc74d96/887830017664.png/760x760bb.jpg",
+        "sourceHash": "86b234a3786ecb4d",
+        "files": {
+          "wall.avif": "3d2143804b6b5433",
+          "wall.webp": "107dcb8e729cc581"
+        }
+      }
+    },
+    {
+      "id": "history-fba955ac4bb02dbd",
+      "artist": "The Drums",
+      "album": "Portamento",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/portamento/1443824825",
+        "artist": "The Drums",
+        "album": "Portamento",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/ec/8e/f7/ec8ef719-3c2e-dc5c-c82a-77f2689a89f5/00602527814568.rgb.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/ec/8e/f7/ec8ef719-3c2e-dc5c-c82a-77f2689a89f5/00602527814568.rgb.jpg/760x760bb.jpg",
+        "sourceHash": "f660222d2759a680",
+        "files": {
+          "wall.avif": "2acbbf40e4237d48",
+          "wall.webp": "b135324ac0acea49"
+        }
+      }
+    },
+    {
+      "id": "history-cd6a75596dadacb9",
+      "artist": "Sister Sledge",
+      "album": "When the Boys Meet the Girls",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/when-the-boys-meet-the-girls/296558228",
+        "artist": "Sister Sledge",
+        "album": "When the Boys Meet the Girls",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music/40/85/b3/mzi.zpofozjr.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music/40/85/b3/mzi.zpofozjr.jpg/760x760bb.jpg",
+        "sourceHash": "dddb8fef376e7dda",
+        "files": {
+          "wall.avif": "0fb4a9cb385b8af0",
+          "wall.webp": "e167c928ae1cb76f"
+        }
+      }
+    },
+    {
+      "id": "history-256dd3931ab4185d",
+      "artist": "Explosions In The Sky",
+      "album": "All of a Sudden I Miss Everyone",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/all-of-a-sudden-i-miss-everyone/923356909",
+        "artist": "Explosions In the Sky",
+        "album": "All of a Sudden I Miss Everyone",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music3/v4/36/b1/e5/36b1e56a-8f75-5dba-89c4-48cb318c1fc4/cover.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music3/v4/36/b1/e5/36b1e56a-8f75-5dba-89c4-48cb318c1fc4/cover.jpg/760x760bb.jpg",
+        "sourceHash": "b62f651ea0dcb1f6",
+        "files": {
+          "wall.avif": "12d077f5b34f6653",
+          "wall.webp": "f3f44ebcff52d706"
+        }
+      }
+    },
+    {
+      "id": "history-d5d6a516e23598d9",
+      "artist": "Mahmoud Guinia",
+      "album": "Marhaba",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/marhaba/981105723",
+        "artist": "James Holden, Floating Points & Maalem Mahmoud Guinia",
+        "album": "Marhaba",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music1/v4/18/3d/ef/183def0e-54bd-df66-25ab-e17d60507159/cover.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "The same release; Apple credits Maalem Mahmoud Guinia with James Holden and Floating Points.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music1/v4/18/3d/ef/183def0e-54bd-df66-25ab-e17d60507159/cover.jpg/760x760bb.jpg",
+        "sourceHash": "d0d06e7f909c3214",
+        "files": {
+          "wall.avif": "5041b37af56722f4",
+          "wall.webp": "ccc1114dfec7eb71"
+        }
+      }
+    },
+    {
+      "id": "history-151c61fccb63ab93",
+      "artist": "Joji",
+      "album": "Yeah Right",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/yeah-right-single/1724977019",
+        "artist": "Joji",
+        "album": "YEAH RIGHT - Single",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/ba/a3/7f/baa37ff3-a3e7-55c5-33be-cff0c8e6f8ec/190296945250.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/ba/a3/7f/baa37ff3-a3e7-55c5-33be-cff0c8e6f8ec/190296945250.jpg/760x760bb.jpg",
+        "sourceHash": "44139be235d8099b",
+        "files": {
+          "wall.avif": "5bffa18533024258",
+          "wall.webp": "b575020b3d980d9c"
+        }
+      }
+    },
+    {
+      "id": "history-d90451065952009d",
+      "artist": "Animal Collective",
+      "album": "People",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/people-ep/1547781308",
+        "artist": "Animal Collective",
+        "album": "People - EP",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/7a/20/01/7a200123-7186-bb10-b7dd-1b0f0c830300/194606010799.png/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/7a/20/01/7a200123-7186-bb10-b7dd-1b0f0c830300/194606010799.png/760x760bb.jpg",
+        "sourceHash": "e6c95715823b122a",
+        "files": {
+          "wall.avif": "b851245658605192",
+          "wall.webp": "4f6e71af5cdd4700"
+        }
+      }
+    },
+    {
+      "id": "history-b46d933555fd0556",
+      "artist": "Tonstartssbandht",
+      "album": "Hymn",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/hymn/1582233604",
+        "artist": "Tonstartssbandht",
+        "album": "Hymn",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/2a/bd/17/2abd1776-4d28-b57a-32b3-9da683c6ea75/634457072596.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/2a/bd/17/2abd1776-4d28-b57a-32b3-9da683c6ea75/634457072596.jpg/760x760bb.jpg",
+        "sourceHash": "242676f38b33a9eb",
+        "files": {
+          "wall.avif": "1a3ebe6555bee41f",
+          "wall.webp": "716510af1610e4e0"
+        }
+      }
+    },
+    {
+      "id": "history-9dfed52bb70a5ec0",
+      "artist": "Explosions In The Sky",
+      "album": "The Wilderness",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/the-wilderness/1071883919",
+        "artist": "Explosions In the Sky",
+        "album": "The Wilderness",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music69/v4/70/b9/3a/70b93a36-d548-6147-2ef9-16d78046d575/Explosions_In_The_Sky_-_The_Wilderness.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music69/v4/70/b9/3a/70b93a36-d548-6147-2ef9-16d78046d575/Explosions_In_The_Sky_-_The_Wilderness.jpg/760x760bb.jpg",
+        "sourceHash": "fdb159ae95faa051",
+        "files": {
+          "wall.avif": "239badf3740d965c",
+          "wall.webp": "3cbe3150f31004d2"
+        }
+      }
+    },
+    {
+      "id": "history-5b5ec11175dd1efd",
+      "artist": "Morrissey",
+      "album": "Ringleader of the Tormentors",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/ringleader-of-the-tormentors/1470437902",
+        "artist": "Morrissey",
+        "album": "Ringleader of the Tormentors",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/3e/60/7d/3e607d69-0568-decc-4b95-5e316bd0df84/4050538524543.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/3e/60/7d/3e607d69-0568-decc-4b95-5e316bd0df84/4050538524543.jpg/760x760bb.jpg",
+        "sourceHash": "d3f2f92b1b6b4ebc",
+        "files": {
+          "wall.avif": "c010bf9db6752fe2",
+          "wall.webp": "cb43bdfae216a656"
+        }
+      }
+    },
+    {
+      "id": "history-9506bb0dbb2f5175",
+      "artist": "Lou Reed",
+      "album": "Street Hassle",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/street-hassle/252000731",
+        "artist": "Lou Reed",
+        "album": "Street Hassle",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/5b/cb/33/5bcb3389-e9ec-0018-412b-ee24bdfef463/dj.ocupzdox.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/5b/cb/33/5bcb3389-e9ec-0018-412b-ee24bdfef463/dj.ocupzdox.jpg/760x760bb.jpg",
+        "sourceHash": "eefe626d07a57966",
+        "files": {
+          "wall.avif": "eab8ca070c78c451",
+          "wall.webp": "8c5e7000d3c1cded"
+        }
+      }
+    },
+    {
+      "id": "history-e67522e1574ecb57",
+      "artist": "William Basinski",
+      "album": "The Disintegration Loops IV",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/the-disintegration-loops-iv-remastered/908006351",
+        "artist": "William Basinski",
+        "album": "The Disintegration Loops IV (Remastered)",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music4/v4/fa/6f/68/fa6f6823-1602-945e-d3c4-3d3f17d02bc8/cover.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music4/v4/fa/6f/68/fa6f6823-1602-945e-d3c4-3d3f17d02bc8/cover.jpg/760x760bb.jpg",
+        "sourceHash": "0da4a43dbb4072d2",
+        "files": {
+          "wall.avif": "21901ed7562ebd5d",
+          "wall.webp": "373092927f35326d"
+        }
+      }
+    },
+    {
+      "id": "history-bf180b522e04ffeb",
+      "artist": "La Düsseldorf",
+      "album": "La Düsseldorf",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/la-d%C3%BCsseldorf/1122790360",
+        "artist": "La Düsseldorf",
+        "album": "La Düsseldorf",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music60/v4/aa/d8/6b/aad86b06-8915-a505-faec-960ab848db39/190295941345.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music60/v4/aa/d8/6b/aad86b06-8915-a505-faec-960ab848db39/190295941345.jpg/760x760bb.jpg",
+        "sourceHash": "f872d78424693449",
+        "files": {
+          "wall.avif": "aeb5fc85ab70ad15",
+          "wall.webp": "b89c159ab4ed4bfc"
+        }
+      }
+    },
+    {
+      "id": "history-9738f39b87595c4c",
+      "artist": "Little Wings",
+      "album": "Magic Wand",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/magic-wand/989444460",
+        "artist": "Little Wings",
+        "album": "Magic Wand",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music7/v4/51/b2/ab/51b2abaa-89f1-a62a-14bd-1da3a32c0b00/889176860522.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music7/v4/51/b2/ab/51b2abaa-89f1-a62a-14bd-1da3a32c0b00/889176860522.jpg/760x760bb.jpg",
+        "sourceHash": "ee54c676003b3f59",
+        "files": {
+          "wall.avif": "85a7c4db2dadf7cb",
+          "wall.webp": "262927b70193bc21"
+        }
+      }
+    },
+    {
+      "id": "history-9f9bf39a4526fd40",
+      "artist": "Mary Lattimore",
+      "album": "Collected Pieces",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/collected-pieces/1214497922",
+        "artist": "Mary Lattimore",
+        "album": "Collected Pieces",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music111/v4/60/9d/7d/609d7db8-7863-85f7-d866-eb154dde80ec/804297829517.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music111/v4/60/9d/7d/609d7db8-7863-85f7-d866-eb154dde80ec/804297829517.jpg/760x760bb.jpg",
+        "sourceHash": "2a7076e81c111032",
+        "files": {
+          "wall.avif": "3792100ca60b4d0a",
+          "wall.webp": "9cc4e2c7ae351517"
+        }
+      }
+    },
+    {
+      "id": "history-b314264a67ea8b39",
+      "artist": "The Microphones",
+      "album": "The Glow, Pt. 2",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/the-glow-pt-2/483212192",
+        "artist": "The Microphones",
+        "album": "The Glow, Pt. 2",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music/78/c6/06/mzi.wzxrrwjx.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music/78/c6/06/mzi.wzxrrwjx.jpg/760x760bb.jpg",
+        "sourceHash": "eecc773b82f3a00b",
+        "files": {
+          "wall.avif": "9d54bc92b57ee898",
+          "wall.webp": "bf44b7ba7b7237fc"
+        }
+      }
+    },
+    {
+      "id": "history-a9ddc6f9db2912fc",
+      "artist": "William Onyeabor",
+      "album": "Hypertension",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/hypertension/1167065813",
+        "artist": "William Onyeabor",
+        "album": "Hypertension",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/22/b8/8a/22b88adc-ac58-0ed8-0bc0-a88456653693/6808995037193.png/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/22/b8/8a/22b88adc-ac58-0ed8-0bc0-a88456653693/6808995037193.png/760x760bb.jpg",
+        "sourceHash": "d952cd0425e1c68e",
+        "files": {
+          "wall.avif": "48a3661df6d0deac",
+          "wall.webp": "4143598848aee296"
+        }
+      }
+    },
+    {
+      "id": "history-5d835f4b713424fd",
+      "artist": "Haruomi Hosono",
+      "album": "Philharmony",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/philharmony/1464659995",
+        "artist": "Haruomi Hosono",
+        "album": "Philharmony",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/38/df/55/38df55b2-8929-b2f3-0b73-15239b92b0e5/886447763049.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/38/df/55/38df55b2-8929-b2f3-0b73-15239b92b0e5/886447763049.jpg/760x760bb.jpg",
+        "sourceHash": "4c095468429b33f5",
+        "files": {
+          "wall.avif": "1f75704ee2c1583b",
+          "wall.webp": "9ae4097ddafa95e8"
+        }
+      }
+    },
+    {
+      "id": "history-547eeb9704252649",
+      "artist": "Sibylle Baier",
+      "album": "Colour Green",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/colour-green/722298531",
+        "artist": "Sibylle Baier",
+        "album": "Colour Green",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/14/57/78/14577894-f936-a51f-bb49-06d8ee669e7e/888003356313.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/14/57/78/14577894-f936-a51f-bb49-06d8ee669e7e/888003356313.jpg/760x760bb.jpg",
+        "sourceHash": "57c5cc9df5f9a5e6",
+        "files": {
+          "wall.avif": "c799fbdad296b7ed",
+          "wall.webp": "f1b15d343e44cffe"
+        }
+      }
+    },
+    {
+      "id": "history-5ed30b1006ee031f",
+      "artist": "Jaco Pastorius",
+      "album": "Word Of Mouth",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/word-of-mouth/504179391",
+        "artist": "Jaco Pastorius",
+        "album": "Word of Mouth",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music/9c/15/28/mzi.yqkazmfo.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music/9c/15/28/mzi.yqkazmfo.jpg/760x760bb.jpg",
+        "sourceHash": "9535c2ce0eac2a7e",
+        "files": {
+          "wall.avif": "eb2f94d6c643b27d",
+          "wall.webp": "693c84235914018a"
+        }
+      }
+    },
+    {
+      "id": "history-eebf01dfb0a85e7a",
+      "artist": "Bark Psychosis",
+      "album": "Hex",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/hex/714204335",
+        "artist": "Bark Psychosis",
+        "album": "Hex",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/cd/63/ea/cd63ea51-e1f3-04ae-4c9b-87807d92ee55/05099923723559.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/cd/63/ea/cd63ea51-e1f3-04ae-4c9b-87807d92ee55/05099923723559.jpg/760x760bb.jpg",
+        "sourceHash": "5fb6d2b749a966b2",
+        "files": {
+          "wall.avif": "bc400ef71db3e7f8",
+          "wall.webp": "96e1ce19db1d255e"
+        }
+      }
+    },
+    {
+      "id": "history-f7407f5b8b89cfcc",
+      "artist": "Vera",
+      "album": "Take Me to the Bridge / Jumpin' (Get Hot, Hit the Spot)",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/take-me-to-the-bridge-jumpin-get-hot-hit-the-spot-single/1452000971",
+        "artist": "Vera",
+        "album": "Take Me to the Bridge / Jumpin' (Get Hot, Hit the Spot) - Single",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/41/39/7d/41397dca-c1cd-fe76-1f36-516e875d556b/2226.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/41/39/7d/41397dca-c1cd-fe76-1f36-516e875d556b/2226.jpg/760x760bb.jpg",
+        "sourceHash": "22f15485f6e2cb75",
+        "files": {
+          "wall.avif": "fff21671ecb1c8c7",
+          "wall.webp": "fe5975fb9df8e7d3"
+        }
+      }
+    },
+    {
+      "id": "history-572dadfa409762f0",
+      "artist": "The Beatles",
+      "album": "Abbey Road",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/abbey-road-remastered/1441164426",
+        "artist": "The Beatles",
+        "album": "Abbey Road (Remastered)",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/df/db/61/dfdb615d-47f8-06e9-9533-b96daccc029f/18UMGIM31076.rgb.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/df/db/61/dfdb615d-47f8-06e9-9533-b96daccc029f/18UMGIM31076.rgb.jpg/760x760bb.jpg",
+        "sourceHash": "f3bc6b60f8606823",
+        "files": {
+          "wall.avif": "781c32791ce52a06",
+          "wall.webp": "4079c0f6b39dfb44"
+        }
+      }
+    },
+    {
+      "id": "history-80ef02bcb97939ce",
+      "artist": "F.S.Blumm",
+      "album": "Tag Eins Tag Zwei",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/tag-eins-tag-zwei/1086159792",
+        "artist": "Nils Frahm & F.S.Blumm",
+        "album": "Tag Eins Tag Zwei",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/d5/0b/f0/d50bf033-89e3-3c50-2161-931cb0fd41ed/880918223735.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "The same release; Apple credits F.S.Blumm with Nils Frahm.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/d5/0b/f0/d50bf033-89e3-3c50-2161-931cb0fd41ed/880918223735.jpg/760x760bb.jpg",
+        "sourceHash": "18674c33ce8c19c9",
+        "files": {
+          "wall.avif": "f909043de7ff7528",
+          "wall.webp": "846407a4938ce384"
+        }
+      }
+    },
+    {
+      "id": "history-691da3e29c4d3265",
+      "artist": "Cluster",
+      "album": "Cluster & Eno",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/cluster-eno/1185025944",
+        "artist": "Cluster & Brian Eno",
+        "album": "Cluster & Eno",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/45/cf/55/45cf550c-a171-076d-dec0-29c39de4bf77/4050486801055.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "The same release; Apple credits Cluster with Brian Eno.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/45/cf/55/45cf550c-a171-076d-dec0-29c39de4bf77/4050486801055.jpg/760x760bb.jpg",
+        "sourceHash": "8271f82e0b7aa48d",
+        "files": {
+          "wall.avif": "58d80cebc81c4e71",
+          "wall.webp": "0df554a0e6473261"
+        }
+      }
+    },
+    {
+      "id": "history-d573e72608d97adf",
+      "artist": "Peter Matthew Bauer",
+      "album": "Liberation!",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/liberation/1760136231",
+        "artist": "Peter Matthew Bauer",
+        "album": "Liberation!",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/99/e5/d3/99e5d3af-4a14-af15-7642-d98c46a2b92b/184923119565_Cover.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/99/e5/d3/99e5d3af-4a14-af15-7642-d98c46a2b92b/184923119565_Cover.jpg/760x760bb.jpg",
+        "sourceHash": "39702c7d569129e0",
+        "files": {
+          "wall.avif": "7957aff1456c1aa0",
+          "wall.webp": "d71c084f27498e87"
+        }
+      }
+    },
+    {
+      "id": "history-44dd306aaf06702a",
+      "artist": "Ram Dass",
+      "album": "Alchemy of the Heart",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/alchemy-of-the-heart/1768329217",
+        "artist": "Ram Dass & David Starfire",
+        "album": "Alchemy of the Heart",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/96/5c/50/965c50a6-095f-de00-4d2c-cfa0ea266889/744553990905_cover.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "The same release; Apple credits Ram Dass with David Starfire.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/96/5c/50/965c50a6-095f-de00-4d2c-cfa0ea266889/744553990905_cover.jpg/760x760bb.jpg",
+        "sourceHash": "03eff731c50c77e7",
+        "files": {
+          "wall.avif": "ff935fd673212f44",
+          "wall.webp": "a6d9bfb01e61fccb"
+        }
+      }
+    },
+    {
+      "id": "history-1652b6b859231236",
+      "artist": "The Dramatics",
+      "album": "Drama V",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/drama-v-expanded-edition/1475034979",
+        "artist": "The Dramatics",
+        "album": "Drama V (Expanded Edition)",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/76/ca/aa/76caaa82-3e78-dc2b-9cca-2e37e7f90ca2/19UMGIM56400.rgb.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/76/ca/aa/76caaa82-3e78-dc2b-9cca-2e37e7f90ca2/19UMGIM56400.rgb.jpg/760x760bb.jpg",
+        "sourceHash": "dc8723d69405bb7b",
+        "files": {
+          "wall.avif": "e47179775e636d23",
+          "wall.webp": "1c7347de629a486e"
+        }
+      }
+    },
+    {
+      "id": "history-ab7f1a770e17e9a4",
+      "artist": "Alice Boman",
+      "album": "Be Mine",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/be-mine-single/1506585137",
+        "artist": "Alice Boman",
+        "album": "Be Mine - Single",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/db/68/85/db6885f0-0145-c03a-12f4-92805a9f70f6/5051083158886_cover.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/db/68/85/db6885f0-0145-c03a-12f4-92805a9f70f6/5051083158886_cover.jpg/760x760bb.jpg",
+        "sourceHash": "fc7f866e3b8803c0",
+        "files": {
+          "wall.avif": "cbc8d893f4e891b5",
+          "wall.webp": "2322aa4067059c09"
+        }
+      }
+    },
+    {
+      "id": "history-018c873c43954f19",
+      "artist": "Jessica Lea Mayfield",
+      "album": "(David Bowie I Love You) Since I Was Six [From the Motion Picture \"APART\"] - Single",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/david-bowie-i-love-you-since-i-was-six-from-the/425412628",
+        "artist": "Jessica Lea Mayfield",
+        "album": "(David Bowie I Love You) Since I Was Six [From the Motion Picture \"APART\"] - Single",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music/dd/f6/be/mzi.tovzuknl.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music/dd/f6/be/mzi.tovzuknl.jpg/760x760bb.jpg",
+        "sourceHash": "83f6300e3274d138",
+        "files": {
+          "wall.avif": "663535357da59816",
+          "wall.webp": "2e2e5adee3941389"
+        }
+      }
+    },
+    {
+      "id": "history-3c5e0b9c1fbc1157",
+      "artist": "DakhaBrakha",
+      "album": "Light",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/light/804795918",
+        "artist": "DakhaBrakha",
+        "album": "Light",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/1e/79/cd/1e79cd04-e905-6ca5-2071-6388b8372da5/859711852312_cover.tif/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/1e/79/cd/1e79cd04-e905-6ca5-2071-6388b8372da5/859711852312_cover.tif/760x760bb.jpg",
+        "sourceHash": "d8bbb92adbd4ac18",
+        "files": {
+          "wall.avif": "ed643a22f332cdba",
+          "wall.webp": "76a0bf79973166d7"
+        }
+      }
+    },
+    {
+      "id": "history-d3c5b0c33d9ceafb",
+      "artist": "Courteeners",
+      "album": "Falcon",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/falcon/1443070070",
+        "artist": "Courteeners",
+        "album": "Falcon",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/4a/e6/12/4ae612ce-aa35-1c0b-779d-28b784182f06/00602527337302.rgb.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/4a/e6/12/4ae612ce-aa35-1c0b-779d-28b784182f06/00602527337302.rgb.jpg/760x760bb.jpg",
+        "sourceHash": "ba4de09e9163e6d9",
+        "files": {
+          "wall.avif": "fff2867867c97b28",
+          "wall.webp": "30c4052d5b69f79c"
+        }
+      }
+    },
+    {
+      "id": "history-7eaf21cda231bb36",
+      "artist": "HAIM",
+      "album": "Lost Track",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/lost-track-single/1611147718",
+        "artist": "HAIM",
+        "album": "Lost Track - Single",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/0c/7c/fb/0c7cfb73-f69e-98ab-72c8-85251b16be58/22UMGIM13504.rgb.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/0c/7c/fb/0c7cfb73-f69e-98ab-72c8-85251b16be58/22UMGIM13504.rgb.jpg/760x760bb.jpg",
+        "sourceHash": "3d01a55175d0f2f3",
+        "files": {
+          "wall.avif": "a6e0ddedb6740ad8",
+          "wall.webp": "0b6cd5e0067b357e"
+        }
+      }
+    },
+    {
+      "id": "history-4ff972ccbd996cb6",
+      "artist": "El Ten Eleven",
+      "album": "El Ten Eleven",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/el-ten-eleven/1764141470",
+        "artist": "El Ten Eleven",
+        "album": "El Ten Eleven",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/fc/c3/ec/fcc3ecf3-a1cc-89d0-c1b3-e8895ce26227/47978.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/fc/c3/ec/fcc3ecf3-a1cc-89d0-c1b3-e8895ce26227/47978.jpg/760x760bb.jpg",
+        "sourceHash": "316b2903ef7ca742",
+        "files": {
+          "wall.avif": "86af6d08021221ec",
+          "wall.webp": "931c5dc0d46a19f5"
+        }
+      }
     }
   ]
 }
