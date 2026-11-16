@@ -233,14 +233,15 @@ main {
 
 /* The signature, as at the foot of ohlifestudios.com: the flower from the
    mark's border set like a letter, then the name. */
+/* Its line is the bar's 44px, so its letters stand level with the orders'. */
 .music-sign {
   display: inline-flex;
   align-items: baseline;
   gap: 0.5em;
   min-height: 44px;
-  padding: 8px 0;
+  padding: 0;
   color: var(--ink);
-  font: 500 clamp(18px, 1.2vw + 13px, 24px)/1.2 "Alegreya SC", var(--serif);
+  font: 500 clamp(18px, 1.2vw + 13px, 24px)/44px "Alegreya SC", var(--serif);
   letter-spacing: 0.22em;
   text-transform: lowercase;
   text-decoration: none;
@@ -336,6 +337,7 @@ main {
   position: relative;
   min-height: 44px;
   padding: 0;
+  line-height: 44px;
   border: 0;
   background: none;
   color: var(--ink-soft);
@@ -458,20 +460,23 @@ main {
     column-gap: 10px;
   }
 
+  /* A smaller signature, and the orders spread evenly over the rest of
+     the row (Dan, 16 November 2026: "using the space properly"). */
   .music-sign {
-    font-size: clamp(15px, 5vw, 21px);
+    font-size: clamp(14px, 3.9vw, 16px);
     letter-spacing: 0.2em;
   }
 
   .music-tools {
     flex: 1 1 auto;
-    justify-content: flex-end;
     min-width: 0;
-    column-gap: clamp(2px, 1.2vw, 8px);
+    column-gap: 0;
   }
 
   .music-order {
-    gap: 0 clamp(8px, 2.6vw, 14px);
+    flex: 1 1 auto;
+    justify-content: space-evenly;
+    gap: 0 6px;
   }
 
   .music-order button {
@@ -775,7 +780,8 @@ main {
   flex-direction: column;
   align-self: stretch;
   min-width: 0;
-  padding: 11px 13px 4px;
+  padding: 10px 12px 3px;
+  border: 1px solid var(--ink);
   border-radius: 2px;
   background: var(--paper-light);
 }
