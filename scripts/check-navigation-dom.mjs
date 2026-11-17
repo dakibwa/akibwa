@@ -14,7 +14,8 @@ import { unpackRanking } from "../components/paper/music-ranking.mjs";
 import { mergeShelf } from "../components/paper/music-shelf.mjs";
 
 const outDir = fileURLToPath(new URL("../out", import.meta.url));
-const externalOrigin = process.env.CHECK_NAV_URL || null;
+const shelfOnly = process.argv.includes("--shelf");
+const externalOrigin = shelfOnly ? null : process.env.CHECK_NAV_URL || null;
 const failures = [];
 let currentSection = "setup";
 let cdp;
@@ -267,6 +268,22 @@ const checkPublicLanding = async () => {
   // One record for every top album and every other sleeve or song (mergeShelf).
   const published = unpackRanking(JSON.parse(readFileSync(new URL("../public/music-ranking.json", import.meta.url), "utf8")));
   const RECORDS = mergeShelf(published.albums, published.songs).length;
+  if (shelfOnly) {
+    section("the exported homepage");
+    await cdp.send("Emulation.setScriptExecutionDisabled", { value: true });
+    await goto("/");
+    const { root } = await cdp.send("DOM.getDocument");
+    const { nodeIds } = await cdp.send("DOM.querySelectorAll", { nodeId: root.nodeId, selector: ".music-page .music-tile button" });
+    check(nodeIds.length === RECORDS && RECORDS > 0, `the homepage ships the music shelf before JavaScript [${nodeIds.length} of ${RECORDS}]`);
+    await cdp.send("Emulation.setScriptExecutionDisabled", { value: false });
+    await goto("/");
+    check(await waitFor(`(() => {
+      if (document.querySelector("dialog.music-tracks[open]")) return true;
+      document.querySelector(".music-tile button")?.click();
+      return false;
+    })()`), "choosing a record opens its sheet");
+    return;
+  }
   // Dan, 16 November 2026: akibwa.com is one page, the music shelf.
   section("the page and public boundary");
   await setDesktop();

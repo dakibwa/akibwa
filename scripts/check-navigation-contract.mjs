@@ -47,8 +47,6 @@ const requireRuleText = (selector, declarations) => {
 };
 
 // The root route is the music shelf, and its search posture.
-requireText(index, 'import { MusicRoom } from "@/components/paper/music-room"', "the public index must render the music shelf");
-requireText(index, "<MusicRoom initial={musicSeed(ranking)} active />", "the music shelf must own the root route");
 requireText(index, "noimageindex: true", "the public index must opt out of image indexing");
 requireText(index, '"max-snippet": 120', "the public index must limit search snippets");
 requireText(layout, 'applicationName: "Akibwa"', "site metadata must be brand-led");

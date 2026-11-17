@@ -9,6 +9,7 @@ The shelf at `/` is the only public page and the only entry in the sitemap. On 1
 ## Checks and publishing
 
 - `npm run build`: run the public-boundary and music checks, then export to `out/`.
+- `npm run check:fast` and `npm run check:release`: build once, then check the exported shelf with JavaScript off and open a record with it on. The check uses a temporary Chromium profile.
 - `npm run check:navigation:dom`: exercise the rendered public boundary in Chrome.
 - `npm run check:worker`: check repeat-visit caching, background refreshes, offline failures and cache isolation from other apps.
 - `npm run publish:check`: verify registered public surfaces and exported routes.
