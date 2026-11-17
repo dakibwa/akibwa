@@ -63,10 +63,8 @@ const retired = [
   "/trek", "/trek/", "/trek/route-detail.json", "/albums/", "/projects/cover-collision/", "/personal/",
   "/about/", "/contact", "/offer/", "/professional/", "/systems/", "/work/", "/concept/",
   "/onebagger/", "/probe/", "/portugal", "/portugal/", "/meditator/", "/features", "/features/",
-  "/features/legal.html", "/life-map/", "/hosting-check-missing-page/"
+  "/features/legal.html", "/features/api/health", "/features/api/me", "/life-map/", "/hosting-check-missing-page/"
 ];
-// On the public domain the separate game Worker owns its legacy API route.
-if (preview || origin.hostname === "localhost") retired.push("/features/api/health");
 await Promise.all(retired.map(async (path) => {
   const response = await request(path);
   assert.equal(response.status, 404, `${path} must return 404`);

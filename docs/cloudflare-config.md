@@ -21,7 +21,7 @@ leave the dashboard-managed domain and any zone routes untouched. Do not
 add domain routing to Wrangler or broaden the deployment token to manage DNS.
 GitHub Pages is retained as a manual fallback; it no longer publishes on push.
 
-The game pages live at `features.games`. Their former addresses on akibwa.com return 404. The separate game's Worker also owns the legacy API route `akibwa.com/features/api/*` on the public domain. On the static preview that path returns 404. Hosting checks monitor the game's API at `https://features.games/features/api/health`.
+The game and its account service live at `features.games`. Their former page and API addresses on akibwa.com return 404. Hosting checks verify both the retired paths and the game’s health on its own domain.
 
 ## Build and deploy
 
@@ -57,7 +57,7 @@ alongside this check.
   byte-for-byte intact.
 - The zone's active `security headers` response transform matches
   `(http.host eq "akibwa.com" and not (http.request.uri.path eq "/features/api" or starts_with(http.request.uri.path, "/features/api/")))`.
-  The separate game API supplies its own headers on that route.
+  The exception dates from when the game API used that path. It now serves the same static 404 as other retired addresses.
 - Fingerprinted `/_next/static/*` files receive one-year immutable caching.
   HTML, artwork with stable filenames, JSON and service workers retain
   Cloudflare's default `public, max-age=0, must-revalidate` behavior.
