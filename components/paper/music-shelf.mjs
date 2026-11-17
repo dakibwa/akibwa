@@ -84,12 +84,16 @@ export function rowsFor(entries, width, reference, limits = bounds(width)) {
  */
 export function trackMap(tracks, width) {
   if (!tracks.length || width <= 0) return { height: 0, cells: [] };
-  const height = Math.round(width * Math.min(1.1, 0.42 + 0.045 * tracks.length));
   const most = Math.sqrt(Math.max(1, ...tracks.map((track) => track.minutes)));
   const weighted = tracks
     .map((track) => ({ track, weight: Math.max(most * 0.2, Math.sqrt(Math.max(0, track.minutes))) }))
     .sort((a, b) => b.weight - a.weight);
   const total = weighted.reduce((sum, item) => sum + item.weight, 0);
+  // Let a long record scroll. A fixed-height phone mosaic can leave only
+  // enough space for the duration and hide the track's name completely.
+  const smallest = weighted[weighted.length - 1].weight;
+  const minArea = Math.min(88, width) * 66;
+  const height = Math.ceil(Math.max(width * Math.min(1.1, 0.42 + 0.045 * tracks.length), minArea * total / (width * smallest)));
   const scale = (width * height) / total;
   const items = weighted.map((item) => ({ ...item, area: item.weight * scale }));
   const cells = [];
@@ -244,8 +248,10 @@ export function yearPairs(record, years) {
   return [...by];
 }
 
+const sortTitle = (title) => fold(title).trim().replace(/^the\s+/, "");
+
 const letterOf = (text) => {
-  const first = fold(text).trim().replace(/^the\s+/, "").charAt(0).toUpperCase();
+  const first = sortTitle(text).charAt(0).toUpperCase();
   return /[A-Z]/.test(first) ? first : "#";
 };
 
@@ -266,7 +272,7 @@ export function arrange(order, entries, { years, kinds } = {}) {
     return map;
   };
   if (order === "name") {
-    const sorted = [...entries].sort((a, b) => fold(a.item.title).localeCompare(fold(b.item.title), "en"));
+    const sorted = [...entries].sort((a, b) => sortTitle(a.item.title).localeCompare(sortTitle(b.item.title), "en"));
     const map = new Map();
     for (const entry of sorted) {
       const letter = letterOf(entry.item.title);

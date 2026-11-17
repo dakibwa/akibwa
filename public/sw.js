@@ -8,8 +8,8 @@
 /* Bump the version whenever committed artwork is replaced in place — same
    URLs, new pixels — or removed. Activation purges the old cache, so returning
    visitors get the new art on their next load instead of one visit behind.
-   v3: the album archive, wall and old project artwork were deleted. */
-const CACHE_NAME = "akibwa-static-v4";
+   v5: the signature flower replaces the old icons. */
+const CACHE_NAME = "akibwa-static-v5";
 const CACHE_PREFIX = "akibwa-static-";
 
 /* Not ours: /features/ redirects to features.games (12 November 2026), and

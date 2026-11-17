@@ -87,6 +87,7 @@
   --serif: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
   --sans: "Akibwa Sans", "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --gutter: clamp(16px, 4vw, 52px);
+  --shelf-ease: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-pop: cubic-bezier(0.34, 1.5, 0.64, 1);
   --lift: 0 1px 0 rgb(42 36 32 / 0.05), 0 14px 26px -16px rgb(42 36 32 / 0.45);
@@ -212,19 +213,13 @@ main {
   gap: 10px;
 }
 
-/* The bar (Dan, 16 November 2026: "super minimalist and simple", no lines,
-   nothing squeezed): the signature, then the orders, albums or songs, and
-   the search. One row on a wide screen, two tidy rows below that, and it
-   stays in view. */
-/* One row that tightens as the window narrows (Dan, 16 November 2026: "why
-   can't this resize properly"): the gaps, the type and the search all shrink
-   with the width, and only a narrow phone takes a second row. */
+/* One pinned row. On a phone the search opens over the orders. */
 .music-bar {
   position: sticky;
   top: 0;
   z-index: 3;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   column-gap: clamp(14px, 3.2vw, 40px);
   padding: clamp(4px, 1vw, 10px) 0;
@@ -261,7 +256,6 @@ main {
   top: 0.056em;
   width: 0.65em;
   height: 0.62em;
-  fill: #db552d;
 }
 
 /* What is under the pointer or the keyboard, as a label at the foot of the
@@ -281,10 +275,7 @@ main {
   background: var(--paper);
   white-space: nowrap;
   pointer-events: none;
-}
-
-.music-now {
-  transition: opacity 160ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 120ms ease, transform 160ms var(--shelf-ease);
 }
 
 .music-now[data-empty="true"] {
@@ -359,8 +350,8 @@ main {
   border-radius: 50%;
   background: #db552d;
   opacity: 0;
-  transform: scale(0.4);
-  transition: opacity 200ms ease, transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+  transform: scale(0.8);
+  transition: opacity 140ms ease, transform 180ms var(--shelf-ease);
 }
 
 .music-order button:hover,
@@ -386,6 +377,13 @@ main {
   min-height: 44px;
 }
 
+.music-search-mark {
+  display: grid;
+  align-items: center;
+  align-self: stretch;
+  cursor: text;
+}
+
 .music-search svg {
   flex: none;
   fill: none;
@@ -408,6 +406,12 @@ main {
   color: var(--ink);
   font: italic 400 17px/1.2 "Alegreya", var(--serif);
   user-select: text;
+}
+
+.music-search:has(input:focus-visible) {
+  outline: 2px solid var(--ink);
+  outline-offset: -2px;
+  border-radius: 2px;
 }
 
 .music-search input::placeholder {
@@ -480,20 +484,23 @@ main {
   }
 
   .music-order button {
+    flex: 1 1 auto;
+    min-width: 24px;
     font-size: clamp(10px, 3vw, 12.5px);
     letter-spacing: clamp(0.08em, 0.9vw - 1.6px, 0.16em);
   }
 
   .music-order,
   .music-find {
-    transition: opacity 180ms ease, transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+    visibility: visible;
+    transition: opacity 130ms ease, transform 200ms var(--shelf-ease);
   }
 
   .music-find {
     display: grid;
     place-items: center;
     flex: none;
-    width: 36px;
+    width: 44px;
     height: 44px;
     margin-right: -8px;
     padding: 0;
@@ -518,29 +525,35 @@ main {
 
   .music-search {
     position: absolute;
-    inset: 0 0 0 0;
+    inset: 0;
     width: auto;
     padding-left: 2px;
     background: var(--paper);
-    /* Drawn out from the right edge, never past it. */
-    clip-path: inset(0 0 0 100%);
+    transform: translateX(8px);
     opacity: 0;
     visibility: hidden;
-    transition: clip-path 320ms cubic-bezier(0.16, 1, 0.3, 1), opacity 180ms ease, visibility 0s linear 320ms;
+    pointer-events: none;
+    interactivity: inert;
+    transition: opacity 140ms ease, transform 200ms var(--shelf-ease), visibility 0s linear 200ms;
   }
 
   .music-tools[data-finding="true"] .music-search {
-    clip-path: inset(0);
+    transform: none;
     opacity: 1;
     visibility: visible;
-    transition: clip-path 320ms cubic-bezier(0.16, 1, 0.3, 1), opacity 180ms ease, visibility 0s;
+    pointer-events: auto;
+    interactivity: auto;
+    transition-delay: 0s;
   }
 
   .music-tools[data-finding="true"] .music-order,
   .music-tools[data-finding="true"] .music-find {
     opacity: 0;
     pointer-events: none;
-    transform: translateX(-14px);
+    interactivity: inert;
+    visibility: hidden;
+    transform: translateX(-6px);
+    transition: opacity 130ms ease, transform 200ms var(--shelf-ease), visibility 0s linear 130ms;
   }
 }
 
@@ -554,6 +567,7 @@ main {
    as its hours between the floor and the cap the room sets. A square still
    gliding to its place never widens the page. */
 .music-map-frame {
+  container-type: inline-size;
   overflow-x: clip;
   overflow-clip-margin: 6px;
 }
@@ -600,7 +614,12 @@ main {
 }
 
 .music-tile {
+  position: relative;
   flex: none;
+  width: calc(var(--side) * 1px);
+  height: calc(var(--side) * 1px);
+  transform-origin: top left;
+  scroll-margin-block: 74px 52px;
 }
 
 .music-face {
@@ -614,15 +633,11 @@ main {
   background: var(--paper-deep);
   color: var(--ink);
   cursor: pointer;
-  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  touch-action: manipulation;
+  transition: transform 180ms var(--shelf-ease);
 }
 
-/* Under the pointer a sleeve lifts a little off the shelf. */
-.music-tile {
-  position: relative;
-}
-
-.music-tile:hover {
+.music-tile:focus-within {
   z-index: 1;
 }
 
@@ -635,9 +650,19 @@ main {
   transform-origin: left center;
 }
 
-.music-face:hover {
-  transform: scale(1.04);
-  box-shadow: 0 10px 22px -10px rgb(42 36 32 / 0.55);
+@media (hover: hover) and (pointer: fine) {
+  .music-tile:hover {
+    z-index: 1;
+  }
+
+  .music-face:hover {
+    transform: scale(1.035);
+  }
+}
+
+.music-face:active {
+  transform: scale(0.985);
+  transition-duration: 90ms;
 }
 
 .music-face:focus-visible {
@@ -688,22 +713,25 @@ main {
   width: 100%;
   height: 100%;
   padding: 8px;
-  background: var(--paper-light);
-  font: italic 400 13px/1.2 "Alegreya", var(--serif);
+  background: var(--tint, var(--paper-light));
+  font: 500 42px/1 "Alegreya SC", var(--serif);
   text-align: center;
 }
 
 .music-more {
+  align-items: center;
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
 }
 
 
-@media (prefers-reduced-motion: reduce) {
-  .music-face {
-    transition: none;
-  }
+html {
+  scrollbar-gutter: stable;
+}
+
+html:has(.music-tracks[open]) {
+  overflow: hidden;
 }
 
 /* A record's sheet (Dan, 16 November 2026): a mosaic like the shelf, with
@@ -713,7 +741,7 @@ main {
 .music-tracks {
   width: min(560px, calc(100vw - 24px));
   max-width: none;
-  max-height: min(88vh, 900px);
+  max-height: min(88dvh, 900px);
   padding: 0;
   overflow: visible;
   border: 0;
@@ -728,26 +756,43 @@ main {
 
 .music-tracks::backdrop {
   background: rgb(42 36 32 / 0.34);
-  animation: backdrop-in 220ms ease both;
-}
-
-@keyframes backdrop-in {
-  from { opacity: 0; }
+  opacity: 1;
+  transition: opacity 180ms ease;
 }
 
 .music-tracks-sheet {
   position: relative;
-  max-height: min(88vh, 900px);
+  max-height: min(88dvh, 900px);
   overflow: auto;
+  overscroll-behavior: contain;
   padding: 6px;
   border: 1px solid var(--ink);
   border-radius: 2px;
   background: var(--paper);
-  animation: tracks-in 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  opacity: 1;
+  transform: none;
+  transition: opacity 180ms ease, transform 240ms var(--shelf-ease);
 }
 
-@keyframes tracks-in {
-  from { opacity: 0; transform: translateY(10px) scale(0.985); }
+@starting-style {
+  .music-tracks[open]::backdrop {
+    opacity: 0;
+  }
+
+  .music-tracks[open] .music-tracks-sheet {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+}
+
+.music-tracks[data-closing]::backdrop,
+.music-tracks[data-closing] .music-tracks-sheet {
+  opacity: 0;
+  transition-duration: 140ms;
+}
+
+.music-tracks[data-closing] .music-tracks-sheet {
+  transform: translateY(5px) scale(0.995);
 }
 
 .music-tracks-head {
@@ -786,15 +831,12 @@ main {
   background: var(--paper-light);
 }
 
-.music-tracks-card h3 {
-  display: -webkit-box;
+.music-tracks-card h2 {
   margin: 0;
-  padding-right: 26px;
-  overflow: hidden;
+  padding-right: 29px;
   font: italic 400 clamp(18px, 3.4vw, 25px)/1.12 "Alegreya", var(--serif);
   overflow-wrap: anywhere;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
+  text-wrap: pretty;
 }
 
 .music-tracks-artist,
@@ -832,12 +874,12 @@ main {
 /* The way out: a fine ink cross in the card's top right corner. */
 .music-tracks-close {
   position: absolute;
-  top: 2px;
-  right: 2px;
+  top: 0;
+  right: 0;
   display: grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   padding: 0;
   border: 0;
   background: none;
@@ -865,7 +907,14 @@ main {
 }
 
 .music-tracks-note {
-  margin: 0 0 8px;
+  margin: 0;
+  padding: 12px;
+  color: var(--ink-soft);
+  font: italic 400 16px/1.3 "Alegreya", var(--serif);
+}
+
+.music-more p {
+  margin: 0;
   color: var(--ink-soft);
   font: italic 400 16px/1.3 "Alegreya", var(--serif);
 }
@@ -889,15 +938,33 @@ html:not(.js) .music-bar {
   display: none;
 }
 
-/* The squares are sized for a laptop before scripting runs; on a narrow
-   screen without it, none is wider than under half the screen. */
-html:not(.js) .music-row {
+/* Fit the server-rendered covers to the actual viewport while the exact
+   rows are being measured. This is also the shelf without JavaScript. */
+.music-map[data-measured="false"] .music-shelf {
+  --floor: max(56px, 4.5cqi);
+  --cap: 15cqi;
+  display: flex;
   flex-wrap: wrap;
+  align-items: flex-start;
 }
 
-html:not(.js) .music-tile {
-  max-width: 44vw;
-  max-height: 44vw;
+@container (max-width: 599px) {
+  .music-map[data-measured="false"] .music-shelf {
+    --floor: 44px;
+    --cap: calc((100cqi - 12px) / 4);
+  }
+}
+
+.music-map[data-measured="false"] .music-row {
+  display: contents;
+}
+
+.music-map[data-measured="false"] .music-tile {
+  flex: 1 1 clamp(var(--floor), calc(var(--cap) * var(--share)), var(--cap));
+  min-width: 0;
+  max-width: var(--cap);
+  height: auto;
+  aspect-ratio: 1;
 }
 
 .music-tracks-cover .music-blank {
@@ -908,14 +975,14 @@ html:not(.js) .music-tile {
 .music-listen {
   display: flex;
   gap: 0;
-  margin: 0 0 0 -9px;
+  margin: 0 0 0 -12px;
 }
 
 .music-listen a {
   display: grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   color: var(--ink);
   transition: color 180ms ease;
 }
@@ -1003,16 +1070,6 @@ html:not(.js) .music-tile {
   white-space: nowrap;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .music-tracks-sheet {
-    animation: none;
-  }
-
-  .music-face:hover {
-    transform: none;
-  }
-}
-
 /* A pencil-underlined text link: the way home from a missing page. */
 .pencil-link {
   position: relative;
@@ -1055,11 +1112,16 @@ html:not(.js) .music-tile {
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
-  *::after {
-    animation-duration: 1ms !important;
-    animation-delay: 0ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 1ms !important;
+  *::after,
+  .music-tracks::backdrop {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .music-face:hover,
+  .music-face:active,
+  .music-tracks[data-closing] .music-tracks-sheet {
+    transform: none;
   }
 }
 

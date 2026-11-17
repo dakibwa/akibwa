@@ -52,10 +52,17 @@ function worker({ names = [], cached, fetcher = async () => new Response("fresh"
 }
 
 test("activation retires only Akibwa caches and preserves other apps and Trek tiles", async () => {
-  const w = worker({ names: ["akibwa-static-v2", "akibwa-static-v3", "akibwa-static-v4", "features-offline", "trek-map-tiles-v1", "another-app"] });
+  const otherApps = ["features-offline", "trek-map-tiles-v1", "another-app"];
+  const w = worker({ names: ["akibwa-static-v3", "akibwa-static-v4", ...otherApps] });
+  // Populate the current cache through the real fetch handler so this check
+  // still exercises a version upgrade when the artwork next changes.
+  await w.dispatch("fetch", new Request("https://akibwa.test/cover.webp")).response;
+  const current = [...w.kept].at(-1);
+  assert.match(current, /^akibwa-static-v\d+$/);
+  assert.ok(!["akibwa-static-v3", "akibwa-static-v4"].includes(current));
   await Promise.all(w.dispatch("activate").waits);
-  assert.deepEqual(w.deleted, ["akibwa-static-v2", "akibwa-static-v3"]);
-  assert.deepEqual([...w.kept], ["akibwa-static-v4", "features-offline", "trek-map-tiles-v1", "another-app"]);
+  assert.deepEqual(w.deleted, ["akibwa-static-v3", "akibwa-static-v4"]);
+  assert.deepEqual([...w.kept], [...otherApps, current]);
 });
 
 test("cached artwork responds immediately and holds the worker through refresh and disk write", async () => {

@@ -376,6 +376,16 @@ const checkPublicLanding = async () => {
   }
   await setDesktop();
 
+  section("phone search and track sheets");
+  await setMobile();
+  await goto("/");
+  await evaluate(`document.querySelector(".music-find").click()`);
+  check(await waitFor(`document.activeElement.matches(".music-search input")`), "opening search focuses the phone field");
+  await cdp.send("Input.insertText", { text: "radiohead" });
+  await cdp.send("Input.dispatchKeyEvent", { type: "keyDown", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
+  await cdp.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
+  check(await waitFor(`document.activeElement.matches(".music-find") && document.querySelector(".music-find").getAttribute("aria-expanded") === "false"`), "dismissing phone search returns focus to its visible button");
+
   section("music loading recovery");
   await cdp.send("Fetch.enable", { patterns: [{ urlPattern: "*music-ranking.json", requestStage: "Request" }] });
   let paused = cdp.waitFor("Fetch.requestPaused");
@@ -392,6 +402,10 @@ const checkPublicLanding = async () => {
   await cdp.send("Fetch.continueRequest", { requestId: request.requestId });
   await cdp.send("Fetch.disable");
   check(await waitFor(`Boolean(document.querySelector("dialog[open] .music-track-list li"))`, 8000), "retrying fills the same open sheet with its tracks");
+  check(await evaluate(`(() => {
+    const sheet = document.querySelector("dialog .music-tracks-sheet");
+    return sheet.scrollWidth <= sheet.clientWidth + 1;
+  })()`), "an open phone sheet fits its actual width when its tracks arrive on retry");
 
   await cdp.send("Fetch.enable", { patterns: [{ urlPattern: "*music-ranking.json", requestStage: "Request" }] });
   paused = cdp.waitFor("Fetch.requestPaused");
