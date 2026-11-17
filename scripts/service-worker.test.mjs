@@ -65,6 +65,30 @@ test("activation retires only Akibwa caches and preserves other apps and Trek ti
   assert.deepEqual([...w.kept], [...otherApps, current]);
 });
 
+test("retiring Meditator unregisters its worker and clears only its own caches", async () => {
+  const script = readFileSync(new URL("../public/meditator/sw.js", import.meta.url), "utf8");
+  const listeners = new Map();
+  const names = new Set(["meditator-shell-v9", "meditator-assets-v9", "akibwa-static-v5", "features-offline"]);
+  const url = "https://akibwa.test/meditator/";
+  let unregistered = false;
+  let refreshed = "";
+  runInNewContext(script, {
+    caches: { keys: async () => [...names], delete: async (name) => names.delete(name) },
+    self: {
+      addEventListener: (name, listener) => listeners.set(name, listener),
+      registration: { unregister: async () => { unregistered = true; } },
+      clients: { matchAll: async () => [{ url, navigate: async (destination) => { refreshed = destination; } }] }
+    }
+  });
+
+  let activation;
+  listeners.get("activate")({ waitUntil: (promise) => { activation = promise; } });
+  await activation;
+  assert.deepEqual([...names], ["akibwa-static-v5", "features-offline"]);
+  assert.equal(unregistered, true);
+  assert.equal(refreshed, url);
+});
+
 test("cached artwork responds immediately and holds the worker through refresh and disk write", async () => {
   const network = deferred();
   const disk = deferred();
@@ -109,7 +133,7 @@ test("unavailable cache storage and failed writes do not block valid network res
 
 test("the worker leaves documents, data, other apps and foreign origins to their owners", () => {
   const w = worker();
-  for (const url of ["https://akibwa.test/features/icon.png", "https://akibwa.test/music-ranking.json", "https://other.test/cover.webp"]) {
+  for (const url of ["https://akibwa.test/features/icon.png", "https://akibwa.test/trek/photos/old.webp", "https://akibwa.test/music-ranking.json", "https://other.test/cover.webp"]) {
     assert.equal(w.dispatch("fetch", new Request(url)).response, undefined);
   }
   assert.equal(w.dispatch("fetch", { url: "https://akibwa.test/cover.svg", method: "GET", mode: "navigate", destination: "document" }).response, undefined);

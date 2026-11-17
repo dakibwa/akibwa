@@ -6,16 +6,11 @@ const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const surfaceConfig = readJson("data/public-surfaces.json");
 const hasStaticExport = existsSync(join(root, "out"));
 
-const redirects = readFileSync(join(root, "public/_redirects"), "utf8");
-
-// An external surface is an edge redirect, so it has no page or export of its own.
-const checks = surfaceConfig.surfaces.flatMap((surface) => surface.externalUrl
-  ? [redirectCheck(surface)]
-  : [
-      routeCheck(surface),
-      ...dataChecks(surface),
-      ...(hasStaticExport ? [exportCheck(surface)] : [])
-    ]);
+const checks = surfaceConfig.surfaces.flatMap((surface) => [
+  routeCheck(surface),
+  ...dataChecks(surface),
+  ...(hasStaticExport ? [exportCheck(surface)] : [])
+]);
 
 const failed = checks.filter((check) => !check.ok);
 
@@ -39,16 +34,6 @@ if (failed.length) {
 
 function readJson(relativePath) {
   return JSON.parse(readFileSync(join(root, relativePath), "utf8"));
-}
-
-function redirectCheck(surface) {
-  const rule = `${routeWithoutHash(surface.route)} ${surface.externalUrl} 301`;
-  return {
-    surface: surface.id,
-    type: "edge-redirect",
-    target: rule,
-    ok: redirects.split("\n").includes(rule)
-  };
 }
 
 function routeCheck(surface) {
@@ -84,19 +69,6 @@ function dataChecks(surface) {
 }
 
 function exportCheck(surface) {
-  if (surface.staticPath) {
-    const routePath = routeWithoutHash(surface.route);
-    const outputPath =
-      routePath === "/" ? "out/index.html" : `out${routePath}/index.html`;
-
-    return {
-      surface: surface.id,
-      type: "static-export-route",
-      target: outputPath,
-      ok: existsSync(join(root, outputPath))
-    };
-  }
-
   const routePath = routeWithoutHash(surface.route);
   const outputPath = routePath === "/" ? "out/index.html" : `out${routePath}/index.html`;
 

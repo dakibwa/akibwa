@@ -4,9 +4,8 @@ import { indexItems, search } from "../components/paper/music-search.mjs";
 import { GAP, arrange, bounds, mergeShelf, rowsFor, sideFor, songTitle } from "../components/paper/music-shelf.mjs";
 
 /* Build-time contract for akibwa.com. From 16 November 2026 (Dan) the site is
-   one page, the music shelf; the trek keeps its own standalone page for old
-   links. Named public choices do not relax the private-data and search
-   boundaries below. */
+   one page, the music shelf. Retired paths return 404. The checks
+   below protect the public content and search settings. */
 
 const read = (relativePath) =>
   readFileSync(new URL(`../${relativePath}`, import.meta.url), "utf8");
@@ -15,10 +14,7 @@ const css = read("app/globals.css");
 const index = read("app/page.jsx");
 const layout = read("app/layout.jsx");
 const sitemap = read("app/sitemap.js");
-const redirects = read("public/_redirects");
 const music = read("components/paper/music-room.jsx");
-const trekTemplate = read("scripts/trek-journey-template.html");
-const trekPublished = read("public/trek/index.html");
 const ranking = JSON.parse(read("public/music-ranking.json"));
 const musicMeta = JSON.parse(read("public/music-meta.json"));
 const musicKinds = JSON.parse(read("public/music-kinds.json"));
@@ -57,10 +53,6 @@ requireText(index, "noimageindex: true", "the public index must opt out of image
 requireText(index, '"max-snippet": 120', "the public index must limit search snippets");
 requireText(layout, 'applicationName: "Akibwa"', "site metadata must be brand-led");
 requireText(layout, 'classList.add("js")', "the layout must mark scripted pages before the first paint");
-// Old links stay useful now that there is one page.
-requireText(layout, 'trek:"/trek/"', "old #trek links must reach the trek's own page");
-requireText(layout, 'features:"https://features.games/"', "old #features links must reach the game's own address");
-requireText(layout, 'websites:"https://ohlifestudios.com/"', "old #websites links must reach the studio");
 requireRuleText("\nbody {", ["user-select: none"]);
 
 // Retired with the front page and its rooms (Dan, 16 November 2026): deleted,
@@ -210,28 +202,25 @@ for (const name of ranking.names) {
   if (!search(songIndex, "ambient")?.some((song) => song.artist === "Brian Eno")) fail("genres must remain searchable");
 }
 
-// Retired pages are deleted, not hidden. The site is one page; old links 301
-// to it from the edge instead of loading a stub page that redirects itself.
-for (const route of ["albums", "projects", "personal", "about", "contact", "offer", "professional", "systems", "work", "concept"]) {
-  if (existsSync(new URL(`../app/${route}`, import.meta.url))) fail(`the retired /${route}/ route must not return`);
-  for (const redirect of [`/${route} / 301`, `/${route}/* / 301`]) requireText(redirects, `\n${redirect}\n`, `old /${route}/ links must redirect to the homepage`);
+// Old page paths are absent from the export. The standalone game is staged
+// under public/features for its own deployment and excluded from this site.
+for (const route of ["trek", "albums", "projects", "personal", "about", "contact", "offer", "professional", "systems", "work", "concept", "onebagger", "meditator", "portugal", "probe", "features"]) {
+  const paths = [`app/${route}`];
+  if (route !== "features") paths.push(`public/${route}/index.html`);
+  for (const path of paths) {
+    if (existsSync(new URL(`../${path}`, import.meta.url))) fail(`the retired /${route}/ route must stay out of the site`);
+  }
 }
-requireText(redirects, "\n/portugal https://portuguesewithines.com/ 301\n", "the Portuguese short link must keep reaching Inês's site");
+requireText(read("public/.assetsignore"), "\n/features/\n", "only the standalone game host may publish the game");
+requireText(read("wrangler.jsonc"), '"not_found_handling": "404-page"', "missing routes must use the real 404 page");
 requireText(sitemap, 'const routes = [{ path: "/", priority: 1 }]', "only the Akibwa index belongs in the sitemap");
 
 if (existsSync(new URL("../public/life-map/index.html", import.meta.url))) {
   fail("the detailed Life in Maps page must not ship");
 }
 
-for (const [source, label] of [
-  [trekTemplate, "the Trek source template"],
-  [trekPublished, "the generated Trek page"]
-]) {
-  requireText(source, "noindex", `${label} must be excluded from search indexing`);
-  requireText(source, "noimageindex", `${label} must opt out of image indexing`);
-  forbidText(source, "data-akibwa-project", `${label} must remain standalone`);
-  forbidText(source, "akibwa-project-banner", `${label} must not expose the portfolio identity`);
-  requireText(source, "24 September to 28 November 2019", `${label} must retain the exact journey date range`);
+if (existsSync(new URL("../public/trek", import.meta.url))) {
+  fail("the retired Trek files must stay out of the public export");
 }
 
 console.log("Akibwa public-boundary contract passed.");

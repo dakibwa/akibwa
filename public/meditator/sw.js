@@ -18,11 +18,11 @@ self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     (async () => {
-      for (const name of await caches.keys()) await caches.delete(name);
+      const names = await caches.keys().catch(() => []);
+      await Promise.allSettled(names.filter((name) => name.startsWith("meditator-")).map((name) => caches.delete(name)));
+      const windows = await self.clients.matchAll({ type: "window" });
       await self.registration.unregister();
-      for (const client of await self.clients.matchAll({ type: "window" })) {
-        client.navigate(client.url);
-      }
+      await Promise.allSettled(windows.map((client) => client.navigate(client.url)));
     })()
   );
 });

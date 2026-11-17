@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-12",
+  "updated": "2026-11-17",
   "surfaces": [
     {
       "id": "home",
@@ -8,23 +8,6 @@
       "kind": "page",
       "visibility": "public",
       "fallbackData": "public/listening-catalogue.json"
-    },
-    {
-      "id": "trek",
-      "title": "The trek",
-      "route": "/trek",
-      "kind": "static-directory",
-      "visibility": "public",
-      "staticPath": "public/trek/index.html",
-      "siteData": "data/trek-days.json"
-    },
-    {
-      "id": "portuguese-with-ines",
-      "title": "Português com a Inês",
-      "route": "/portugal",
-      "kind": "external-site",
-      "visibility": "public",
-      "externalUrl": "https://portuguesewithines.com/"
     }
   ]
 }

@@ -56,12 +56,16 @@ export const viewport = {
   colorScheme: "light"
 };
 
-/* Runs before the first paint: marks the page as scripted, and keeps old
-   links useful now that Akibwa is one page (16 November 2026): #trek goes to
-   the trek's own page, #features to features.games, #websites to the studio,
-   and #music or #career to the shelf itself. A future hash-based
-   Content-Security-Policy must include this script's hash. */
-const boot = `(function(d,h){d.classList.add("js");var t={trek:"/trek/",features:"https://features.games/",websites:"https://ohlifestudios.com/"}[h];if(t){location.replace(t)}else if(h==="music"||h==="career"){history.replaceState(null,"",location.pathname+location.search)}})(document.documentElement,location.hash.slice(1))`;
+/* Old room bookmarks open the same shelf at its canonical address. */
+const boot = `(function(){
+  document.documentElement.classList.add("js");
+  if (location.pathname !== "/") return;
+  function clearBookmark() {
+    if (location.hash || location.search) history.replaceState(history.state, "", "/");
+  }
+  clearBookmark();
+  addEventListener("hashchange", clearBookmark);
+})()`;
 
 export default function RootLayout({ children }) {
   return (

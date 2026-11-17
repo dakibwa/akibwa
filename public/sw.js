@@ -8,13 +8,12 @@
 /* Bump the version whenever committed artwork is replaced in place — same
    URLs, new pixels — or removed. Activation purges the old cache, so returning
    visitors get the new art on their next load instead of one visit behind.
-   v5: the signature flower replaces the old icons. */
+   v5: the signature flower replaces the old icons and the Trek is retired. */
 const CACHE_NAME = "akibwa-static-v5";
 const CACHE_PREFIX = "akibwa-static-";
 
-/* Not ours: /features/ redirects to features.games (12 November 2026), and
-   that redirect must always come from the network. */
-const FOREIGN_PATHS = ["/features/"];
+/* Previously cached artwork under retired paths must reach the host for a 404. */
+const RETIRED_PATHS = ["/features/", "/trek/"];
 
 const IMMUTABLE_PATH = "/_next/static/";
 const ASSET_EXTENSIONS = /\.(?:webp|avif|jpg|jpeg|png|gif|svg|ico|woff2?)$/;
@@ -69,7 +68,7 @@ self.addEventListener("fetch", (event) => {
 
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
-  if (FOREIGN_PATHS.some((path) => url.pathname.startsWith(path))) return;
+  if (RETIRED_PATHS.some((path) => url.pathname.startsWith(path))) return;
   if (request.mode === "navigate" || request.destination === "document") return;
 
   if (url.pathname.startsWith(IMMUTABLE_PATH)) {

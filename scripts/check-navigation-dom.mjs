@@ -1,5 +1,4 @@
-/* Rendered regression check for Akibwa's one page, the music shelf, and, with
- * CHECK_TREK_ONLY=1, the standalone Trek.
+/* Rendered regression check for Akibwa's music shelf.
  *
  * Usage: npm run build && npm run check:navigation:dom
  * Optional: CHECK_NAV_URL=https://akibwa.com npm run check:navigation:dom
@@ -7,11 +6,10 @@
 
 import { execSync, spawn } from "node:child_process";
 import { createServer } from "node:http";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { extname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
-import { checkTrekPaths } from "./check-trek-paths-dom.mjs";
 import { unpackRanking } from "../components/paper/music-ranking.mjs";
 import { mergeShelf } from "../components/paper/music-shelf.mjs";
 
@@ -33,13 +31,6 @@ const check = (ok, message) => {
 };
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-const capture = async (name) => {
-  if (!process.env.CHECK_NAV_CAPTURE_DIR) return;
-  mkdirSync(process.env.CHECK_NAV_CAPTURE_DIR, { recursive: true });
-  const { data } = await cdp.send("Page.captureScreenshot", { format: "png" });
-  writeFileSync(join(process.env.CHECK_NAV_CAPTURE_DIR, `${name}.png`), Buffer.from(data, "base64"));
-};
-
 const mime = {
   ".html": "text/html",
   ".css": "text/css",
@@ -112,7 +103,7 @@ const launchChrome = (chromeBin, profileDir) =>
         `--user-data-dir=${profileDir}`,
         "--no-first-run",
         "--no-default-browser-check",
-        ...(process.env.CHECK_TREK_ONLY ? process.env.CHECK_TREK_HARDWARE_GPU === "1" ? [] : ["--enable-unsafe-swiftshader", "--use-gl=angle", "--use-angle=swiftshader"] : ["--disable-gpu"]),
+        "--disable-gpu",
         "--hide-scrollbars",
         "--window-size=1440,900",
         "about:blank"
@@ -300,12 +291,12 @@ const checkPublicLanding = async () => {
   await setDesktop();
 
   section("old links");
-  await goto("/#trek");
-  check(await waitFor(`location.pathname === "/trek/"`, 6000), "an old #trek link reaches the trek's own page");
-  for (const hash of ["career", "music"]) {
-    await goto(`/#${hash}`);
-    check(await waitFor(`location.pathname === "/" && location.hash === "" && document.querySelectorAll(".music-page .music-tile").length === ${RECORDS}`), `an old #${hash} link lands on the shelf`);
+  for (const hash of ["trek", "career", "music", "features", "websites"]) {
+    await goto(`/?bookmark=old#${hash}`);
+    check(await waitFor(`location.href === location.origin + "/" && document.querySelectorAll(".music-page .music-tile").length === ${RECORDS}`), `an old #${hash} bookmark opens the bare homepage`);
   }
+  await evaluate('location.hash = "trek"');
+  check(await waitFor('location.href === location.origin + "/"'), "a room hash clears even while the shelf is already open");
 
   section("music");
   await goto("/");
@@ -455,7 +446,7 @@ const main = async () => {
     process.exit(2);
   }
 
-  const timeoutMs = process.env.CHECK_TREK_ONLY ? 240000 : 180000;
+  const timeoutMs = 180000;
   const watchdog = setTimeout(() => {
     console.error(`\nNavigation DOM check timed out after ${timeoutMs / 1000}s.`);
     process.exit(1);
@@ -487,8 +478,7 @@ const main = async () => {
     await cdp.send("Runtime.enable");
     // Native focus events are suppressed while the headless page is inactive.
     await cdp.send("Page.bringToFront");
-    if (process.env.CHECK_TREK_ONLY) await checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,section,capture});
-    else await checkPublicLanding();
+    await checkPublicLanding();
   } finally {
     cdp?.socket.close();
     try {

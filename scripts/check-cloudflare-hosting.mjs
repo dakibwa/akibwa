@@ -49,60 +49,44 @@ const files = await inventory(root);
 assert.ok(files.length <= 20000, "export exceeds the Workers Free asset count");
 assert.ok(files.every((file) => file.bytes <= 25 * 1024 * 1024), "export contains an asset larger than 25 MiB");
 
-const pages = ["", "trek", "meditator"];
-for (const page of pages) {
-  const path = page ? `/${page}/` : "/";
-  const expected = await readFile(join(root, page, "index.html"));
-  const ready = await waitForHostedExport(origin, hash(expected), { path });
-  const response = ready.response;
-  assert.equal(response.status, 200, `${path} must remain available`);
-  assert.match(response.headers.get("content-type") || "", /text\/html/, `${path} MIME type`);
-  checkRevalidation(response, path);
-  assert.equal(hash(ready.body), hash(expected), `${path} must serve the exact exported HTML`);
-  for (const [name, value] of Object.entries(headers)) assert.equal(response.headers.get(name), value, `${path} ${name}`);
-  if (preview) assert.equal(response.headers.get("x-robots-tag"), "noindex", "preview must not be indexed");
-}
+const homepage = await readFile(join(root, "index.html"));
+const readyHome = await waitForHostedExport(origin, hash(homepage));
+const homeResponse = readyHome.response;
+assert.equal(homeResponse.status, 200, "the shelf must remain available");
+assert.match(homeResponse.headers.get("content-type") || "", /text\/html/, "homepage MIME type");
+checkRevalidation(homeResponse, "/");
+assert.equal(hash(readyHome.body), hash(homepage), "the homepage must serve the exact exported HTML");
+for (const [name, value] of Object.entries(headers)) assert.equal(homeResponse.headers.get(name), value, `/ ${name}`);
+if (preview) assert.equal(homeResponse.headers.get("x-robots-tag"), "noindex", "preview must not be indexed");
 
-// The game's old address was retired on 12 November 2026: every path under
-// /features moves to the same path on features.games, with its query string.
-const moved = "?hosting-check=moved";
-for (const [path, target] of [
-  ["/features", "https://features.games/"],
-  ["/features/", "https://features.games/"],
-  ["/features/legal.html", "https://features.games/legal.html"],
-]) {
-  const response = await request(path + moved);
-  assert.equal(response.status, 301, `${path} must permanently redirect to features.games`);
-  assert.equal(response.headers.get("location"), target + moved, `${path} redirect target`);
-}
-// Retired pages are deleted; their old links redirect at the edge.
-for (const [path, target] of [
-  ["/albums/", "/"], ["/projects/cover-collision/", "/"], ["/personal/", "/"], ["/about/", "/"],
-  ["/probe/", "https://features.games/"], ["/portugal/", "https://portuguesewithines.com/"],
-]) {
+const retired = [
+  "/trek", "/trek/", "/trek/route-detail.json", "/albums/", "/projects/cover-collision/", "/personal/",
+  "/about/", "/contact", "/offer/", "/professional/", "/systems/", "/work/", "/concept/",
+  "/onebagger/", "/probe/", "/portugal", "/portugal/", "/meditator/", "/features", "/features/",
+  "/features/legal.html", "/life-map/", "/hosting-check-missing-page/"
+];
+// On the public domain the separate game Worker owns its legacy API route.
+if (preview || origin.hostname === "localhost") retired.push("/features/api/health");
+await Promise.all(retired.map(async (path) => {
   const response = await request(path);
-  assert.equal(response.status, 301, `${path} must permanently redirect`);
-  assert.equal(new URL(response.headers.get("location"), origin).href, new URL(target, origin).href, `${path} redirect target`);
-}
+  assert.equal(response.status, 404, `${path} must return 404`);
+  assert.equal(response.headers.get("location"), null, `${path} must have no redirect`);
+  assert.match(response.headers.get("content-type") || "", /text\/html/, `${path} must serve an HTML error page`);
+  assert.match(await response.text(), /Nothing here/, `${path} must use the site's 404 page`);
+}));
 
-const canonical = await fetch("https://www.akibwa.com/trek/?hosting-check=canonical", {
+const canonical = await fetch("https://www.akibwa.com/favicon.svg?hosting-check=canonical", {
   redirect: "manual", signal: AbortSignal.timeout(15000),
 });
 assert.equal(canonical.status, 301, "www must permanently redirect to the apex");
-assert.equal(canonical.headers.get("location"), "https://akibwa.com/trek/?hosting-check=canonical",
+assert.equal(canonical.headers.get("location"), "https://akibwa.com/favicon.svg?hosting-check=canonical",
   "www redirect must preserve the path and query string");
-
-for (const path of ["/life-map/", "/hosting-check-missing-page/"]) {
-  const response = await request(path);
-  assert.equal(response.status, 404, `${path} must not fall back to the homepage`);
-  assert.match(response.headers.get("content-type") || "", /text\/html/, "use the exported 404 page");
-}
 
 const samples = [
   files.find((file) => file.path.startsWith("_next/static/") && file.path.endsWith(".css"))?.path,
   files.find((file) => file.path.startsWith("_next/static/") && file.path.endsWith(".js"))?.path,
   files.find((file) => file.path.startsWith("album-art/") && file.path.endsWith(".avif"))?.path,
-  "trek/route-detail.json", "meditator/sw.js", "sw.js", "robots.txt", "sitemap.xml",
+  "favicon.svg", "favicon.ico", "apple-touch-icon.png", "meditator/sw.js", "sw.js", "robots.txt", "sitemap.xml",
 ];
 for (const path of samples) {
   assert.ok(path, "representative generated asset exists");
@@ -119,14 +103,9 @@ for (const path of samples) {
   else checkRevalidation(response, path);
 }
 
-// Features owns its API at features.games. The static site never answers for
-// it: on a workers.dev preview its old path is only the redirect above.
-if (preview || origin.hostname === "localhost") {
-  assert.equal((await request("/features/api/health")).status, 301, "preview must not proxy production sessions");
-}
 const health = await fetch("https://features.games/features/api/health", { signal: AbortSignal.timeout(15000) });
 assert.equal(health.status, 200, "production Features API remains available");
 assert.match(health.headers.get("cache-control") || "", /no-store/, "API responses must not enter the static cache");
 assert.equal((await health.json()).ok, true, "production Features API health");
 
-console.log(`hosting checks passed: ${pages.length} pages, ${samples.length} assets, real 404s, retired-page and features.games redirects, production API; ${files.length} uploaded files`);
+console.log(`hosting checks passed: homepage, ${samples.length} assets, ${retired.length} missing paths, canonical host and production game API; ${files.length} uploaded files`);

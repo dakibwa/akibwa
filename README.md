@@ -4,21 +4,15 @@ Public site for [akibwa.com](https://akibwa.com), exported statically with Next.
 
 From 16 November 2026 (Dan) akibwa.com is one page: a shelf of the records Dan plays most, in the Akibwa signature's style: his top 150 albums and the records his top 1,000 songs come from, merged, so a record loved for one song (King Krule's Hey World!) is there too. Every square in a row shares one size, taken from those records' hours between a floor (big enough to see) and a cap (none dominates), with one gap across and down. One bar at the top holds everything there is to know: the signature, the order (hours; the year each was played most; kind of music, from `public/music-kinds.json`; a to z) and a smart search (artists and the artists around them, genres and eras, from `public/music-meta.json`). A label at the foot of the screen names the record under the pointer or keyboard focus. Changing the order during a glide starts each visible cover from its current position. With reduced motion enabled, the shelf and sheets update immediately. An album opens its track list with plays and hours per song and links to Spotify and Apple Music (`public/music-ranking.json`, `public/music-links.json`). Long track lists scroll inside the sheet. The signature and browser icons use the same red flower in `public/favicon.svg`.
 
-The front page, the trek and career rooms, the mascot, the name change, the contact links, the night paper, the career and podcast data and their artwork were retired that day. Old `#trek` links go to the trek's own page, `#features` to https://features.games/, `#websites` to https://ohlifestudios.com/, and `#music` or `#career` to the shelf. Only `/` is advertised in the sitemap. Old pages (the album archive, the wall and the earlier project pages) were deleted; their links 301 to the homepage from `public/_redirects`. The game's old address, `akibwa.com/features`, was retired on 12 November 2026 and now 301s to the same path on features.games. The `public/features/` copy stays in this repository because it is what features.games serves.
-
-## The trek
-
-- `/trek/` is a `noindex` interactive relief of the original Paris-to-Sofia journey. It retains the exact dated route, daily distances, activity metrics, photo capture times and full photograph set. Journal excerpts are limited to neutral route observations: first-person reflection and personal, health, relationship, financial, accommodation and identifying third-party details are excluded. The walk now waits for its landscape: its pace never outruns the map tiles that have arrived.
+The shelf at `/` is the only public page and the only entry in the sitemap. On 17 November 2026 the standalone Trek, its photographs and journal, and the remaining links to old pages were removed. Former page addresses return 404. Opening a bookmark with a room name after `#` shows the shelf at the bare homepage address. The game in `public/features/` is published separately at features.games.
 
 ## Checks and publishing
 
-- `npm run build`: run the public-boundary and Trek privacy contracts, then export to `out/`.
+- `npm run build`: run the public-boundary and music checks, then export to `out/`.
 - `npm run check:navigation:dom`: exercise the rendered public boundary in Chrome.
 - `npm run check:worker`: check repeat-visit caching, background refreshes, offline failures and cache isolation from other apps.
 - `npm run publish:check`: verify registered public surfaces and exported routes.
 - `npm run publish:ready`: run the full publication gate.
-- `npm run trek:build`: rebuild the Trek from the exact route data and privacy-edited journal.
-- `npm run check:trek:dom`: exercise relief, playback, phone layouts and graphics failure paths. See [the Trek design and source contract](docs/trek-design.md).
 - `node scripts/build-music-ranking.mjs --history-root PRIVATE_HISTORY_DIRECTORY`: refresh the public song and artist ranking from the private history's prepared top 1,000.
 - The link-preview card, `public/share-card-music.jpg`, is the shelf's first screen captured at 1200×630 with headless Chrome once the sleeves have loaded. When the first screen changes, capture it again under a new filename so link previews drop their cached copy.
 

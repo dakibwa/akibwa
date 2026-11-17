@@ -21,14 +21,7 @@ leave the dashboard-managed domain and any zone routes untouched. Do not
 add domain routing to Wrangler or broaden the deployment token to manage DNS.
 GitHub Pages is retained as a manual fallback; it no longer publishes on push.
 
-The game's old address, `akibwa.com/features`, was retired on 12 November 2026.
-Features and its API live only at `features.games`. The `features-api` Worker's
-old `akibwa.com/features/api/*` route is removed from the Features repository's
-`worker/wrangler.toml`; Cloudflare treats a Worker Custom Domain as the origin,
-so while a route exists it runs before the static site, and once it is gone
-`/features/api/*` gets the same 301 as the rest of `/features/`. This site never
-serves or proxies the API: on the static preview `/features/api/*` is that
-redirect too. Hosting checks probe `https://features.games/features/api/health`.
+The game pages live at `features.games`. Their former addresses on akibwa.com return 404. The separate game's Worker also owns the legacy API route `akibwa.com/features/api/*` on the public domain. On the static preview that path returns 404. Hosting checks monitor the game's API at `https://features.games/features/api/health`.
 
 ## Build and deploy
 
@@ -43,50 +36,34 @@ npm run check:hosting -- https://akibwa.com
 
 The deployment command uploads the already-checked export once, updating both
 the public site and preview. It does not build a second copy or change domain
-routing. Publish the `out/` tree: standalone `/trek/`, generated artwork,
-listening data, fonts and the `/meditator/` service-worker retirement files are
+routing. Publish the `out/` tree: the music shelf, album artwork,
+listening data, fonts and the legacy `/meditator/sw.js` that unregisters old installations are
 part of it. `.assetsignore` excludes `CNAME` and `.nojekyll`, which remain in
 the export for the GitHub Pages fallback, and the game's `/features/` copy,
 which `features-site` deploys on its own (see below).
 
 `npm run check:hosting -- <origin>` checks exported HTML and representative asset
-bytes, security headers, the `features.games` and retired-page redirects, the
-`www` redirect, real 404s, caching, preview indexing and production API health
+bytes, security headers, retired page and asset 404s, the `www` redirect,
+caching, preview indexing and production API health
 at `features.games`. Keep a direct browser run-through of the affected pages
 alongside this check.
 
 ## Routing and response policy
 
-- Folder index pages keep trailing slashes. Explicit `index.html` links remain
-  usable through Cloudflare's canonical HTML redirect.
-- The game's old address redirects: `/features` and `/features/` 301 to
-  `https://features.games/`, and `/features/*` to the same path there
-  (`/features/legal.html` to `https://features.games/legal.html`). Workers
-  Static Assets keep the query string and apply `_redirects` before any file.
-  `/probe` and `/probe/*`, the game's name until 13 August 2026, 301 straight
-  to `https://features.games/`.
-- Missing paths serve the exported `404.html` with status 404. There is no
-  homepage fallback for missing or retired routes such as `/life-map/`.
-- Retired routes are deleted and redirect at the edge from `public/_redirects`:
-  `/albums`, `/projects`, `/personal`, `/about`, `/contact`, `/offer`,
-  `/professional`, `/systems`, `/work` and `/concept` (and everything beneath
-  them) 301 to `/`; `/portugal` 301s to `https://portuguesewithines.com/`. Static rules sit above splat rules. The
-  GitHub Pages fallback cannot apply `_redirects`, so those links 404 there.
+- The shelf at `/` is the only public page and the only sitemap entry. Old room fragments and query strings clear from the homepage address bar.
+- Missing and retired page paths, including the former Trek and game pages, serve the exported error page with HTTP status 404. The manual GitHub Pages fallback also excludes the game.
 - `public/_headers` preserves the six production security headers and existing
   public asset CORS behavior. Features' additional hardened meta CSP is left
   byte-for-byte intact.
 - The zone's active `security headers` response transform matches
   `(http.host eq "akibwa.com" and not (http.request.uri.path eq "/features/api" or starts_with(http.request.uri.path, "/features/api/")))`.
-  It dates from the retired `akibwa.com/features/api/*` route, whose responses
-  carried their own stricter headers; once that route is gone the exclusion
-  does nothing and Dan may remove it in the dashboard. This scope was verified
-  live on 8 September 2026, with all six homepage headers unchanged.
+  The separate game API supplies its own headers on that route.
 - Fingerprinted `/_next/static/*` files receive one-year immutable caching.
   HTML, artwork with stable filenames, JSON and service workers retain
   Cloudflare's default `public, max-age=0, must-revalidate` behavior.
 - The zone's configuration rule setting `disable_rum: true` for `/features` and
   `/features/*` kept analytics out of the game while it was served here. Those
-  paths only redirect now, so the rule does nothing and Dan may remove it.
+  old game pages now return 404.
   Avoid `Cache-Control: no-transform` as a beacon exclusion: it also disables
   compression. See the
   [configuration rule settings](https://developers.cloudflare.com/rules/configuration-rules/settings/#disable-real-user-monitoring-rum).

@@ -38,13 +38,16 @@ jobs:
         env:
           NEXT_TELEMETRY_DISABLED: 1
 
+      - name: Stage the Akibwa site for Pages
+        run: rsync -a --exclude='/features/' out/ "$RUNNER_TEMP/akibwa-pages/"
+
       - name: Configure Pages
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
         with:
-          path: ./out
+          path: ${{ runner.temp }}/akibwa-pages
 
   deploy:
     needs: build
