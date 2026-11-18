@@ -803,8 +803,11 @@ export function MusicRoom({ initial, active }) {
             window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
           }}
         >
-          <svg viewBox="-2.7 -2.8 5.4 5.15" aria-hidden="true" focusable="false">
-            <use href="/favicon.svg?v=flower#flower" />
+          {/* The illuminated A (Dan, 18 November 2026): his drawing's lettered
+              panel, traced, its column doubled into the A's legs and its
+              laurel slung between them, on his gold ground and red disc. */}
+          <svg viewBox="0 0 740 640" aria-hidden="true" focusable="false">
+            <use href="/favicon.svg?v=illuminated#mark" />
           </svg>
           Akibwa
         </a>

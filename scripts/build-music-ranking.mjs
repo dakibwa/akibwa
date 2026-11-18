@@ -259,7 +259,10 @@ const toRecord = ({ release, tracks }) => {
   record.uris = new Set(record.songs.flatMap((song) => song.uris));
   return record;
 };
-const shelf = [...homes.values()].map(toRecord).sort((a, b) => b.ms - a.ms).slice(0, SHELF_SIZE);
+// Records Dan asked to keep off the shelf (data/music-hidden.json).
+const hidden = new Set(JSON.parse(readFileSync(new URL("../data/music-hidden.json", import.meta.url), "utf8")).records.map((record) => `${fold(record.artist)}|${fold(record.title)}`));
+const isHidden = (record) => hidden.has(`${fold(record.artist)}|${fold(record.title)}`) || hidden.has(record.release.key);
+const shelf = [...homes.values()].map(toRecord).filter((record) => !isHidden(record)).sort((a, b) => b.ms - a.ms).slice(0, SHELF_SIZE);
 // The top 150 albums by the catalogue's reconciled plays (Dan asked for half
 // as many again as 100 on 25 September 2026) keep their checked covers and
 // links; the rest of the shelf's albums follow, then its singles.

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "note": "Records Dan asked to keep off the shelf; the next record by hours takes each one's place. Matched by artist and title as scripts/build-music-ranking.mjs folds them.",
+  "records": [
+    { "artist": "The Maccabees", "title": "Given To The Wild", "asked": "2026-11-18" }
+  ]
+}

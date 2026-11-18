@@ -272,19 +272,19 @@ html.ready .music-sign svg {
   outline-offset: 2px;
 }
 
-/* The flower stands a little taller than the words, and sways on its stem
-   under the pointer, settling back. */
+/* The illuminated A stands a little taller than the words, and tilts on
+   its corner under the pointer, settling back. */
 .music-sign svg {
   flex: none;
-  width: 1.45em;
-  height: 1.4em;
-  transform-origin: 50% 96%;
+  width: 2.6em;
+  height: 2.25em;
+  transform-origin: 50% 60%;
   transition: rotate 600ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .music-sign:hover svg,
 .music-sign:focus-visible svg {
-  rotate: -14deg;
+  rotate: -6deg;
 }
 
 /* What is under the pointer, in a small card that follows it (Dan, 18

@@ -112,6 +112,9 @@ requireText(css, ".music-track-list li:hover {\n  background: color-mix(in srgb,
   if (new Set(placedSongs).size !== placedSongs.length || placedSongs.length !== songs.filter((song) => song.art).length) fail("every top song on the shelf must belong to exactly one record");
   if (placedSongs.length < 900) fail("nearly all the top songs must be on the shelf's records");
   if (records.length !== 1000) fail(`the shelf must hold the top 1,000 records [${records.length}]`);
+  // Records Dan asked to keep off the shelf stay off it.
+  const hiddenRecords = JSON.parse(read("data/music-hidden.json")).records;
+  for (const gone of hiddenRecords) if (records.some((record) => record.artist === gone.artist && record.title === gone.title)) fail(`${gone.artist}'s ${gone.title} must stay off the shelf`);
   if (!singles.length || singles.some((single) => single.tracks.length !== 1)) fail("the singles must each be one song");
   const loss = records.find((record) => record.artist === "MGMT" && record.tracks.some((track) => track.title === "Bubblegum Dog"));
   if (loss?.title !== "Loss of Life") fail("a single must fold into the album it is on, as Bubblegum Dog into Loss of Life");
