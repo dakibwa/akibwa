@@ -3429,6 +3429,236 @@
           "wall.webp": "456c9897eb761f6a"
         }
       }
+    },
+    {
+      "id": "history-d9e620b607e392c3",
+      "artist": "King Crimson",
+      "album": "Absent Lovers (Live in Montreal, 1984)",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/waiting-man-live-at-the-spectrum-montreal-jul-84/1435061174",
+        "artist": "King Crimson",
+        "album": "Absent Lovers (Live at the Spectrum: Montreal Jul, 1984)",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/33/bb/4e/33bb4e88-b703-fd66-0dff-51dfd4d900f7/Absent_Lovers_2500px.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "The same live release under its fuller title.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/33/bb/4e/33bb4e88-b703-fd66-0dff-51dfd4d900f7/Absent_Lovers_2500px.jpg/760x760bb.jpg",
+        "sourceHash": "9133ae7b53d2606e",
+        "files": {
+          "wall.avif": "7a0a87a2c46b4f2f",
+          "wall.webp": "6d4c324433a96337"
+        }
+      }
+    },
+    {
+      "id": "history-cb1c83a47e307a95",
+      "artist": "Kim Jung Mi",
+      "album": "Beautiful Rivers and Mountains: The Psychedelic Rock Sound of South Korea's Shin Joong Hyun 1958-1974",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/beautiful-rivers-and-mountains-the-psychedelic-rock/1790505348",
+        "artist": "Shin Joong Hyun",
+        "album": "Beautiful Rivers and Mountains: The Psychedelic Rock Sound of South Korea's Shin Joong Hyun 1958-1974",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ac/9b/03/ac9b03b3-1b49-3f3c-f15f-b7aa2a9de98f/54.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "The same compilation; Apple credits Shin Joong Hyun, whose songs it collects.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ac/9b/03/ac9b03b3-1b49-3f3c-f15f-b7aa2a9de98f/54.jpg/760x760bb.jpg",
+        "sourceHash": "c54496c4df99f6b0",
+        "files": {
+          "wall.avif": "81205939eaf8adb1",
+          "wall.webp": "151d929332c18873"
+        }
+      }
+    },
+    {
+      "id": "history-9719a50a406aa823",
+      "artist": "Run The Jewels",
+      "album": "DELETED Run The Jewels",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/run-the-jewels/1863305829",
+        "artist": "Run The Jewels",
+        "album": "Run The Jewels",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/7b/44/c2/7b44c2aa-12c4-4617-9fec-8942664e640f/198704918407_Cover.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "The self-titled Run The Jewels; the catalogue name carries a deleted edition label.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/7b/44/c2/7b44c2aa-12c4-4617-9fec-8942664e640f/198704918407_Cover.jpg/760x760bb.jpg",
+        "sourceHash": "59a413b487c59e94",
+        "files": {
+          "wall.avif": "aca891611241575c",
+          "wall.webp": "e6593139d0786cc8"
+        }
+      }
+    },
+    {
+      "id": "history-fc2dabead1c781c8",
+      "artist": "Art Garfunkel",
+      "album": "Breakaway",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/waters-of-march/197976353",
+        "artist": "A.Garfunkel",
+        "album": "Breakaway",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music/b7/fd/d7/mzi.aoaevlbr.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "The same album; Apple credits A.Garfunkel.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music/b7/fd/d7/mzi.aoaevlbr.jpg/760x760bb.jpg",
+        "sourceHash": "8bd0b37eeacd752f",
+        "files": {
+          "wall.avif": "510d9d937c3ba966",
+          "wall.webp": "3d48062b27aa9ea5"
+        }
+      }
+    },
+    {
+      "id": "history-5c30b1533c3a9180",
+      "artist": "John Wasson",
+      "album": "Whiplash",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/caravan/1572720372",
+        "artist": "Justin Hurwitz",
+        "album": "Whiplash (Original Motion Picture Soundtrack)",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/70/8e/1a/708e1a89-114a-de74-3e9f-5f785e7888ff/whiplash_3000.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "The Whiplash soundtrack, which John Wasson's Caravan is on; Apple credits Justin Hurwitz.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/70/8e/1a/708e1a89-114a-de74-3e9f-5f785e7888ff/whiplash_3000.jpg/760x760bb.jpg",
+        "sourceHash": "32c14f42806e51e7",
+        "files": {
+          "wall.avif": "b32e5c91c0f48306",
+          "wall.webp": "bea3ddae525e2db0"
+        }
+      }
+    },
+    {
+      "id": "history-86ec3e03217dc6be",
+      "artist": "セキトオ・シゲオ",
+      "album": "華麗なるエレクトーン -ザ・ワード-",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/the-word-2/1463527027",
+        "artist": "Shigeo Sekito",
+        "album": "Special Sound Series, Vol. 2: The Word",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/36/5a/7c/365a7c04-7f34-6482-6bba-46d6027d5984/COKM-42347.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "The same record under its English title, Special Sound Series Vol. 2: The Word.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/36/5a/7c/365a7c04-7f34-6482-6bba-46d6027d5984/COKM-42347.jpg/760x760bb.jpg",
+        "sourceHash": "cda1eccf99519022",
+        "files": {
+          "wall.avif": "2c44e0a4ad6f1aa5",
+          "wall.webp": "a8940b5ba88c258e"
+        }
+      }
+    },
+    {
+      "id": "history-10f8c0cec9297f13",
+      "artist": "金延幸子",
+      "album": "み空",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/%E3%81%BF%E7%A9%BA/1674482553",
+        "artist": "Sachiko Kanenobu",
+        "album": "み空",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/e8/fe/07/e8fe07b0-fc51-3bb0-6c79-cb52a6211224/4547366604757.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "The same album; Apple credits Sachiko Kanenobu, the romanised name.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/e8/fe/07/e8fe07b0-fc51-3bb0-6c79-cb52a6211224/4547366604757.jpg/760x760bb.jpg",
+        "sourceHash": "87a39fb1e061ce71",
+        "files": {
+          "wall.avif": "25fe125927a99436",
+          "wall.webp": "5c79599eb460a25d"
+        }
+      }
+    },
+    {
+      "id": "history-eabf33a9a7f1576a",
+      "artist": "Animal Collective",
+      "album": "Spirit They've Gone, Spirit They've Vanished",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/alvin-row/1484066093",
+        "artist": "Animal Collective",
+        "album": "Spirit They’re Gone, Spirit They’ve Vanished",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/89/39/5c/89395c46-c64d-7b8e-1942-ed9e74dd6dc1/194606000264.png/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "The same album; its first word is They're on Apple Music.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/89/39/5c/89395c46-c64d-7b8e-1942-ed9e74dd6dc1/194606000264.png/760x760bb.jpg",
+        "sourceHash": "77f2764f2d8afb7c",
+        "files": {
+          "wall.avif": "589c1ef63eaaca9b",
+          "wall.webp": "38d5252f690f111d"
+        }
+      }
+    },
+    {
+      "id": "history-f192d06f1d075585",
+      "artist": "Elvis Presley",
+      "album": "The Wonder of You: Elvis Presley with the Royal Philharmonic Orchestra",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/i-just-cant-help-believin/1150569438",
+        "artist": "Elvis Presley & Royal Philharmonic Orchestra",
+        "album": "The Wonder of You: Elvis with the Royal Philharmonic Orchestra",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music71/v4/19/7f/97/197f97cf-65fc-1041-93bd-8e1ee7ccd236/886446093550.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "The same album, credited to Elvis Presley and the Royal Philharmonic Orchestra.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music71/v4/19/7f/97/197f97cf-65fc-1041-93bd-8e1ee7ccd236/886446093550.jpg/760x760bb.jpg",
+        "sourceHash": "3c3f79c6b73ee626",
+        "files": {
+          "wall.avif": "d67427cb6d5a7418",
+          "wall.webp": "b379177bdaec944c"
+        }
+      }
+    },
+    {
+      "id": "history-2e9c06ba0584775a",
+      "artist": "Travis Scott",
+      "album": "Watch (feat. Lil Uzi Vert & Kanye West)",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/us/album/watch-feat-lil-uzi-vert-kanye-west/1378730785",
+        "artist": "Travis Scott",
+        "album": "Watch (feat. Lil Uzi Vert & Kanye West) - Single",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/a5/0e/2f/a50e2fe3-38bd-937b-c973-62b7bd392a99/886447093795.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-16",
+      "verification": "Artist and release title match the public catalogue, allowing punctuation, case and edition labels.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/a5/0e/2f/a50e2fe3-38bd-937b-c973-62b7bd392a99/886447093795.jpg/760x760bb.jpg",
+        "sourceHash": "8acba166a3c174e5",
+        "files": {
+          "wall.avif": "e035d9fefafb87e9",
+          "wall.webp": "8441f8bec04f99ec"
+        }
+      }
     }
   ]
 }

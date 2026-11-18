@@ -39,7 +39,9 @@ const fold = (text) =>
     .replace(/\s*[([].*?(remaster|deluxe|edition|version|anniversary|expanded|soundtrack).*?[)\]]/g, "")
     .replace(/\s+-\s+.*?(remaster|deluxe|edition|version).*$/g, "")
     .replace(/&/g, "and")
-    .replace(/[^a-z0-9]+/g, " ")
+    // Letters of every script, so two Japanese or Russian titles never fold
+    // to the same empty name.
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
     .trim();
 
 // Joint albums ("Panda Bear & Sonic Boom") match tracks credited to either.
