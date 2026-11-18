@@ -306,7 +306,7 @@ html.ready .music-sign svg {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: baseline;
   gap: 2px 16px;
-  max-width: min(340px, calc(100vw - 16px));
+  max-width: min(380px, calc(100vw - 16px));
   padding: 7px 11px 8px;
   overflow: hidden;
   border: 1px solid var(--ink);
@@ -338,10 +338,11 @@ html.ready .music-sign svg {
   text-transform: lowercase;
 }
 
+/* Who and when, a little faded under the title (Dan, 18 November 2026). */
 .music-now span {
   grid-column: 1 / -1;
   overflow: hidden;
-  color: var(--ink-soft);
+  color: color-mix(in srgb, var(--ink-soft) 80%, var(--paper-light));
   font-size: 11px;
   text-overflow: ellipsis;
 }
