@@ -239,7 +239,7 @@ html.js .music-bar {
   transition: opacity 360ms ease;
 }
 
-html.ready .music-sign svg {
+html.ready .music-mark {
   animation: mark-arrives 800ms cubic-bezier(0.34, 1.4, 0.64, 1) 80ms both;
 }
 
@@ -272,18 +272,20 @@ html.ready .music-sign svg {
   outline-offset: 2px;
 }
 
-/* The illuminated A stands a little taller than the words, and tilts on
-   its corner under the pointer, settling back. */
-.music-sign svg {
+/* The logo, Dan's little character, top left: it tilts under the pointer
+   and settles back. */
+.music-mark {
+  display: block;
   flex: none;
-  width: 2.6em;
-  height: 2.25em;
-  transform-origin: 50% 60%;
+  width: auto;
+  height: 40px;
+  transform-origin: 50% 70%;
   transition: rotate 600ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  -webkit-user-drag: none;
 }
 
-.music-sign:hover svg,
-.music-sign:focus-visible svg {
+.music-sign:hover .music-mark,
+.music-sign:focus-visible .music-mark {
   rotate: -6deg;
 }
 
@@ -528,6 +530,10 @@ html.ready .music-sign svg {
   .music-bar {
     flex-wrap: nowrap;
     column-gap: 10px;
+  }
+
+  .music-mark {
+    height: 36px;
   }
 
   /* A smaller signature, and the orders spread evenly over the rest of

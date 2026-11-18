@@ -803,13 +803,10 @@ export function MusicRoom({ initial, active }) {
             window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
           }}
         >
-          {/* The illuminated A (Dan, 18 November 2026): his drawing's lettered
-              panel, traced, its column doubled into the A's legs and its
-              laurel slung between them, on his gold ground and red disc. */}
-          <svg viewBox="0 0 740 640" aria-hidden="true" focusable="false">
-            <use href="/favicon.svg?v=illuminated#mark" />
-          </svg>
-          Akibwa
+          {/* The logo is Dan's drawing of himself, traced (Dan, 18 November
+              2026: "the little character should be the logo"), its lettered
+              panel carrying an A; no wordmark beside it. */}
+          <img className="music-mark" src="/akibwa-mark.svg?v=portrait" alt="" width="34" height="40" draggable="false" />
         </a>
         <Now say={say} order={shown} years={years} kinds={kinds} meta={meta} />
         <div className="music-tools" data-finding={finding || Boolean(query)}>
