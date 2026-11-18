@@ -9467,6 +9467,595 @@
           "wall.webp": "1a7ed029159f142f"
         }
       }
+    },
+    {
+      "id": "single-834179d92030ae85",
+      "kind": "single",
+      "artist": "Brian Eno",
+      "song": "Lilac",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/lilac-single/1660418803",
+        "artist": "Eno • Hyde",
+        "album": "Lilac - Single",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/db/be/94/dbbe94ef-8b3a-57ca-e2c6-b9469c4ba23a/22UM1IM39081.rgb.jpg/760x760bb.jpg",
+        "releaseYear": 2014
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Apple's one-track Lilac single by Eno • Hyde has the same 9:24 recording, but its cover is identical to the High Life album cover.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/db/be/94/dbbe94ef-8b3a-57ca-e2c6-b9469c4ba23a/22UM1IM39081.rgb.jpg/760x760bb.jpg",
+        "sourceHash": "819b4f97a539290d",
+        "files": {
+          "wall.avif": "a58fcf9073bf098b",
+          "wall.webp": "c4b5fb1421d9f38e"
+        }
+      }
+    },
+    {
+      "id": "single-ac4d6e5fff148d81",
+      "kind": "single",
+      "artist": "Oliver",
+      "song": "Good Morning Starshine (Rerecorded)",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/good-morning-starshine-jean-rerecorded-version-single/1669069012",
+        "artist": "Oliver",
+        "album": "Good Morning Starshine / Jean (Rerecorded Version) - Single",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/4f/be/1e/4fbe1e11-40e1-352b-9e90-df997d5302a7/693532225432_Cover.jpg/760x760bb.jpg",
+        "releaseYear": 1969
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Apple's Good Morning Starshine / Jean single by Oliver has the same rerecorded Good Morning Starshine as track 1, and its cover shows Oliver with both titles.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/4f/be/1e/4fbe1e11-40e1-352b-9e90-df997d5302a7/693532225432_Cover.jpg/760x760bb.jpg",
+        "sourceHash": "47677ebabe5a6917",
+        "files": {
+          "wall.avif": "d2ff1dea6f353f69",
+          "wall.webp": "5eb279a858fef23d"
+        }
+      }
+    },
+    {
+      "id": "single-839b7ee759501bb7",
+      "kind": "single",
+      "artist": "Braxe + Falcon",
+      "song": "Step By Step",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/step-by-step-creative-source-single/1613618344",
+        "artist": "Braxe + Falcon, Alan Braxe & DJ Falcon",
+        "album": "Step by Step / Creative Source - Single",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/0b/2e/38/0b2e38b4-60c7-23f4-f52c-4f0d83f51d21/192152050160.png/760x760bb.jpg",
+        "releaseYear": 2022
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Apple's 2022 double A-side single by Braxe + Falcon opens with Step by Step (feat. Panda Bear) and is the release Dan played; its label-style cover names both songs.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/0b/2e/38/0b2e38b4-60c7-23f4-f52c-4f0d83f51d21/192152050160.png/760x760bb.jpg",
+        "sourceHash": "acafad94d713aba6",
+        "files": {
+          "wall.avif": "b518fdf784694981",
+          "wall.webp": "b07134ced60089c2"
+        }
+      }
+    },
+    {
+      "id": "single-dbfbc58e65444481",
+      "kind": "single",
+      "artist": "Travis Scott",
+      "song": "Watch (feat. Lil Uzi Vert & Kanye West)",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/us/album/watch-feat-lil-uzi-vert-kanye-west-single/1378730785",
+        "artist": "Travis Scott",
+        "album": "Watch (feat. Lil Uzi Vert & Kanye West) - Single",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/a5/0e/2f/a50e2fe3-38bd-937b-c973-62b7bd392a99/886447093795.jpg/760x760bb.jpg",
+        "releaseYear": 2018
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Apple's one-track Watch single by Travis Scott (US store) is the same song, and its cover shows the WATCH title over a skull.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/a5/0e/2f/a50e2fe3-38bd-937b-c973-62b7bd392a99/886447093795.jpg/760x760bb.jpg",
+        "sourceHash": "8acba166a3c174e5",
+        "files": {
+          "wall.avif": "e035d9fefafb87e9",
+          "wall.webp": "8441f8bec04f99ec"
+        }
+      }
+    },
+    {
+      "id": "single-03b394c95f32138e",
+      "kind": "single",
+      "artist": "Cass McCombs",
+      "song": "That's That",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/thats-that-single/271272130",
+        "artist": "Cass McCombs",
+        "album": "That's That - Single",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music/1f/98/62/mzi.geiwhrcu.tif/760x760bb.jpg",
+        "releaseYear": 2008
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Apple's That's That single by Cass McCombs opens with That's That, and its painted cover carries his name and the title.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music/1f/98/62/mzi.geiwhrcu.tif/760x760bb.jpg",
+        "sourceHash": "b5071e1177597f58",
+        "files": {
+          "wall.avif": "cdde142dcb7884e5",
+          "wall.webp": "6295de72e9d91503"
+        }
+      }
+    },
+    {
+      "id": "single-18b1a36971011d28",
+      "kind": "single",
+      "artist": "Orbital",
+      "song": "Belfast",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/belfast/1741006723",
+        "artist": "Orbital",
+        "album": "Belfast",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/fd/7c/3d/fd7c3d33-ee8d-6639-61e8-97522993c8c0/5061017251866.jpg/760x760bb.jpg",
+        "releaseYear": 1991
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Apple's six-track Belfast release by Orbital opens with the original Belfast (2024 remaster) but is not labelled a single; its black sleeve reads Orbital 'Belfast'.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/fd/7c/3d/fd7c3d33-ee8d-6639-61e8-97522993c8c0/5061017251866.jpg/760x760bb.jpg",
+        "sourceHash": "05bd79b8f9711cfa",
+        "files": {
+          "wall.avif": "8a37fd6f024d38e7",
+          "wall.webp": "69abad0948da9e93"
+        }
+      }
+    },
+    {
+      "id": "single-66564691362d1517",
+      "kind": "single",
+      "artist": "King Krule",
+      "song": "Rock Bottom",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/rock-bottom-octopus-single/1871166095",
+        "artist": "King Krule",
+        "album": "Rock Bottom / Octopus - Single",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/bc/49/81/bc4981a7-acc4-9278-5cfd-bce38d57838d/191404163658.png/760x760bb.jpg",
+        "releaseYear": 2013
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Apple's Rock Bottom / Octopus single by King Krule opens with the studio Rock Bottom (Dan played the live version), and its cover reads King Krule Rock Bottom.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/bc/49/81/bc4981a7-acc4-9278-5cfd-bce38d57838d/191404163658.png/760x760bb.jpg",
+        "sourceHash": "6f179cb86e654b69",
+        "files": {
+          "wall.avif": "835c9e4c29a027a1",
+          "wall.webp": "051037eb2879a4f5"
+        }
+      }
+    },
+    {
+      "id": "single-8c02327abf0390c2",
+      "kind": "single",
+      "artist": "Jenny Hval",
+      "song": "Spells",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/the-long-sleep-ep/1365760364",
+        "artist": "Jenny Hval",
+        "album": "The Long Sleep - EP",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/0c/97/b7/0c97b7e6-653b-a076-d3bb-f1d97f26d111/616892574248.jpg/760x760bb.jpg",
+        "releaseYear": 2018
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Apple has no Spells single, but Jenny Hval's EP The Long Sleep opens with Spells, the song that led it; its cover reads The Long Sleep.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/0c/97/b7/0c97b7e6-653b-a076-d3bb-f1d97f26d111/616892574248.jpg/760x760bb.jpg",
+        "sourceHash": "e0526d8a1f62408d",
+        "files": {
+          "wall.avif": "d7d4bc0c76acc40b",
+          "wall.webp": "82d8291cca9d14eb"
+        }
+      }
+    },
+    {
+      "id": "single-23bfa828c1d26e31",
+      "kind": "single",
+      "artist": "Vera",
+      "song": "Take Me to the Bridge",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/take-me-to-the-bridge-jumpin-get-hot-hit-the-spot-single/1452000971",
+        "artist": "Vera",
+        "album": "Take Me to the Bridge / Jumpin' (Get Hot, Hit the Spot) - Single",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/41/39/7d/41397dca-c1cd-fe76-1f36-516e875d556b/2226.jpg/760x760bb.jpg",
+        "releaseYear": 1980
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Apple's Take Me to the Bridge / Jumpin' single by Vera is the release Dan played, with Take Me to the Bridge as track 1, and its cover is the Unidisc label.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/41/39/7d/41397dca-c1cd-fe76-1f36-516e875d556b/2226.jpg/760x760bb.jpg",
+        "sourceHash": "22f15485f6e2cb75",
+        "files": {
+          "wall.avif": "fff21671ecb1c8c7",
+          "wall.webp": "fe5975fb9df8e7d3"
+        }
+      }
+    },
+    {
+      "id": "single-e76c70e6e065ffa6",
+      "kind": "single",
+      "artist": "Laurie Anderson",
+      "song": "O Superman",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/o-superman-single/255970905",
+        "artist": "Laurie Anderson",
+        "album": "O Superman - Single",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music/9b/7c/d5/mzi.rlwxzqhx.jpg/760x760bb.jpg",
+        "releaseYear": 2007
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Apple's O Superman single by Laurie Anderson (with Walk the Dog) has the same song, and its cover reads O Superman, Laurie Anderson.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music/9b/7c/d5/mzi.rlwxzqhx.jpg/760x760bb.jpg",
+        "sourceHash": "e5df3a5aac2be90e",
+        "files": {
+          "wall.avif": "c996c051b684a818",
+          "wall.webp": "cf03979d4f36be21"
+        }
+      }
+    },
+    {
+      "id": "single-4c9b52cd87c1ab31",
+      "kind": "single",
+      "artist": "Kieran Hebden",
+      "song": "If I Had a Boat",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/if-i-had-a-boat-ep/1811489589",
+        "artist": "Kieran Hebden & William Tyler",
+        "album": "If I Had a Boat - EP",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/80/04/1a/80041a6b-b67d-2828-da10-81dde2dd47e5/25SYMIM19313.rgb.jpg/760x760bb.jpg",
+        "releaseYear": 2025
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Apple's one-track If I Had a Boat release by Kieran Hebden & William Tyler is the song itself, and its cover is a photo of the two.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/80/04/1a/80041a6b-b67d-2828-da10-81dde2dd47e5/25SYMIM19313.rgb.jpg/760x760bb.jpg",
+        "sourceHash": "94dcdcb5fb4c9d12",
+        "files": {
+          "wall.avif": "a45661340beaba96",
+          "wall.webp": "b12d81b2898979b8"
+        }
+      }
+    },
+    {
+      "id": "single-7e8ed71e99b32d30",
+      "kind": "single",
+      "artist": "Suicide",
+      "song": "Dream Baby Dream",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/dream-baby-dream-single/1608862984",
+        "artist": "Suicide",
+        "album": "Dream Baby Dream - Single",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/43/9d/c2/439dc2a3-d2e5-29d2-10bb-6f3a090b3b3c/4050538785432.jpg/760x760bb.jpg",
+        "releaseYear": 2019
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Apple's Dream Baby Dream single by Suicide holds the short and long versions with Radiation, and its cover carries the Suicide logo.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/43/9d/c2/439dc2a3-d2e5-29d2-10bb-6f3a090b3b3c/4050538785432.jpg/760x760bb.jpg",
+        "sourceHash": "627810667df7119f",
+        "files": {
+          "wall.avif": "44fdde0c37bdbb85",
+          "wall.webp": "386378bb927b0db6"
+        }
+      }
+    },
+    {
+      "id": "single-01a9bd0ffdeb1793",
+      "kind": "single",
+      "artist": "Shina Williams & His African Percussionists",
+      "song": "Agb'oju L'ogun - Original 12\" Version",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/agboju-logun-mr-bongo-7-edit-single/1407715703",
+        "artist": "Shina Williams & His African Percussionists",
+        "album": "Agboju Logun (Mr Bongo 7\" Edit) - Single",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/96/85/83/96858321-27d4-9ba2-a82b-82bd24398608/cover.jpg/760x760bb.jpg",
+        "releaseYear": 2018
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Apple's only single of the original recording is the Mr Bongo 7-inch edit of Agboju Logun by Shina Williams & His African Percussionists, and its cover names that edit.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/96/85/83/96858321-27d4-9ba2-a82b-82bd24398608/cover.jpg/760x760bb.jpg",
+        "sourceHash": "87863e6f1aa81c04",
+        "files": {
+          "wall.avif": "dd95796216a14846",
+          "wall.webp": "a174ac0de60d1426"
+        }
+      }
+    },
+    {
+      "id": "single-7e278eb243064a93",
+      "kind": "single",
+      "artist": "Death Grips",
+      "song": "Steroids (Crouching Tiger Hidden Gabber)",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/steroids-crouching-tiger-hidden-gabber-ep/1240655400",
+        "artist": "Death Grips",
+        "album": "Steroids (Crouching Tiger Hidden Gabber) - EP",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music117/v4/b6/66/fa/b666fa56-c175-7bc4-9f55-79a6ec624c15/859721186018_cover.jpg/760x760bb.jpg",
+        "releaseYear": 2017
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Apple's one-track Steroids (Crouching Tiger Hidden Gabber) EP by Death Grips is the song itself (Apple's search missed it; its release list has it), and its cover was checked by eye.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music117/v4/b6/66/fa/b666fa56-c175-7bc4-9f55-79a6ec624c15/859721186018_cover.jpg/760x760bb.jpg",
+        "sourceHash": "99485460691424f5",
+        "files": {
+          "wall.avif": "47f1588eaaf57db1",
+          "wall.webp": "e62b5f74fda69408"
+        }
+      }
+    },
+    {
+      "id": "single-b84cf4c985ffd225",
+      "kind": "single",
+      "artist": "Floating Points",
+      "song": "Ratio - Full Mix",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/ratio-ep/1438633140",
+        "artist": "Floating Points",
+        "album": "Ratio - EP",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/0d/ea/58/0dea58f2-9ed6-94d5-a67d-dc7fced5367f/5053760044888.png/760x760bb.jpg",
+        "releaseYear": 2017
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Apple's Ratio EP by Floating Points holds the Full Mix and the Edit, and its cover is the blue light loops.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/0d/ea/58/0dea58f2-9ed6-94d5-a67d-dc7fced5367f/5053760044888.png/760x760bb.jpg",
+        "sourceHash": "6f0d0cc89fa49dba",
+        "files": {
+          "wall.avif": "0d9a8252a609f823",
+          "wall.webp": "a7a316b73e27e95d"
+        }
+      }
+    },
+    {
+      "id": "single-229b89136b5c66cd",
+      "kind": "single",
+      "artist": "Brian Eno",
+      "song": "Reflection",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/reflection-excerpt-single/1660419470",
+        "artist": "Brian Eno",
+        "album": "Reflection (Excerpt) - Single",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/15/2d/58/152d58a0-c643-b81e-6e1c-05e1b7434587/22UM1IM39048.rgb.jpg/760x760bb.jpg",
+        "releaseYear": 2017
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Apple's Reflection (Excerpt) single by Brian Eno is a shorter cut of the same piece, and its dark portrait cover was checked by eye.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/15/2d/58/152d58a0-c643-b81e-6e1c-05e1b7434587/22UM1IM39048.rgb.jpg/760x760bb.jpg",
+        "sourceHash": "06f7986dd3df0d16",
+        "files": {
+          "wall.avif": "eae25d0be9305a3c",
+          "wall.webp": "caad55a7e13b323b"
+        }
+      }
+    },
+    {
+      "id": "history-d86c834528e215cd",
+      "artist": "Q Lazzarus",
+      "album": "Goodbye Horses",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/43051511",
+        "artist": "Q Lazzarus",
+        "album": "Goodbye Horses - Single",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/fa12a619cf19fff39a267aa047857ebb/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "The song's own single on Deezer.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/fa12a619cf19fff39a267aa047857ebb/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "20545af1e235fab8",
+        "files": {
+          "wall.avif": "305722d3e2a1c048",
+          "wall.webp": "28c5d27ba70ba9c6"
+        }
+      }
+    },
+    {
+      "id": "history-4d6849d687381239",
+      "artist": "Avey Tare",
+      "album": "7s",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/382150047",
+        "artist": "Avey Tare",
+        "album": "7s",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/24bd6708246ded10e53ed33ab4179a75/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Avey Tare's 2020 album 7s on Deezer.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/24bd6708246ded10e53ed33ab4179a75/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "b6473bcadde0d158",
+        "files": {
+          "wall.avif": "8c3dc825980379f5",
+          "wall.webp": "ff002a744e99da69"
+        }
+      }
+    },
+    {
+      "id": "history-12c3ac21c0c8ade9",
+      "artist": "Kiasmos",
+      "album": "Sailed",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/571274811",
+        "artist": "Kiasmos",
+        "album": "II",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/437446482e5eeafad546ede6e6c84cf7/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "The single has been withdrawn; Sailed is on Kiasmos's album II, whose cover this is.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/437446482e5eeafad546ede6e6c84cf7/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "e986910471f9915a",
+        "files": {
+          "wall.avif": "3bfff4e8593b97c7",
+          "wall.webp": "c13ee7c1d241e37b"
+        }
+      }
+    },
+    {
+      "id": "single-6cdb8657f0ceead2",
+      "kind": "single",
+      "artist": "Ekkehard Ehlers",
+      "song": "Plays John Cassavetes 2",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/346781477",
+        "artist": "Ekkehard Ehlers",
+        "album": "Plays",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/485512456f6e67575dd58c65e480ccea/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Plays John Cassavetes 2 is on Ehlers's album Plays, whose cover this is.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/485512456f6e67575dd58c65e480ccea/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "73cf0709d23fbbb9",
+        "files": {
+          "wall.avif": "65799ad946f79b5d",
+          "wall.webp": "269d9fd8b7e9b362"
+        }
+      }
+    },
+    {
+      "id": "single-404f64e6da391bce",
+      "kind": "single",
+      "artist": "Beat Happening",
+      "song": "Godsend",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/365290147",
+        "artist": "Beat Happening",
+        "album": "You Turn Me On",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/1fc502b076ebfae11c7e2182d935ebc2/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Godsend is on Beat Happening's You Turn Me On, whose cover this is.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/1fc502b076ebfae11c7e2182d935ebc2/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "e29ce4055e82743f",
+        "files": {
+          "wall.avif": "4248f793df186a64",
+          "wall.webp": "e6dcd64cfc55543f"
+        }
+      }
+    },
+    {
+      "id": "single-fddf5573a4536614",
+      "kind": "single",
+      "artist": "M83",
+      "song": "Lower Your Eyelids To Die With the Sun",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/64512752",
+        "artist": "M83",
+        "album": "Before the Dawn Heals Us",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/d96131afc062c4703d9a349ee70ace0c/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "The song is on M83's Before the Dawn Heals Us, whose cover this is.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/d96131afc062c4703d9a349ee70ace0c/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "d58dbd037c34a0da",
+        "files": {
+          "wall.avif": "bcc701958f96c72f",
+          "wall.webp": "839d9c15c18d1f59"
+        }
+      }
+    },
+    {
+      "id": "single-436ac7035ebaa09e",
+      "kind": "single",
+      "artist": "Q-Tip",
+      "song": "ManWomanBoogie",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/251656",
+        "artist": "Q-Tip",
+        "album": "The Renaissance",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/e6d5b7d75349318a2368fdb6bc9c865c/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "ManWomanBoogie is on Q-Tip's The Renaissance, whose cover this is.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/e6d5b7d75349318a2368fdb6bc9c865c/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "c916a8962cb1f800",
+        "files": {
+          "wall.avif": "34ffc4f41d937a28",
+          "wall.webp": "56231c116d171167"
+        }
+      }
+    },
+    {
+      "id": "single-5470eea1bffbc2a3",
+      "kind": "single",
+      "artist": "Harmonia",
+      "song": "Deluxe (Immer weiter)",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/11000688",
+        "artist": "Harmonia",
+        "album": "Deluxe",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/b9d65a8647fbf9608f2dac2d711f6abe/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "The title track of Harmonia's Deluxe, whose cover this is.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/b9d65a8647fbf9608f2dac2d711f6abe/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "7449bddea35a872d",
+        "files": {
+          "wall.avif": "d4c9c5008ef0c828",
+          "wall.webp": "dfb6e69da8f5f8f2"
+        }
+      }
     }
   ]
 }

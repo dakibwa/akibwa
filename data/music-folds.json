@@ -1,5 +1,196 @@
 {
   "schemaVersion": 1,
-  "note": "Singles and EPs whose songs Apple Music lists on one of the artist's albums Dan played, so the shelf counts them on that album (Dan, 18 November 2026). Built from scripts/build-music-ranking.mjs's checks; ids are public catalogue ids.",
-  "folds": []
+  "note": "Singles and EPs whose songs Apple Music lists on one of the artist's albums Dan played, so the shelf counts them on that album (Dan, 18 November 2026). Each was checked against the album's Apple track list; ids are public catalogue ids.",
+  "folds": [
+    {
+      "singleId": "history-eea1032cbfd6db0b",
+      "release": "Skepta .. Fred",
+      "artist": "Fred again..",
+      "songs": [
+        "Victory Lap"
+      ],
+      "albumId": "lf-0a708dea58fa91b3",
+      "album": "USB",
+      "evidence": "Apple lists Victory Lap as track 18 of USB (2026)."
+    },
+    {
+      "singleId": "lf-28e74b764fe5d274",
+      "release": "King's Dead (with Kendrick Lamar, Future & James Blake)",
+      "artist": "Jay Rock",
+      "songs": [
+        "King's Dead (with Kendrick Lamar, Future & James Blake)"
+      ],
+      "albumId": "lf-183ec9f6c7fb7fce",
+      "album": "Redemption",
+      "evidence": "Apple lists King's Dead (feat. Future) as track 8 of Redemption (2018)."
+    },
+    {
+      "singleId": "history-65168f57b08e0aa7",
+      "release": "Blue Comanche",
+      "artist": "Westerman",
+      "songs": [
+        "Blue Comanche"
+      ],
+      "albumId": "lf-c399b0cf206fd715",
+      "album": "Your Hero Is Not Dead",
+      "evidence": "Apple lists Blue Comanche as track 8 of Your Hero Is Not Dead (2020)."
+    },
+    {
+      "singleId": "history-19bf9e6f230297ce",
+      "release": "Broccoli",
+      "artist": "DRAM",
+      "songs": [
+        "Broccoli"
+      ],
+      "albumId": "lf-39d2b6e8f955090e",
+      "album": "Big Baby Dram",
+      "evidence": "Apple lists Broccoli (feat. Lil Yachty) as track 7 of Big Baby DRAM (Deluxe) (2016)."
+    },
+    {
+      "singleId": "history-2dc63126c6da6c99",
+      "release": "EP!",
+      "artist": "JPEGMAFIA",
+      "songs": [
+        "BALD!"
+      ],
+      "albumId": "174",
+      "album": "LP!",
+      "evidence": "Apple lists BALD! as track 17 of LP! (2021)."
+    },
+    {
+      "singleId": "history-b62cce00186e8169",
+      "release": "Bro's",
+      "artist": "Panda Bear",
+      "songs": [
+        "Bro's"
+      ],
+      "albumId": "201",
+      "album": "Person Pitch",
+      "evidence": "Apple lists Bros as track 3 of Person Pitch (2007)."
+    },
+    {
+      "singleId": "history-720f7fb23f040ecc",
+      "release": "pick up the phone",
+      "artist": "Young Thug",
+      "songs": [
+        "pick up the phone"
+      ],
+      "albumId": "107",
+      "album": "Jeffery",
+      "evidence": "Apple lists Pick Up the Phone (feat. Quavo) as track 10 of JEFFERY (2016)."
+    },
+    {
+      "singleId": "051",
+      "release": "Understudy",
+      "artist": "Låpsley",
+      "songs": [
+        "Falling Short - 2014"
+      ],
+      "albumId": "history-71c1d9e48a2c4ce4",
+      "album": "Long Way Home",
+      "evidence": "Apple lists Falling Short as track 3 of Long Way Home (2016)."
+    },
+    {
+      "singleId": "history-dd92898544716655",
+      "release": "Soul Capturer",
+      "artist": "Animal Collective",
+      "songs": [
+        "Soul Capturer - Single Version"
+      ],
+      "albumId": "lf-1a1b393dbb576237",
+      "album": "Isn’t It Now?",
+      "evidence": "Apple lists Soul Capturer as track 1 of Isn’t It Now? (2023), with the 5:44 single version itself as track 1 of the album's second disc."
+    },
+    {
+      "singleId": "history-caf11c153d6ec953",
+      "release": "Not Checking Up",
+      "artist": "Arthur Russell",
+      "songs": [
+        "Not Checking Up"
+      ],
+      "albumId": "history-230c7e47a4549b48",
+      "album": "Picture of Bunny Rabbit",
+      "evidence": "Apple lists Not Checking Up as track 2 of Picture of Bunny Rabbit (2023)."
+    },
+    {
+      "singleId": "history-b03d17b1da16e55b",
+      "release": "Song Machine Episode 2",
+      "artist": "Gorillaz",
+      "songs": [
+        "Désolé (feat. Fatoumata Diawara)"
+      ],
+      "albumId": "lf-73b9380df8a0c5a6",
+      "album": "Song Machine, Season One: Strange Timez",
+      "evidence": "Apple lists Désolé (feat. Fatoumata Diawara) [Extended Version] as track 10 of Song Machine, Season One: Strange Timez (2020), a 5:33 cut of the EP's 3:57 song."
+    },
+    {
+      "singleId": "lf-56ab7a7a80c349b6",
+      "release": "Lights Burn Dimmer",
+      "artist": "Fred again..",
+      "songs": [
+        "Lights Burn Dimmer"
+      ],
+      "albumId": "lf-0a708dea58fa91b3",
+      "album": "USB",
+      "evidence": "Apple lists Lights Burn Dimmer as track 1 of USB (2026)."
+    },
+    {
+      "singleId": "history-d2276f53a6218514",
+      "release": "rockstar",
+      "artist": "Post Malone",
+      "songs": [
+        "rockstar"
+      ],
+      "albumId": "history-9cc1e070cf81746f",
+      "album": "beerbongs & bentleys",
+      "evidence": "Apple lists rockstar (feat. 21 Savage) as track 6 of beerbongs & bentleys (2018)."
+    },
+    {
+      "singleId": "history-6f23eca01e26bc52",
+      "release": "RITUAL (evocation)",
+      "artist": "Jon Hopkins",
+      "songs": [
+        "RITUAL (evocation)"
+      ],
+      "albumId": "history-b00473d1785b0d4e",
+      "album": "RITUAL",
+      "evidence": "Apple lists RITUAL (evocation) [feat. Ishq & Cherif Hashizume] as track 1 of the second disc of RITUAL (2024), after the album's eight parts."
+    },
+    {
+      "singleId": "history-115a2df1f03e8273",
+      "release": "Life Of The Party",
+      "artist": "Kanye West",
+      "songs": [
+        "Life Of The Party (with André 3000)",
+        "Life Of The Party"
+      ],
+      "albumId": "lf-99b41433663d89c4",
+      "album": "Donda",
+      "evidence": "Apple lists Life Of The Party as track 4 of Donda (Deluxe) (2021); the 27-track standard Donda does not have it."
+    },
+    {
+      "singleId": "lf-26867fe87797d375",
+      "release": "Spielt Eigen Kompositionen",
+      "artist": "Emahoy Tsege Mariam Gebru",
+      "songs": [
+        "The Homeless Wanderer",
+        "A Young Girl's Complaint"
+      ],
+      "albumId": "history-4cf5650ac15c40d3",
+      "album": "Ethiopiques, vol. 21: Emahoy",
+      "evidence": "Apple lists The Homeless Wanderer as track 1 and A Young Girl's Complaint as track 3 of Éthiopiques, Vol. 21: Piano Solo, its name for the listed Ethiopiques, vol. 21 (same lengths as the EP's, 7:05 and 6:10)."
+    },
+    {
+      "singleId": "lf-20f1f63433e1e396",
+      "release": "Dream Baby Dream EP",
+      "artist": "Suicide",
+      "songs": [
+        "Dream Baby Dream - Long Version",
+        "Dream Baby Dream - Single Edit"
+      ],
+      "albumId": "history-c80ec727e119e81b",
+      "album": "The Second Album + The First Rehearsal Tapes",
+      "evidence": "Apple lists Dream Baby Dream as track 12 of disc 1 of The Second Album + the First Rehearsal Tapes (1998), at 6:25 the same length as the EP's long version; the EP's single edit is a 3:17 cut of it."
+    }
+  ]
 }
