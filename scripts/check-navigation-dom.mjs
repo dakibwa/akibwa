@@ -404,9 +404,10 @@ const checkPublicLanding = async () => {
     // Dan, 18 November 2026: the bar is one even row at every width.
     const row = await evaluate(`(() => {
       const items = [document.querySelector(".music-page .music-sign"), ...document.querySelectorAll(".music-page .music-order button")].map((element) => element.getBoundingClientRect());
-      return { tops: new Set(items.map((box) => Math.round(box.top))).size, tall: Math.max(...items.map((box) => box.height)), overlap: items.some((box, at) => at && box.left < items[at - 1].right - 0.5) };
+      // One line: every item shares a centre, the words stay one line tall.
+      return { centres: new Set(items.map((box) => Math.round(box.top + box.height / 2))).size, tall: Math.max(...items.slice(1).map((box) => box.height)), overlap: items.some((box, at) => at && box.left < items[at - 1].right - 0.5) };
     })()`);
-    check(row.tops === 1 && row.tall <= 44 && !row.overlap, `the bar keeps one row at ${width}px [${JSON.stringify(row)}]`);
+    check(row.centres === 1 && row.tall <= 44 && !row.overlap, `the bar keeps one row at ${width}px [${JSON.stringify(row)}]`);
   }
   await setDesktop();
 
