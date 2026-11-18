@@ -322,31 +322,30 @@ height:auto;padding:16px 20px 18px;z-index:2}
 transition:transform var(--t-bounce) var(--ease-bounce)}
 .help.hud-door.down>svg{transform:scale(.86);transition:transform var(--t-press) var(--ease-out)}
 .hud-door .door-disc{fill:var(--node-fill);stroke:none}
-.hud-door .door-mark{fill:currentColor;stroke:none}
+.hud-door .door-mark{fill:currentColor;stroke:none;transition:fill 90ms linear 110ms}
 .hud-door :is(.door-flood,.sound-wave,.sound-off,.theme-orb,.theme-bite,.theme-rays){transform-origin:12px 12px}
 .help.hud-door:focus-visible{color:var(--ink)}
 .help.hud-door:active{color:var(--ink)}
 @media (hover:hover){.help.hud-door:hover{color:var(--ink)}}
 .help.hud-menu.hud-door::before{inset:calc((var(--door-step) - 22px) / 2) calc((100% - 22px) / 2)}
+.hud-door .door-flood{fill:currentColor;stroke:none;transform:scale(0);transition:transform var(--t-exit) var(--ease-in)}
+.help.hud-door[aria-pressed="true"]{color:var(--ink)}
+.hud-door[aria-pressed="true"] .door-flood{transform:none;transition:transform var(--t-card) var(--ease-glide)}
+.hud-door[aria-pressed="true"] .door-mark{fill:var(--surface);transition:fill var(--t-press) linear 25ms}
+.help.hud-door[aria-pressed="true"]:active{color:var(--ink-soft)}
+@media (hover:hover){.help.hud-door[aria-pressed="true"]:hover{color:var(--ink-soft)}}
 #hudhelp .door-line{stroke-width:2;transition:stroke 90ms linear 110ms}
-#hudhelp .door-mark{transition:fill 90ms linear 110ms}
-#hudhelp .door-flood{fill:currentColor;stroke:none;transform:scale(0);transition:transform var(--t-exit) var(--ease-in)}
-#hudhelp[aria-pressed="true"]{color:var(--ink)}
-#hudhelp[aria-pressed="true"] .door-flood{transform:none;transition:transform var(--t-card) var(--ease-glide)}
 #hudhelp[aria-pressed="true"] .door-line{stroke:var(--surface);transition:stroke var(--t-press) linear 25ms}
-#hudhelp[aria-pressed="true"] .door-mark{fill:var(--surface);transition:fill var(--t-press) linear 25ms}
-#hudhelp[aria-pressed="true"]:active{color:var(--ink-soft)}
-@media (hover:hover){#hudhelp[aria-pressed="true"]:hover{color:var(--ink-soft)}}
-#hudsound .sound-wave{transition:transform var(--t-card) var(--ease-glide) 70ms,opacity var(--t-ui) var(--ease-out) 70ms}
+#hudsound .sound-wave{stroke:var(--surface);transition:transform var(--t-card) var(--ease-glide) 70ms,opacity var(--t-ui) var(--ease-out) 70ms}
 #hudsound .sound-wave+.sound-wave{transition-delay:150ms}
 #hudsound .sound-off{stroke-width:1.6;transform-origin:15.8px 12px;opacity:0;transform:rotate(-30deg) scale(.4);transition:transform var(--t-ui) var(--ease-in),opacity var(--t-press) linear 50ms}
 #hudsound[aria-pressed="false"] .sound-wave{opacity:0;transform:scale(.7);transition:transform var(--t-ui) var(--ease-in),opacity var(--t-press) linear 50ms}
 #hudsound[aria-pressed="false"] .sound-off{opacity:1;transform:none;transition:transform var(--t-card) var(--ease-glide) 90ms,opacity var(--t-ui) var(--ease-out) 90ms}
-#hudtheme .theme-orb{transform:translate(.5px,-.5px) scale(1.606);transition:transform var(--t-card) var(--ease-glide)}
-#hudtheme .theme-bite{fill:var(--surface);stroke:none;transform-origin:17.5px 6.5px;transition:transform var(--t-card) var(--ease-glide)}
-#hudtheme .theme-rays{stroke-width:1.6;opacity:0;transform:rotate(-45deg) scale(.6);transition:transform var(--t-ui) var(--ease-in),opacity var(--t-press) linear 50ms}
-#hudtheme[aria-pressed="true"] .theme-orb{transform:none}
-#hudtheme[aria-pressed="true"] .theme-bite{transform:scale(0)}
+#hudtheme .theme-orb{transform:translate(.5px,-.5px) scale(1.606);transition:transform var(--t-card) var(--ease-glide),fill 90ms linear 110ms}
+#hudtheme .theme-bite{fill:var(--surface);stroke:none;transform-origin:17.5px 6.5px;transition:transform var(--t-card) var(--ease-glide) 120ms}
+#hudtheme .theme-rays{stroke:var(--surface);stroke-width:1.6;opacity:0;transform:rotate(-45deg) scale(.6);transition:transform var(--t-ui) var(--ease-in),opacity var(--t-press) linear 50ms}
+#hudtheme[aria-pressed="true"] .theme-orb{transform:none;transition:transform var(--t-card) var(--ease-glide),fill var(--t-press) linear 25ms}
+#hudtheme[aria-pressed="true"] .theme-bite{transform:scale(0);transition:transform var(--t-ui) var(--ease-glide)}
 #hudtheme[aria-pressed="true"] .theme-rays{opacity:1;transform:none;transition:transform var(--t-card) var(--ease-glide) 110ms,opacity var(--t-ui) var(--ease-out) 110ms}
 .help.hud-door.aside:not(:focus-visible){opacity:0;visibility:hidden;pointer-events:none;transition:opacity var(--ui),color var(--ui),visibility 0s linear var(--t-ui)}
 .hud-doors.under>.help.hud-door{opacity:0;visibility:hidden;pointer-events:none;transition:opacity var(--ui),color var(--ui),visibility 0s linear var(--t-ui)}
@@ -1586,6 +1585,10 @@ html.desk-menu .menusheet>.menu-again>.menu-say{display:grid;justify-items:end;f
 .hud-head>.hud-sharebox{margin-top:0}
 .hud-word{font-family:"Helvetica Neue","features sans",Helvetica,Arial,sans-serif;font-size:27px;letter-spacing:-.045em;line-height:1}
 }
+@media (min-width:701px) and (max-width:900px) and (min-height:501px){
+.hud-head>.hud-word{margin-top:-8px}
+.hud-head>.hud-word>.wordrule{margin-top:6.2px}
+}
 @media (min-width:901px),(orientation:landscape) and (max-height:500px){
 }
 @media (min-width:901px) and (min-height:501px){
@@ -1790,6 +1793,7 @@ body>noscript a{color:inherit}
 <button class="help hud-menu hud-door" id="hudsound" type="button" aria-label="sound" aria-pressed="true">
 <svg viewBox="0 0 24 24" aria-hidden="true">
 <circle class="door-disc" cx="12" cy="12" r="9.3"/>
+<circle class="door-flood" cx="12" cy="12" r="9.3"/>
 <path class="door-mark" d="M6.6 10.35h2.25L12 7.8v8.4l-3.15-2.55H6.6z"/>
 <path class="sound-wave" d="M13.75 10.1a2.7 2.7 0 0 1 0 3.8"/>
 <path class="sound-wave" d="M15.5 8.4a5.1 5.1 0 0 1 0 7.2"/>
@@ -1800,6 +1804,7 @@ body>noscript a{color:inherit}
 <button class="help hud-menu hud-door" id="hudtheme" type="button" aria-label="dark mode" aria-pressed="false">
 <svg viewBox="0 0 24 24" aria-hidden="true">
 <circle class="door-disc" cx="12" cy="12" r="9.3"/>
+<circle class="door-flood" cx="12" cy="12" r="9.3"/>
 <circle class="door-mark theme-orb" cx="12" cy="12" r="3.3"/>
 <circle class="theme-bite" cx="15.05" cy="8.95" r="4.35"/>
 <path class="theme-rays" d="M12 5.7v1.1M12 17.2v1.1M5.7 12h1.1M17.2 12h1.1M7.55 7.55l.78.78M15.67 15.67l.78.78M16.45 7.55l-.78.78M8.33 15.67l-.78.78"/>
