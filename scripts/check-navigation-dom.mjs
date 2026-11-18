@@ -107,15 +107,18 @@ const launchChrome = (chromeBin, profileDir) =>
         "--disable-gpu",
         "--hide-scrollbars",
         "--window-size=1440,900",
+        // Newer Linux runners refuse Chrome's own sandbox (18 November 2026).
+        ...(process.platform === "linux" && process.env.CI ? ["--no-sandbox"] : []),
         "about:blank"
       ],
       { stdio: ["ignore", "ignore", "pipe"] }
     );
     let stderr = "";
     let settled = false;
+    // A first start on a fresh runner can be slow; say what Chrome said.
     const timer = setTimeout(() => {
-      if (!settled) reject(new Error("Chrome DevTools endpoint did not appear within 15s"));
-    }, 15000);
+      if (!settled) reject(new Error(`Chrome DevTools endpoint did not appear within 45s:\n${stderr.slice(-2000)}`));
+    }, 45000);
     const onData = (chunk) => {
       stderr += chunk;
       const match = stderr.match(/DevTools listening on ws:\/\/127\.0\.0\.1:(\d+)/);
@@ -343,7 +346,7 @@ const checkPublicLanding = async () => {
   check(albums.lead?.startsWith("Music for Psychedelic Therapy"), `the map starts with the most listened [${albums.lead}]`);
   // Dan, 16 November 2026: everything to know is in the bar above the shelf.
   const pointed = await evaluate(`(() => { const face = [...document.querySelectorAll(".music-page .music-face")].find((button) => button.getAttribute("aria-label").startsWith("Graceland")); face.dispatchEvent(new PointerEvent("pointerover", { bubbles: true, pointerType: "mouse" })); return new Promise((done) => setTimeout(() => done(document.querySelector(".music-page .music-now")?.textContent ?? ""), 200)); })()`);
-  check(/^Graceland.*\d+ h listened/.test(pointed), `pointing at a sleeve names it and its hours in the bar [${pointed}]`);
+  check(/^Graceland\d[\d,.]* hPaul Simon/.test(pointed), `pointing at a sleeve names it, its hours and its artist [${pointed}]`);
   for (const [order, heading] of [["genre", "ambient"], ["a–z", "A"]]) {
     await evaluate(`[...document.querySelectorAll(".music-page .music-order button")].find((button) => button.textContent === ${JSON.stringify(order)}).click()`);
     check(await waitFor(`(() => { const heads = [...document.querySelectorAll(".music-page .music-group-head")].map((head) => head.firstElementChild.textContent); return heads.includes(${JSON.stringify(heading)}) && document.querySelectorAll(".music-page .music-tile").length === ${RECORDS}; })()`, 4000), `the ${order} order sorts every record under its headings`);

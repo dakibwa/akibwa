@@ -443,21 +443,24 @@ function Now({ say, order, years, kinds }) {
   useLayoutEffect(() => {
     if (visible) aim();
   }, [item, visible, aim]);
+  // The title with its hours at the top right, then who and when (Dan, 18
+  // November 2026: "can the hours just go top right and not have the word
+  // listened"); in a year, that year's hours, and the record's in all.
   let main = "";
+  let hours = "";
   let side = "";
   if (item) {
     main = item.title;
-    // Who, when, then how much (Dan, 18 November 2026: "this order makes no
-    // sense"); in a year, that year's hours and all of them.
+    hours = listened(item.minutes);
     const facts = [item.artist];
     if (order === "kind" && kinds) {
       const name = kinds.kinds?.[kinds.artists?.[item.artist]];
       if (name) facts.push(name);
-    } else if (item.year && !item.inYear) {
+    } else if (item.inYear) {
+      facts.push(`in ${item.inYear}`, `${listened(item.allMinutes)} in all`);
+    } else if (item.year) {
       facts.push(item.year);
     }
-    if (item.inYear) facts.push(`${listened(item.minutes)} in ${item.inYear}`, `${listened(item.allMinutes)} in all`);
-    else facts.push(`${listened(item.minutes)} listened`);
     side = facts.join(" · ");
   }
   // Nothing to say until something is pointed at (Dan, 16 November 2026:
@@ -465,6 +468,7 @@ function Now({ say, order, years, kinds }) {
   return (
     <output className="music-now" ref={box} aria-live="off" aria-hidden={!visible} data-empty={!visible}>
       <strong>{main}</strong>
+      <b className="music-now-hours">{hours}</b>
       <span>{side}</span>
     </output>
   );
