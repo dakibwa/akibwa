@@ -10056,6 +10056,29 @@
           "wall.webp": "dfb6e69da8f5f8f2"
         }
       }
+    },
+    {
+      "id": "history-c89ff5dc78945899",
+      "artist": "The Modern Lovers",
+      "album": "Live at the longbranch and more",
+      "source": {
+        "provider": "Spotify",
+        "url": "https://open.spotify.com/track/36JuaGlNLdEDPnBWpEUjJW",
+        "artist": "Modern Lovers",
+        "album": "Live at the longbranch and more",
+        "artworkUrl": "https://i.scdn.co/image/ab67616d0000b2731d4156debbefff3eacae28a3"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "The album Dan played A plea for tenderness from on Spotify, which Dan found; the other services do not carry it.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://i.scdn.co/image/ab67616d0000b2731d4156debbefff3eacae28a3",
+        "sourceHash": "aa1746780fb8be40",
+        "files": {
+          "wall.avif": "41f371feacd059b4",
+          "wall.webp": "ac3d20fe1ab7e386"
+        }
+      }
     }
   ]
 }

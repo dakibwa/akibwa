@@ -142,7 +142,8 @@ played, or `data/music-folds.json` records Apple listing it on one of his
 albums; editions fold together, including ": … Edition" suffixes. A record
 over 90% one song becomes that song's single (`singles`), with the single's
 reviewed cover where published (`kind: "single"` entries in
-`data/listening-artwork.json`); the top 150 albums by plays never become
+`data/listening-artwork.json`; covers come from Apple Music, Deezer, Spotify
+or the Cover Art Archive); the top 150 albums by plays never become
 singles. Only the top 1,000 records by hours are kept. Rows in
 `sleeves` and `singles` add the cover's id, or null. Before that, every other
 record a top song came

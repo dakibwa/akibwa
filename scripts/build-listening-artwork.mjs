@@ -54,9 +54,9 @@ for (const entry of manifest.entries) {
       [suffix, await readFile(new URL(`${entry.reuseId}-${suffix}`, out))])));
   } else {
     const imageUrl = new URL(entry.source.artworkUrl);
-    // Apple Music, Deezer and the Cover Art Archive (MusicBrainz) publish
-    // covers; any other host is refused (18 November 2026).
-    const approved = [".mzstatic.com", ".dzcdn.net", "coverartarchive.org"];
+    // Apple Music, Deezer, Spotify and the Cover Art Archive (MusicBrainz)
+    // publish covers; any other host is refused (18 November 2026).
+    const approved = [".mzstatic.com", ".dzcdn.net", "i.scdn.co", "coverartarchive.org"];
     if (imageUrl.protocol !== "https:" || !approved.some((host) => imageUrl.hostname === host || imageUrl.hostname.endsWith(host)))
       throw Error(`Unapproved artwork source: ${entry.id}`);
     const cached = new URL(`catalogue-${hash(imageUrl.href)}.bin`, cache);
