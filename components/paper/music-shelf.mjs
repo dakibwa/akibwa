@@ -82,18 +82,36 @@ export function rowsFor(entries, width, reference, limits = bounds(width)) {
  * the most listened's weight so every name has room. The box grows taller with
  * more tracks. Rectangles come back inset by half the gap on every side.
  */
-export function trackMap(tracks, width) {
+export function trackMap(tracks, width, room = Infinity) {
   if (!tracks.length || width <= 0) return { height: 0, cells: [] };
-  const most = Math.sqrt(Math.max(1, ...tracks.map((track) => track.minutes)));
-  const weighted = tracks
-    .map((track) => ({ track, weight: Math.max(most * 0.2, Math.sqrt(Math.max(0, track.minutes))) }))
-    .sort((a, b) => b.weight - a.weight);
-  const total = weighted.reduce((sum, item) => sum + item.weight, 0);
-  // Let a long record scroll. A fixed-height phone mosaic can leave only
-  // enough space for the duration and hide the track's name completely.
-  const smallest = weighted[weighted.length - 1].weight;
+  // The sheet fits the screen (Dan, 18 November 2026: "always have it fit on
+  // the screen too so it's no scroll"): the mosaic takes the room there is,
+  // and when its quietest songs would be too small to read they share one box.
+  const height = Math.max(120, Math.floor(Math.min(width * Math.min(1.1, 0.42 + 0.045 * tracks.length), room)));
   const minArea = Math.min(88, width) * 66;
-  const height = Math.ceil(Math.max(width * Math.min(1.1, 0.42 + 0.045 * tracks.length), minArea * total / (width * smallest)));
+  const sorted = [...tracks].sort((a, b) => b.minutes - a.minutes);
+  const weigh = (list) => {
+    const most = Math.sqrt(Math.max(1, ...list.map((track) => track.minutes)));
+    return list.map((track) => ({ track, weight: Math.max(most * 0.2, Math.sqrt(Math.max(0, track.minutes))) })).sort((a, b) => b.weight - a.weight);
+  };
+  const legible = (items) => {
+    const total = items.reduce((sum, item) => sum + item.weight, 0);
+    return (width * height * items[items.length - 1].weight) / total >= minArea;
+  };
+  let weighted = weigh(sorted);
+  for (let keep = sorted.length - 1; keep >= 1 && !legible(weighted); keep--) {
+    const rest = sorted.slice(keep);
+    weighted = weigh([
+      ...sorted.slice(0, keep),
+      {
+        title: `${rest.length} more`,
+        plays: rest.reduce((sum, track) => sum + track.plays, 0),
+        minutes: rest.reduce((sum, track) => sum + track.minutes, 0),
+        rest: rest.map((track) => track.title)
+      }
+    ]);
+  }
+  const total = weighted.reduce((sum, item) => sum + item.weight, 0);
   const scale = (width * height) / total;
   const items = weighted.map((item) => ({ ...item, area: item.weight * scale }));
   const cells = [];
@@ -152,7 +170,8 @@ export function trackMap(tracks, width) {
 export const ORDERS = [
   ["hours", "hours"],
   ["year", "year"],
-  ["kind", "kind"],
+  // Named genre (Dan, 18 November 2026); its file is still music-kinds.json.
+  ["kind", "genre"],
   ["name", "a–z"]
 ];
 
@@ -260,7 +279,7 @@ const letterOf = (text) => {
  * for hours), the most listened first inside each, except a to z. Entries
  * arrive most listened first, as `{ item, ... }`.
  */
-export function arrange(order, entries, { years, kinds } = {}) {
+export function arrange(order, entries, { years, kinds, reverse = false } = {}) {
   const total = entries.reduce((sum, entry) => sum + entry.item.minutes, 0) || 1;
   const grouped = (keyOf) => {
     const map = new Map();
@@ -272,7 +291,9 @@ export function arrange(order, entries, { years, kinds } = {}) {
     return map;
   };
   if (order === "name") {
-    const sorted = [...entries].sort((a, b) => sortTitle(a.item.title).localeCompare(sortTitle(b.item.title), "en"));
+    // A to z, or z to a when the order is pressed again (Dan, 18 November 2026).
+    const way = reverse ? -1 : 1;
+    const sorted = [...entries].sort((a, b) => way * sortTitle(a.item.title).localeCompare(sortTitle(b.item.title), "en"));
     const map = new Map();
     for (const entry of sorted) {
       const letter = letterOf(entry.item.title);
@@ -280,20 +301,35 @@ export function arrange(order, entries, { years, kinds } = {}) {
       map.get(letter).push(entry);
     }
     return [...map]
-      .sort(([a], [b]) => (a === "#" ? -1 : b === "#" ? 1 : a.localeCompare(b)))
+      .sort(([a], [b]) => (a === "#" ? -1 : b === "#" ? 1 : way * a.localeCompare(b)))
       .map(([letter, list]) => ({ key: letter, label: letter, figures: String(list.length), entries: list }));
   }
   if (order === "year" && years) {
-    const peaks = new Map(entries.map((entry) => [entry, peakOf(yearPairs(entry.item, years))]));
-    const map = grouped((entry) => peaks.get(entry)?.[0] ?? "undated");
+    // Every record played for an hour or more in a year, as large as its
+    // hours that year, newest year first or, pressed again, oldest (Dan, 18
+    // November 2026: "does this mean I ultimately only listened to this many
+    // albums this year?"). A record appears in each year it was played.
+    const map = new Map();
+    for (const entry of entries) {
+      for (const [year, minutes] of yearPairs(entry.item, years) ?? []) {
+        if (minutes < 60) continue;
+        if (!map.has(year)) map.set(year, []);
+        map.get(year).push({ ...entry, item: { ...entry.item, key: `${year}:${entry.item.key}`, record: entry.item.key, minutes, inYear: year, allMinutes: entry.item.minutes } });
+      }
+    }
     return [...map]
-      .sort(([a], [b]) => (a === "undated" ? 1 : b === "undated" ? -1 : b - a))
-      .map(([year, list]) => ({
-        key: String(year),
-        label: String(year),
-        figures: `${listened(list.reduce((sum, entry) => sum + (peaks.get(entry)?.[1] ?? 0), 0))} that year`,
-        entries: list
-      }));
+      .sort(([a], [b]) => (reverse ? a - b : b - a))
+      .map(([year, list]) => {
+        list.sort((a, b) => b.item.minutes - a.item.minutes || a.item.key.localeCompare(b.item.key));
+        return {
+          key: String(year),
+          label: String(year),
+          figures: `${list.length} records · ${listened(list.reduce((sum, entry) => sum + entry.item.minutes, 0))}`,
+          entries: list,
+          // Each year's largest record reaches the cap.
+          reference: list[Math.min(2, list.length - 1)].item.minutes
+        };
+      });
   }
   if (order === "kind" && kinds) {
     const kindOf = (entry) => kinds.kinds?.[kinds.artists?.[entry.item.artist]] ?? "other";

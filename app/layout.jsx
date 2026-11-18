@@ -1,3 +1,4 @@
+import { preload } from "react-dom";
 import "./globals.css";
 import { ServiceWorkerRegistration } from "@/components/service-worker-registration";
 import { SiteShell } from "@/components/site-shell";
@@ -58,7 +59,21 @@ export const viewport = {
 
 /* Old room bookmarks open the same shelf at its canonical address. */
 const boot = `(function(){
-  document.documentElement.classList.add("js");
+  var page = document.documentElement;
+  page.classList.add("js");
+  // The page shows itself once its small capitals have arrived, so the bar
+  // never flashes in a stand-in face (Dan, 18 November 2026: "super smooth").
+  function ready() {
+    if (page.classList.contains("ready")) return;
+    page.classList.add("ready");
+    dispatchEvent(new Event("paperready"));
+  }
+  if (document.fonts && document.fonts.load) {
+    Promise.race([
+      Promise.all([document.fonts.load('500 16px "Alegreya SC"'), document.fonts.load('italic 400 16px "Alegreya"')]),
+      new Promise(function (done) { setTimeout(done, 900); })
+    ]).then(ready, ready);
+  } else ready();
   if (location.pathname !== "/") return;
   function clearBookmark() {
     if (location.hash || location.search) history.replaceState(history.state, "", "/");
@@ -68,6 +83,9 @@ const boot = `(function(){
 })()`;
 
 export default function RootLayout({ children }) {
+  // The bar's small capitals and the titles' italic arrive with the page.
+  preload("/fonts/alegreya-sc-500-latin.woff2", { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
+  preload("/fonts/alegreya-italic-latin.woff2", { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
   return (
     <html lang="en-GB" suppressHydrationWarning>
       <body>

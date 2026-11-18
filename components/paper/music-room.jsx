@@ -6,7 +6,7 @@ import { flushSync } from "react-dom";
 import { useMusicRanking } from "../use-music-ranking";
 import { LARGE_ART } from "./music-art.mjs";
 import { indexItems, search } from "./music-search.mjs";
-import { ORDERS, arrange, listened, mergeShelf, peakOf, rowsFor, songTitle, trackMap, yearPairs } from "./music-shelf.mjs";
+import { ORDERS, arrange, listened, mergeShelf, rowsFor, songTitle, trackMap } from "./music-shelf.mjs";
 
 // Albums and the records behind the top songs share one shelf. Sorting,
 // searching and opening a track sheet all work in place.
@@ -122,7 +122,95 @@ class GlidingShelf extends PureComponent {
   componentDidMount() {
     this.motion = matchMedia("(prefers-reduced-motion: reduce)");
     this.motion.addEventListener("change", this.stop);
+    this.ready = document.documentElement.classList.contains("ready");
+    if (!this.ready) addEventListener("paperready", this.whenReady, { once: true });
+    this.opening();
+    this.settle();
+    this.watch();
   }
+
+  whenReady = () => {
+    this.ready = true;
+    this.opening();
+  };
+
+  /*
+   * The first screen lifts in once, a sleeve after its neighbour, when the
+   * shelf has been measured and its type has arrived; before then it is not
+   * shown at all, so nothing jumps.
+   */
+  opening = () => {
+    const list = this.list.current;
+    if (this.opened || !list || !this.props.measured || !this.ready) return;
+    this.opened = true;
+    if (this.motion.matches) return;
+    const fold = window.innerHeight;
+    let index = 0;
+    for (const face of list.querySelectorAll(".music-face")) {
+      const box = face.getBoundingClientRect();
+      if (box.top >= fold) break;
+      face.animate(
+        [{ opacity: 0, transform: "translateY(12px)" }, { opacity: 1, transform: "none" }],
+        { duration: 620, delay: Math.min(index++ * 16, 520), easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "backwards" }
+      );
+    }
+  };
+
+  // Each cover fades in when it has arrived, rather than appearing in pieces.
+  settle = () => {
+    const list = this.list.current;
+    if (!list) return;
+    for (const image of list.querySelectorAll(".music-face img")) {
+      if (image.complete || image.dataset.loading) continue;
+      image.dataset.loading = "true";
+      const done = () => delete image.dataset.loading;
+      image.addEventListener("load", done, { once: true });
+      image.addEventListener("error", done, { once: true });
+    }
+  };
+
+  /*
+   * The wall comes alive as it scrolls (Dan, 18 November 2026: "make the
+   * wall feel more dynamic"): a row that comes into view lifts in, a sleeve
+   * after its neighbour. Rows already on screen are left alone, so nothing
+   * that has been seen ever blinks.
+   */
+  revealed = new WeakSet();
+
+  watch = () => {
+    const list = this.list.current;
+    // Rows have no place of their own until the shelf has been measured.
+    if (!list || !this.props.measured || this.motion.matches || typeof IntersectionObserver === "undefined") return;
+    if (!this.seer) {
+      this.seer = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const row = entry.target;
+          this.seer.unobserve(row);
+          this.revealed.add(row);
+          delete row.dataset.waiting;
+          if (this.motion.matches) continue;
+          row.querySelectorAll(".music-face").forEach((face, index) => {
+            face.animate(
+              [{ opacity: 0, transform: "translateY(14px)" }, { opacity: 1, transform: "none" }],
+              { duration: 560, delay: Math.min(index, 14) * 32, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "backwards" }
+            );
+          });
+        }
+      }, { rootMargin: "0px 0px -4% 0px" });
+    }
+    const fold = window.innerHeight;
+    for (const row of list.querySelectorAll(".music-row")) {
+      if (this.revealed.has(row) || row.dataset.waiting) continue;
+      // Only a row still below the screen waits to be revealed.
+      if (row.getBoundingClientRect().top < fold) {
+        this.revealed.add(row);
+        continue;
+      }
+      row.dataset.waiting = "true";
+      this.seer.observe(row);
+    }
+  };
 
   getSnapshotBeforeUpdate(previous) {
     if (!previous.measured || previous.arrangement === this.props.arrangement || this.motion.matches) return null;
@@ -130,6 +218,9 @@ class GlidingShelf extends PureComponent {
   }
 
   componentDidUpdate(previous, state, before) {
+    this.opening();
+    this.settle();
+    this.watch();
     if (!before) return;
     this.stop();
     // All destination reads precede the first write. A cover coming from
@@ -157,6 +248,8 @@ class GlidingShelf extends PureComponent {
   componentWillUnmount() {
     this.motion.removeEventListener("change", this.stop);
     this.stop();
+    this.seer?.disconnect();
+    removeEventListener("paperready", this.whenReady);
   }
 
   render() {
@@ -216,17 +309,33 @@ function useProgressive(list) {
   return current.count;
 }
 
+// Each sleeve catches the light its own way: an angle, a speed and a side
+// the gloss comes from, fixed by its record so it is the same every visit.
+function sheenFor(key) {
+  let hash = 2166136261;
+  for (let at = 0; at < key.length; at += 1) hash = Math.imul(hash ^ key.charCodeAt(at), 16777619);
+  hash >>>= 0;
+  const fromLeft = hash & 1;
+  return {
+    "--sheen-angle": `${96 + (hash >>> 1) % 44}deg`,
+    "--sheen-time": `${(0.85 + ((hash >>> 7) % 7) * 0.1).toFixed(2)}s`,
+    "--sheen-from": fromLeft ? "130%" : "-30%",
+    "--sheen-to": fromLeft ? "-30%" : "130%",
+    "--gloss-x": `${12 + (hash >>> 11) % 70}%`
+  };
+}
+
 const Tile = memo(function Tile({ item, side, share, priority, onOpen, onPoint }) {
   const described = `${item.title}, ${item.artist}. ${listened(item.minutes)} listened, ${plays(item.plays)}.`;
   return (
-    <li className="music-tile" data-key={item.key} style={{ "--side": side, "--share": share, "--tint": item.art ? undefined : tintFor(item.artist) }}>
+    <li className="music-tile" data-key={item.key} style={{ "--side": side, "--share": share, "--tint": item.art ? undefined : tintFor(item.artist), ...sheenFor(item.record ?? item.key) }}>
       <button
         type="button"
         className="music-face"
         onClick={(event) => onOpen(item, event.currentTarget)}
         onPointerEnter={(event) => { if (event.pointerType !== "touch") onPoint(item); }}
         onPointerLeave={() => onPoint(null)}
-        onFocus={(event) => { if (event.currentTarget.matches(":focus-visible")) onPoint(item); }}
+        onFocus={(event) => { if (event.currentTarget.matches(":focus-visible")) onPoint(item, event.currentTarget.getBoundingClientRect()); }}
         onBlur={() => onPoint(null)}
         aria-label={`${described} ${item.kind === "album" ? "Show its tracks" : "Show it"}.`}
       >
@@ -244,40 +353,117 @@ const Tile = memo(function Tile({ item, side, share, priority, onOpen, onPoint }
 });
 
 /*
- * The bar's one line of words: whatever is under the pointer or the
- * keyboard, and nothing otherwise. It keeps its own state, so pointing at a sleeve
- * does not draw the shelf again.
+ * What is under the pointer, in a small label that follows it a little
+ * behind (Dan, 18 November 2026: "closer to where you are hovering"), or
+ * under the sleeve the keyboard is on. It keeps its own state and moves by
+ * transform alone, so pointing never draws the shelf again.
  */
+const NEAR = 16;
 function Now({ say, order, years, kinds }) {
   const [{ item, visible }, setLabel] = useState({ item: null, visible: false });
+  const box = useRef(null);
+  const at = useRef({ x: 0, y: 0, tx: 0, ty: 0, px: null, py: null, anchor: null, frame: 0, jump: true });
+  // Beside the pointer, or under the sleeve, turning back from the edges.
+  const aim = useCallback(() => {
+    const state = at.current;
+    const label = box.current;
+    if (!label) return;
+    const width = label.offsetWidth;
+    const height = label.offsetHeight;
+    let x;
+    let y;
+    if (state.anchor) {
+      x = state.anchor.left;
+      y = state.anchor.bottom + 8;
+      if (y + height > innerHeight - 8) y = state.anchor.top - height - 8;
+    } else if (state.px !== null) {
+      x = state.px + NEAR;
+      y = state.py + NEAR + 4;
+      if (x + width > innerWidth - 8) x = state.px - NEAR - width;
+      if (y + height > innerHeight - 8) y = state.py - NEAR - height;
+    } else {
+      return;
+    }
+    state.tx = Math.max(8, Math.min(x, innerWidth - width - 8));
+    state.ty = Math.max(8, y);
+    const place = () => {
+      label.style.transform = `translate3d(${Math.round(state.x)}px, ${Math.round(state.y)}px, 0)`;
+    };
+    if (state.jump) {
+      cancelAnimationFrame(state.frame);
+      state.frame = 0;
+      state.x = state.tx;
+      state.y = state.ty;
+      state.jump = false;
+      place();
+      return;
+    }
+    if (state.frame) return;
+    const glide = () => {
+      const dx = state.tx - state.x;
+      const dy = state.ty - state.y;
+      if (Math.abs(dx) < 0.4 && Math.abs(dy) < 0.4) {
+        state.x = state.tx;
+        state.y = state.ty;
+        state.frame = 0;
+      } else {
+        state.x += dx * 0.32;
+        state.y += dy * 0.32;
+        state.frame = requestAnimationFrame(glide);
+      }
+      place();
+    };
+    state.frame = requestAnimationFrame(glide);
+  }, []);
   useEffect(() => {
-    say.current = (next) => setLabel((last) => next
-      ? { item: next, visible: true }
-      : last.visible ? { ...last, visible: false } : last);
+    const state = at.current;
+    const move = (event) => {
+      if (event.pointerType === "touch") return;
+      state.px = event.clientX;
+      state.py = event.clientY;
+      state.anchor = null;
+      aim();
+    };
+    window.addEventListener("pointermove", move, { passive: true });
+    say.current = (next, anchor = null) => setLabel((last) => {
+      if (!next) return last.visible ? { ...last, visible: false } : last;
+      state.anchor = anchor;
+      // A label that appears starts where it is wanted, not where it was.
+      if (!last.visible || anchor) state.jump = true;
+      return { item: next, visible: true };
+    });
     return () => {
+      window.removeEventListener("pointermove", move);
+      cancelAnimationFrame(state.frame);
+      state.frame = 0;
       say.current = null;
     };
-  }, [say]);
+  }, [say, aim]);
+  // Its size changes with its words, so it is aimed once they are drawn.
+  useLayoutEffect(() => {
+    if (visible) aim();
+  }, [item, visible, aim]);
   let main = "";
   let side = "";
   if (item) {
     main = item.title;
-    const facts = [item.artist, `${listened(item.minutes)} listened`];
-    if (order === "year" && years) {
-      const peak = peakOf(yearPairs(item, years));
-      if (peak) facts.push(`most in ${peak[0]}`);
-    } else if (order === "kind" && kinds) {
+    // Who, when, then how much (Dan, 18 November 2026: "this order makes no
+    // sense"); in a year, that year's hours and all of them.
+    const facts = [item.artist];
+    if (order === "kind" && kinds) {
       const name = kinds.kinds?.[kinds.artists?.[item.artist]];
       if (name) facts.push(name);
-    } else if (item.year) {
+    } else if (item.year && !item.inYear) {
       facts.push(item.year);
     }
+    if (item.inYear) facts.push(`${listened(item.minutes)} in ${item.inYear}`, `${listened(item.allMinutes)} in all`);
+    else facts.push(`${listened(item.minutes)} listened`);
     side = facts.join(" · ");
   }
   // Nothing to say until something is pointed at (Dan, 16 November 2026:
   // “super minimalist and simple”).
   return (
-    <output className="music-now" aria-live="off" aria-hidden={!visible} data-empty={!visible}>
+    <output className="music-now" ref={box} aria-live="off" aria-hidden={!visible} data-empty={!visible}>
       <strong>{main}</strong>
       <span>{side}</span>
     </output>
@@ -305,10 +491,13 @@ const SERVICE_MARKS = {
 // A sheet over the shelf, set as a mosaic like the shelf (Dan, 16 November
 // 2026): the sleeve first at the top left, a card with everything about the
 // record and the way out beside it, then the listens.
-function Sheet({ cover, title, artist, byline, hours, count, links, label, onClose, children }) {
+function Sheet({ cover, title, artist, byline, hours, count, links, label, onClose, head, from, children }) {
   const panel = useRef(null);
   useLayoutEffect(() => {
     const dialog = panel.current;
+    // Opened from a sleeve, the view transition grows that sleeve into the
+    // sheet's cover (Dan, 18 November 2026: "grow out into the middle").
+    if (from?.grow) dialog.dataset.grow = "true";
     dialog.showModal();
     return () => dialog.close();
   }, []);
@@ -337,7 +526,7 @@ function Sheet({ cover, title, artist, byline, hours, count, links, label, onClo
       }}
     >
       <div className="music-tracks-sheet">
-        <header className="music-tracks-head">
+        <header className="music-tracks-head" ref={head}>
           <span className="music-tracks-cover">
             {cover ? <AlbumArtImage id={cover} alt="" large={LARGE_ART[cover]} sizes="200px" /> : <span className="music-blank" style={{ "--tint": tintFor(artist) }} aria-hidden="true">{title.charAt(0)}</span>}
           </span>
@@ -375,13 +564,38 @@ function Sheet({ cover, title, artist, byline, hours, count, links, label, onClo
  * as the shelf does (trackMap in music-shelf.mjs): soft tints, the name and
  * hours inside, a deeper tint under the pointer.
  */
-function AlbumTracks({ album, year, found, loading, loadError, retry, onClose }) {
+// The room under a sheet's head, so the whole sheet fits the screen.
+function useRoomUnder(head) {
+  const [room, setRoom] = useState(Infinity);
+  useLayoutEffect(() => {
+    const top = head.current;
+    if (!top) return undefined;
+    const read = () => {
+      const screen = window.visualViewport?.height ?? window.innerHeight;
+      // The sheet's own height limit, less its padding, edge and the gap under its head.
+      setRoom(Math.max(160, Math.floor(Math.min(screen * 0.88, 900) - top.offsetHeight - 16)));
+    };
+    read();
+    const observer = new ResizeObserver(read);
+    observer.observe(top);
+    window.addEventListener("resize", read);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", read);
+    };
+  }, [head]);
+  return room;
+}
+
+function AlbumTracks({ album, year, found, loading, loadError, retry, onClose, from }) {
   const frame = useRef(null);
+  const head = useRef(null);
   const [width] = useSettledWidth(frame, 550);
+  const room = useRoomUnder(head);
   // An album's own tracks, or once the ranking has loaded without them, the
   // songs of it among the top 1,000.
   const known = album.tracks ?? (loading || loadError ? null : album.fallback ?? null);
-  const map = useMemo(() => trackMap(known ?? [], width), [known, width]);
+  const map = useMemo(() => trackMap(known ?? [], width, room), [known, width, room]);
   return (
     <Sheet
       cover={album.id}
@@ -393,6 +607,8 @@ function AlbumTracks({ album, year, found, loading, loadError, retry, onClose })
       links={listenLinks(found, album.artist, album.title)}
       label="Close the track list"
       onClose={onClose}
+      head={head}
+      from={from}
     >
       <div className="music-track-frame" ref={frame}>
         {known ? (
@@ -404,9 +620,9 @@ function AlbumTracks({ album, year, found, loading, loadError, retry, onClose })
               const tight = lines < 1;
               return (
                 <li
-                  key={track.title}
-                  title={track.title}
-                  className={tight ? "is-tight" : undefined}
+                  key={track.rest ? "rest" : track.title}
+                  title={track.rest ? track.rest.map(songTitle).join(", ") : track.title}
+                  className={[tight ? "is-tight" : "", track.rest ? "is-rest" : ""].join(" ").trim() || undefined}
                   style={{
                     left: x,
                     top: y,
@@ -449,6 +665,8 @@ export function MusicRoom({ initial, active }) {
   // The orders answer at once; the shelf follows as a transition.
   const [pressedOrder, setPressedOrder] = useState("hours");
   const [order, setOrder] = useState("hours");
+  // The year and a to z orders turn round when pressed again.
+  const [reversed, setReversed] = useState({ year: false, name: false });
   const [query, setQuery] = useState("");
   const filter = useDeferredValue(query.trim());
   // On a phone the search waits behind its mark and slides out over the
@@ -490,9 +708,11 @@ export function MusicRoom({ initial, active }) {
   const searching = Boolean(query.trim());
   const sort = (name) => {
     say.current?.(null);
+    const turn = name === pressedOrder && !searching && name in reversed;
     setQuery("");
     setPressedOrder(name);
     startTransition(() => setOrder(name));
+    if (turn) startTransition(() => setReversed((last) => ({ ...last, [name]: !last[name] })));
   };
   const shown = filter ? "hours" : order;
   const orderFile = shown === "year" ? yearFile : shown === "kind" ? kindFile : null;
@@ -522,18 +742,33 @@ export function MusicRoom({ initial, active }) {
   // music-shelf.mjs).
   const reference = records[Math.min(2, records.length - 1)]?.item.minutes || 1;
   const arrangement = useMemo(
-    () => arrange(shown, entries, { years, kinds }).map((group) => ({ ...group, rows: rowsFor(group.entries, width, reference) })),
-    [entries, width, reference, shown, years, kinds]
+    () => arrange(shown, entries, { years, kinds, reverse: reversed[shown] ?? false }).map((group) => ({ ...group, rows: rowsFor(group.entries, width, group.reference ?? reference) })),
+    [entries, width, reference, shown, years, kinds, reversed]
   );
   const flat = useMemo(() => arrangement.flatMap((group) => group.entries), [arrangement]);
   const count = useProgressive(flat);
 
+  const launch = useRef(null);
   const onOpen = useCallback((item, button) => {
     say.current?.(null);
     opener.current = { button, key: item.key };
-    setOpen(item.key);
+    // A year's square opens its record.
+    const key = item.record ?? item.key;
+    // The browser morphs the sleeve into the sheet's cover where it can;
+    // elsewhere the sheet simply fades in.
+    if (document.startViewTransition && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      launch.current = { grow: true };
+      button.style.viewTransitionName = "record-sleeve";
+      document.startViewTransition(() => {
+        button.style.viewTransitionName = "";
+        flushSync(() => setOpen(key));
+      });
+    } else {
+      launch.current = null;
+      setOpen(key);
+    }
   }, []);
-  const onPoint = useCallback((item) => say.current?.(item), []);
+  const onPoint = useCallback((item, anchor) => say.current?.(item, anchor), []);
   const record = open ? records.find((entry) => entry.item.key === open)?.item ?? null : null;
 
   const close = () => {
@@ -566,11 +801,22 @@ export function MusicRoom({ initial, active }) {
         <Now say={say} order={shown} years={years} kinds={kinds} />
         <div className="music-tools" data-finding={finding || Boolean(query)}>
           <div className="music-order" role="group" aria-label="Order">
-            {ORDERS.map(([name, label]) => (
-              <button key={name} type="button" aria-pressed={!searching && pressedOrder === name} onClick={() => sort(name)}>
-                {label}
-              </button>
-            ))}
+            {ORDERS.map(([name, label]) => {
+              const on = !searching && pressedOrder === name;
+              return (
+                <button
+                  key={name}
+                  type="button"
+                  aria-pressed={on}
+                  aria-label={name === "year" && on ? `year, ${reversed.year ? "oldest" : "newest"} first` : undefined}
+                  onClick={() => sort(name)}
+                >
+                  {name === "name" && reversed.name ? "z–a" : label}
+                  {/* The year's way round: newest first, or oldest. */}
+                  {name === "year" ? <span className="music-order-way" data-on={on} data-up={reversed.year} aria-hidden="true" /> : null}
+                </button>
+              );
+            })}
           </div>
           <button
             type="button"
@@ -670,6 +916,7 @@ export function MusicRoom({ initial, active }) {
           loadError={music.loadError}
           retry={music.retry}
           onClose={close}
+          from={launch.current}
         />
       ) : null}
     </div>

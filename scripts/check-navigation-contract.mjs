@@ -79,7 +79,7 @@ requireText(music, 'className="music-find"', "on a phone the bar must keep one r
 requireText(css, ".music-tools[data-finding=\"true\"] .music-search {", "the phone's search must slide out over the orders");
 requireText(music, '<span className="music-tracks-cover">', "a sheet must open with its sleeve at the top left (Dan, 16 November 2026)");
 requireText(music, '<div className="music-tracks-card">\n            <button type="button" className="music-tracks-close"', "a sheet's way out must sit in its card, beside the sleeve");
-requireText(music, "rowsFor(group.entries, width, reference)", "the shelf must be laid out in rows sized by hours between a floor and a cap");
+requireText(music, "rowsFor(group.entries, width, group.reference ?? reference)", "the shelf must be laid out in rows sized by hours between a floor and a cap");
 requireText(music, 'role="group" aria-label="Order"', "the bar must sort the whole shelf by hours, year, kind or name");
 requireText(music, '<output className="music-now"', "the bar must say what the shelf holds and what is under the pointer");
 requireText(music, "startTransition(() => setOrder(name))", "an order must answer before the shelf is sorted again");
@@ -128,12 +128,27 @@ requireText(css, ".music-track-list li:hover {\n  background: color-mix(in srgb,
   }
   const entries = records.map((item) => ({ item }));
   const years = JSON.parse(read("public/music-years.json"));
-  for (const order of ["hours", "year", "kind", "name"]) {
+  for (const order of ["hours", "kind", "name"]) {
     const groups = arrange(order, entries, { years, kinds: musicKinds });
     const placed = groups.flatMap((group) => group.entries.map((entry) => entry.item.key));
     if (placed.length !== records.length || new Set(placed).size !== records.length) fail(`the ${order} order must place every record once`);
     if (order !== "hours" && groups.some((group) => !group.label || !group.figures)) fail(`the ${order} order must head each group with what it needs`);
   }
+  // Dan, 18 November 2026: a year holds every record played for an hour or
+  // more that year, as large as that year's hours, newest year first; pressed
+  // again, the year and a to z orders turn round.
+  const byYear = arrange("year", entries, { years });
+  if (byYear.length < 5 || byYear.some((group, at) => at && Number(group.key) > Number(byYear[at - 1].key))) fail("the year order must run newest year first");
+  for (const group of byYear) {
+    const keys = group.entries.map((entry) => entry.item.record);
+    if (new Set(keys).size !== keys.length || group.entries.some((entry) => entry.item.minutes < 60 || entry.item.inYear !== Number(group.key))) fail(`${group.key} must hold each record played an hour or more that year, once`);
+  }
+  const busiest = Math.max(...byYear.map((group) => group.entries.length));
+  if (busiest < 100) fail("a year must hold every record played that year, not only those played most then");
+  if (arrange("year", entries, { years, reverse: true })[0].key !== byYear.at(-1).key) fail("the year order must turn round to oldest first");
+  const atoz = arrange("name", entries, {});
+  const ztoa = arrange("name", entries, { reverse: true });
+  if (ztoa[ztoa.length - 1].key === atoz[atoz.length - 1].key) fail("a to z must turn round to z to a");
 }
 
 // The address stays private.
