@@ -772,6 +772,11 @@ transition-duration:var(--t-ui),var(--t-ui),var(--t-ui),var(--t-press)}
 .wbtn.solid{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
 @media (hover:hover){.wbtn.solid:hover{background:color-mix(in srgb,var(--ink) 6%,transparent);border-color:var(--ink);color:var(--ink)}}
 .wbtn.solid:active{background:color-mix(in srgb,var(--ink) 6%,transparent)}
+.askveil > .bulletin{border-color:var(--ink)}
+:is(#signcard,#premiumcard) .wbtn.solid{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+@media (hover:hover){:is(#signcard,#premiumcard) .wbtn.solid:not(:disabled):hover{background:color-mix(in srgb,var(--ink) 84%,var(--surface));border-color:transparent;color:var(--surface)}}
+:is(#signcard,#premiumcard) .wbtn.solid:not(:disabled):active{background:color-mix(in srgb,var(--ink) 84%,var(--surface));color:var(--surface)}
+:is(#signcard,#premiumcard) .wbtn.solid:disabled{background:color-mix(in srgb,var(--ink) 38%,var(--surface));border-color:transparent;color:var(--surface);cursor:default}
 .minted{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 18px}
 .minted .mb{flex:0 1 78px;min-width:0;text-align:center;
 animation:stampin .7s var(--ease-glide) both,stampfade .3s var(--ease-out) both;
@@ -928,7 +933,7 @@ html.menu-cover .hud-foot>#netveil :is(#contbtn,.hud-share){pointer-events:none}
 }
 .askveil{z-index:80}
 .veil.askveil.show > *{transition:opacity var(--t-ui) var(--ease-out) 60ms,transform var(--t-glide) var(--ease-glide)}
-.askveil > .bulletin{max-width:392px}
+.askveil > .bulletin{max-width:min(392px,calc(100% - 32px))}
 #askbulletin .bactions{display:grid;grid-template-columns:1fr 1fr}
 .signveil,.legalveil{z-index:70}
 .legalveil > .bulletin{max-width:min(440px,calc(100% - 32px));width:100%;max-height:min(480px,calc(100dvh - 48px - var(--foot-clear)));display:flex;flex-direction:column}
