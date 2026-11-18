@@ -1,0 +1,5 @@
+{
+  "schemaVersion": 1,
+  "note": "Singles and EPs whose songs Apple Music lists on one of the artist's albums Dan played, so the shelf counts them on that album (Dan, 18 November 2026). Built from scripts/build-music-ranking.mjs's checks; ids are public catalogue ids.",
+  "folds": []
+}

@@ -74,7 +74,8 @@ for (const room of ["trek", "career", "websites"]) forbidText(index + music, `id
 
 // Dan, 16 November 2026: one shelf, each row of squares as large as its
 // albums' hours between a floor and a cap, everything to know in the bar.
-requireText(music, "mergeShelf(music.albums, music.songs, music.sleeves)", "albums and songs must be one shelf of records (Dan, 16 November 2026)");
+requireText(music, "mergeShelf(music.albums, music.songs, music.sleeves, music.singles)", "albums, singles and songs must be one shelf of records (Dan, 16 and 18 November 2026)");
+requireText(music, 'className="music-singles"', "the bar must switch the shelf to the singles (Dan, 18 November 2026)");
 requireText(music, 'className="music-find"', "on a phone the bar must keep one row, the search waiting behind its mark (Dan, 16 November 2026)");
 requireText(css, ".music-tools[data-finding=\"true\"] .music-search {", "the phone's search must slide out over the orders");
 requireText(music, '<span className="music-tracks-cover">', "a sheet must open with its sleeve at the top left (Dan, 16 November 2026)");
@@ -100,12 +101,27 @@ requireText(css, ".music-track-list li:hover {\n  background: color-mix(in srgb,
   // one size, each as large as its records' hours between the floor and the
   // cap, every full row filling the width, sizes only ever stepping down;
   // and each order placing every record once.
-  const { albums, songs, sleeves } = unpackRanking(ranking);
-  const records = mergeShelf(albums, songs, sleeves);
+  const { albums, songs, sleeves, singles } = unpackRanking(ranking);
+  const records = mergeShelf(albums, songs, sleeves, singles);
   if (records.slice(0, 3).map((record) => record.title).join("|") !== "Music for Psychedelic Therapy|Discreet Music|Graceland") fail("the shelf must start with the most listened");
   if (records.filter((record) => record.kind === "album").length !== albums.length) fail("every top album must be a record on the shelf");
+  // Dan, 18 November 2026: the shelf is his top 1,000 records, each song
+  // counts on one record only, a single folds into the album it is on, and a
+  // record that is over 90% one song is that song's single.
   const placedSongs = records.flatMap((record) => record.songs.map((song) => song.rank));
-  if (placedSongs.length !== songs.length || new Set(placedSongs).size !== songs.length) fail("every top song must belong to exactly one record");
+  if (new Set(placedSongs).size !== placedSongs.length || placedSongs.length !== songs.filter((song) => song.art).length) fail("every top song on the shelf must belong to exactly one record");
+  if (placedSongs.length < 900) fail("nearly all the top songs must be on the shelf's records");
+  if (records.length !== 1000) fail(`the shelf must hold the top 1,000 records [${records.length}]`);
+  if (!singles.length || singles.some((single) => single.tracks.length !== 1)) fail("the singles must each be one song");
+  const loss = records.find((record) => record.artist === "MGMT" && record.tracks.some((track) => track.title === "Bubblegum Dog"));
+  if (loss?.title !== "Loss of Life") fail("a single must fold into the album it is on, as Bubblegum Dog into Loss of Life");
+  // Melt My Eyez See Your Future is really Walkin.
+  if (records.some((record) => record.title === "Melt My Eyez See Your Future")) fail("a record over 90% one song must not stand as its album");
+  if (!singles.some((record) => record.title === "Walkin" && record.artist === "Denzel Curry")) fail("Melt My Eyez See Your Future must be on the shelf as the single Walkin");
+  // A long piece (over ten minutes a play) is an album in itself.
+  const song = (track) => track.minutes <= track.plays * 10;
+  if (sleeves.some((record) => (record.tracks.length === 1 || record.tracks[0].minutes > record.minutes * 0.9) && song(record.tracks[0]))) fail("a record over 90% one song must be that song's single");
+  if (records.some((record) => /Everasking Edition/.test(record.title)) || !records.some((record) => record.title === "Desire, I Want to Turn Into You")) fail("an album's editions must fold into one record");
   if (!records.some((record) => record.title === "Hey World!" && record.artist === "King Krule")) fail("a record loved for one song, such as King Krule's Hey World!, must be on the shelf");
   // Dan, 16 November 2026: such a record lists every track he played from it.
   const trex = records.find((record) => record.title === "T. Rex" && record.artist === "T. Rex");
@@ -160,22 +176,25 @@ for (const [source, label] of [[index, "the page"], [music, "the music shelf"], 
 if (ranking.schemaVersion !== 2 || !/^\d{4}-\d{2}-\d{2}$/.test(ranking.asOf)) fail("the music file must be versioned and dated");
 if (ranking.songs.length !== 1000 || ranking.albums.length !== 150) fail("the music file must hold 1,000 songs and 150 albums");
 const whole = (value) => Number.isSafeInteger(value) && value >= 0;
+const recordIds = new Set([...ranking.albums, ...ranking.sleeves, ...ranking.singles].map((row) => row[0]));
 for (const [title, artist, plays, youtube, art, minutes] of ranking.songs) {
   if (typeof title !== "string" || !Number.isInteger(artist) || !ranking.names[artist]) fail("every song needs a title and a named artist");
   if (!whole(plays) || !whole(youtube) || youtube > plays || !whole(minutes)) fail("song counts must be whole plays and minutes");
-  if (art !== null && !existsSync(new URL(`../public/album-art/${art}-wall.webp`, import.meta.url))) fail(`missing sleeve ${art}`);
+  if (art !== null && !recordIds.has(art)) fail(`a song names a record that is not on the shelf: ${art}`);
 }
-// The other records the top songs come from carry the same public fields as
-// the albums (Dan, 16 November 2026).
-for (const [id, title, artist, year, plays, minutes, tracks] of [...ranking.albums, ...ranking.sleeves]) {
-  if (!existsSync(new URL(`../public/album-art/${id}-wall.webp`, import.meta.url))) fail(`missing sleeve ${id}`);
+// The other albums and the singles carry the same public fields as the top
+// albums, and their cover's id or none (Dan, 16 and 18 November 2026).
+for (const row of [...ranking.albums, ...ranking.sleeves, ...ranking.singles]) {
+  const [id, title, artist, year, plays, minutes, tracks] = row;
+  const art = row.length === 8 ? row[7] : id;
+  if (art !== null && !existsSync(new URL(`../public/album-art/${art}-wall.webp`, import.meta.url))) fail(`missing sleeve ${art}`);
   if (typeof title !== "string" || !ranking.names[artist] || !(year === null || /^\d{4}$/.test(year))) fail("every album needs a title, artist and year or none");
   if (!whole(plays) || !whole(minutes) || !Array.isArray(tracks) || !tracks.length) fail(`${title} needs plays, minutes and its tracks`);
   if (tracks.some((track) => track.length !== 3 || typeof track[0] !== "string" || !whole(track[1]) || !whole(track[2]))) fail(`${title}'s tracks must be [title, plays, minutes]`);
 }
 // Only these fields, in fixed-length rows.
-if (JSON.stringify(Object.keys(ranking).sort()) !== JSON.stringify(["albums", "asOf", "counts", "hours", "names", "schemaVersion", "sleeves", "songs"])) fail("the public music file has unexpected fields");
-if (ranking.songs.some((row) => row.length !== 6) || [...ranking.albums, ...ranking.sleeves].some((row) => row.length !== 7)) fail("music rows must keep their public fields");
+if (JSON.stringify(Object.keys(ranking).sort()) !== JSON.stringify(["albums", "asOf", "counts", "hours", "names", "schemaVersion", "singles", "sleeves", "songs"])) fail("the public music file has unexpected fields");
+if (ranking.songs.some((row) => row.length !== 6) || ranking.albums.some((row) => row.length !== 7) || [...ranking.sleeves, ...ranking.singles].some((row) => row.length !== 8)) fail("music rows must keep their public fields");
 const rankingText = JSON.stringify(ranking);
 for (const [pattern, what] of [[/spotify:/i, "track URIs"], [/\d{4}-\d{2}-\d{2}T\d/, "timestamps"]]) {
   if (pattern.test(rankingText)) fail(`the public music file must not include ${what}`);

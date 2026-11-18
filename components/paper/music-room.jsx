@@ -295,7 +295,7 @@ class GlidingShelf extends PureComponent {
  * The shelf is drawn in one pass, so the page holds every record before
  * scripting runs; a longer list would draw the rest a frame later.
  */
-const FIRST = 640;
+const FIRST = 1000;
 
 function useProgressive(list) {
   const [shown, setShown] = useState({ list, count: Math.min(list.length, FIRST) });
@@ -326,7 +326,7 @@ function sheenFor(key) {
 }
 
 const Tile = memo(function Tile({ item, side, share, priority, onOpen, onPoint }) {
-  const described = `${item.title}, ${item.artist}. ${listened(item.minutes)} listened, ${plays(item.plays)}.`;
+  const described = `${item.title}, ${item.artist}. ${listened(item.allMinutes ?? item.minutes)} listened, ${plays(item.plays)}.`;
   return (
     <li className="music-tile" data-key={item.key} style={{ "--side": side, "--share": share, "--tint": item.art ? undefined : tintFor(item.artist), ...sheenFor(item.record ?? item.key) }}>
       <button
@@ -359,7 +359,7 @@ const Tile = memo(function Tile({ item, side, share, priority, onOpen, onPoint }
  * transform alone, so pointing never draws the shelf again.
  */
 const NEAR = 16;
-function Now({ say, order, years, kinds }) {
+function Now({ say, order, years, kinds, meta }) {
   const [{ item, visible }, setLabel] = useState({ item: null, visible: false });
   const box = useRef(null);
   const at = useRef({ x: 0, y: 0, tx: 0, ty: 0, px: null, py: null, anchor: null, frame: 0, jump: true });
@@ -443,23 +443,22 @@ function Now({ say, order, years, kinds }) {
   useLayoutEffect(() => {
     if (visible) aim();
   }, [item, visible, aim]);
-  // The title with its hours at the top right, then who and when (Dan, 18
-  // November 2026: "can the hours just go top right and not have the word
-  // listened"); in a year, that year's hours, and the record's in all.
+  // The title with its total hours at the top right, then who and when, the
+  // same in every order (Dan, 18 November 2026: "can the hours just go top
+  // right and not have the word listened"; a year's own hours are not needed,
+  // "it can just be total").
   let main = "";
   let hours = "";
   let side = "";
   if (item) {
     main = item.title;
-    hours = listened(item.minutes);
+    hours = listened(item.allMinutes ?? item.minutes);
     const facts = [item.artist];
     if (order === "kind" && kinds) {
       const name = kinds.kinds?.[kinds.artists?.[item.artist]];
       if (name) facts.push(name);
-    } else if (item.inYear) {
-      facts.push(`in ${item.inYear}`, `${listened(item.allMinutes)} in all`);
-    } else if (item.year) {
-      facts.push(item.year);
+    } else if (item.year || meta?.years?.[item.art]) {
+      facts.push(item.year || meta.years[item.art]);
     }
     side = facts.join(" · ");
   }
@@ -550,9 +549,9 @@ function Sheet({ cover, title, artist, byline, hours, count, links, label, onClo
                   </a>
                 ))}
               </p>
+              {/* Hours and plays keep together, and part only on a narrow sheet. */}
               <p className="music-tracks-totals">
-                {hours}
-                <span className="visually-hidden"> listened</span> · {count}
+                <span>{hours}<span className="visually-hidden"> listened</span></span> · <span>{count}</span>
               </p>
             </div>
           </div>
@@ -671,6 +670,8 @@ export function MusicRoom({ initial, active }) {
   const [order, setOrder] = useState("hours");
   // The year and a to z orders turn round when pressed again.
   const [reversed, setReversed] = useState({ year: false, name: false });
+  // The shelf holds the albums, or the singles.
+  const [singlesOn, setSinglesOn] = useState(false);
   const [query, setQuery] = useState("");
   const filter = useDeferredValue(query.trim());
   // On a phone the search waits behind its mark and slides out over the
@@ -723,7 +724,10 @@ export function MusicRoom({ initial, active }) {
 
   // One shelf of records, albums and the records his songs come from, the
   // most listened first (mergeShelf in music-shelf.mjs).
-  const records = useMemo(() => mergeShelf(music.albums, music.songs, music.sleeves).map((item) => ({ item })), [music.albums, music.songs, music.sleeves]);
+  const records = useMemo(
+    () => mergeShelf(music.albums, music.songs, music.sleeves, music.singles).map((item) => ({ item })),
+    [music.albums, music.songs, music.sleeves, music.singles]
+  );
   const index = useMemo(
     () =>
       indexItems(records.map((entry) => entry.item), {
@@ -733,13 +737,14 @@ export function MusicRoom({ initial, active }) {
       }),
     [records, meta]
   );
-  // All of the shelf, or what the search finds in it.
+  // The albums, or the singles (Dan, 18 November 2026: "can we add a singles
+  // menu button too"), or what the search finds among both.
   const entries = useMemo(() => {
     const found = search(index, filter);
-    if (!found) return records;
+    if (!found) return records.filter((entry) => (entry.item.kind === "single") === singlesOn);
     const kept = new Set(found.map((record) => record.key));
     return records.filter((entry) => kept.has(entry.item.key));
-  }, [records, index, filter]);
+  }, [records, index, filter, singlesOn]);
 
   // Sizes come from the whole shelf, so a search or an order never rescales
   // them; each row's size comes from its records' hours (rowsFor in
@@ -793,6 +798,7 @@ export function MusicRoom({ initial, active }) {
             if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
             event.preventDefault();
             sort("hours");
+            setSinglesOn(false);
             setFinding(false);
             window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
           }}
@@ -802,7 +808,7 @@ export function MusicRoom({ initial, active }) {
           </svg>
           Akibwa
         </a>
-        <Now say={say} order={shown} years={years} kinds={kinds} />
+        <Now say={say} order={shown} years={years} kinds={kinds} meta={meta} />
         <div className="music-tools" data-finding={finding || Boolean(query)}>
           <div className="music-order" role="group" aria-label="Order">
             {ORDERS.map(([name, label]) => {
@@ -821,6 +827,18 @@ export function MusicRoom({ initial, active }) {
                 </button>
               );
             })}
+            <button
+              type="button"
+              className="music-singles"
+              aria-pressed={!searching && singlesOn}
+              onClick={() => {
+                say.current?.(null);
+                setQuery("");
+                startTransition(() => setSinglesOn((on) => !on));
+              }}
+            >
+              singles
+            </button>
           </div>
           <button
             type="button"

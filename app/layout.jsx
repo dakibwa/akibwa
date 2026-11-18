@@ -3,7 +3,7 @@ import "./globals.css";
 import { ServiceWorkerRegistration } from "@/components/service-worker-registration";
 import { SiteShell } from "@/components/site-shell";
 
-const description = "The music Akibwa plays most: 150 albums and 1,000 songs, each as large as the hours listened.";
+const description = "The music Akibwa plays most: 1,000 records, each as large as the hours listened.";
 
 export const metadata = {
   metadataBase: new URL("https://akibwa.com"),

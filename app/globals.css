@@ -874,6 +874,7 @@ html:has(.music-tracks[open]) {
 
 .music-tracks-sheet {
   position: relative;
+  container-type: inline-size;
   max-height: min(88dvh, 900px);
   overflow: auto;
   overscroll-behavior: contain;
@@ -1015,7 +1016,46 @@ html:has(.music-tracks[open]) {
   padding-bottom: 6px;
   font-size: 14px;
   font-variant-numeric: tabular-nums;
+}
+
+.music-tracks-totals > span {
   white-space: nowrap;
+}
+
+/* A narrow sheet (Dan, 18 November 2026: "on small phones they are weird
+   too"): a smaller sleeve and smaller type, so the card's words keep inside
+   it. */
+@container (max-width: 400px) {
+  .music-tracks-head {
+    grid-template-columns: clamp(84px, 34%, 200px) minmax(0, 1fr);
+  }
+
+  .music-tracks-card {
+    padding: 8px 10px 2px;
+  }
+
+  .music-tracks-card h2 {
+    padding-right: 26px;
+    font-size: 17px;
+  }
+
+  .music-tracks-artist {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+
+  .music-tracks-totals {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+  }
+
+  .music-track-hours {
+    font-size: 11px;
+  }
+
+  .music-tracks-card .music-listen {
+    margin-left: -10px;
+  }
 }
 
 /* The way out: a fine ink cross in the card's top right corner. */

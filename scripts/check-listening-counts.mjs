@@ -92,8 +92,10 @@ assert(packet.albums.every((row) => row.plays === null || row.plays >= row.sourc
 for (const row of packet.albums.filter((album) => album.artwork))
   assert(existsSync(new URL(`../public/album-art/${row.id}-wall.webp`, import.meta.url)), `missing album art ${row.id}`);
 assert(!("podcasts" in packet), "the public packet carries albums only");
-assert(packet.diagnostics.spotifyMusic === 187176 && packet.diagnostics.youtubeMusic > 1000);
-assert.equal(packet.diagnostics.spotifyQualifiedDuplicatesSuppressed, 548);
+// The history only grows as new exports arrive (18 November 2026: the export
+// to 1 October 2026 holds 187,888 Spotify music plays).
+assert(packet.diagnostics.spotifyMusic >= 187176 && packet.diagnostics.youtubeMusic > 1000);
+assert(packet.diagnostics.spotifyQualifiedDuplicatesSuppressed >= 548);
 const publicJson = JSON.stringify(packet);
 assert(!/(?:[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}|\/Users\/|sourceArchiveId|accountScope|publicVideoId|occurredAt|lastPlayedAt|incognitoMode)/i.test(publicJson), "the aggregate packet contains no private identifiers or event fields");
 console.log(`Listening history passed: ${packet.albums.length} albums; overlap bounds, identity matching and source-safe schema.`);

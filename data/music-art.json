@@ -117,18 +117,6 @@
       }
     },
     {
-      "id": "lf-f396087d71105729",
-      "source": "cover art archive",
-      "ref": "https://musicbrainz.org/release-group/0f1b9e07-b38b-4bba-9794-55e0924d7177",
-      "match": 3.3,
-      "sourceHash": "517f072fbc897a32",
-      "width": 800,
-      "files": {
-        "avif": "980d1816a5b49f98",
-        "webp": "d9041d5446027f53"
-      }
-    },
-    {
       "id": "lf-1fa6c02e2ebbf849",
       "source": "cover art archive",
       "ref": "https://musicbrainz.org/release-group/4505ae3f-6f4d-4049-a9a3-1151f89ef344",
@@ -138,6 +126,18 @@
       "files": {
         "avif": "105ceefe64b5d6f2",
         "webp": "a950ea9194449457"
+      }
+    },
+    {
+      "id": "lf-f396087d71105729",
+      "source": "cover art archive",
+      "ref": "https://musicbrainz.org/release-group/0f1b9e07-b38b-4bba-9794-55e0924d7177",
+      "match": 3.3,
+      "sourceHash": "517f072fbc897a32",
+      "width": 800,
+      "files": {
+        "avif": "980d1816a5b49f98",
+        "webp": "d9041d5446027f53"
       }
     },
     {
@@ -186,6 +186,18 @@
       }
     },
     {
+      "id": "lf-48abf5a53479159d",
+      "source": "cover art archive",
+      "ref": "https://musicbrainz.org/release-group/5b32cb6b-464e-4b4a-abad-3f3fda885e80",
+      "match": 6.3,
+      "sourceHash": "b0518764608fadb8",
+      "width": 800,
+      "files": {
+        "avif": "9039e6d5a64924ff",
+        "webp": "825e850b1cc56d4c"
+      }
+    },
+    {
       "id": "182",
       "source": "print master",
       "ref": "macdemarco_thisolddog_awje.jpg",
@@ -206,18 +218,6 @@
       "files": {
         "avif": "b72d25661af7abee",
         "webp": "77a31c79cc510c2f"
-      }
-    },
-    {
-      "id": "lf-48abf5a53479159d",
-      "source": "cover art archive",
-      "ref": "https://musicbrainz.org/release-group/5b32cb6b-464e-4b4a-abad-3f3fda885e80",
-      "match": 6.3,
-      "sourceHash": "b0518764608fadb8",
-      "width": 800,
-      "files": {
-        "avif": "9039e6d5a64924ff",
-        "webp": "825e850b1cc56d4c"
       }
     },
     {
@@ -427,18 +427,6 @@
       }
     },
     {
-      "id": "lf-f308b9f4bd8bae1e",
-      "source": "apple music",
-      "ref": "https://music.apple.com/gb/album/painful/1589240889",
-      "match": 8.5,
-      "sourceHash": "ca426819eb9497d6",
-      "width": 800,
-      "files": {
-        "avif": "6e5767e91623272a",
-        "webp": "15efc547e732e31a"
-      }
-    },
-    {
       "id": "lf-85de65df641ac79a",
       "source": "cover art archive",
       "ref": "https://musicbrainz.org/release-group/c88c77da-b9f9-34b9-abdf-ad3cec875aca",
@@ -451,14 +439,27 @@
       }
     },
     {
-      "id": "128",
-      "source": "print master",
-      "ref": "animalcollective_sungtongs_bxxv.jpg",
-      "sourceHash": "c49256339111661e",
+      "id": "lf-f308b9f4bd8bae1e",
+      "source": "apple music",
+      "ref": "https://music.apple.com/gb/album/painful/1589240889",
+      "match": 8.5,
+      "sourceHash": "ca426819eb9497d6",
       "width": 800,
       "files": {
-        "avif": "52d23bea10d3adbf",
-        "webp": "278fe8c9492cb9de"
+        "avif": "6e5767e91623272a",
+        "webp": "15efc547e732e31a"
+      }
+    },
+    {
+      "id": "lf-f145710c4a0a4cee",
+      "source": "deezer",
+      "ref": "https://www.deezer.com/album/921000",
+      "match": 3.2,
+      "sourceHash": "4bd225284a3cddf1",
+      "width": 800,
+      "files": {
+        "avif": "1a2c65cdbd812a48",
+        "webp": "d56fb342efa60512"
       }
     },
     {
@@ -473,15 +474,14 @@
       }
     },
     {
-      "id": "lf-f145710c4a0a4cee",
-      "source": "deezer",
-      "ref": "https://www.deezer.com/album/921000",
-      "match": 3.2,
-      "sourceHash": "4bd225284a3cddf1",
+      "id": "128",
+      "source": "print master",
+      "ref": "animalcollective_sungtongs_bxxv.jpg",
+      "sourceHash": "c49256339111661e",
       "width": 800,
       "files": {
-        "avif": "1a2c65cdbd812a48",
-        "webp": "d56fb342efa60512"
+        "avif": "52d23bea10d3adbf",
+        "webp": "278fe8c9492cb9de"
       }
     },
     {
@@ -542,17 +542,6 @@
       }
     },
     {
-      "id": "078",
-      "source": "print master",
-      "ref": "The Smiths - Louder Than Bombs.png",
-      "sourceHash": "be0ce39897a1a84a",
-      "width": 800,
-      "files": {
-        "avif": "c728ef54f4766ce2",
-        "webp": "2a16ff35bb5e0036"
-      }
-    },
-    {
       "id": "012",
       "source": "print master",
       "ref": "Black Country New Road - For the First Time.png",
@@ -561,6 +550,17 @@
       "files": {
         "avif": "84603c0809a5dda3",
         "webp": "f8c88268960d6672"
+      }
+    },
+    {
+      "id": "078",
+      "source": "print master",
+      "ref": "The Smiths - Louder Than Bombs.png",
+      "sourceHash": "be0ce39897a1a84a",
+      "width": 800,
+      "files": {
+        "avif": "c728ef54f4766ce2",
+        "webp": "2a16ff35bb5e0036"
       }
     },
     {
@@ -575,6 +575,17 @@
       }
     },
     {
+      "id": "186",
+      "source": "print master",
+      "ref": "mgmt_congratulations_1s73.jpg",
+      "sourceHash": "8fc4602fc5aee5b3",
+      "width": 800,
+      "files": {
+        "avif": "72d3ff6db2c72ea6",
+        "webp": "6f60dbe841762823"
+      }
+    },
+    {
       "id": "lf-383d8c5fb987ecf8",
       "source": "cover art archive",
       "ref": "https://musicbrainz.org/release-group/f7b59bee-62d7-4bc8-ad47-cda988cd8ded",
@@ -584,17 +595,6 @@
       "files": {
         "avif": "2da929f4c70bc906",
         "webp": "3bdc3c1c823c5a89"
-      }
-    },
-    {
-      "id": "186",
-      "source": "print master",
-      "ref": "mgmt_congratulations_1s73.jpg",
-      "sourceHash": "8fc4602fc5aee5b3",
-      "width": 800,
-      "files": {
-        "avif": "72d3ff6db2c72ea6",
-        "webp": "6f60dbe841762823"
       }
     },
     {
@@ -620,6 +620,17 @@
       }
     },
     {
+      "id": "230",
+      "source": "print master",
+      "ref": "thedoors_thedoorsmonoversion_44m8.jpg",
+      "sourceHash": "bbd88eba763074d7",
+      "width": 800,
+      "files": {
+        "avif": "4e1160b5989f101a",
+        "webp": "29b32a4a529b7523"
+      }
+    },
+    {
       "id": "lf-b1e6e583a5575429",
       "source": "apple music",
       "ref": "https://music.apple.com/gb/album/red-house-painters-i/311195427",
@@ -629,17 +640,6 @@
       "files": {
         "avif": "0e4ade3ea6dfc578",
         "webp": "f419a0c3529b926a"
-      }
-    },
-    {
-      "id": "230",
-      "source": "print master",
-      "ref": "thedoors_thedoorsmonoversion_44m8.jpg",
-      "sourceHash": "bbd88eba763074d7",
-      "width": 800,
-      "files": {
-        "avif": "4e1160b5989f101a",
-        "webp": "29b32a4a529b7523"
       }
     },
     {
@@ -802,6 +802,18 @@
       }
     },
     {
+      "id": "lf-71ba450f4975ccf4",
+      "source": "cover art archive",
+      "ref": "https://musicbrainz.org/release-group/51c431fb-6521-4284-a817-aace744d9961",
+      "match": 3.7,
+      "sourceHash": "754636a8659371c9",
+      "width": 685,
+      "files": {
+        "avif": "f0e54e4673a5a5b5",
+        "webp": "2d25122436e488fe"
+      }
+    },
+    {
       "id": "190",
       "source": "print master",
       "ref": "mr morale.jpg",
@@ -832,6 +844,18 @@
       "files": {
         "avif": "622f3b9689212de2",
         "webp": "f3e3b25623da000c"
+      }
+    },
+    {
+      "id": "lf-c3744c6b1122f6db",
+      "source": "cover art archive",
+      "ref": "https://musicbrainz.org/release-group/ad5a6f0f-3444-4ebd-8a98-ce6dfb1bfabe",
+      "match": 3.3,
+      "sourceHash": "ff8933791d8c651a",
+      "width": 800,
+      "files": {
+        "avif": "f1f487da86c9f78b",
+        "webp": "0b3a42c14494f20d"
       }
     },
     {
@@ -880,18 +904,6 @@
       }
     },
     {
-      "id": "lf-c3744c6b1122f6db",
-      "source": "cover art archive",
-      "ref": "https://musicbrainz.org/release-group/ad5a6f0f-3444-4ebd-8a98-ce6dfb1bfabe",
-      "match": 3.3,
-      "sourceHash": "ff8933791d8c651a",
-      "width": 800,
-      "files": {
-        "avif": "f1f487da86c9f78b",
-        "webp": "0b3a42c14494f20d"
-      }
-    },
-    {
       "id": "history-6909accc50629a10",
       "source": "apple music",
       "ref": "https://music.apple.com/gb/album/kid-a/1097862870",
@@ -915,17 +927,6 @@
       }
     },
     {
-      "id": "history-7bc48260f470bc47",
-      "source": "apple music",
-      "ref": "https://music.apple.com/gb/album/nightmare-ending/623855423",
-      "sourceHash": "8477048779716d7c",
-      "width": 800,
-      "files": {
-        "avif": "bc3a25374db6338b",
-        "webp": "8f91244455ac3500"
-      }
-    },
-    {
       "id": "175",
       "source": "print master",
       "ref": "kanyewest_thelifeofpablocover2_8cpj(1).jpg",
@@ -937,26 +938,14 @@
       }
     },
     {
-      "id": "lf-71ba450f4975ccf4",
-      "source": "cover art archive",
-      "ref": "https://musicbrainz.org/release-group/51c431fb-6521-4284-a817-aace744d9961",
-      "match": 3.7,
-      "sourceHash": "754636a8659371c9",
-      "width": 685,
-      "files": {
-        "avif": "f0e54e4673a5a5b5",
-        "webp": "2d25122436e488fe"
-      }
-    },
-    {
-      "id": "151",
-      "source": "print master",
-      "ref": "debonair.jpg",
-      "sourceHash": "d9119be1730874fc",
+      "id": "history-7bc48260f470bc47",
+      "source": "apple music",
+      "ref": "https://music.apple.com/gb/album/nightmare-ending/623855423",
+      "sourceHash": "8477048779716d7c",
       "width": 800,
       "files": {
-        "avif": "8d1febe4388451f1",
-        "webp": "336d0b1fc70962e8"
+        "avif": "bc3a25374db6338b",
+        "webp": "8f91244455ac3500"
       }
     },
     {
@@ -971,17 +960,6 @@
       }
     },
     {
-      "id": "235",
-      "source": "print master",
-      "ref": "tierrawhack_whackworld_dq02.jpg",
-      "sourceHash": "17052dbedfd6e8a1",
-      "width": 800,
-      "files": {
-        "avif": "250fa5453fdf72f6",
-        "webp": "08abd1bb0116e64a"
-      }
-    },
-    {
       "id": "lf-328e6892dab57d60",
       "source": "cover art archive",
       "ref": "https://musicbrainz.org/release-group/636bc236-13ec-4c2f-b9f7-54a64a2a3414",
@@ -991,6 +969,28 @@
       "files": {
         "avif": "fdb0bb90aa5cc65e",
         "webp": "b00841899acfd481"
+      }
+    },
+    {
+      "id": "151",
+      "source": "print master",
+      "ref": "debonair.jpg",
+      "sourceHash": "d9119be1730874fc",
+      "width": 800,
+      "files": {
+        "avif": "8d1febe4388451f1",
+        "webp": "336d0b1fc70962e8"
+      }
+    },
+    {
+      "id": "235",
+      "source": "print master",
+      "ref": "tierrawhack_whackworld_dq02.jpg",
+      "sourceHash": "17052dbedfd6e8a1",
+      "width": 800,
+      "files": {
+        "avif": "250fa5453fdf72f6",
+        "webp": "08abd1bb0116e64a"
       }
     },
     {
@@ -1028,17 +1028,6 @@
       }
     },
     {
-      "id": "071",
-      "source": "print master",
-      "ref": "Sparks - In Outer Space.png",
-      "sourceHash": "5a9d7c55af10520f",
-      "width": 800,
-      "files": {
-        "avif": "547dee34b339b2de",
-        "webp": "0142e3af6a41a7d1"
-      }
-    },
-    {
       "id": "152",
       "source": "print master",
       "ref": "delasoul_andtheanonymousnobod_8vwo.jpg",
@@ -1047,6 +1036,17 @@
       "files": {
         "avif": "7055841e0a825bea",
         "webp": "0a4aa33411ee7291"
+      }
+    },
+    {
+      "id": "071",
+      "source": "print master",
+      "ref": "Sparks - In Outer Space.png",
+      "sourceHash": "5a9d7c55af10520f",
+      "width": 800,
+      "files": {
+        "avif": "547dee34b339b2de",
+        "webp": "0142e3af6a41a7d1"
       }
     },
     {
@@ -1128,6 +1128,17 @@
       }
     },
     {
+      "id": "037",
+      "source": "print master",
+      "ref": "HAIM - Women in Music Pt III.png",
+      "sourceHash": "e4e6b7bdc5e1aa57",
+      "width": 800,
+      "files": {
+        "avif": "437dc79597547687",
+        "webp": "b181a174fc472cfa"
+      }
+    },
+    {
       "id": "lf-9ceeda8633d2b5a3",
       "source": "deezer",
       "ref": "https://www.deezer.com/album/14887713",
@@ -1137,6 +1148,17 @@
       "files": {
         "avif": "5b77ead4914e59a3",
         "webp": "07bab847a2cf9707"
+      }
+    },
+    {
+      "id": "206",
+      "source": "print master",
+      "ref": "purple mountains.jpg",
+      "sourceHash": "f9260788ebf19909",
+      "width": 800,
+      "files": {
+        "avif": "00432e6c9456eb25",
+        "webp": "0a509b95ee1c46c8"
       }
     },
     {
@@ -1162,14 +1184,15 @@
       }
     },
     {
-      "id": "037",
-      "source": "print master",
-      "ref": "HAIM - Women in Music Pt III.png",
-      "sourceHash": "e4e6b7bdc5e1aa57",
+      "id": "lf-5289afe4e743a2aa",
+      "source": "cover art archive",
+      "ref": "https://musicbrainz.org/release-group/d8dde278-482c-3cc8-a530-fea70476f3a5",
+      "match": 12.2,
+      "sourceHash": "f1d96993b10c9e46",
       "width": 800,
       "files": {
-        "avif": "437dc79597547687",
-        "webp": "b181a174fc472cfa"
+        "avif": "d69102777120e9df",
+        "webp": "3892703ad76eb89a"
       }
     },
     {
@@ -1181,29 +1204,6 @@
       "files": {
         "avif": "b633b7d36bbdd3be",
         "webp": "9a6f37fc4f745f1a"
-      }
-    },
-    {
-      "id": "206",
-      "source": "print master",
-      "ref": "purple mountains.jpg",
-      "sourceHash": "f9260788ebf19909",
-      "width": 800,
-      "files": {
-        "avif": "00432e6c9456eb25",
-        "webp": "0a509b95ee1c46c8"
-      }
-    },
-    {
-      "id": "lf-5289afe4e743a2aa",
-      "source": "cover art archive",
-      "ref": "https://musicbrainz.org/release-group/d8dde278-482c-3cc8-a530-fea70476f3a5",
-      "match": 12.2,
-      "sourceHash": "f1d96993b10c9e46",
-      "width": 800,
-      "files": {
-        "avif": "d69102777120e9df",
-        "webp": "3892703ad76eb89a"
       }
     },
     {
@@ -1262,6 +1262,18 @@
       }
     },
     {
+      "id": "lf-be730e7d269ab161",
+      "source": "cover art archive",
+      "ref": "https://musicbrainz.org/release-group/7ea67831-77a3-4822-af7d-e795bd83cd42",
+      "match": 1.8,
+      "sourceHash": "d336f1ee69fc5e63",
+      "width": 800,
+      "files": {
+        "avif": "0f91c3a77490fe59",
+        "webp": "79fb3c3a1da6aac1"
+      }
+    },
+    {
       "id": "067",
       "source": "print master",
       "ref": "Rudgie - Holy Ghost Zone.png",
@@ -1292,18 +1304,6 @@
       "files": {
         "avif": "de6c8010691aa53f",
         "webp": "dbe8c7a50c7e0ccf"
-      }
-    },
-    {
-      "id": "lf-be730e7d269ab161",
-      "source": "cover art archive",
-      "ref": "https://musicbrainz.org/release-group/7ea67831-77a3-4822-af7d-e795bd83cd42",
-      "match": 1.8,
-      "sourceHash": "d336f1ee69fc5e63",
-      "width": 800,
-      "files": {
-        "avif": "0f91c3a77490fe59",
-        "webp": "79fb3c3a1da6aac1"
       }
     },
     {
@@ -1397,18 +1397,6 @@
       }
     },
     {
-      "id": "lf-35a31c629274ad5b",
-      "source": "cover art archive",
-      "ref": "https://musicbrainz.org/release-group/4692f067-8974-4c83-ba7d-458c3c19b53c",
-      "match": 4.7,
-      "sourceHash": "3e6be38dc9c86732",
-      "width": 800,
-      "files": {
-        "avif": "03a9fc90f9c16da6",
-        "webp": "b3a8953f8756be64"
-      }
-    },
-    {
       "id": "lf-6d05ba9341de270a",
       "source": "cover art archive",
       "ref": "https://musicbrainz.org/release-group/08f25199-41f1-4615-a75e-6f8a9de33dec",
@@ -1429,6 +1417,18 @@
       "files": {
         "avif": "aae200f3a63462ee",
         "webp": "0a109f9a60d7343c"
+      }
+    },
+    {
+      "id": "lf-35a31c629274ad5b",
+      "source": "cover art archive",
+      "ref": "https://musicbrainz.org/release-group/4692f067-8974-4c83-ba7d-458c3c19b53c",
+      "match": 4.7,
+      "sourceHash": "3e6be38dc9c86732",
+      "width": 800,
+      "files": {
+        "avif": "03a9fc90f9c16da6",
+        "webp": "b3a8953f8756be64"
       }
     },
     {
@@ -1455,17 +1455,6 @@
       }
     },
     {
-      "id": "096",
-      "source": "print master",
-      "ref": "Unidentified - Geometric Form in Mist.jpg",
-      "sourceHash": "33676ec9aef36079",
-      "width": 800,
-      "files": {
-        "avif": "34ac700062e357ce",
-        "webp": "4c35a8419ac18288"
-      }
-    },
-    {
       "id": "247",
       "source": "print master",
       "ref": "wish you were here.jpg",
@@ -1474,6 +1463,17 @@
       "files": {
         "avif": "8d156a893aef888e",
         "webp": "a522bcdade4ff6e6"
+      }
+    },
+    {
+      "id": "096",
+      "source": "print master",
+      "ref": "Unidentified - Geometric Form in Mist.jpg",
+      "sourceHash": "33676ec9aef36079",
+      "width": 800,
+      "files": {
+        "avif": "34ac700062e357ce",
+        "webp": "4c35a8419ac18288"
       }
     },
     {
@@ -1591,17 +1591,6 @@
       }
     },
     {
-      "id": "156",
-      "source": "print master",
-      "ref": "elbow_thetakeoffandlanding_6rrw.jpg",
-      "sourceHash": "4057ef286cf9957a",
-      "width": 800,
-      "files": {
-        "avif": "7d225e626f7f902f",
-        "webp": "9dd760233a97ee83"
-      }
-    },
-    {
       "id": "history-9c5176cc560c069b",
       "source": "apple music",
       "ref": "https://music.apple.com/gb/album/station-to-station-2016-remaster/1195104858",
@@ -1610,6 +1599,28 @@
       "files": {
         "avif": "5b4cfd05f6b80e2f",
         "webp": "bf281e1ec64ff514"
+      }
+    },
+    {
+      "id": "149",
+      "source": "print master",
+      "ref": "deakinfront.jpg",
+      "sourceHash": "010bcef98cc2ab71",
+      "width": 800,
+      "files": {
+        "avif": "8e89601dd0cea16a",
+        "webp": "3fdbdee70e7cc3f3"
+      }
+    },
+    {
+      "id": "156",
+      "source": "print master",
+      "ref": "elbow_thetakeoffandlanding_6rrw.jpg",
+      "sourceHash": "4057ef286cf9957a",
+      "width": 800,
+      "files": {
+        "avif": "7d225e626f7f902f",
+        "webp": "9dd760233a97ee83"
       }
     },
     {
@@ -1625,14 +1636,14 @@
       }
     },
     {
-      "id": "149",
+      "id": "099",
       "source": "print master",
-      "ref": "deakinfront.jpg",
-      "sourceHash": "010bcef98cc2ab71",
+      "ref": "Unidentified - Illustrated Night Landscape.png",
+      "sourceHash": "ae2525fb3d764420",
       "width": 800,
       "files": {
-        "avif": "8e89601dd0cea16a",
-        "webp": "3fdbdee70e7cc3f3"
+        "avif": "a2bd2e13677cd8ec",
+        "webp": "4e08c893bb2f4318"
       }
     },
     {
@@ -1671,28 +1682,6 @@
       }
     },
     {
-      "id": "history-e1cbfbc8406426ee",
-      "source": "apple music",
-      "ref": "https://music.apple.com/gb/album/her-original-score/1553022037",
-      "sourceHash": "9a2abbf9a0763fa8",
-      "width": 800,
-      "files": {
-        "avif": "947ff75d350cb1f1",
-        "webp": "55aadb1084193427"
-      }
-    },
-    {
-      "id": "099",
-      "source": "print master",
-      "ref": "Unidentified - Illustrated Night Landscape.png",
-      "sourceHash": "ae2525fb3d764420",
-      "width": 800,
-      "files": {
-        "avif": "a2bd2e13677cd8ec",
-        "webp": "4e08c893bb2f4318"
-      }
-    },
-    {
       "id": "lf-4cb306fbca55133f",
       "source": "cover art archive",
       "ref": "https://musicbrainz.org/release-group/f833a9fc-3c55-309f-a7f5-30fb9124040d",
@@ -1725,6 +1714,17 @@
       "files": {
         "avif": "cdc4529265c79da6",
         "webp": "ab5d6145e0d5ff29"
+      }
+    },
+    {
+      "id": "history-e67522e1574ecb57",
+      "source": "apple music",
+      "ref": "https://music.apple.com/gb/album/the-disintegration-loops-iv-remastered/908006351",
+      "sourceHash": "c19258c96d6ca60a",
+      "width": 800,
+      "files": {
+        "avif": "6270da7290552c45",
+        "webp": "b62599f3a71ca7e6"
       }
     },
     {
@@ -1785,6 +1785,17 @@
       }
     },
     {
+      "id": "history-2e197b18e6453a80",
+      "source": "apple music",
+      "ref": "https://music.apple.com/gb/album/famous-prophets-stars/1586483380",
+      "sourceHash": "5d0e95f24451ca7c",
+      "width": 800,
+      "files": {
+        "avif": "e90a2b597da92e17",
+        "webp": "22788c93a3a439ea"
+      }
+    },
+    {
       "id": "238",
       "source": "print master",
       "ref": "trr278.jpg",
@@ -1793,17 +1804,6 @@
       "files": {
         "avif": "9cb4fb1150787133",
         "webp": "21581a7188788eda"
-      }
-    },
-    {
-      "id": "history-5ef029aafe7641b2",
-      "source": "apple music",
-      "ref": "https://music.apple.com/us/album/high-life/882740748",
-      "sourceHash": "40c62258cd9adefd",
-      "width": 800,
-      "files": {
-        "avif": "775e693a451c05fb",
-        "webp": "4ec7022a26aeb2c7"
       }
     },
     {
@@ -1818,15 +1818,14 @@
       }
     },
     {
-      "id": "lf-acbba8cb3e1b7801",
-      "source": "cover art archive",
-      "ref": "https://musicbrainz.org/release-group/70f30471-98cb-49e4-ad99-35b87a797919",
-      "match": 2.6,
-      "sourceHash": "6ab2d0ade66f7cb7",
-      "width": 640,
+      "id": "history-5ef029aafe7641b2",
+      "source": "apple music",
+      "ref": "https://music.apple.com/us/album/high-life/882740748",
+      "sourceHash": "40c62258cd9adefd",
+      "width": 800,
       "files": {
-        "avif": "b45b362aa3ffae11",
-        "webp": "7ea5dee544987494"
+        "avif": "775e693a451c05fb",
+        "webp": "4ec7022a26aeb2c7"
       }
     },
     {
@@ -1838,6 +1837,18 @@
       "files": {
         "avif": "c6a4fe389a0243e7",
         "webp": "ebc57b1fb7e5ec6c"
+      }
+    },
+    {
+      "id": "lf-0b2209eef303b3ac",
+      "source": "apple music",
+      "ref": "https://music.apple.com/gb/album/calling-out-of-context/905117652",
+      "match": 3,
+      "sourceHash": "2133ca6a7594e806",
+      "width": 800,
+      "files": {
+        "avif": "156b47cb9d7a231d",
+        "webp": "7214a34a1d26b636"
       }
     },
     {
@@ -1864,18 +1875,6 @@
       }
     },
     {
-      "id": "lf-0b2209eef303b3ac",
-      "source": "apple music",
-      "ref": "https://music.apple.com/gb/album/calling-out-of-context/905117652",
-      "match": 3,
-      "sourceHash": "2133ca6a7594e806",
-      "width": 800,
-      "files": {
-        "avif": "156b47cb9d7a231d",
-        "webp": "7214a34a1d26b636"
-      }
-    },
-    {
       "id": "history-65436918aee47e5c",
       "source": "apple music",
       "ref": "https://music.apple.com/gb/album/meeting-of-the-waters-ep/1225800522",
@@ -1898,6 +1897,17 @@
       }
     },
     {
+      "id": "history-93b92aeddb9e1c77",
+      "source": "apple music",
+      "ref": "https://music.apple.com/gb/album/grace/1046187510",
+      "sourceHash": "d0c2e6c7cfb385c4",
+      "width": 800,
+      "files": {
+        "avif": "a6ec5b04daa5c305",
+        "webp": "ee7ecb7dbc9fa838"
+      }
+    },
+    {
       "id": "lf-734713a64f1317e0",
       "source": "deezer",
       "ref": "https://www.deezer.com/album/415407217",
@@ -1907,17 +1917,6 @@
       "files": {
         "avif": "4a9a0f1b0b4eca97",
         "webp": "4f550e71fd0eb6c1"
-      }
-    },
-    {
-      "id": "history-93b92aeddb9e1c77",
-      "source": "apple music",
-      "ref": "https://music.apple.com/gb/album/grace/1046187510",
-      "sourceHash": "d0c2e6c7cfb385c4",
-      "width": 800,
-      "files": {
-        "avif": "a6ec5b04daa5c305",
-        "webp": "ee7ecb7dbc9fa838"
       }
     },
     {
@@ -1953,23 +1952,20 @@
         "avif": "fe86693f207c2dd3",
         "webp": "6db16ee2ba11dd69"
       }
-    },
-    {
-      "id": "224",
-      "source": "print master",
-      "ref": "talkingheads_speakingintongues_deik.jpg",
-      "sourceHash": "4a75be5126cf16a7",
-      "width": 800,
-      "files": {
-        "avif": "4d1e4b01898c2cdb",
-        "webp": "873a88aa9f2d4745"
-      }
     }
   ],
   "skipped": [
     {
       "id": "lf-516104b1b71f11e2",
       "reason": "closest larger cover differs (28.7)"
+    },
+    {
+      "id": "lf-26dab1d3cb3c9703",
+      "reason": "no larger source found"
+    },
+    {
+      "id": "history-c89ff5dc78945899",
+      "reason": "no catalogue artwork entry"
     }
   ]
 }

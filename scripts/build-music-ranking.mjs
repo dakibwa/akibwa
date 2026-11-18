@@ -21,6 +21,7 @@ import { createReadStream, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { createInterface } from "node:readline";
 import { browseAlbums } from "../components/album-catalogue.mjs";
+import { songTitle } from "../components/paper/music-shelf.mjs";
 
 const at = process.argv.indexOf("--history-root");
 const root = at > -1 ? process.argv[at + 1] : null;
@@ -38,6 +39,8 @@ const fold = (text) =>
     .toLowerCase()
     .replace(/\s*[([].*?(remaster|deluxe|edition|version|anniversary|expanded|soundtrack).*?[)\]]/g, "")
     .replace(/\s+-\s+.*?(remaster|deluxe|edition|version).*$/g, "")
+    .replace(/\s*[:–—]\s+[^:–—]*(remaster|deluxe|edition|version|anniversary|expanded|bonus)[^:–—]*$/g, "")
+    .replace(/\s+-\s+(single|ep)$/g, "")
     .replace(/&/g, "and")
     // Letters of every script, so two Japanese or Russian titles never fold
     // to the same empty name.
@@ -55,145 +58,206 @@ const sameArtist = (track, album) => {
 // Glass's recording).
 const within = (a, b) => ` ${fold(a)} `.includes(` ${fold(b)} `) || ` ${fold(b)} `.includes(` ${fold(a)} `);
 
-// Sleeves by artist and album, preferring the most-played edition. Failing
-// that (16 November 2026: every record has its cover), an album of the same
-// title on which the song's artist is credited, such as Panda Bear's songs on
-// Panda Bear & Sonic Boom's Reset, or a various-artists soundtrack.
-const sleeves = new Map();
-const byTitle = new Map();
-for (const album of catalogue.albums) {
-  if (!album.artwork) continue;
-  const key = `${fold(album.artist)}|${fold(album.album)}`;
-  if (!sleeves.has(key) || (album.plays ?? 0) > (sleeves.get(key).plays ?? 0)) sleeves.set(key, album);
-  const title = fold(album.album);
-  if (!byTitle.has(title)) byTitle.set(title, []);
-  byTitle.get(title).push(album);
-}
-const sleeveFor = (artist, albums) => {
-  const ordered = Object.entries(albums ?? {}).sort((a, b) => b[1] - a[1]);
-  for (const [album] of ordered) {
-    const found = sleeves.get(`${fold(artist)}|${fold(album)}`);
-    if (found) return found.id;
-  }
-  for (const [album] of ordered) {
-    const shared = (byTitle.get(fold(album)) ?? []).filter(
-      (found) => fold(found.artist) === "various artists" || sameArtist(artist, found.artist) || within(artist, found.artist)
-    );
-    if (shared.length) return shared.sort((a, b) => (b.plays ?? 0) - (a.plays ?? 0))[0].id;
-  }
-  return null;
-};
-
 // Spotify playback time, in whole minutes. YouTube records no durations.
 const minutes = (ms) => Math.round((ms ?? 0) / 60000);
 
 // The Spotify catalogue URIs a song was played under, for its years below.
 const urisOf = (track) => (track.catalogueUris?.length ? track.catalogueUris : [track.uri]).filter(Boolean);
 
+/*
+ * The shelf's records (Dan, 18 November 2026). Every release once, its
+ * editions folded together ("Desire, I Want to Turn Into You: Everasking
+ * Edition" is that album), named by the edition with a cover and the plainest
+ * title. Every song Dan played counts on one record only: the release most
+ * of its plays came from, unless that is a single or EP and the song is on a
+ * fuller album by its artist that he played too, which takes it (MGMT's
+ * Bubblegum Dog belongs on Loss of Life). data/music-folds.json adds the
+ * singles Apple lists on an album he played, though he never played the song
+ * from there. A record over 90% one song is that song's single, with the
+ * single's own cover where one is published (Denzel Curry's Melt My Eyez See
+ * Your Future is really Walkin). The shelf is his top 1,000 records by hours,
+ * albums and singles together (Dan, 18 November 2026: "can we do the top
+ * 1000 so it's simple?").
+ */
+const SHELF_SIZE = 1000;
+const verifiedIds = new Set(JSON.parse(readFileSync(new URL("../data/music-sources.json", import.meta.url), "utf8")).entries.map((entry) => entry.id));
+const manifest = JSON.parse(readFileSync(new URL("../data/listening-artwork.json", import.meta.url), "utf8"));
+const folds = JSON.parse(readFileSync(new URL("../data/music-folds.json", import.meta.url), "utf8"));
+const releases = new Map();
+const better = (a, b) =>
+  (!!a.artwork !== !!b.artwork ? !!a.artwork : verifiedIds.has(a.id) !== verifiedIds.has(b.id) ? verifiedIds.has(a.id) : a.album.length !== b.album.length ? a.album.length < b.album.length : (a.plays ?? 0) > (b.plays ?? 0));
+for (const album of catalogue.albums) {
+  const key = `${fold(album.artist)}|${fold(album.album)}`;
+  const seen = releases.get(key);
+  if (!seen) {
+    releases.set(key, { key, best: album, ids: new Set([album.id]), plays: album.plays ?? 0 });
+    continue;
+  }
+  seen.ids.add(album.id);
+  seen.plays += album.plays ?? 0;
+  if (better(album, seen.best)) seen.best = album;
+}
+const releaseOfId = new Map();
+for (const release of releases.values()) for (const id of release.ids) releaseOfId.set(id, release);
+const byTitle = new Map();
+for (const release of releases.values()) {
+  const title = release.key.split("|")[1];
+  if (!byTitle.has(title)) byTitle.set(title, []);
+  byTitle.get(title).push(release);
+}
+const various = (release) => fold(release.best.artist) === "various artists";
+const everyTrack = [...ranking.allSourceTracks, ...ranking.excludedTracks];
+// The releases a song was played on, with its plays on each.
+const candidatesOf = new Map();
+for (const track of everyTrack) {
+  const found = new Map();
+  for (const [name, count] of Object.entries(track.albums ?? {})) {
+    for (const release of byTitle.get(fold(name)) ?? []) {
+      if (!various(release) && !sameArtist(track.artist, release.best.artist) && !within(track.artist, release.best.artist)) continue;
+      found.set(release.key, { release, plays: (found.get(release.key)?.plays ?? 0) + count });
+    }
+  }
+  candidatesOf.set(track, [...found.values()].sort((a, b) => b.plays - a.plays));
+}
+const songsOn = new Map();
+for (const list of candidatesOf.values()) for (const { release } of list) songsOn.set(release.key, (songsOn.get(release.key) ?? 0) + 1);
+const singleLike = (release) => (songsOn.get(release.key) ?? 0) <= 3 || /\b(single|ep)\b/i.test(release.best.album);
+// Singles Apple lists on one of the artist's albums he played.
+const foldInto = new Map();
+for (const entry of folds.folds) {
+  const single = releaseOfId.get(entry.singleId);
+  const album = releaseOfId.get(entry.albumId);
+  if (!single || !album || single === album) continue;
+  if (!foldInto.has(single.key)) foldInto.set(single.key, new Map());
+  for (const song of entry.songs) foldInto.get(single.key).set(fold(songTitle(song)), album);
+}
+const recordOf = new Map();
+const homes = new Map();
+for (const track of everyTrack) {
+  const list = candidatesOf.get(track);
+  if (!list.length) continue;
+  let home = list[0].release;
+  if (singleLike(home)) {
+    const fuller = list.filter(({ release }) => release !== home && !various(release) && !singleLike(release) && (songsOn.get(release.key) ?? 0) > (songsOn.get(home.key) ?? 0));
+    if (fuller.length) home = fuller[0].release;
+  }
+  home = foldInto.get(home.key)?.get(fold(songTitle(track.track))) ?? home;
+  recordOf.set(track, home);
+  if (!homes.has(home.key)) homes.set(home.key, { release: home, tracks: [] });
+  homes.get(home.key).tracks.push(track);
+}
+const rankOf = new Map(browseAlbums(catalogue.albums).map((album, position) => [album.id, position]));
+// The published single covers (data/listening-artwork.json, kind "single").
+const singleCovers = new Map(manifest.entries.filter((entry) => entry.kind === "single").map((entry) => [`${fold(entry.artist)}|${fold(songTitle(entry.song))}`, entry]));
+const toRecord = ({ release, tracks }) => {
+  // One row per song title: live and remastered variants were joined upstream.
+  const merged = new Map();
+  for (const track of tracks) {
+    const key = fold(songTitle(track.track));
+    const entry = merged.get(key) ?? { title: track.track, artist: track.artist, plays: 0, ms: 0, uris: [], tracks: [] };
+    entry.plays += track.listens;
+    entry.ms += track.spotifyTotalPlayedMs;
+    entry.uris.push(...urisOf(track));
+    entry.tracks.push(track);
+    merged.set(key, entry);
+  }
+  const listed = [...merged.values()].sort((a, b) => b.ms - a.ms || b.plays - a.plays);
+  const total = listed.reduce((sum, track) => sum + track.ms, 0);
+  const album = release.best;
+  const artist = fold(album.artist) === "various artists" ? listed[0].artist : album.artist;
+  const record = {
+    id: album.id,
+    art: album.artwork ? album.id : null,
+    title: album.album,
+    artist,
+    year: album.year ?? null,
+    plays: Math.max(release.plays, listed.reduce((sum, track) => sum + track.plays, 0)),
+    ms: total,
+    single: false,
+    release,
+    songs: listed
+  };
+  // Over 90% one song: that song's single, unless it is one of the top
+  // albums, such as Discreet Music, whose title piece is most of it.
+  const top = [...release.ids].some((id) => verifiedIds.has(id) || (rankOf.get(id) ?? Infinity) < 150);
+  // A long piece is an album in itself (Thursday Afternoon, dlp 1), unless
+  // it was released as a single with its own cover (Hey World!).
+  const cover = singleCovers.get(`${fold(listed[0].artist)}|${fold(songTitle(listed[0].title))}`);
+  const long = listed[0].ms / Math.max(1, listed[0].plays) > 10 * 60000;
+  if (!top && (!long || cover) && (listed.length === 1 || listed[0].ms / Math.max(1, total) > 0.9)) {
+    const top = listed[0];
+    Object.assign(record, {
+      single: true,
+      title: songTitle(top.title),
+      artist: top.artist,
+      plays: top.plays,
+      ms: top.ms,
+      songs: [top],
+      ...(cover ? { id: cover.id, art: cover.id, year: cover.source.releaseYear ?? record.year } : {})
+    });
+  }
+  // A record with no cover of its own borrows one from another release its
+  // songs were played on (Dan, 18 November 2026: "they exist somewhere").
+  if (!record.art) {
+    const lent = record.songs.flatMap((song) => song.tracks.flatMap((track) => candidatesOf.get(track) ?? [])).find(({ release: other }) => other.best.artwork);
+    if (lent) record.art = lent.release.best.id;
+  }
+  record.minutes = minutes(record.ms);
+  record.tracks = record.songs.map((song) => ({ title: song.title, plays: song.plays, minutes: minutes(song.ms) }));
+  record.uris = new Set(record.songs.flatMap((song) => song.uris));
+  return record;
+};
+const shelf = [...homes.values()].map(toRecord).sort((a, b) => b.ms - a.ms).slice(0, SHELF_SIZE);
+// The top 150 albums by the catalogue's reconciled plays (Dan asked for half
+// as many again as 100 on 25 September 2026) keep their checked covers and
+// links; the rest of the shelf's albums follow, then its singles.
+const firstRank = (record) => Math.min(...[...record.release.ids].map((id) => rankOf.get(id) ?? Infinity));
+const shelfAlbums = shelf.filter((record) => !record.single).sort((a, b) => firstRank(a) - firstRank(b) || b.minutes - a.minutes);
+const albums = shelfAlbums.slice(0, 150);
+const others = shelfAlbums.slice(150).sort((a, b) => b.minutes - a.minutes);
+const singles = shelf.filter((record) => record.single).sort((a, b) => b.minutes - a.minutes);
+const records = [...albums, ...others, ...singles];
+if (records.some((record) => record.art === null && verifiedIds.has(record.id))) throw Error("a checked album lost its cover");
+
+// The top 1,000 songs, each on its record (art is that record's id), or on
+// none when its record is under three hours.
+const placed = new Map();
+const songKey = (track) => JSON.stringify(track.songKey);
+for (const record of records) for (const song of record.songs) for (const track of song.tracks) placed.set(songKey(track), record);
 const songs = ranking.playlistSelection.tracks.map((track) => ({
   rank: track.playlistRank,
   title: track.track,
   artist: track.artist,
   plays: track.listens,
   youtube: track.youtubeWatches,
-  art: sleeveFor(track.artist, track.albums),
+  art: placed.get(songKey(track))?.id ?? null,
   minutes: minutes(track.spotifyTotalPlayedMs),
   uris: urisOf(track)
 }));
 
-// The top 150 albums by the catalogue's reconciled plays (Dan asked for half
-// as many again as 100 on 25 September 2026), each with the
-// tracks Dan played from it: their Spotify plays on that album and a share of
-// their playback time in proportion to those plays. The excluded ambient
-// albums still belong here; only the song ranking leaves them out.
-const everyTrack = [...ranking.allSourceTracks, ...ranking.excludedTracks];
-function albumRecord(album, loose = false) {
-  const various = fold(album.artist) === "various artists";
-  const tracks = [];
-  const uris = new Set();
-  for (const track of everyTrack) {
-    if (!various && !sameArtist(track.artist, album.artist) && !(loose && within(track.artist, album.artist))) continue;
-    // A track belongs to the album most of its plays came from; a handful of
-    // plays tagged to another album (For the First Time's songs under Ants
-    // From Up There) are stray metadata, not that album's tracks.
-    const byAlbum = new Map();
-    for (const [name, plays] of Object.entries(track.albums ?? {})) byAlbum.set(fold(name), (byAlbum.get(fold(name)) ?? 0) + plays);
-    const home = [...byAlbum.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
-    const share = (byAlbum.get(fold(album.album)) ?? 0) / Math.max(1, track.spotifyListens);
-    if (home !== fold(album.album) && share < 0.4) continue;
-    for (const [name, plays] of Object.entries(track.albums ?? {})) {
-      if (fold(name) !== fold(album.album) || !plays) continue;
-      const share = track.spotifyListens ? plays / track.spotifyListens : 0;
-      tracks.push({ title: track.track, plays, minutes: minutes(track.spotifyTotalPlayedMs * share) });
-      for (const uri of urisOf(track)) uris.add(uri);
-    }
-  }
-  // One row per title: live and remastered variants were joined upstream.
-  const merged = new Map();
-  for (const track of tracks) {
-    const key = fold(track.title);
-    const entry = merged.get(key) ?? { title: track.title, plays: 0, minutes: 0 };
-    entry.plays += track.plays;
-    entry.minutes += track.minutes;
-    merged.set(key, entry);
-  }
-  const listed = [...merged.values()].sort((a, b) => b.plays - a.plays || b.minutes - a.minutes);
-  return {
-    id: album.id,
-    title: album.album,
-    artist: album.artist,
-    year: album.year ?? null,
-    plays: album.plays,
-    minutes: listed.reduce((sum, track) => sum + track.minutes, 0),
-    tracks: listed,
-    uris
-  };
-}
-const albums = browseAlbums(catalogue.albums).slice(0, 150).map((album) => albumRecord(album));
-
-// The other records his top songs come from, each with every track he played
-// from it (Dan, 16 November 2026: surely he has heard more of T. Rex than
-// Diamond Meadows). Its top songs are always among them, whatever album name
-// their plays were filed under.
-const topIds = new Set(albums.map((album) => album.id));
-const catalogueById = new Map(catalogue.albums.map((album) => [album.id, album]));
-const others = [...new Set(songs.map((song) => song.art).filter((id) => id && !topIds.has(id)))].map((id) => {
-  const record = albumRecord(catalogueById.get(id), true);
-  for (const song of songs.filter((song) => song.art === id)) {
-    if (!record.tracks.some((track) => fold(track.title) === fold(song.title))) record.tracks.push({ title: song.title, plays: song.plays, minutes: song.minutes });
-    for (const uri of song.uris) record.uris.add(uri);
-  }
-  // Named for the artist of its best-loved song, as the songs are, so a
-  // soundtrack or a credit spelt another way keeps that artist's kind.
-  record.artist = songs.filter((song) => song.art === id).sort((a, b) => b.minutes - a.minutes)[0].artist;
-  record.tracks.sort((a, b) => b.plays - a.plays || b.minutes - a.minutes);
-  record.minutes = record.tracks.reduce((sum, track) => sum + track.minutes, 0);
-  record.plays = Math.max(record.plays ?? 0, record.tracks.reduce((sum, track) => sum + track.plays, 0));
-  return record;
-});
-
 // Compact rows keep the lazily loaded file small. Songs are
-// [title, artist, plays, youtube, art, minutes]; albums and sleeves are
-// [id, title, artist, year, plays, minutes, [[track, plays, minutes], …]].
-const names = [...new Set([...albums.map((album) => album.artist), ...songs.map((song) => song.artist), ...others.map((album) => album.artist)])];
-const row = (album) => [album.id, album.title, index.get(album.artist), album.year, album.plays, album.minutes, album.tracks.map((track) => [track.title, track.plays, track.minutes])];
+// [title, artist, plays, youtube, record, minutes]; albums are
+// [id, title, artist, year, plays, minutes, [[track, plays, minutes], …]];
+// sleeves (the other albums) and singles add the cover's id, or null.
+const names = [...new Set([...records.map((record) => record.artist), ...songs.map((song) => song.artist)])];
 const index = new Map(names.map((name, position) => [name, position]));
+const row = (record) => [record.id, record.title, index.get(record.artist), record.year, record.plays, record.minutes, record.tracks.map((track) => [track.title, track.plays, track.minutes])];
 const packet = {
   schemaVersion: 2,
   asOf: ranking.generatedAt.slice(0, 10),
   counts: "Spotify plays of at least 30 seconds plus identified YouTube song watches. Two ambient albums are left out of the songs.",
-  hours: "Spotify playback time; YouTube records no durations.",
+  hours: "Spotify playback time; YouTube records no durations. The shelf is the top 1,000 records by these hours.",
   names,
   songs: songs.map((song) => [song.title, index.get(song.artist), song.plays, song.youtube, song.art, song.minutes]),
   albums: albums.map(row),
-  sleeves: others.map(row)
+  sleeves: others.map((record) => [...row(record), record.art]),
+  singles: singles.map((record) => [...row(record), record.art])
 };
 
 writeFileSync(new URL("../public/music-ranking.json", import.meta.url), JSON.stringify(packet) + "\n");
-const covered = songs.filter((song) => song.art).length;
-const empty = albums.filter((album) => !album.tracks.length);
-console.log(`music-ranking: ${songs.length} songs (${covered} with sleeves), ${albums.length} albums, ${others.length} other records, as of ${packet.asOf}`);
-console.log(`albums without matched tracks: ${empty.length ? empty.map((album) => `${album.artist} — ${album.title}`).join("; ") : "none"}`);
+const covered = records.filter((record) => record.art).length;
+console.log(`music-ranking: the top ${records.length} records (${albums.length} top albums, ${others.length} more albums, ${singles.length} singles), down to ${Math.min(...records.map((record) => record.minutes))} minutes, ${covered} with covers; ${songs.filter((song) => song.art).length} of the top ${songs.length} songs on them; as of ${packet.asOf}`);
+console.log(`without covers: ${records.filter((record) => !record.art).map((record) => `${record.artist} — ${record.title}`).slice(0, 12).join("; ")}${records.filter((record) => !record.art).length > 12 ? " …" : ""}`);
 console.log(`top albums: ${albums.slice(0, 6).map((album) => `${album.title} ${album.plays} plays, ${Math.round(album.minutes / 60)} h, ${album.tracks.length} tracks`).join("; ")}`);
 
 /*
@@ -207,12 +271,11 @@ console.log(`top albums: ${albums.slice(0, 6).map((album) => `${album.title} ${a
 const MUSIC = new Set(["track", "video_track"]);
 const songsByUri = new Map();
 songs.forEach((song, position) => song.uris.forEach((uri) => songsByUri.set(uri, position)));
-const records = [...albums, ...others];
 const albumsByUri = new Map();
 records.forEach((album, position) => album.uris.forEach((uri) => albumsByUri.set(uri, [...(albumsByUri.get(uri) ?? []), position])));
 const tally = () => new Map();
 const songYears = songs.map(tally);
-const albumYears = records.map(() => ({ named: tally(), any: tally() }));
+const albumYears = records.map(() => ({ any: tally() }));
 const add = (map, year, ms) => map.set(year, (map.get(year) ?? 0) + ms);
 const lines = createInterface({ input: createReadStream(resolve(root, "private/spotify/extended-streaming-history.jsonl")), crlfDelay: Infinity });
 for await (const line of lines) {
@@ -225,7 +288,6 @@ for await (const line of lines) {
   for (const position of albumsByUri.get(event.uri) ?? []) {
     const tallies = albumYears[position];
     add(tallies.any, year, event.msPlayed);
-    if (fold(event.collection ?? "") === fold(records[position].title)) add(tallies.named, year, event.msPlayed);
   }
 }
 
@@ -247,8 +309,8 @@ function split(byYear, total) {
 
 const yearsOfSongs = songs.map((song, position) => split(songYears[position], song.minutes));
 const yearsOfAlbums = records.map((album, position) => {
-  const { named, any } = albumYears[position];
-  return split(named.size ? named : any, album.minutes);
+  const { any } = albumYears[position];
+  return split(any, album.minutes);
 });
 // The years with at least a dozen of the top albums played for an hour or more.
 const played = new Map();

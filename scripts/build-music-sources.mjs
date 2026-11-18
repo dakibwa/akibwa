@@ -51,7 +51,15 @@ const REVIEWED = {
   "history-7abaf827ee921950": "Bang on a Can's 1998 recording, the same cover as on Deezer, where it is credited to them.",
   "229": "The UK double EP's sleeve, the band in animal costumes under a starry BEATLES; the services show the US LP's yellow one.",
   "lf-516104b1b71f11e2": "The original sleeve; the services show the 2015 remaster's, the same portrait in a black frame.",
-  "lf-6ad83c9cca124c69": "The same logo as on Deezer and Apple Music; its thin lines throw the fingerprint."
+  "lf-6ad83c9cca124c69": "The same logo as on Deezer and Apple Music; its thin lines throw the fingerprint.",
+  // Looked at on 18 November 2026, when the services' covers could not be fetched.
+  "123": "Andy Shauf's The Party: the illustrated party guests, titled in red.",
+  "lf-9fe13313da83214d": "King Krule's The OOZ: a pink streak across a blue sky.",
+  "001": "King Krule's Man Alive!: the red figure folded over a blue ground.",
+  "049": "Kendrick Lamar's DAMN.: his portrait against the brick wall under the red title.",
+  "057": "Nick Cave & Warren Ellis's Carnage: the black lettering on cream.",
+  "170": "MGMT's In the Afternoon: the painted portrait in green, titled in script.",
+  "lf-26dab1d3cb3c9703": "Nala Sinephro's The Smashing Machine score: the yellow-green title on black."
 };
 
 const sha = (value) => createHash("sha256").update(value).digest("hex").slice(0, 16);

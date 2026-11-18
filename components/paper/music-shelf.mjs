@@ -183,75 +183,30 @@ export function peakOf(pairs) {
 }
 
 /*
- * One shelf of records (Dan, 16 November 2026: "by combining albums and
- * songs that should effectively merge both", since a record can matter for
- * one song, such as King Krule's Hey World!). Every top album is a record
- * as large as its own hours; every top song from another record joins that
- * record's sleeve, which carries the record's own name and every track he
- * played from it (`sleeves`, 16 November 2026), or failing those, is named by
- * its most listened song and as large as its songs together; a song with no
- * sleeve stands alone, typeset. Each record keeps the songs that brought it,
- * which fill its track list until the record's own has loaded. The most
- * listened come first.
+ * The shelf's records (Dan, 16 and 18 November 2026): every album he played
+ * for three hours or more, and the singles, records that are over 90% one
+ * song, each with every song he played from it counted there and nowhere
+ * else (scripts/build-music-ranking.mjs decides which record each song is
+ * on). Each record keeps the top songs on it, which fill its track list
+ * until its own has loaded. The most listened come first.
  */
-export function mergeShelf(albums, songs, sleeves = []) {
-  const ids = new Set(albums.map((album) => album.id));
-  const ofAlbum = new Map();
-  const bySleeve = new Map();
-  const alone = [];
+export function mergeShelf(albums, songs, sleeves = [], singles = []) {
+  const byId = new Map();
+  const records = [];
+  const add = (record, kind) => {
+    const item = { ...record, key: `${kind}-${record.id}`, kind, art: record.art === undefined ? record.id : record.art, songs: [], fallback: null };
+    byId.set(record.id, item);
+    records.push(item);
+  };
+  albums.forEach((record) => add(record, "album"));
+  sleeves.forEach((record) => add(record, "sleeve"));
+  singles.forEach((record) => add(record, "single"));
   for (const song of songs) {
-    if (song.art && ids.has(song.art)) {
-      if (!ofAlbum.has(song.art)) ofAlbum.set(song.art, []);
-      ofAlbum.get(song.art).push(song);
-    } else if (song.art) {
-      if (!bySleeve.has(song.art)) bySleeve.set(song.art, []);
-      bySleeve.get(song.art).push(song);
-    } else {
-      alone.push(song);
-    }
+    const record = song.art ? byId.get(song.art) : null;
+    if (record) record.songs.push(song);
   }
-  const tracksOf = (list) => list.map((song) => ({ title: song.title, plays: song.plays, minutes: song.minutes }));
-  const sum = (list, field) => list.reduce((total, song) => total + song[field], 0);
-  const records = albums.map((album) => {
-    const own = ofAlbum.get(album.id) ?? [];
-    return { ...album, key: `album-${album.id}`, kind: "album", art: album.id, songs: own, fallback: own.length ? tracksOf(own) : null };
-  });
-  const recordOf = new Map(sleeves.map((record) => [record.id, record]));
-  for (const [art, list] of bySleeve) {
-    const sorted = [...list].sort((a, b) => b.minutes - a.minutes || a.rank - b.rank);
-    const own = recordOf.get(art);
-    if (own) {
-      records.push({ ...own, key: `sleeve-${art}`, kind: "sleeve", art, songs: sorted, fallback: tracksOf(sorted) });
-      continue;
-    }
-    records.push({
-      key: `sleeve-${art}`,
-      kind: "sleeve",
-      id: art,
-      art,
-      title: songTitle(sorted[0].title),
-      artist: sorted[0].artist,
-      year: null,
-      plays: sum(sorted, "plays"),
-      minutes: sum(sorted, "minutes"),
-      songs: sorted,
-      tracks: tracksOf(sorted)
-    });
-  }
-  for (const song of alone) {
-    records.push({
-      key: `song-${song.rank}`,
-      kind: "song",
-      id: null,
-      art: null,
-      title: songTitle(song.title),
-      artist: song.artist,
-      year: null,
-      plays: song.plays,
-      minutes: song.minutes,
-      songs: [song],
-      tracks: tracksOf([song])
-    });
+  for (const record of records) {
+    if (record.songs.length) record.fallback = record.songs.map((song) => ({ title: song.title, plays: song.plays, minutes: song.minutes }));
   }
   return records.sort((a, b) => b.minutes - a.minutes || a.key.localeCompare(b.key));
 }

@@ -134,8 +134,19 @@ are public MusicBrainz data (`scripts/build-music-meta.mjs`), never
 listening history. Covers reuse the committed album sleeves
 where artist and album match, or failing that an album of the same title on
 which the song's artist is credited (Panda Bear's songs on Panda Bear & Sonic
-Boom's Reset) or a various-artists record. Every other record a top song comes
-from is in `sleeves`, in the same row shape as the albums: its catalogue
+Boom's Reset) or a various-artists record. Since 18 November 2026 the shelf is Dan's top 1,000 records by Spotify
+playback, built song by song: each song Dan played counts once, on the release most of
+its plays came from, unless that is a single or EP (three songs or fewer
+played, or so named) and the song is on a fuller album by its artist he also
+played, or `data/music-folds.json` records Apple listing it on one of his
+albums; editions fold together, including ": … Edition" suffixes. A record
+over 90% one song becomes that song's single (`singles`), with the single's
+reviewed cover where published (`kind: "single"` entries in
+`data/listening-artwork.json`); the top 150 albums by plays never become
+singles. Only the top 1,000 records by hours are kept. Rows in
+`sleeves` and `singles` add the cover's id, or null. Before that, every other
+record a top song came
+from was in `sleeves`, in the same row shape as the albums: its catalogue
 title, year and plays, every track Dan played from it (its top songs always
 among them), and the artist of its best-loved song, so its kind follows that
 artist (Dan, 16 November 2026: "surely I have listened to other songs from
@@ -185,5 +196,8 @@ npm run music:refresh -- --history-root /path/to/private/digital-history
 `AKIBWA_HISTORY_ROOT` can stand in for the flag; the path is never committed.
 New listening reaches the room only once the history has it: Spotify and
 YouTube deliver their histories as exports on request, and the current
-history covers Spotify to 31 August 2026 and YouTube to 5 September 2026.
+history covers Spotify to 1 October 2026 and YouTube to 3 October 2026 (the
+song ranking was rebuilt from it with the Daybook's
+`tools/build-song-ranking.py` on 18 November 2026). Last.fm scrobbles after
+those dates add plays to the catalogue but no hours.
 Then run `npm run publish:ready` before committing.

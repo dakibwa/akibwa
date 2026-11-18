@@ -115,7 +115,9 @@ async function main() {
     if ((index + 1) % 25 === 0) process.stderr.write(`  artists ${index + 1}/${ranking.names.length}\n`);
   }
 
-  const ids = [...new Set([...ranking.albums.map((album) => album[0]), ...ranking.songs.map((song) => song[4]).filter(Boolean)])];
+  // Every record's id and cover (18 November 2026: other albums and singles too).
+  const others = [...(ranking.sleeves ?? []), ...(ranking.singles ?? [])].flatMap((row) => [row[0], row[7]]).filter(Boolean);
+  const ids = [...new Set([...ranking.albums.map((album) => album[0]), ...others, ...ranking.songs.map((song) => song[4]).filter(Boolean)])];
   const years = {};
   for (const [index, id] of ids.entries()) {
     const sleeve = sleeves.get(id);

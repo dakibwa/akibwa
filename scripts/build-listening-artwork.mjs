@@ -43,7 +43,8 @@ if (!checkOnly) {
   await mkdir(cache, { recursive: true });
 }
 for (const entry of manifest.entries) {
-  if (!/^history-[a-f0-9]{16}$/.test(entry.id)) throw Error(`Unowned artwork ID: ${entry.id}`);
+  // A single's cover has its own id; it belongs to no catalogue album.
+  if (!(entry.kind === "single" ? /^single-[a-f0-9]{16}$/ : /^history-[a-f0-9]{16}$/).test(entry.id)) throw Error(`Unowned artwork ID: ${entry.id}`);
   if (await current(entry)) continue;
   if (checkOnly) { problems.push(`${entry.id} needs its artwork generated`); continue; }
   let files, sourceHash;
@@ -53,7 +54,10 @@ for (const entry of manifest.entries) {
       [suffix, await readFile(new URL(`${entry.reuseId}-${suffix}`, out))])));
   } else {
     const imageUrl = new URL(entry.source.artworkUrl);
-    if (imageUrl.protocol !== "https:" || !imageUrl.hostname.endsWith(".mzstatic.com"))
+    // Apple Music, Deezer and the Cover Art Archive (MusicBrainz) publish
+    // covers; any other host is refused (18 November 2026).
+    const approved = [".mzstatic.com", ".dzcdn.net", "coverartarchive.org"];
+    if (imageUrl.protocol !== "https:" || !approved.some((host) => imageUrl.hostname === host || imageUrl.hostname.endsWith(host)))
       throw Error(`Unapproved artwork source: ${entry.id}`);
     const cached = new URL(`catalogue-${hash(imageUrl.href)}.bin`, cache);
     let bytes;

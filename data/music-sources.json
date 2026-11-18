@@ -46,7 +46,7 @@
       "title": "Coloring Book",
       "artist": "Chance the Rapper",
       "spotify": "https://open.spotify.com/album/71QyofYesSsRMwFOTafnhB",
-      "apple": "https://music.apple.com/gb/album/coloring-book/1113239004",
+      "apple": null,
       "cover": {
         "source": "deezer",
         "ref": "https://www.deezer.com/album/13204564",
@@ -71,8 +71,8 @@
       "id": "135",
       "title": "Ants From Up There",
       "artist": "Black Country, New Road",
-      "spotify": "https://open.spotify.com/album/21xp7NdU1ajmO1CX0w2Egd",
-      "apple": "https://music.apple.com/gb/album/ants-from-up-there/1586070259",
+      "spotify": "https://open.spotify.com/album/4ZGAjDHKwwcMZSkDALzlSO",
+      "apple": "https://music.apple.com/gb/album/ants-from-up-there-deluxe/1619390820",
       "cover": {
         "source": "deezer",
         "ref": "https://www.deezer.com/album/265280732",
@@ -84,7 +84,7 @@
       "id": "201",
       "title": "Person Pitch",
       "artist": "Panda Bear",
-      "spotify": "https://open.spotify.com/album/5xvUpk2fTmj5j5TybamuOY",
+      "spotify": null,
       "apple": "https://music.apple.com/gb/album/person-pitch/1484070816",
       "cover": {
         "source": "deezer",
@@ -115,7 +115,7 @@
       "cover": {
         "source": "deezer",
         "ref": "https://www.deezer.com/album/267898502",
-        "score": 5.4
+        "score": 5.5
       },
       "verdict": "same"
     },
@@ -123,25 +123,12 @@
       "id": "125",
       "title": "Feels",
       "artist": "Animal Collective",
-      "spotify": "https://open.spotify.com/album/60EHyVXM7pTKcNWdY4X47I",
-      "apple": "https://music.apple.com/gb/album/feels-20th-anniversary/1834379952",
+      "spotify": null,
+      "apple": "https://music.apple.com/gb/album/feels/1484069740",
       "cover": {
         "source": "deezer",
         "ref": "https://www.deezer.com/album/115459542",
         "score": 8.5
-      },
-      "verdict": "same"
-    },
-    {
-      "id": "lf-f396087d71105729",
-      "title": "IGOR",
-      "artist": "Tyler, The Creator",
-      "spotify": "https://open.spotify.com/album/5zi7WsKlIiUXv09tbGLKsE",
-      "apple": "https://music.apple.com/gb/album/igor/1463409338",
-      "cover": {
-        "source": "deezer",
-        "ref": "https://www.deezer.com/album/97140952",
-        "score": 3.5
       },
       "verdict": "same"
     },
@@ -155,6 +142,19 @@
         "source": "cover art archive",
         "ref": "https://musicbrainz.org/release-group/4505ae3f-6f4d-4049-a9a3-1151f89ef344",
         "score": 3.9
+      },
+      "verdict": "same"
+    },
+    {
+      "id": "lf-f396087d71105729",
+      "title": "IGOR",
+      "artist": "Tyler, The Creator",
+      "spotify": "https://open.spotify.com/album/5zi7WsKlIiUXv09tbGLKsE",
+      "apple": "https://music.apple.com/gb/album/igor/1463409338",
+      "cover": {
+        "source": "deezer",
+        "ref": "https://www.deezer.com/album/97140952",
+        "score": 3.5
       },
       "verdict": "same"
     },
@@ -208,6 +208,19 @@
       "verdict": "same"
     },
     {
+      "id": "lf-48abf5a53479159d",
+      "title": "Black British Music (2025)",
+      "artist": "Jim Legxacy",
+      "spotify": "https://open.spotify.com/album/0uqw8DmJjWCODFySYWx47f",
+      "apple": "https://music.apple.com/gb/album/black-british-music-2025/1822840203",
+      "cover": {
+        "source": "deezer",
+        "ref": "https://www.deezer.com/album/778617401",
+        "score": 6.1
+      },
+      "verdict": "same"
+    },
+    {
       "id": "182",
       "title": "This Old Dog",
       "artist": "Mac DeMarco",
@@ -234,19 +247,6 @@
       "verdict": "same"
     },
     {
-      "id": "lf-48abf5a53479159d",
-      "title": "Black British Music (2025)",
-      "artist": "Jim Legxacy",
-      "spotify": "https://open.spotify.com/album/0uqw8DmJjWCODFySYWx47f",
-      "apple": "https://music.apple.com/gb/album/black-british-music-2025/1822840203",
-      "cover": {
-        "source": "deezer",
-        "ref": "https://www.deezer.com/album/778617401",
-        "score": 6.1
-      },
-      "verdict": "same"
-    },
-    {
       "id": "lf-b1b131517ca6b745",
       "title": "Merriweather Post Pavilion",
       "artist": "Animal Collective",
@@ -264,13 +264,14 @@
       "title": "The Party",
       "artist": "Andy Shauf",
       "spotify": null,
-      "apple": null,
+      "apple": "https://music.apple.com/gb/album/the-party/1485075427",
       "cover": {
-        "source": "cover art archive",
-        "ref": "https://musicbrainz.org/release-group/d6dd7b04-4b98-44b1-bc22-0bbf0d977b96",
-        "score": 3.5
+        "source": "apple music",
+        "ref": "https://music.apple.com/gb/album/the-party/1485075427",
+        "score": 3.1
       },
-      "verdict": "same"
+      "verdict": "reviewed",
+      "review": "Andy Shauf's The Party: the illustrated party guests, titled in red."
     },
     {
       "id": "lf-9fe13313da83214d",
@@ -283,7 +284,8 @@
         "ref": "https://musicbrainz.org/release-group/6ee668b0-8d9b-490b-bdf2-1c68cf197891",
         "score": 1.6
       },
-      "verdict": "same"
+      "verdict": "reviewed",
+      "review": "King Krule's The OOZ: a pink streak across a blue sky."
     },
     {
       "id": "164",
@@ -302,14 +304,15 @@
       "id": "001",
       "title": "Man Alive!",
       "artist": "King Krule",
-      "spotify": "https://open.spotify.com/album/5NQNPI9CjqubBrqaODT9by",
-      "apple": "https://music.apple.com/gb/album/man-alive/1490914724",
+      "spotify": null,
+      "apple": null,
       "cover": {
-        "source": "apple music",
-        "ref": "https://music.apple.com/gb/album/man-alive/1490914724",
-        "score": 5.7
+        "source": "cover art archive",
+        "ref": "https://musicbrainz.org/release-group/f36be6a7-ad91-4428-a39b-a0375e642152",
+        "score": 7
       },
-      "verdict": "same"
+      "verdict": "reviewed",
+      "review": "King Krule's Man Alive!: the red figure folded over a blue ground."
     },
     {
       "id": "lf-4ec689292a6d66c0",
@@ -354,7 +357,7 @@
       "id": "lf-c3effd4493487e5b",
       "title": "Voodoo",
       "artist": "D'Angelo",
-      "spotify": "https://open.spotify.com/album/1ecv8bJajqX9E0EOX2g3eI",
+      "spotify": null,
       "apple": "https://music.apple.com/gb/album/voodoo/1443829916",
       "cover": {
         "source": "apple music",
@@ -367,7 +370,7 @@
       "id": "032",
       "title": "Zentropy",
       "artist": "Frankie Cosmos",
-      "spotify": "https://open.spotify.com/album/1mBWZqi3QFidFuhudYwrbr",
+      "spotify": null,
       "apple": "https://music.apple.com/gb/album/zentropy/1505810198",
       "cover": {
         "source": "deezer",
@@ -385,7 +388,7 @@
       "cover": {
         "source": "deezer",
         "ref": "https://www.deezer.com/album/348082687",
-        "score": 3
+        "score": 3.2
       },
       "verdict": "same"
     },
@@ -398,7 +401,7 @@
       "cover": {
         "source": "deezer",
         "ref": "https://www.deezer.com/album/12114226",
-        "score": 4.3
+        "score": 4.4
       },
       "verdict": "same"
     },
@@ -411,7 +414,7 @@
       "cover": {
         "source": "deezer",
         "ref": "https://www.deezer.com/album/351534447",
-        "score": 1
+        "score": 0.9
       },
       "verdict": "same"
     },
@@ -419,12 +422,12 @@
       "id": "140",
       "title": "Before and After Science",
       "artist": "Brian Eno",
-      "spotify": "https://open.spotify.com/album/6lU1MDxi3TqhKnYNQm555u",
+      "spotify": null,
       "apple": null,
       "cover": {
-        "source": "cover art archive",
-        "ref": "https://musicbrainz.org/release-group/6f9e2641-f79b-32f2-a752-f7212e9040e4",
-        "score": 17.6
+        "source": "deezer",
+        "ref": "https://www.deezer.com/album/299484",
+        "score": 19.2
       },
       "verdict": "same"
     },
@@ -481,19 +484,6 @@
       "verdict": "same"
     },
     {
-      "id": "lf-f308b9f4bd8bae1e",
-      "title": "Painful",
-      "artist": "Yo La Tengo",
-      "spotify": "https://open.spotify.com/album/3CDVD1gY7nu4huRn3eT2aw",
-      "apple": "https://music.apple.com/gb/album/painful/1589240889",
-      "cover": {
-        "source": "deezer",
-        "ref": "https://www.deezer.com/album/10965564",
-        "score": 8.5
-      },
-      "verdict": "same"
-    },
-    {
       "id": "lf-85de65df641ac79a",
       "title": "Ladies and Gentlemen We Are Floating in Space",
       "artist": "Spiritualized",
@@ -507,28 +497,15 @@
       "verdict": "same"
     },
     {
-      "id": "128",
-      "title": "Sung Tongs",
-      "artist": "Animal Collective",
-      "spotify": "https://open.spotify.com/album/5Zz8BDaRBpH9Ex7KRvhkGt",
-      "apple": "https://music.apple.com/gb/album/sung-tongs/1484067224",
+      "id": "lf-f308b9f4bd8bae1e",
+      "title": "Painful",
+      "artist": "Yo La Tengo",
+      "spotify": "https://open.spotify.com/album/3CDVD1gY7nu4huRn3eT2aw",
+      "apple": "https://music.apple.com/gb/album/painful/1589240889",
       "cover": {
-        "source": "spotify",
-        "ref": "https://open.spotify.com/album/5Zz8BDaRBpH9Ex7KRvhkGt",
-        "score": 13.8
-      },
-      "verdict": "same"
-    },
-    {
-      "id": "200",
-      "title": "Panda Bear Meets the Grim Reaper",
-      "artist": "Panda Bear",
-      "spotify": "https://open.spotify.com/album/4iRqf2zoGhh7yO5evg1NYj",
-      "apple": "https://music.apple.com/gb/album/panda-bear-meets-the-grim-reaper/952873212",
-      "cover": {
-        "source": "cover art archive",
-        "ref": "https://musicbrainz.org/release-group/4a22fe4b-c575-4bb3-829c-c9dab7fe3407",
-        "score": 13.9
+        "source": "deezer",
+        "ref": "https://www.deezer.com/album/10965564",
+        "score": 8.5
       },
       "verdict": "same"
     },
@@ -546,10 +523,36 @@
       "verdict": "same"
     },
     {
+      "id": "200",
+      "title": "Panda Bear Meets the Grim Reaper",
+      "artist": "Panda Bear",
+      "spotify": "https://open.spotify.com/album/4iRqf2zoGhh7yO5evg1NYj",
+      "apple": "https://music.apple.com/gb/album/panda-bear-meets-the-grim-reaper/952873212",
+      "cover": {
+        "source": "cover art archive",
+        "ref": "https://musicbrainz.org/release-group/4a22fe4b-c575-4bb3-829c-c9dab7fe3407",
+        "score": 13.9
+      },
+      "verdict": "same"
+    },
+    {
+      "id": "128",
+      "title": "Sung Tongs",
+      "artist": "Animal Collective",
+      "spotify": "https://open.spotify.com/album/5Zz8BDaRBpH9Ex7KRvhkGt",
+      "apple": "https://music.apple.com/gb/album/sung-tongs/1484067224",
+      "cover": {
+        "source": "spotify",
+        "ref": "https://open.spotify.com/album/5Zz8BDaRBpH9Ex7KRvhkGt",
+        "score": 13.8
+      },
+      "verdict": "same"
+    },
+    {
       "id": "lf-54e7fc66ecf394cd",
       "title": "Weezer",
       "artist": "Weezer",
-      "spotify": "https://open.spotify.com/album/1xpGyKyV26uPstk1Elgp9Q",
+      "spotify": "https://open.spotify.com/album/6v8wNjiQDhDijoapXXZ9mZ",
       "apple": "https://music.apple.com/gb/album/weezer-2024-remaster/1890580956",
       "cover": {
         "source": "apple music",
@@ -562,8 +565,8 @@
       "id": "lf-ef66056ba1b14f21",
       "title": "Assume Form",
       "artist": "James Blake",
-      "spotify": "https://open.spotify.com/album/3VpbXPsAOhcp3duHhkye8g",
-      "apple": "https://music.apple.com/gb/album/assume-form-deluxe/1459584222",
+      "spotify": null,
+      "apple": "https://music.apple.com/gb/album/assume-form/1447513857",
       "cover": {
         "source": "deezer",
         "ref": "https://www.deezer.com/album/84226762",
@@ -575,14 +578,15 @@
       "id": "049",
       "title": "DAMN.",
       "artist": "Kendrick Lamar",
-      "spotify": "https://open.spotify.com/album/4eLPsYPBmXABThSJ821sqY",
+      "spotify": "https://open.spotify.com/album/0bLXUfNT34mna9aXq8ex68",
       "apple": "https://music.apple.com/gb/album/damn/1440881047",
       "cover": {
         "source": "apple music",
         "ref": "https://music.apple.com/gb/album/damn/1440881047",
         "score": 3.8
       },
-      "verdict": "same"
+      "verdict": "reviewed",
+      "review": "Kendrick Lamar's DAMN.: his portrait against the brick wall under the red title."
     },
     {
       "id": "092",
@@ -611,6 +615,19 @@
       "verdict": "same"
     },
     {
+      "id": "012",
+      "title": "For the First Time",
+      "artist": "Black Country, New Road",
+      "spotify": null,
+      "apple": null,
+      "cover": {
+        "source": "deezer",
+        "ref": "https://www.deezer.com/album/182543292",
+        "score": 4.3
+      },
+      "verdict": "same"
+    },
+    {
       "id": "078",
       "title": "Louder Than Bombs",
       "artist": "The Smiths",
@@ -624,41 +641,15 @@
       "verdict": "same"
     },
     {
-      "id": "012",
-      "title": "For the First Time",
-      "artist": "Black Country, New Road",
-      "spotify": "https://open.spotify.com/album/2PfgptDcfJTFtoZIS3AukX",
-      "apple": "https://music.apple.com/gb/album/for-the-first-time/1533822061",
-      "cover": {
-        "source": "deezer",
-        "ref": "https://www.deezer.com/album/182543292",
-        "score": 4.3
-      },
-      "verdict": "same"
-    },
-    {
       "id": "history-49f86f14ae8ef784",
       "title": "Paradise Valley",
       "artist": "Grouper",
-      "spotify": "https://open.spotify.com/album/5e5MtmjBRnh3eI5g5C0Tyv",
+      "spotify": null,
       "apple": null,
       "cover": {
         "source": "deezer",
         "ref": "https://www.deezer.com/album/14433210",
         "score": 1.7
-      },
-      "verdict": "same"
-    },
-    {
-      "id": "lf-383d8c5fb987ecf8",
-      "title": "Because the Internet",
-      "artist": "Childish Gambino",
-      "spotify": "https://open.spotify.com/album/4GNIhgEGXzWGAefgN5qjdU",
-      "apple": "https://music.apple.com/gb/album/because-the-internet/1771709429",
-      "cover": {
-        "source": "deezer",
-        "ref": "https://www.deezer.com/album/650763991",
-        "score": 3.6
       },
       "verdict": "same"
     },
@@ -676,6 +667,19 @@
       "verdict": "same"
     },
     {
+      "id": "lf-383d8c5fb987ecf8",
+      "title": "Because the Internet",
+      "artist": "Childish Gambino",
+      "spotify": "https://open.spotify.com/album/5h0KYWMZIg8xT6eRGYkNMh",
+      "apple": "https://music.apple.com/gb/album/because-the-internet/1771709429",
+      "cover": {
+        "source": "deezer",
+        "ref": "https://www.deezer.com/album/650763991",
+        "score": 3.6
+      },
+      "verdict": "same"
+    },
+    {
       "id": "188",
       "title": "The Lonesome Crowded West",
       "artist": "Modest Mouse",
@@ -683,7 +687,7 @@
       "apple": "https://music.apple.com/gb/album/the-lonesome-crowded-west/1566174024",
       "cover": {
         "source": "deezer",
-        "ref": "https://www.deezer.com/album/228054752",
+        "ref": "https://www.deezer.com/album/1131424761",
         "score": 32.6
       },
       "verdict": "reviewed",
@@ -704,19 +708,6 @@
       "review": "The same photograph; the printed card is a warmer scan."
     },
     {
-      "id": "lf-b1e6e583a5575429",
-      "title": "Red House Painters I",
-      "artist": "Red House Painters",
-      "spotify": null,
-      "apple": "https://music.apple.com/gb/album/red-house-painters-i/311195427",
-      "cover": {
-        "source": "deezer",
-        "ref": "https://www.deezer.com/album/6508851",
-        "score": 6.8
-      },
-      "verdict": "same"
-    },
-    {
       "id": "230",
       "title": "The Doors",
       "artist": "The Doors",
@@ -726,6 +717,19 @@
         "source": "deezer",
         "ref": "https://www.deezer.com/album/15801434",
         "score": 5
+      },
+      "verdict": "same"
+    },
+    {
+      "id": "lf-b1e6e583a5575429",
+      "title": "Red House Painters I",
+      "artist": "Red House Painters",
+      "spotify": null,
+      "apple": "https://music.apple.com/gb/album/red-house-painters-i/311195427",
+      "cover": {
+        "source": "deezer",
+        "ref": "https://www.deezer.com/album/6508851",
+        "score": 6.8
       },
       "verdict": "same"
     },
@@ -759,7 +763,7 @@
       "id": "lf-4f06c006ff18c338",
       "title": "American Football",
       "artist": "American Football",
-      "spotify": "https://open.spotify.com/album/2ctUeZHBMWAIgLXprW3Fzp",
+      "spotify": null,
       "apple": "https://music.apple.com/gb/album/american-football-25th-anniversary-edition/1754429576",
       "cover": {
         "source": "deezer",
@@ -786,20 +790,17 @@
       "id": "057",
       "title": "Carnage",
       "artist": "Nick Cave & Warren Ellis",
-      "spotify": "https://open.spotify.com/album/2ENZX0TZOt42tmCMgUyoNJ",
-      "apple": "https://music.apple.com/gb/album/carnage/1552929712",
-      "cover": {
-        "source": "apple music",
-        "ref": "https://music.apple.com/gb/album/carnage/1552929712",
-        "score": 6.8
-      },
-      "verdict": "same"
+      "spotify": null,
+      "apple": null,
+      "cover": null,
+      "verdict": "reviewed",
+      "review": "Nick Cave & Warren Ellis's Carnage: the black lettering on cream."
     },
     {
       "id": "lf-db1e5d911a25216e",
       "title": "Sinister Grift",
       "artist": "Panda Bear",
-      "spotify": "https://open.spotify.com/album/7dQ09jOwQBuBcm6qRBQcP9",
+      "spotify": null,
       "apple": "https://music.apple.com/gb/album/sinister-grift/1761198973",
       "cover": {
         "source": "deezer",
@@ -825,7 +826,7 @@
       "id": "147",
       "title": "Low",
       "artist": "David Bowie",
-      "spotify": "https://open.spotify.com/album/2de6LD7eOW8zrlorbS28na",
+      "spotify": "https://open.spotify.com/album/0Oqi3Mm316FRX5H9mHjF0b",
       "apple": "https://music.apple.com/gb/album/low-2017-remaster/1347895593",
       "cover": {
         "source": "deezer",
@@ -851,7 +852,7 @@
       "id": "lf-b0ab97598918dde7",
       "title": "And Then Nothing Turned Itself Inside-Out",
       "artist": "Yo La Tengo",
-      "spotify": "https://open.spotify.com/album/3Dd8XjacY0PngUPEyKUHH5",
+      "spotify": null,
       "apple": "https://music.apple.com/gb/album/and-then-nothing-turned-itself-inside-out/1589242414",
       "cover": {
         "source": "deezer",
@@ -913,6 +914,19 @@
       "verdict": "same"
     },
     {
+      "id": "lf-71ba450f4975ccf4",
+      "title": "Amygdala",
+      "artist": "DJ Koze",
+      "spotify": "https://open.spotify.com/album/1Q8cUwVr0hWPLWDXKgnIoK",
+      "apple": "https://music.apple.com/gb/album/amygdala-bonus-track-version/1784709589",
+      "cover": {
+        "source": "deezer",
+        "ref": "https://www.deezer.com/album/679943641",
+        "score": 2.8
+      },
+      "verdict": "same"
+    },
+    {
       "id": "190",
       "title": "Mr. Morale & The Big Steppers",
       "artist": "Kendrick Lamar",
@@ -948,6 +962,19 @@
         "source": "deezer",
         "ref": "https://www.deezer.com/album/43866451",
         "score": 2.4
+      },
+      "verdict": "same"
+    },
+    {
+      "id": "lf-c3744c6b1122f6db",
+      "title": "We Will Always Love You",
+      "artist": "The Avalanches",
+      "spotify": null,
+      "apple": null,
+      "cover": {
+        "source": "deezer",
+        "ref": "https://www.deezer.com/album/190809862",
+        "score": 3.2
       },
       "verdict": "same"
     },
@@ -1001,23 +1028,10 @@
       "review": "Bang on a Can's 1998 recording, the same cover as on Deezer, where it is credited to them."
     },
     {
-      "id": "lf-c3744c6b1122f6db",
-      "title": "We Will Always Love You",
-      "artist": "The Avalanches",
-      "spotify": "https://open.spotify.com/album/755yBlrk0Sz8tIgMMTgyr1",
-      "apple": null,
-      "cover": {
-        "source": "deezer",
-        "ref": "https://www.deezer.com/album/190809862",
-        "score": 3.2
-      },
-      "verdict": "same"
-    },
-    {
       "id": "history-6909accc50629a10",
       "title": "Kid A",
       "artist": "Radiohead",
-      "spotify": "https://open.spotify.com/album/6J6nlVu4JMveJz0YM9zDgL",
+      "spotify": "https://open.spotify.com/album/6GjwtEZcfenmOf6l18N7T7",
       "apple": "https://music.apple.com/gb/album/kid-a/1097862870",
       "cover": {
         "source": "deezer",
@@ -1040,19 +1054,6 @@
       "verdict": "same"
     },
     {
-      "id": "history-7bc48260f470bc47",
-      "title": "Nightmare Ending",
-      "artist": "Eluvium",
-      "spotify": null,
-      "apple": "https://music.apple.com/gb/album/nightmare-ending/623855423",
-      "cover": {
-        "source": "deezer",
-        "ref": "https://www.deezer.com/album/7150995",
-        "score": 10.4
-      },
-      "verdict": "same"
-    },
-    {
       "id": "175",
       "title": "The Life of Pablo",
       "artist": "Kanye West",
@@ -1066,15 +1067,41 @@
       "verdict": "same"
     },
     {
-      "id": "lf-71ba450f4975ccf4",
-      "title": "Amygdala",
-      "artist": "DJ Koze",
-      "spotify": "https://open.spotify.com/album/1Q8cUwVr0hWPLWDXKgnIoK",
-      "apple": "https://music.apple.com/gb/album/amygdala-bonus-track-version/1784709589",
+      "id": "history-7bc48260f470bc47",
+      "title": "Nightmare Ending",
+      "artist": "Eluvium",
+      "spotify": null,
+      "apple": "https://music.apple.com/gb/album/nightmare-ending/623855423",
       "cover": {
         "source": "deezer",
-        "ref": "https://www.deezer.com/album/679943641",
-        "score": 2.8
+        "ref": "https://www.deezer.com/album/7150995",
+        "score": 10.4
+      },
+      "verdict": "same"
+    },
+    {
+      "id": "009",
+      "title": "Awaken, My Love!",
+      "artist": "Childish Gambino",
+      "spotify": null,
+      "apple": null,
+      "cover": {
+        "source": "deezer",
+        "ref": "https://www.deezer.com/album/650764601",
+        "score": 3.2
+      },
+      "verdict": "same"
+    },
+    {
+      "id": "lf-328e6892dab57d60",
+      "title": "Knock Knock",
+      "artist": "DJ Koze",
+      "spotify": "https://open.spotify.com/album/0sT4nyNxsvGNQr1O8OR83O",
+      "apple": "https://music.apple.com/gb/album/knock-knock/1784316789",
+      "cover": {
+        "source": "deezer",
+        "ref": "https://www.deezer.com/album/681795221",
+        "score": 5
       },
       "verdict": "same"
     },
@@ -1092,41 +1119,15 @@
       "verdict": "same"
     },
     {
-      "id": "009",
-      "title": "Awaken, My Love!",
-      "artist": "Childish Gambino",
-      "spotify": "https://open.spotify.com/album/4JCybsNZUXWrK2Jpyn12Ni",
-      "apple": null,
-      "cover": {
-        "source": "deezer",
-        "ref": "https://www.deezer.com/album/650764601",
-        "score": 3.2
-      },
-      "verdict": "same"
-    },
-    {
       "id": "235",
       "title": "Whack World",
       "artist": "Tierra Whack",
-      "spotify": "https://open.spotify.com/album/3ogNAkUhvQy0cFOfLoR6Y8",
-      "apple": "https://music.apple.com/gb/album/whack-world/1388073103",
+      "spotify": null,
+      "apple": "https://music.apple.com/gb/album/whack-world/1625029943",
       "cover": {
         "source": "deezer",
-        "ref": "https://www.deezer.com/album/319981687",
-        "score": 3.1
-      },
-      "verdict": "same"
-    },
-    {
-      "id": "lf-328e6892dab57d60",
-      "title": "Knock Knock",
-      "artist": "DJ Koze",
-      "spotify": "https://open.spotify.com/album/0sT4nyNxsvGNQr1O8OR83O",
-      "apple": "https://music.apple.com/gb/album/knock-knock/1784316789",
-      "cover": {
-        "source": "deezer",
-        "ref": "https://www.deezer.com/album/681795221",
-        "score": 5
+        "ref": "https://www.deezer.com/album/64463622",
+        "score": 3.5
       },
       "verdict": "same"
     },
@@ -1170,19 +1171,6 @@
       "verdict": "same"
     },
     {
-      "id": "071",
-      "title": "Indiscreet",
-      "artist": "Sparks",
-      "spotify": "https://open.spotify.com/album/7dgrdhuTNbswEBBRSY5iH9",
-      "apple": "https://music.apple.com/gb/album/indiscreet-21st-century-edition/1444071607",
-      "cover": {
-        "source": "deezer",
-        "ref": "https://www.deezer.com/album/161160",
-        "score": 5.8
-      },
-      "verdict": "same"
-    },
-    {
       "id": "152",
       "title": "and the Anonymous Nobody...",
       "artist": "De La Soul",
@@ -1192,6 +1180,19 @@
         "source": "deezer",
         "ref": "https://www.deezer.com/album/362187787",
         "score": 5.5
+      },
+      "verdict": "same"
+    },
+    {
+      "id": "071",
+      "title": "Indiscreet",
+      "artist": "Sparks",
+      "spotify": "https://open.spotify.com/album/7dgrdhuTNbswEBBRSY5iH9",
+      "apple": "https://music.apple.com/gb/album/indiscreet-21st-century-edition/1444071607",
+      "cover": {
+        "source": "deezer",
+        "ref": "https://www.deezer.com/album/161160",
+        "score": 5.8
       },
       "verdict": "same"
     },
@@ -1212,7 +1213,7 @@
       "id": "159",
       "title": "New Energy",
       "artist": "Four Tet",
-      "spotify": "https://open.spotify.com/album/74r6JJ97ipO0CREXP9PMqZ",
+      "spotify": null,
       "apple": "https://music.apple.com/gb/album/new-energy/1288517633",
       "cover": {
         "source": "deezer",
@@ -1252,8 +1253,8 @@
       "id": "020",
       "title": "Teens of Denial",
       "artist": "Car Seat Headrest",
-      "spotify": "https://open.spotify.com/album/3KpYyDP8q8sUBxatHaYEsP",
-      "apple": "https://music.apple.com/gb/album/teens-of-denial/1589252471",
+      "spotify": null,
+      "apple": null,
       "cover": {
         "source": "deezer",
         "ref": "https://www.deezer.com/album/14879857",
@@ -1278,7 +1279,7 @@
       "id": "209",
       "title": "In Rainbows",
       "artist": "Radiohead",
-      "spotify": "https://open.spotify.com/album/5vkqYmiPBYLaalcmjujWxK",
+      "spotify": null,
       "apple": "https://music.apple.com/gb/album/in-rainbows/1109714933",
       "cover": {
         "source": "deezer",
@@ -1302,6 +1303,19 @@
       "review": "The original sleeve; the services show the 2015 remaster's, the same portrait in a black frame."
     },
     {
+      "id": "037",
+      "title": "Women in Music Pt. III",
+      "artist": "HAIM",
+      "spotify": "https://open.spotify.com/album/6NtEjhPWfZcvJQuvjGX4bk",
+      "apple": "https://music.apple.com/gb/album/women-in-music-pt-iii/1500020581",
+      "cover": {
+        "source": "deezer",
+        "ref": "https://www.deezer.com/album/207133032",
+        "score": 4.2
+      },
+      "verdict": "same"
+    },
+    {
       "id": "lf-9ceeda8633d2b5a3",
       "title": "We Must Become the Pitiless Censors of Ourselves",
       "artist": "John Maus",
@@ -1311,6 +1325,19 @@
         "source": "deezer",
         "ref": "https://www.deezer.com/album/14887713",
         "score": 2.1
+      },
+      "verdict": "same"
+    },
+    {
+      "id": "206",
+      "title": "Purple Mountains",
+      "artist": "Purple Mountains",
+      "spotify": "https://open.spotify.com/album/5NCdiiTgky5PbjmCtcgwtn",
+      "apple": "https://music.apple.com/gb/album/purple-mountains/1456510195",
+      "cover": {
+        "source": "deezer",
+        "ref": "https://www.deezer.com/album/96713052",
+        "score": 4.5
       },
       "verdict": "same"
     },
@@ -1331,51 +1358,12 @@
       "id": "history-6f411293b09f6271",
       "title": "3001: A Laced Odyssey",
       "artist": "Flatbush Zombies",
-      "spotify": "https://open.spotify.com/album/4Qohh8LwXoV7ucmjCU4MYL",
-      "apple": "https://music.apple.com/gb/album/3001-a-laced-odyssey/1078051629",
+      "spotify": null,
+      "apple": null,
       "cover": {
         "source": "deezer",
         "ref": "https://www.deezer.com/album/12547388",
         "score": 5.5
-      },
-      "verdict": "same"
-    },
-    {
-      "id": "037",
-      "title": "Women in Music Pt. III",
-      "artist": "HAIM",
-      "spotify": "https://open.spotify.com/album/6NtEjhPWfZcvJQuvjGX4bk",
-      "apple": "https://music.apple.com/gb/album/women-in-music-pt-iii/1500020581",
-      "cover": {
-        "source": "deezer",
-        "ref": "https://www.deezer.com/album/207133032",
-        "score": 4.2
-      },
-      "verdict": "same"
-    },
-    {
-      "id": "126",
-      "title": "Here Comes the Indian",
-      "artist": "Animal Collective",
-      "spotify": "https://open.spotify.com/album/6apXgl09wxsMJ5vjkTryiC",
-      "apple": null,
-      "cover": {
-        "source": "spotify",
-        "ref": "https://open.spotify.com/album/6apXgl09wxsMJ5vjkTryiC",
-        "score": 19.8
-      },
-      "verdict": "same"
-    },
-    {
-      "id": "206",
-      "title": "Purple Mountains",
-      "artist": "Purple Mountains",
-      "spotify": "https://open.spotify.com/album/5NCdiiTgky5PbjmCtcgwtn",
-      "apple": "https://music.apple.com/gb/album/purple-mountains/1456510195",
-      "cover": {
-        "source": "deezer",
-        "ref": "https://www.deezer.com/album/96713052",
-        "score": 4.5
       },
       "verdict": "same"
     },
@@ -1389,6 +1377,19 @@
         "source": "cover art archive",
         "ref": "https://musicbrainz.org/release-group/d8dde278-482c-3cc8-a530-fea70476f3a5",
         "score": 12.8
+      },
+      "verdict": "same"
+    },
+    {
+      "id": "126",
+      "title": "Here Comes the Indian",
+      "artist": "Animal Collective",
+      "spotify": "https://open.spotify.com/album/6apXgl09wxsMJ5vjkTryiC",
+      "apple": null,
+      "cover": {
+        "source": "spotify",
+        "ref": "https://open.spotify.com/album/6apXgl09wxsMJ5vjkTryiC",
+        "score": 19.8
       },
       "verdict": "same"
     },
@@ -1448,12 +1449,25 @@
       "id": "241",
       "title": "Vampire Weekend",
       "artist": "Vampire Weekend",
-      "spotify": "https://open.spotify.com/album/5oXBmKbyJeQftWMo87cQ9F",
+      "spotify": null,
       "apple": null,
       "cover": {
         "source": "deezer",
         "ref": "https://www.deezer.com/album/105411",
         "score": 7.4
+      },
+      "verdict": "same"
+    },
+    {
+      "id": "lf-be730e7d269ab161",
+      "title": "Oxy Music",
+      "artist": "Alex Cameron",
+      "spotify": null,
+      "apple": null,
+      "cover": {
+        "source": "deezer",
+        "ref": "https://www.deezer.com/album/1123318782",
+        "score": 1.9
       },
       "verdict": "same"
     },
@@ -1497,19 +1511,6 @@
       "verdict": "same"
     },
     {
-      "id": "lf-be730e7d269ab161",
-      "title": "Oxy Music",
-      "artist": "Alex Cameron",
-      "spotify": null,
-      "apple": null,
-      "cover": {
-        "source": "deezer",
-        "ref": "https://www.deezer.com/album/280740341",
-        "score": 1.9
-      },
-      "verdict": "same"
-    },
-    {
       "id": "134",
       "title": "Sometimes I Wish We Were an Eagle",
       "artist": "Bill Callahan",
@@ -1526,7 +1527,7 @@
       "id": "history-916344727461f76e",
       "title": "The Wall",
       "artist": "Pink Floyd",
-      "spotify": "https://open.spotify.com/album/6WaIQHxEHtZL0RZ62AuY0g",
+      "spotify": null,
       "apple": "https://music.apple.com/gb/album/the-wall/1065975633",
       "cover": {
         "source": "deezer",
@@ -1585,7 +1586,8 @@
         "ref": "https://musicbrainz.org/release-group/7b5f2d9e-de2a-4adf-89ef-ab4cb059e0f3",
         "score": 4.8
       },
-      "verdict": "same"
+      "verdict": "reviewed",
+      "review": "MGMT's In the Afternoon: the painted portrait in green, titled in script."
     },
     {
       "id": "141",
@@ -1604,7 +1606,7 @@
       "id": "lf-6ad83c9cca124c69",
       "title": "The Overload",
       "artist": "Yard Act",
-      "spotify": "https://open.spotify.com/album/4rXBcuJMRSt4izAwXNrTQu",
+      "spotify": null,
       "apple": "https://music.apple.com/gb/album/the-overload/1585181002",
       "cover": {
         "source": "apple music",
@@ -1613,19 +1615,6 @@
       },
       "verdict": "reviewed",
       "review": "The same logo as on Deezer and Apple Music; its thin lines throw the fingerprint."
-    },
-    {
-      "id": "lf-35a31c629274ad5b",
-      "title": "Jumping The Shark",
-      "artist": "Alex Cameron",
-      "spotify": null,
-      "apple": "https://music.apple.com/gb/album/jumping-the-shark/1115881920",
-      "cover": {
-        "source": "deezer",
-        "ref": "https://www.deezer.com/album/13620872",
-        "score": 4.7
-      },
-      "verdict": "same"
     },
     {
       "id": "lf-6d05ba9341de270a",
@@ -1650,6 +1639,19 @@
         "source": "deezer",
         "ref": "https://www.deezer.com/album/10222930",
         "score": 6
+      },
+      "verdict": "same"
+    },
+    {
+      "id": "lf-35a31c629274ad5b",
+      "title": "Jumping The Shark",
+      "artist": "Alex Cameron",
+      "spotify": null,
+      "apple": "https://music.apple.com/gb/album/jumping-the-shark/1115881920",
+      "cover": {
+        "source": "deezer",
+        "ref": "https://www.deezer.com/album/13620872",
+        "score": 4.7
       },
       "verdict": "same"
     },
@@ -1680,19 +1682,6 @@
       "verdict": "same"
     },
     {
-      "id": "096",
-      "title": "Kiasmos",
-      "artist": "Kiasmos",
-      "spotify": "https://open.spotify.com/album/3ey3SOpFavkQi7O4rhzTqO",
-      "apple": "https://music.apple.com/gb/album/kiasmos/1451077320",
-      "cover": {
-        "source": "deezer",
-        "ref": "https://www.deezer.com/album/85958832",
-        "score": 2.1
-      },
-      "verdict": "same"
-    },
-    {
       "id": "247",
       "title": "Wish You Were Here",
       "artist": "Pink Floyd",
@@ -1702,6 +1691,19 @@
         "source": "apple music",
         "ref": "https://music.apple.com/gb/album/wish-you-were-here/1065973975",
         "score": 2.8
+      },
+      "verdict": "same"
+    },
+    {
+      "id": "096",
+      "title": "Kiasmos",
+      "artist": "Kiasmos",
+      "spotify": null,
+      "apple": "https://music.apple.com/gb/album/kiasmos/1451077320",
+      "cover": {
+        "source": "deezer",
+        "ref": "https://www.deezer.com/album/85958832",
+        "score": 2.1
       },
       "verdict": "same"
     },
@@ -1722,12 +1724,12 @@
       "id": "lf-87b8402385cdeaaf",
       "title": "Spirit of Eden",
       "artist": "Talk Talk",
-      "spotify": null,
+      "spotify": "https://open.spotify.com/album/4YXo7p7aubyVIbNLoVlBp9",
       "apple": "https://music.apple.com/gb/album/spirit-of-eden/701395363",
       "cover": {
         "source": "deezer",
         "ref": "https://www.deezer.com/album/302210",
-        "score": 11.5
+        "score": 11.6
       },
       "verdict": "same"
     },
@@ -1740,7 +1742,7 @@
       "cover": {
         "source": "deezer",
         "ref": "https://www.deezer.com/album/637081381",
-        "score": 1.9
+        "score": 2.4
       },
       "verdict": "same"
     },
@@ -1753,7 +1755,7 @@
       "cover": {
         "source": "deezer",
         "ref": "https://www.deezer.com/album/1206405",
-        "score": 3.1
+        "score": 3.2
       },
       "verdict": "same"
     },
@@ -1779,7 +1781,7 @@
       "cover": {
         "source": "deezer",
         "ref": "https://www.deezer.com/album/570808731",
-        "score": 4.9
+        "score": 4.8
       },
       "verdict": "same"
     },
@@ -1792,7 +1794,7 @@
       "cover": {
         "source": "deezer",
         "ref": "https://www.deezer.com/album/400903517",
-        "score": 4.5
+        "score": 4.6
       },
       "verdict": "same"
     },
@@ -1810,10 +1812,20 @@
       "verdict": "same"
     },
     {
+      "id": "lf-26dab1d3cb3c9703",
+      "title": "The Smashing Machine",
+      "artist": "Nala Sinephro",
+      "spotify": null,
+      "apple": null,
+      "cover": null,
+      "verdict": "reviewed",
+      "review": "Nala Sinephro's The Smashing Machine score: the yellow-green title on black."
+    },
+    {
       "id": "243",
       "title": "Lookaftering",
       "artist": "Vashti Bunyan",
-      "spotify": "https://open.spotify.com/album/44sFM6O56LTsmgu6GXXTZZ",
+      "spotify": null,
       "apple": "https://music.apple.com/gb/album/lookaftering/79936576",
       "cover": {
         "source": "apple music",
@@ -1831,20 +1843,7 @@
       "cover": {
         "source": "deezer",
         "ref": "https://www.deezer.com/album/683405391",
-        "score": 5.2
-      },
-      "verdict": "same"
-    },
-    {
-      "id": "156",
-      "title": "The Take Off and Landing of Everything",
-      "artist": "Elbow",
-      "spotify": "https://open.spotify.com/album/4hlp9aOHxgOBh7JK4PakM6",
-      "apple": "https://music.apple.com/gb/album/the-take-off-and-landing-of-everything/1445872326",
-      "cover": {
-        "source": "apple music",
-        "ref": "https://music.apple.com/gb/album/the-take-off-and-landing-of-everything/1445872326",
-        "score": 8.9
+        "score": 8.1
       },
       "verdict": "same"
     },
@@ -1857,20 +1856,7 @@
       "cover": {
         "source": "deezer",
         "ref": "https://www.deezer.com/album/15318359",
-        "score": 4.8
-      },
-      "verdict": "same"
-    },
-    {
-      "id": "lf-db82cef580d911bc",
-      "title": "Skepta .. Fred",
-      "artist": "Skepta",
-      "spotify": "https://open.spotify.com/album/7x9gF8DtACwxkejv2xBndT",
-      "apple": "https://music.apple.com/gb/album/skepta-fred-ep/1836176896",
-      "cover": {
-        "source": "deezer",
-        "ref": "https://www.deezer.com/album/812185181",
-        "score": 1.4
+        "score": 4.9
       },
       "verdict": "same"
     },
@@ -1888,6 +1874,45 @@
       "verdict": "same"
     },
     {
+      "id": "156",
+      "title": "The Take Off and Landing of Everything",
+      "artist": "Elbow",
+      "spotify": "https://open.spotify.com/album/4hlp9aOHxgOBh7JK4PakM6",
+      "apple": "https://music.apple.com/gb/album/the-take-off-and-landing-of-everything/1445872326",
+      "cover": {
+        "source": "apple music",
+        "ref": "https://music.apple.com/gb/album/the-take-off-and-landing-of-everything/1445872326",
+        "score": 8.9
+      },
+      "verdict": "same"
+    },
+    {
+      "id": "lf-db82cef580d911bc",
+      "title": "Skepta .. Fred",
+      "artist": "Skepta",
+      "spotify": "https://open.spotify.com/album/7x9gF8DtACwxkejv2xBndT",
+      "apple": "https://music.apple.com/gb/album/skepta-fred-ep/1836176896",
+      "cover": {
+        "source": "deezer",
+        "ref": "https://www.deezer.com/album/812185181",
+        "score": 1.4
+      },
+      "verdict": "same"
+    },
+    {
+      "id": "099",
+      "title": "Pure Comedy",
+      "artist": "Father John Misty",
+      "spotify": null,
+      "apple": "https://music.apple.com/gb/album/pure-comedy/1193788689",
+      "cover": {
+        "source": "deezer",
+        "ref": "https://www.deezer.com/album/185279432",
+        "score": 4.3
+      },
+      "verdict": "same"
+    },
+    {
       "id": "160",
       "title": "Rounds",
       "artist": "Four Tet",
@@ -1896,7 +1921,7 @@
       "cover": {
         "source": "deezer",
         "ref": "https://www.deezer.com/album/291059332",
-        "score": 3.9
+        "score": 4
       },
       "verdict": "same"
     },
@@ -1904,12 +1929,12 @@
       "id": "lf-3afe209ece99ef32",
       "title": "Lil Boat",
       "artist": "Lil Yachty",
-      "spotify": "https://open.spotify.com/album/4LnDmGctE4vdy9ke1RVRLL",
-      "apple": "https://music.apple.com/gb/album/lil-boat/1440889951",
+      "spotify": null,
+      "apple": null,
       "cover": {
         "source": "deezer",
         "ref": "https://www.deezer.com/album/13502737",
-        "score": 5.1
+        "score": 5.2
       },
       "verdict": "same"
     },
@@ -1923,32 +1948,6 @@
         "source": "deezer",
         "ref": "https://www.deezer.com/album/176532302",
         "score": 4
-      },
-      "verdict": "same"
-    },
-    {
-      "id": "history-e1cbfbc8406426ee",
-      "title": "Her (Original Score)",
-      "artist": "Arcade Fire",
-      "spotify": null,
-      "apple": "https://music.apple.com/gb/album/her-original-score/1553022037",
-      "cover": {
-        "source": "deezer",
-        "ref": "https://www.deezer.com/album/206741772",
-        "score": 2.8
-      },
-      "verdict": "same"
-    },
-    {
-      "id": "099",
-      "title": "Pure Comedy",
-      "artist": "Father John Misty",
-      "spotify": "https://open.spotify.com/album/2QgZA6t1oFOjiJ59x7jrEI",
-      "apple": "https://music.apple.com/gb/album/pure-comedy/1193788689",
-      "cover": {
-        "source": "deezer",
-        "ref": "https://www.deezer.com/album/185279432",
-        "score": 4.2
       },
       "verdict": "same"
     }

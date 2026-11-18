@@ -270,7 +270,11 @@ const waitFor = async (expression, timeout = 6000) => {
 const checkPublicLanding = async () => {
   // One record for every top album and every other sleeve or song (mergeShelf).
   const published = unpackRanking(JSON.parse(readFileSync(new URL("../public/music-ranking.json", import.meta.url), "utf8")));
-  const RECORDS = mergeShelf(published.albums, published.songs).length;
+  // The shelf opens on the albums; the singles are a button away (Dan, 18
+  // November 2026).
+  const shelf = mergeShelf(published.albums, published.songs, published.sleeves, published.singles);
+  const RECORDS = shelf.filter((record) => record.kind !== "single").length;
+  const SINGLES = shelf.length - RECORDS;
   if (shelfOnly) {
     section("the exported homepage");
     await cdp.send("Emulation.setScriptExecutionDisabled", { value: true });
@@ -340,7 +344,10 @@ const checkPublicLanding = async () => {
     };
   })()`);
   check(albums.count === RECORDS, `the shelf holds every record, albums and songs merged [${albums.count}]`);
-  check(await evaluate(`[...document.querySelectorAll(".music-page .music-face")].some((face) => face.getAttribute("aria-label").startsWith("Hey World!, King Krule"))`), "a record loved for one song is on the shelf (King Krule's Hey World!)");
+  await evaluate(`document.querySelector(".music-page .music-singles").click()`);
+  check(await waitFor(`document.querySelectorAll(".music-page .music-tile").length === ${SINGLES}`, 4000), "the singles button shows the singles");
+  await evaluate(`document.querySelector(".music-page .music-singles").click()`);
+  check(await waitFor(`document.querySelectorAll(".music-page .music-tile").length === ${RECORDS}`, 4000), "pressing singles again puts the albums back");
   check(albums.first > albums.last * 6, `sleeves are sized by hours listened [${Math.round(albums.first)}px² to ${Math.round(albums.last)}px²]`);
   check(albums.bounded && albums.inside, "the sleeves are square, between the floor and the cap, and on the shelf");
   check(albums.lead?.startsWith("Music for Psychedelic Therapy"), `the map starts with the most listened [${albums.lead}]`);
@@ -394,6 +401,12 @@ const checkPublicLanding = async () => {
     await sleep(500);
     const fit = await evaluate(`(() => { const map = document.querySelector(".music-page .music-map").getBoundingClientRect(); const wide = [...document.querySelectorAll("body *")].filter((element) => element.getBoundingClientRect().right > innerWidth + 1).map((element) => element.tagName + "." + String(element.className).split(" ")[0]).slice(0, 3); return { ok: document.documentElement.scrollWidth <= innerWidth + 1 && map.right <= innerWidth, wide, right: Math.round(map.right) }; })()`);
     check(fit.ok, `the music map fits ${width}px [${fit.right}px ${fit.wide.join(", ")}]`);
+    // Dan, 18 November 2026: the bar is one even row at every width.
+    const row = await evaluate(`(() => {
+      const items = [document.querySelector(".music-page .music-sign"), ...document.querySelectorAll(".music-page .music-order button")].map((element) => element.getBoundingClientRect());
+      return { tops: new Set(items.map((box) => Math.round(box.top))).size, tall: Math.max(...items.map((box) => box.height)), overlap: items.some((box, at) => at && box.left < items[at - 1].right - 0.5) };
+    })()`);
+    check(row.tops === 1 && row.tall <= 44 && !row.overlap, `the bar keeps one row at ${width}px [${JSON.stringify(row)}]`);
   }
   await setDesktop();
 
@@ -427,6 +440,12 @@ const checkPublicLanding = async () => {
     const sheet = document.querySelector("dialog .music-tracks-sheet");
     return sheet.scrollWidth <= sheet.clientWidth + 1;
   })()`), "an open phone sheet fits its actual width when its tracks arrive on retry");
+  // Dan, 18 November 2026: on a small phone the card's words keep inside it.
+  check(await evaluate(`(() => {
+    const card = document.querySelector("dialog[open] .music-tracks-card").getBoundingClientRect();
+    return [...document.querySelectorAll("dialog[open] .music-tracks-card h2, dialog[open] .music-tracks-artist, dialog[open] .music-tracks-totals span, dialog[open] .music-listen a")]
+      .every((element) => { const box = element.getBoundingClientRect(); return box.left >= card.left - 0.5 && box.right <= card.right + 0.5; });
+  })()`), "a phone sheet's card keeps its words inside it");
 
   await cdp.send("Fetch.enable", { patterns: [{ urlPattern: "*music-ranking.json", requestStage: "Request" }] });
   paused = cdp.waitFor("Fetch.requestPaused");
