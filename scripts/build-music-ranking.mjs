@@ -193,7 +193,7 @@ const toRecord = ({ release, tracks }) => {
       plays: top.plays,
       ms: top.ms,
       songs: [top],
-      ...(cover ? { id: cover.id, art: cover.id, year: cover.source.releaseYear ?? record.year } : {})
+      ...(cover ? { id: cover.id, art: cover.id, year: cover.source.releaseYear ? String(cover.source.releaseYear) : record.year } : {})
     });
   }
   // A record with no cover of its own borrows one from another release its

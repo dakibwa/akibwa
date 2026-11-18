@@ -91,7 +91,8 @@ for (const entry of manifest.entries) {
 
 if (checkOnly) {
   for (const entry of manifest.entries)
-    if (!packet.albums.find((row) => row.id === entry.id).artwork)
+    // A single's cover belongs to no catalogue album.
+    if (entry.kind !== "single" && !packet.albums.find((row) => row.id === entry.id)?.artwork)
       problems.push(`${entry.id} has not been applied to the public catalogue`);
   if (problems.length) throw Error(problems.join("\n"));
 } else {

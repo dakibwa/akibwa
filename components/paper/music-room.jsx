@@ -337,7 +337,7 @@ const Tile = memo(function Tile({ item, side, share, priority, onOpen, onPoint }
         onPointerLeave={() => onPoint(null)}
         onFocus={(event) => { if (event.currentTarget.matches(":focus-visible")) onPoint(item, event.currentTarget.getBoundingClientRect()); }}
         onBlur={() => onPoint(null)}
-        aria-label={`${described} ${item.kind === "album" ? "Show its tracks" : "Show it"}.`}
+        aria-label={`${described} ${item.kind === "single" ? "Show it" : "Show its tracks"}.`}
       >
         {item.art ? (
           <AlbumArtImage id={item.art} alt="" priority={priority} large={LARGE_ART[item.art]} sizes={`${Math.ceil(side)}px`} />

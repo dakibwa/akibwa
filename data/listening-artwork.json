@@ -6419,6 +6419,3054 @@
           "wall.webp": "1ab4b6be33d5382d"
         }
       }
+    },
+    {
+      "id": "history-e798826ba8a483a0",
+      "artist": "Brian Eno",
+      "album": "Reflection",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/398780777",
+        "artist": "Brian Eno",
+        "album": "Reflection",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/633187d73a9371105d0f90c2c8d09132/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Reflection\" by Brian Eno, the one-track 2017 album of the piece Dan played; his other title, \"Reflection - Excerpt\", is a shorter edit of the same piece.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/633187d73a9371105d0f90c2c8d09132/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "e6000c85299d3ee3",
+        "files": {
+          "wall.avif": "15dc4dfce8e69ffa",
+          "wall.webp": "24f90b6bb720d626"
+        }
+      }
+    },
+    {
+      "id": "history-fb466808e26b4641",
+      "artist": "Death Grips",
+      "album": "Steroids (Crouching Tiger Hidden Gabber)",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/42243831",
+        "artist": "Death Grips",
+        "album": "Steroids (Crouching Tiger Hidden Gabber)",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/105c962ff65cc6860703e22702651592/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Steroids (Crouching Tiger Hidden Gabber)\" by Death Grips and it has the track Dan played, \"Steroids (Crouching Tiger Hidden Gabber)\".",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/105c962ff65cc6860703e22702651592/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "b185545e27a728a0",
+        "files": {
+          "wall.avif": "ccea675b1cbd5fc5",
+          "wall.webp": "88b950efb7de8361"
+        }
+      }
+    },
+    {
+      "id": "history-7f230bd18a080854",
+      "artist": "Floating Points",
+      "album": "Ratio",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/75273812",
+        "artist": "Floating Points",
+        "album": "Ratio",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/8b5320bbd5713ffce5390a7dfc323106/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Ratio\" by Floating Points and it has both tracks Dan played (\"Ratio - Full Mix\", \"Ratio - Edit\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/8b5320bbd5713ffce5390a7dfc323106/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "cf13e8e45e4c77c8",
+        "files": {
+          "wall.avif": "77f3862a56553bd0",
+          "wall.webp": "d164b33dbc7c5d6d"
+        }
+      }
+    },
+    {
+      "id": "history-e5cb8c1fb486e0d6",
+      "artist": "Brian Eno",
+      "album": "Neroli (Thinking Music Part IV)",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/7232614",
+        "artist": "Brian Eno",
+        "album": "Neroli (Thinking Music Part IV)",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/565b56704ed0bc70bd7d0b6d58738250/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Neroli (Thinking Music Part IV)\" by Brian Eno and it has the track Dan played, \"Neroli\".",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/565b56704ed0bc70bd7d0b6d58738250/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "f7108d1049c86c84",
+        "files": {
+          "wall.avif": "25a6eda7b49564d0",
+          "wall.webp": "1f371dd1d793c902"
+        }
+      }
+    },
+    {
+      "id": "history-e3b47b3c4bc887e5",
+      "artist": "James Blake",
+      "album": "Bad Cameo",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/604679212",
+        "artist": "James Blake",
+        "album": "Bad Cameo",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/3ac488c34f810ce124e1bad22994dadb/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Bad Cameo\" by James Blake and it has all 3 tracks Dan played (\"Midnight\", \"In Grey\", \"Save The Savior\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/3ac488c34f810ce124e1bad22994dadb/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "ded72416760463b7",
+        "files": {
+          "wall.avif": "bd07c09fa091cc8a",
+          "wall.webp": "567f90a282f703fd"
+        }
+      }
+    },
+    {
+      "id": "history-214f43a5661464d9",
+      "artist": "The National",
+      "album": "I Am Easy to Find",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/96547462",
+        "artist": "The National",
+        "album": "I Am Easy to Find",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/ae5c7ce4d7b9991792a14413e4533f28/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"I Am Easy to Find\" by The National and it has all 3 tracks Dan played (\"Rylan\", \"Light Years\", \"You Had Your Soul With You\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/ae5c7ce4d7b9991792a14413e4533f28/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "2d6f067f1de900d5",
+        "files": {
+          "wall.avif": "1f6b56dd078f76b5",
+          "wall.webp": "dbe94e716bac513b"
+        }
+      }
+    },
+    {
+      "id": "history-736b28b11eed2da7",
+      "artist": "William Basinski",
+      "album": "The Disintegration Loops II",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/433584287",
+        "artist": "William Basinski",
+        "album": "The Disintegration Loops II (Remastered)",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/57ac0d49d4b907b7f066c239aaab5da4/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"The Disintegration Loops II (Remastered)\" by William Basinski, the same album under an edition label, and it has both tracks Dan played (\"dlp 3\", \"dlp 2.2\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/57ac0d49d4b907b7f066c239aaab5da4/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "b04cf9e831215b79",
+        "files": {
+          "wall.avif": "e0300f1d94149c28",
+          "wall.webp": "b80d78564c710161"
+        }
+      }
+    },
+    {
+      "id": "history-7a1f46e50c74e9b7",
+      "artist": "Paramore",
+      "album": "After Laughter",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/41232611",
+        "artist": "Paramore",
+        "album": "After Laughter",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/b43c1a8f1be9a9ee3654562e5a949426/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"After Laughter\" by Paramore and it has all 3 tracks Dan played (\"Forgiveness\", \"Fake Happy\", \"Rose-Colored Boy\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/b43c1a8f1be9a9ee3654562e5a949426/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "af79e6e922d8ba7b",
+        "files": {
+          "wall.avif": "5f6d73e171079d6c",
+          "wall.webp": "7883bcfadcda6847"
+        }
+      }
+    },
+    {
+      "id": "history-3c7b08e9f3b5f936",
+      "artist": "Grouper",
+      "album": "Dragging a Dead Deer Up a Hill",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/6312063",
+        "artist": "Grouper",
+        "album": "Dragging a Dead Deer Up a Hill",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/937b093b85242d7f6a281556eb1e6a0a/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Dragging a Dead Deer Up a Hill\" by Grouper and it has all 3 tracks Dan played (\"Stuck\", \"Traveling Through a Sea\", \"Heavy Water/I'd Rather Be Sleeping\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/937b093b85242d7f6a281556eb1e6a0a/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "7160f4b16db111d2",
+        "files": {
+          "wall.avif": "7d15886d40997834",
+          "wall.webp": "26e41c43353776b5"
+        }
+      }
+    },
+    {
+      "id": "history-2c7cbab05611affc",
+      "artist": "Bill Callahan",
+      "album": "Gold Record",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/150318202",
+        "artist": "Bill Callahan",
+        "album": "Gold Record",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/4d7afd1f7847582325d6a82d102a56b6/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Gold Record\" by Bill Callahan and it has all 3 tracks Dan played (\"Pigeons\", \"35\", \"The Mackenzies\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/4d7afd1f7847582325d6a82d102a56b6/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "0a96736fb12c3866",
+        "files": {
+          "wall.avif": "84dacffac147e6ff",
+          "wall.webp": "30b8ab33ebc1dda2"
+        }
+      }
+    },
+    {
+      "id": "history-40af4f5d5188b335",
+      "artist": "William Basinski",
+      "album": "On Time Out of Time",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/85989962",
+        "artist": "William Basinski",
+        "album": "On Time Out of Time",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/ac03ca0f0fa29b0dc9db83a007975e03/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"On Time Out of Time\" by William Basinski and it has all 3 tracks Dan played (\"On Time Out of Time 1.3\", \"On Time Out of Time 1.1\", \"On Time Out of Time 1.7\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/ac03ca0f0fa29b0dc9db83a007975e03/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "05094bd26fe49a65",
+        "files": {
+          "wall.avif": "bc9249d37cdae706",
+          "wall.webp": "692377320d4943bf"
+        }
+      }
+    },
+    {
+      "id": "history-d141764bfdb17a2d",
+      "artist": "Tim Hecker",
+      "album": "Konoyo",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/69549122",
+        "artist": "Tim Hecker",
+        "album": "Konoyo",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/be7c6c2d756ea084d878a24673b7f05f/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Konoyo\" by Tim Hecker and it has all 3 tracks Dan played (\"This life\", \"Across to Anoyo\", \"Keyed out\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/be7c6c2d756ea084d878a24673b7f05f/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "16bef71c3f86e303",
+        "files": {
+          "wall.avif": "73414c2d86671ff7",
+          "wall.webp": "4f5d141aa9b09240"
+        }
+      }
+    },
+    {
+      "id": "history-8fe8062c3a5389e8",
+      "artist": "Sean Nicholas Savage",
+      "album": "Shine",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/309189877",
+        "artist": "Sean Nicholas Savage",
+        "album": "Shine",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/0aeef357f7d05d72d0ebc153608bd6b4/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Shine\" by Sean Nicholas Savage and it has all 3 tracks Dan played (\"Shine\", \"Ain’t What It Used To Be\", \"Poetry’s My Only Chance\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/0aeef357f7d05d72d0ebc153608bd6b4/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "40ff96b281efdfac",
+        "files": {
+          "wall.avif": "96c8b3f5894e963b",
+          "wall.webp": "837401ae9073cb64"
+        }
+      }
+    },
+    {
+      "id": "history-80a2ea1698189e77",
+      "artist": "Floating Points",
+      "album": "King Bromeliad / Montparnasse",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/366448357",
+        "artist": "Floating Points",
+        "album": "King Bromeliad / Montparnasse",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/baf86732b9c31f91afc5be7e7b7b4895/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"King Bromeliad / Montparnasse\" by Floating Points and it has both tracks Dan played (\"King Bromeliad\", \"Montparnasse\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/baf86732b9c31f91afc5be7e7b7b4895/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "daa76e3a96c48293",
+        "files": {
+          "wall.avif": "8c4b379bd3b38d88",
+          "wall.webp": "64b88c924e52f78f"
+        }
+      }
+    },
+    {
+      "id": "history-8beab64d99984cc0",
+      "artist": "Tim Hecker",
+      "album": "Haunt Me",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/5222241",
+        "artist": "Tim Hecker",
+        "album": "Haunt Me",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/eb8211486800147e6ae5be5b20a76b3f/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Haunt Me\" by Tim Hecker and it has all 3 tracks Dan played (\"Boreal Kiss Pt. 1\", \"Music for Tundra Pt. 1\", \"Arctic Lover's Rock Pt. 1\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/eb8211486800147e6ae5be5b20a76b3f/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "20664813eae73ae9",
+        "files": {
+          "wall.avif": "7ac5d7a1bb92a746",
+          "wall.webp": "98f8d49d565ebd94"
+        }
+      }
+    },
+    {
+      "id": "history-3c9a6cfc67c0e993",
+      "artist": "Noah And The Whale",
+      "album": "Last Night On Earth",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/1310772",
+        "artist": "Noah And The Whale",
+        "album": "Last Night On Earth",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/5dfc8f08eebcd47809f742c0bf896cb9/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Last Night On Earth\" by Noah And The Whale and it has all 3 tracks Dan played (\"L.I.F.E.G.O.E.S.O.N.\", \"Wild Thing\", \"Old Joy\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/5dfc8f08eebcd47809f742c0bf896cb9/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "dbe49b951114abb4",
+        "files": {
+          "wall.avif": "c26baa0c1efd0106",
+          "wall.webp": "a7de4c32449d8704"
+        }
+      }
+    },
+    {
+      "id": "history-61aeb77e3f5d8f48",
+      "artist": "Anz",
+      "album": "All Hours",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/255548412",
+        "artist": "Anz",
+        "album": "All Hours",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/fe733bb0df525eb810e2cb1e62c88c58/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"All Hours\" by Anz and it has all 3 tracks Dan played (\"You Could Be\", \"Last Before Lights\", \"Real Enough To Feel Good\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/fe733bb0df525eb810e2cb1e62c88c58/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "9d4912902ed86042",
+        "files": {
+          "wall.avif": "46208c49b4dbf1d7",
+          "wall.webp": "fb2d51c6ef3475e5"
+        }
+      }
+    },
+    {
+      "id": "history-6d6ee44e5218bcf9",
+      "artist": "Jon Hopkins",
+      "album": "Insides",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/187619282",
+        "artist": "Jon Hopkins",
+        "album": "Insides",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/2e5f152a77d845b558605ba77394c023/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Insides\" by Jon Hopkins and it has all 3 tracks Dan played (\"Light Through The Veins\", \"Small Memory\", \"A Drifting Up\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/2e5f152a77d845b558605ba77394c023/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "92cde5489ba8cc0b",
+        "files": {
+          "wall.avif": "238b8c829520e3b3",
+          "wall.webp": "f38089b3065de672"
+        }
+      }
+    },
+    {
+      "id": "history-c154405cc2d73bf7",
+      "artist": "Death Grips",
+      "album": "The Powers That B",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/9877208",
+        "artist": "Death Grips",
+        "album": "The Powers That B",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/5161fcb913384cf32e52a253df53d0aa/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"The Powers That B\" by Death Grips and it has all 3 tracks Dan played (\"Have A Sad Cum BB\", \"Billy Not Really\", \"Black Quarterback\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/5161fcb913384cf32e52a253df53d0aa/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "25121c4a887017e5",
+        "files": {
+          "wall.avif": "a60c5858613a372a",
+          "wall.webp": "6ceb0ffec759985b"
+        }
+      }
+    },
+    {
+      "id": "history-e5a8b964b914bb49",
+      "artist": "The World Is A Beautiful Place & I Am No Longer Afraid To Die",
+      "album": "Always Foreign",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/49039722",
+        "artist": "The World Is A Beautiful Place & I Am No Longer Afraid To Die",
+        "album": "Always Foreign",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/8c7ccaa2483d75960944a34995477da7/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Always Foreign\" by The World Is A Beautiful Place & I Am No Longer Afraid To Die and it has all 3 tracks Dan played (\"Faker\", \"Hilltopper\", \"Gram\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/8c7ccaa2483d75960944a34995477da7/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "cebb3bd6937ef200",
+        "files": {
+          "wall.avif": "7c05a68dbdfffabb",
+          "wall.webp": "01bb501695945c0d"
+        }
+      }
+    },
+    {
+      "id": "history-d0a9bc8108150299",
+      "artist": "The Space Lady",
+      "album": "The Space Lady's Greatest Hits",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/7179807",
+        "artist": "The Space Lady",
+        "album": "The Space Lady's Greatest Hits",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/885317c4f50513ac200fb1f35561c047/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"The Space Lady's Greatest Hits\" by The Space Lady and it has all 3 tracks Dan played (\"Synthesize Me\", \"Ghost Riders in the Sky\", \"I Had Too Much to Dream Last Night\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/885317c4f50513ac200fb1f35561c047/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "85b802a09950f3af",
+        "files": {
+          "wall.avif": "2e74d02a38e4138f",
+          "wall.webp": "f11d5df351c6d321"
+        }
+      }
+    },
+    {
+      "id": "history-4720bc96a3a70be2",
+      "artist": "Jenny Hval",
+      "album": "Classic Objects",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/296429992",
+        "artist": "Jenny Hval",
+        "album": "Classic Objects",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/fc245a1c03d19802b313494db1285d1e/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Classic Objects\" by Jenny Hval and it has all 3 tracks Dan played (\"Jupiter\", \"Year of Love\", \"American Coffee\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/fc245a1c03d19802b313494db1285d1e/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "8ccbf6e61476b168",
+        "files": {
+          "wall.avif": "dbe2ac6a68548dbf",
+          "wall.webp": "fe93995a3bd4bacb"
+        }
+      }
+    },
+    {
+      "id": "history-0f11b3e1790cec64",
+      "artist": "Harold Budd",
+      "album": "Ambient 2: The Plateaux Of Mirror",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/302276",
+        "artist": "Harold Budd",
+        "album": "Ambient 2: The Plateaux Of Mirror (Remastered 2004)",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/89d0501ef77b7785f2838a40d4ddc4e4/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Ambient 2: The Plateaux Of Mirror (Remastered 2004)\" by Harold Budd, the same album under an edition label, and it has all 3 tracks Dan played (\"An Arc Of Doves - Remastered 2004\", \"Failing Light - Remastered 2004\", \"The Plateaux Of Mirror - Remastered 2004\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/89d0501ef77b7785f2838a40d4ddc4e4/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "4e9fb15b09ece6bb",
+        "files": {
+          "wall.avif": "cc227916b2251d7a",
+          "wall.webp": "34fe38aed83e5dad"
+        }
+      }
+    },
+    {
+      "id": "history-022a91697b97e650",
+      "artist": "Laraaji",
+      "album": "Vision Songs, Vol.1",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/53397292",
+        "artist": "Laraaji",
+        "album": "Vision Songs, Vol.1",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/08efe40b6582211082c432aceb44d0a9/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Vision Songs, Vol.1\" by Laraaji and it has all 3 tracks Dan played (\"I Can Only Bliss Out (F'Days)\", \"All of a Sudden\", \"Hare Jaya Jaya Rama I\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/08efe40b6582211082c432aceb44d0a9/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "5e26686e93b3c56b",
+        "files": {
+          "wall.avif": "0d2fb54231543d1e",
+          "wall.webp": "ab8cd0e27cbffaa4"
+        }
+      }
+    },
+    {
+      "id": "history-780dd193ed2583e7",
+      "artist": "Galaxie 500",
+      "album": "This is Our Music",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/1604228",
+        "artist": "Galaxie 500",
+        "album": "This is Our Music",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/ab303d964b3f8fecb91e997b73e2718e/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"This is Our Music\" by Galaxie 500 and it has all 3 tracks Dan played (\"Fourth of July\", \"Listen, The Snow Is Falling\", \"Summertime\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/ab303d964b3f8fecb91e997b73e2718e/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "2d30952d0af00b5d",
+        "files": {
+          "wall.avif": "dc70a92d961aecf5",
+          "wall.webp": "8b4ad0ead56f345a"
+        }
+      }
+    },
+    {
+      "id": "history-748cc7dbd367a6d7",
+      "artist": "Animal Collective",
+      "album": "Campfire Songs",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/115457602",
+        "artist": "Animal Collective",
+        "album": "Campfire Songs",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/a21a046ca30248935fa77bde19be29c7/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Campfire Songs\" by Animal Collective and it has all 3 tracks Dan played (\"Queen in My Pictures\", \"Doggy\", \"Moo Rah Rah Rain\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/a21a046ca30248935fa77bde19be29c7/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "581f35093bed25eb",
+        "files": {
+          "wall.avif": "ded9b27676a42d92",
+          "wall.webp": "cd1f5a2df3b1867d"
+        }
+      }
+    },
+    {
+      "id": "history-413a8ee41d1a28af",
+      "artist": "Laraaji",
+      "album": "Ambient 3: Day Of Radiance",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/334097",
+        "artist": "Laraaji",
+        "album": "Ambient 3: Day Of Radiance",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/471ecb5e41eee93b71bdedcbfe765082/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Ambient 3: Day Of Radiance\" by Laraaji and it has all 3 tracks Dan played (\"Meditation No. 1\", \"The Dance No. 1\", \"Meditation No. 2\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/471ecb5e41eee93b71bdedcbfe765082/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "64ea3b4ad72447b6",
+        "files": {
+          "wall.avif": "f368e1f234940a4b",
+          "wall.webp": "d9c6410b06c06be1"
+        }
+      }
+    },
+    {
+      "id": "history-3f2c2bb50c70272c",
+      "artist": "21 Savage",
+      "album": "Savage Mode",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/13569267",
+        "artist": "21 Savage",
+        "album": "Savage Mode",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/09bb97ed2b44f5e282b1e8729418826d/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Savage Mode\" by 21 Savage and it has all 3 tracks Dan played (\"No Heart\", \"Savage Mode\", \"X (feat. Future)\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/09bb97ed2b44f5e282b1e8729418826d/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "1f445d86a888d29b",
+        "files": {
+          "wall.avif": "abf052beff5dc4aa",
+          "wall.webp": "91662449803c9b7c"
+        }
+      }
+    },
+    {
+      "id": "history-e2ad50a3c248bba1",
+      "artist": "Stormzy",
+      "album": "Gang Signs & Prayer",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/410427737",
+        "artist": "Stormzy",
+        "album": "Gang Signs & Prayer",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/47cd237569f88ad120774dc1ff40092a/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Gang Signs & Prayer\" by Stormzy and it has all 3 tracks Dan played (\"Big For Your Boots\", \"Shut Up\", \"First Things First\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/47cd237569f88ad120774dc1ff40092a/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "419314b3fadfc585",
+        "files": {
+          "wall.avif": "ef857e654a62c5dc",
+          "wall.webp": "8f572bf31f184181"
+        }
+      }
+    },
+    {
+      "id": "history-97092ee5137611d1",
+      "artist": "Yazoo",
+      "album": "Upstairs at Eric's",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/905272802",
+        "artist": "Yazoo",
+        "album": "Upstairs at Eric’s",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/3e4bd59f9e6b54cc27cd3919f23dbeb9/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Upstairs at Eric’s\" by Yazoo and it has all 3 tracks Dan played (\"Bad Connection\", \"Only You\", \"Midnight\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/3e4bd59f9e6b54cc27cd3919f23dbeb9/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "ebb25e6b36f5e4ae",
+        "files": {
+          "wall.avif": "d13e4bb33621399f",
+          "wall.webp": "aa392b91833fceb0"
+        }
+      }
+    },
+    {
+      "id": "history-f358c71b76569aa8",
+      "artist": "Death Grips",
+      "album": "Government Plates",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/54781102",
+        "artist": "Death Grips",
+        "album": "Government Plates",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/08261e52fb8cda24b96b43007545ab78/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Government Plates\" by Death Grips and it has all 3 tracks Dan played (\"You Might Think He Loves You for Your Money but I Know What He Really Loves You for It's Your Brand New Leopard Skin Pillbox Hat\", \"Anne Bonny\", \"Whatever I Want (Fuck Who's Watching)\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/08261e52fb8cda24b96b43007545ab78/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "07cb8151583a42f7",
+        "files": {
+          "wall.avif": "0cd7c7368f30e18c",
+          "wall.webp": "5591f5360f044f3e"
+        }
+      }
+    },
+    {
+      "id": "history-b0cba242bbf01908",
+      "artist": "GENTS",
+      "album": "Embrace the Future - EP",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/11848966",
+        "artist": "GENTS",
+        "album": "Embrace the Future",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/35a17da6f5ea86d99871d6814bd3a1e9/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Embrace the Future\" by GENTS, the same album under an edition label, and it has all 3 tracks Dan played (\"Young Again\", \"Whole New Life\", \"Circles\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/35a17da6f5ea86d99871d6814bd3a1e9/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "1eaccc537dc6e50e",
+        "files": {
+          "wall.avif": "c9567881e05757fe",
+          "wall.webp": "4dd05fa898d1ecde"
+        }
+      }
+    },
+    {
+      "id": "history-9f95a1caf8628f96",
+      "artist": "Edgar Froese",
+      "album": "Solo (1974-1983) The Virgin Years",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/1626319",
+        "artist": "Edgar Froese",
+        "album": "Solo (1974-1983) The Virgin Years",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/a2bae78fe6a21705dbc78354d4e5e011/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Solo (1974-1983) The Virgin Years\" by Edgar Froese and it has the track Dan played, \"Epsilon In Malaysian Pale - 2012 Remaster\".",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/a2bae78fe6a21705dbc78354d4e5e011/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "2b5e50255ac24bcf",
+        "files": {
+          "wall.avif": "a189b622e2acd02a",
+          "wall.webp": "4161322031aa4fc2"
+        }
+      }
+    },
+    {
+      "id": "history-928d99c3471a9336",
+      "artist": "Childish Gambino",
+      "album": "Camp",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/650691361",
+        "artist": "Childish Gambino",
+        "album": "Camp",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/206697ef5a060454db2e107360543189/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Camp\" by Childish Gambino and it has all 3 tracks Dan played (\"Kids\", \"You See Me\", \"Sunrise\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/206697ef5a060454db2e107360543189/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "065f7690786b0a5a",
+        "files": {
+          "wall.avif": "794d657210e796dd",
+          "wall.webp": "7aae5d275afe6aa6"
+        }
+      }
+    },
+    {
+      "id": "history-c1bb760dc8f7d086",
+      "artist": "Modern Baseball",
+      "album": "Sports",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/337189157",
+        "artist": "Modern Baseball",
+        "album": "Sports",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/5d5cad936af59cf1b688889183da1d39/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Sports\" by Modern Baseball and it has all 3 tracks Dan played (\"Tears Over Beers\", \"The Weekend\", \"Re-Do\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/5d5cad936af59cf1b688889183da1d39/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "3ae481278a62936a",
+        "files": {
+          "wall.avif": "55d50c16e1037938",
+          "wall.webp": "0dcdfc690067d571"
+        }
+      }
+    },
+    {
+      "id": "history-8254fce543950d27",
+      "artist": "Flatsound",
+      "album": "Sleep",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/158114182",
+        "artist": "Flatsound",
+        "album": "Sleep",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/d0eb1d55cfa5dfc66512ae8d3ba179d4/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Sleep\" by Flatsound and it has all 3 tracks Dan played (\"Don't Call Me At All\", \"To See You Alive\", \"It's Thursday, January 12th and This Is the Last Time I'll Talk About Drowning\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/d0eb1d55cfa5dfc66512ae8d3ba179d4/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "0e771427b4262ca0",
+        "files": {
+          "wall.avif": "11450c22c587ad80",
+          "wall.webp": "c72748326d5a8ef5"
+        }
+      }
+    },
+    {
+      "id": "history-b625274b1c1ee91d",
+      "artist": "Pusha T",
+      "album": "King Push – Darkest Before Dawn: The Prelude",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/11990992",
+        "artist": "Pusha T",
+        "album": "King Push – Darkest Before Dawn: The Prelude",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/cfad566c9096f8ba9a28ab3b26d6ad1d/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"King Push – Darkest Before Dawn: The Prelude\" by Pusha T and it has all 3 tracks Dan played (\"M.P.A.\", \"M.F.T.R.\", \"Sunshine\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/cfad566c9096f8ba9a28ab3b26d6ad1d/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "c2d938605d6bd287",
+        "files": {
+          "wall.avif": "b5ee5e9872eb8f51",
+          "wall.webp": "53919e03d0b9f577"
+        }
+      }
+    },
+    {
+      "id": "history-eeedabe8ed40a380",
+      "artist": "Caribou",
+      "album": "Start Breaking My Heart",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/160184502",
+        "artist": "Caribou",
+        "album": "Start Breaking My Heart (Special Edition)",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/a345d3b38eb28816bcea53ef227e153a/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Start Breaking My Heart (Special Edition)\" by Caribou, the same album under an edition label, and it has all 3 tracks Dan played (\"Dundas, Ontario\", \"People Eating Fruit\", \"Brandon\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/a345d3b38eb28816bcea53ef227e153a/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "b6fa76124247f8b5",
+        "files": {
+          "wall.avif": "6446309108b49afd",
+          "wall.webp": "63011db9cb42d528"
+        }
+      }
+    },
+    {
+      "id": "history-d571239fb426cbd4",
+      "artist": "Pastor T.L. Barrett and the Youth for Christ Choir",
+      "album": "I Shall Wear A Crown",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/246311622",
+        "artist": "Pastor T.L. Barrett and the Youth for Christ Choir",
+        "album": "I Shall Wear A Crown",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/d0280a2c77ecf69a4acb99fab19d5228/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"I Shall Wear A Crown\" by Pastor T.L. Barrett and the Youth for Christ Choir and it has all 3 tracks Dan played (\"Father I Stretch My Hands\", \"Like a Ship\", \"Wonderful\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/d0280a2c77ecf69a4acb99fab19d5228/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "ff1a4b741766de51",
+        "files": {
+          "wall.avif": "cbb4d53efffefb39",
+          "wall.webp": "6af8cd852b15aec5"
+        }
+      }
+    },
+    {
+      "id": "history-d9c3b027cb8941de",
+      "artist": "Connan Mockasin",
+      "album": "Caramel",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/662568981",
+        "artist": "Connan Mockasin",
+        "album": "Caramel",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/3ba360195e9722aaf5fdc05abd3e6733/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Caramel\" by Connan Mockasin and it has all 3 tracks Dan played (\"I'm The Man, That Will Find You\", \"It's Your Body 1\", \"Why Are You Crying?\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/3ba360195e9722aaf5fdc05abd3e6733/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "3e63d8135d4575fd",
+        "files": {
+          "wall.avif": "6ad615b1886b4502",
+          "wall.webp": "686015e66d743ab6"
+        }
+      }
+    },
+    {
+      "id": "history-71c1d9e48a2c4ce4",
+      "artist": "Låpsley",
+      "album": "Long Way Home",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/14880431",
+        "artist": "Låpsley",
+        "album": "Long Way Home",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/97fd8615a486344c5f5320f20ab2a4db/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Long Way Home\" by Låpsley and it has all 3 tracks Dan played (\"Station\", \"Painter\", \"Falling Short\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/97fd8615a486344c5f5320f20ab2a4db/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "5a8d78fb1e819228",
+        "files": {
+          "wall.avif": "9d89d5b74598c4cd",
+          "wall.webp": "7c74256ed01ceace"
+        }
+      }
+    },
+    {
+      "id": "history-3ce2e814cedcf7f5",
+      "artist": "Acetone",
+      "album": "Acetone",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/8604614",
+        "artist": "Acetone",
+        "album": "Acetone",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/1cb41b609419fc6837ca220ac2e238d5/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Acetone\" by Acetone and it has all 3 tracks Dan played (\"Shobud\", \"Chew\", \"All You Know - New\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/1cb41b609419fc6837ca220ac2e238d5/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "c6e5c148898739e1",
+        "files": {
+          "wall.avif": "f536e07fae560eba",
+          "wall.webp": "6179b19b68a39a8d"
+        }
+      }
+    },
+    {
+      "id": "history-8c128bc84a854b46",
+      "artist": "Alvvays",
+      "album": "Alvvays",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/7809456",
+        "artist": "Alvvays",
+        "album": "Alvvays",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/750b373216221b8cef331ebd50c2fe04/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Alvvays\" by Alvvays and it has all 3 tracks Dan played (\"Archie, Marry Me\", \"Party Police\", \"Adult Diversion\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/750b373216221b8cef331ebd50c2fe04/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "95c26684ee623ab3",
+        "files": {
+          "wall.avif": "a178f4b0e0e8e59d",
+          "wall.webp": "246a443b9c371116"
+        }
+      }
+    },
+    {
+      "id": "history-61f7f0a11787e081",
+      "artist": "David Byrne",
+      "album": "Everything That Happens Will Happen Today",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/446464685",
+        "artist": "David Byrne",
+        "album": "Everything That Happens Will Happen Today (Deluxe)",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/8dc61f72363232662ba0237afe5cbbc3/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Everything That Happens Will Happen Today (Deluxe)\" by David Byrne, the same album under an edition label, and it has all 3 tracks Dan played (\"Everything That Happens\", \"Strange Overtones\", \"Home\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/8dc61f72363232662ba0237afe5cbbc3/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "65c216f5c69ed3c9",
+        "files": {
+          "wall.avif": "c00792bab02137bc",
+          "wall.webp": "a031055c23539eac"
+        }
+      }
+    },
+    {
+      "id": "history-c387779b15443b00",
+      "artist": "The War On Drugs",
+      "album": "Lost In The Dream",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/7484049",
+        "artist": "The War On Drugs",
+        "album": "Lost In The Dream",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/464e9f5f4011af364517775204753daf/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Lost In The Dream\" by The War On Drugs and it has all 3 tracks Dan played (\"Red Eyes\", \"Suffering\", \"An Ocean In Between The Waves\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/464e9f5f4011af364517775204753daf/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "38c06bdd37b3b4c0",
+        "files": {
+          "wall.avif": "f3f1503bdc5a7f4a",
+          "wall.webp": "3d6c9c9b1e4f7a90"
+        }
+      }
+    },
+    {
+      "id": "history-31885ce0e2d961a8",
+      "artist": "Kevin Gates",
+      "album": "By Any Means 2",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/48414752",
+        "artist": "Kevin Gates",
+        "album": "By Any Means 2",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/25cbd4683d6f30fb092dc7b5c69a35c3/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"By Any Means 2\" by Kevin Gates and it has all 3 tracks Dan played (\"D U Down\", \"No Love\", \"Had To\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/25cbd4683d6f30fb092dc7b5c69a35c3/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "fd8f6207e6d19cd6",
+        "files": {
+          "wall.avif": "c7139872b78be1c0",
+          "wall.webp": "10fecd40f57b99fa"
+        }
+      }
+    },
+    {
+      "id": "history-2b5b78929ed400ff",
+      "artist": "Red House Painters",
+      "album": "Old Ramon",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/185287702",
+        "artist": "Red House Painters",
+        "album": "Old Ramon",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/27562e8463b41a001c8efc3547769404/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Old Ramon\" by Red House Painters and it has all 3 tracks Dan played (\"Cruiser\", \"Wop-A-Din-Din\", \"Between Days\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/27562e8463b41a001c8efc3547769404/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "e8a3f850709f71af",
+        "files": {
+          "wall.avif": "7aaec74ff5b927eb",
+          "wall.webp": "7d506884ff5d3895"
+        }
+      }
+    },
+    {
+      "id": "history-de52c546b8441c60",
+      "artist": "Johann Sebastian Bach",
+      "album": "Bach: The Goldberg Variations, BWV 988",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/11126022",
+        "artist": "Glenn Gould",
+        "album": "Bach: The Goldberg Variations, BWV 988 (1981 Gould Remaster)",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/336498303d8db45161f7499b4bc90c28/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Of the releases titled \"Bach: The Goldberg Variations, BWV 988\", only Glenn Gould's 1981 Sony recording (on Deezer as \"(1981 Gould Remaster)\") has all three of Dan's exact track names, including \"Variation 15 a 1 Clav. Canone alla Quinta. Andante\"; Dan's credit is the composer, and Apple's 1981 edition has the same front.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/336498303d8db45161f7499b4bc90c28/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "4fc56507d4385917",
+        "files": {
+          "wall.avif": "55b500bc5a9f8e36",
+          "wall.webp": "8e3f4305a69d9a6b"
+        }
+      }
+    },
+    {
+      "id": "history-824294116c3c904e",
+      "artist": "Damon Albarn",
+      "album": "The Nearer The Fountain, More Pure The Stream Flows",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/237949582",
+        "artist": "Damon Albarn",
+        "album": "The Nearer The Fountain, More Pure The Stream Flows",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/4dc650a6aa7f60210019d72b4d6497a7/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"The Nearer The Fountain, More Pure The Stream Flows\" by Damon Albarn and it has all 3 tracks Dan played (\"The Nearer The Fountain, More Pure The Stream Flows\", \"Particles\", \"The Cormorant\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/4dc650a6aa7f60210019d72b4d6497a7/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "b3f1d2e6247f3683",
+        "files": {
+          "wall.avif": "d3a13e38c326b25b",
+          "wall.webp": "1c717ae945c7dddb"
+        }
+      }
+    },
+    {
+      "id": "history-605bddd43bbc381d",
+      "artist": "Pink Floyd",
+      "album": "Ummagumma",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/12114232",
+        "artist": "Pink Floyd",
+        "album": "Ummagumma",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/782576b2b0b7bfa7a53f9a2ce0c036aa/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Ummagumma\" by Pink Floyd and it has 1 of the 3 tracks Dan played (\"Grantchester Meadows - 2011 Remastered Version\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/782576b2b0b7bfa7a53f9a2ce0c036aa/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "8a0a4bb2114138d8",
+        "files": {
+          "wall.avif": "dfc01555d34ace4e",
+          "wall.webp": "054d0befcef81ced"
+        }
+      }
+    },
+    {
+      "id": "history-f195b6176f19f85d",
+      "artist": "M83",
+      "album": "Saturdays = Youth",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/10964116",
+        "artist": "M83",
+        "album": "Saturdays = Youth",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/46bf1cfea274b41cb2cc778ef3e7e733/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Saturdays = Youth\" by M83 and it has all 3 tracks Dan played (\"Midnight Souls Still Remain\", \"Too Late\", \"Couleurs\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/46bf1cfea274b41cb2cc778ef3e7e733/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "bbc1fbaca0d56d79",
+        "files": {
+          "wall.avif": "e88614d074508bd5",
+          "wall.webp": "7f91f12bb7273ef4"
+        }
+      }
+    },
+    {
+      "id": "history-7bc15ad3959a8b49",
+      "artist": "Pyotr Ilyich Tchaikovsky",
+      "album": "30 Greatest Classical Symphonies, Vol. 2",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/1381184",
+        "artist": "Armonie Symphony Orchestra",
+        "album": "30 Greatest Classical Symphonies, Vol. 2",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/a7bf28917e4fc254d6787222c2663ba7/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer's \"30 Greatest Classical Symphonies, Vol. 2\" (Armonie Symphony Orchestra, Idyllium, 2011) has the exact track Dan played, \"Symphony No. 5 Op. 64, in E Minor ? A.nte C.bile M.to Con Anima - A.nte Mosso - A.gro non T.po\"; Dan's credit is the composer, Deezer's the orchestra.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/a7bf28917e4fc254d6787222c2663ba7/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "c9f66827433c070d",
+        "files": {
+          "wall.avif": "46a485f14a818263",
+          "wall.webp": "93723913a1c959e6"
+        }
+      }
+    },
+    {
+      "id": "history-3e3c5d4076ca1944",
+      "artist": "Marianne Faithfull",
+      "album": "She Walks in Beauty",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/she-walks-in-beauty-with-warren-ellis/1563692596",
+        "artist": "Marianne Faithfull",
+        "album": "She Walks in Beauty (with Warren Ellis)",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/8e/8a/be/8e8abea5-344f-e555-9422-5fd22758b6c1/4050538651164.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Apple's \"She Walks in Beauty (with Warren Ellis)\" by Marianne Faithfull (2021) is the same album with Warren Ellis's credit in the title, and it has all 3 tracks Dan played; Deezer does not carry it.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/8e/8a/be/8e8abea5-344f-e555-9422-5fd22758b6c1/4050538651164.jpg/760x760bb.jpg",
+        "sourceHash": "46f2271a2242090d",
+        "files": {
+          "wall.avif": "ae6b83d5a70d9296",
+          "wall.webp": "14ff688fd4afa09d"
+        }
+      }
+    },
+    {
+      "id": "history-9b06d1fefda5ed94",
+      "artist": "Sonic Boom",
+      "album": "Spectrum",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/6025236",
+        "artist": "Sonic Boom",
+        "album": "Spectrum",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/c5c7961b82301cd76f9eb9a3d2cb7072/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Spectrum\" by Sonic Boom and it has all 3 tracks Dan played (\"Help Me Please\", \"If I Should Die\", \"Angel\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/c5c7961b82301cd76f9eb9a3d2cb7072/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "d53d0782e7f98540",
+        "files": {
+          "wall.avif": "36076546216ebbba",
+          "wall.webp": "bef6f9575ff609c9"
+        }
+      }
+    },
+    {
+      "id": "history-f17365cb20c20b4b",
+      "artist": "Arcade Fire",
+      "album": "Everything Now",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/44714561",
+        "artist": "Arcade Fire",
+        "album": "Everything Now",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/eb78511c083d8f432f73692047f134a7/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Everything Now\" by Arcade Fire and it has all 3 tracks Dan played (\"Creature Comfort\", \"Everything Now\", \"Signs of Life\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/eb78511c083d8f432f73692047f134a7/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "1d8358b48a71b8f0",
+        "files": {
+          "wall.avif": "98c2dccbf0176b45",
+          "wall.webp": "7df06c04f3977fb6"
+        }
+      }
+    },
+    {
+      "id": "history-5db2bac8520beb2e",
+      "artist": "Penguin Cafe Orchestra",
+      "album": "Music From The Penguin Cafe",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/315619",
+        "artist": "Penguin Cafe Orchestra",
+        "album": "Music From The Penguin Cafe",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/d3e0651c0936a42f6436595aa10a1e9a/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Music From The Penguin Cafe\" by Penguin Cafe Orchestra and it has all 3 tracks Dan played (\"The Sound Of Someone You Love Who's Going Away And It Doesn't Matter - 2008 Digital Remaster\", \"Penguin Cafe Single - 2008 Digital Remaster\", \"Zopf: In A Sydney Motel - 2008 Digital Remaster\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/d3e0651c0936a42f6436595aa10a1e9a/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "751bdd9b24d7c633",
+        "files": {
+          "wall.avif": "863b38454db2f6a4",
+          "wall.webp": "dfa2bbb1d8c8e37e"
+        }
+      }
+    },
+    {
+      "id": "history-d3079b56540cf51f",
+      "artist": "Dirty Three",
+      "album": "Whatever You Love, You Are",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/8690173",
+        "artist": "Dirty Three",
+        "album": "Whatever You Love, You Are",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/5722621236e86afd866955307a2a2784/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Whatever You Love, You Are\" by Dirty Three and it has all 3 tracks Dan played (\"I Really Should've Gone Out Last Night\", \"I Offered It Up to the Stars and the Night Sky\", \"Some Things I Just Don't Want To Know\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/5722621236e86afd866955307a2a2784/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "6cc1e678a3718d23",
+        "files": {
+          "wall.avif": "5969ca73f92516b0",
+          "wall.webp": "5360f4b3c89c21f4"
+        }
+      }
+    },
+    {
+      "id": "history-2d655a5ccb044c84",
+      "artist": "Charlie Megira",
+      "album": "The Abtomatic Miesterzinger Mambo Chic",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/85777172",
+        "artist": "Charlie Megira",
+        "album": "The Abtomatic Miesterzinger Mambo Chic",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/cef446d86e57358fed4b6c4266053cf7/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"The Abtomatic Miesterzinger Mambo Chic\" by Charlie Megira and it has all 3 tracks Dan played (\"The Girl Who Was Frightened of Ashtrays\", \"Tomorrow's Gone\", \"Yesterday, Today and Tomorrow\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/cef446d86e57358fed4b6c4266053cf7/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "eb9d9302315b3701",
+        "files": {
+          "wall.avif": "ba9c6c134521c4ab",
+          "wall.webp": "ee55e01841ecfe46"
+        }
+      }
+    },
+    {
+      "id": "history-d0f309fdf82a2038",
+      "artist": "Black Country, New Road",
+      "album": "Live at Bush Hall",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/403297437",
+        "artist": "Black Country, New Road",
+        "album": "Live at Bush Hall",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/6abeccc2e62d2d2224062bb62994c305/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Live at Bush Hall\" by Black Country, New Road and it has all 3 tracks Dan played (\"Turbines/Pigs - Live at Bush Hall\", \"Dancers - Live at Bush Hall\", \"Up Song - Live at Bush Hall\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/6abeccc2e62d2d2224062bb62994c305/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "be4ccd6300c2f765",
+        "files": {
+          "wall.avif": "53d2666f4b1a9dbd",
+          "wall.webp": "1e37524ae39020ee"
+        }
+      }
+    },
+    {
+      "id": "history-720194fd1d1ff44f",
+      "artist": "The Clash",
+      "album": "Sandinista!",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/6856717",
+        "artist": "The Clash",
+        "album": "Sandinista! (Remastered)",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/bdddedcef653813b9fd78a64d3b30ab3/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Sandinista! (Remastered)\" by The Clash, the same album under an edition label, and it has all 3 tracks Dan played (\"Charlie Don't Surf - Remastered\", \"If Music Could Talk - Remastered\", \"The Magnificent Seven - Remastered\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/bdddedcef653813b9fd78a64d3b30ab3/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "e9d052de678b6332",
+        "files": {
+          "wall.avif": "24079de668ff32ab",
+          "wall.webp": "1d85f9fde8e08696"
+        }
+      }
+    },
+    {
+      "id": "history-097f420efef1c02d",
+      "artist": "Youth Lagoon",
+      "album": "The Year of Hibernation",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/14838805",
+        "artist": "Youth Lagoon",
+        "album": "The Year of Hibernation",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/ba85cba098a37641a0d587da6da92de3/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"The Year of Hibernation\" by Youth Lagoon and it has all 3 tracks Dan played (\"17\", \"July\", \"Daydream\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/ba85cba098a37641a0d587da6da92de3/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "27712d24a3955eea",
+        "files": {
+          "wall.avif": "3e2d52e32d48c17f",
+          "wall.webp": "2354ffe20c059182"
+        }
+      }
+    },
+    {
+      "id": "history-89d320505e34dd54",
+      "artist": "Radiohead",
+      "album": "Amnesiac",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/14879749",
+        "artist": "Radiohead",
+        "album": "Amnesiac",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/d611b9ef9d7ce87a74c697d74be5ae15/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Amnesiac\" by Radiohead and it has all 3 tracks Dan played (\"Pyramid Song\", \"I Might Be Wrong\", \"Packt Like Sardines In a Crushd Tin Box\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/d611b9ef9d7ce87a74c697d74be5ae15/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "33f09461f827f794",
+        "files": {
+          "wall.avif": "0ace96d7e42c94c5",
+          "wall.webp": "4a670f83b7251a12"
+        }
+      }
+    },
+    {
+      "id": "history-ba8945aac6589e33",
+      "artist": "Fairport Convention",
+      "album": "Unhalfbricking",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/248548",
+        "artist": "Fairport Convention",
+        "album": "Unhalfbricking",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/b0118bc487b7f0f9364aa5d592342374/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Unhalfbricking\" by Fairport Convention and it has all 3 tracks Dan played (\"Who Knows Where The Time Goes?\", \"Autopsy\", \"A Sailor's Life\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/b0118bc487b7f0f9364aa5d592342374/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "d7ba7e4899cc3fcd",
+        "files": {
+          "wall.avif": "7cc769acfa9a7cb1",
+          "wall.webp": "25876716774358b1"
+        }
+      }
+    },
+    {
+      "id": "history-04f983c2af85a6fd",
+      "artist": "Slowdive",
+      "album": "Slowdive",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/39511361",
+        "artist": "Slowdive",
+        "album": "Slowdive",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/9f335bfe1887f4edb983f2f3ade2479d/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Slowdive\" by Slowdive and it has all 3 tracks Dan played (\"Sugar for the Pill\", \"Slomo\", \"No Longer Making Time\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/9f335bfe1887f4edb983f2f3ade2479d/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "5800008160cb4331",
+        "files": {
+          "wall.avif": "9ddbf2d5b4417d7e",
+          "wall.webp": "382610179c2846d4"
+        }
+      }
+    },
+    {
+      "id": "history-c8dc1826a56de50b",
+      "artist": "Lou Reed",
+      "album": "New York",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/80552",
+        "artist": "Lou Reed",
+        "album": "New York",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/e6ecb44cedfd45b63b3d5f9c08f86067/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"New York\" by Lou Reed and it has all 3 tracks Dan played (\"Beginning of a Great Adventure\", \"Dirty Blvd.\", \"Endless Cycle\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/e6ecb44cedfd45b63b3d5f9c08f86067/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "98c25a74631b7688",
+        "files": {
+          "wall.avif": "2e63916959907282",
+          "wall.webp": "c8ed3a699f824015"
+        }
+      }
+    },
+    {
+      "id": "history-bec288925e24685d",
+      "artist": "Tim Hecker",
+      "album": "Ravedeath, 1972",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/6114424",
+        "artist": "Tim Hecker",
+        "album": "Ravedeath, 1972",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/8f1af6c9d574c2944a60460c96d3ff5b/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Ravedeath, 1972\" by Tim Hecker and it has all 3 tracks Dan played (\"Hatred of Music I\", \"The Piano Drop\", \"In the Fog II\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/8f1af6c9d574c2944a60460c96d3ff5b/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "e54dedd836e0b638",
+        "files": {
+          "wall.avif": "46bdfbf59dcd34b5",
+          "wall.webp": "ce9632c977dc86c1"
+        }
+      }
+    },
+    {
+      "id": "history-0b865b95b585d4c6",
+      "artist": "Aldous Harding",
+      "album": "Party",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/41707781",
+        "artist": "Aldous Harding",
+        "album": "Party",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/e9e02ec06beff367a1c74397ce5b3b40/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Party\" by Aldous Harding and it has all 3 tracks Dan played (\"Imagining My Man\", \"Party\", \"Living The Classics\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/e9e02ec06beff367a1c74397ce5b3b40/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "c74939de73bb109c",
+        "files": {
+          "wall.avif": "0b475b62af75728b",
+          "wall.webp": "7f8b33474d303682"
+        }
+      }
+    },
+    {
+      "id": "history-9c1b0e03535bcc08",
+      "artist": "Kanye West",
+      "album": "808s & Heartbreak",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/808s-heartbreak/1450527763",
+        "artist": "Kanye West",
+        "album": "808s & Heartbreak",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/e5/69/da/e569daec-0425-9a98-6f0d-31633e6b4535/08UMGIM26620.rgb.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Apple's standard 12-track \"808s & Heartbreak\" by Kanye West (2008) has all 3 tracks Dan played (\"Welcome To Heartbreak\", \"Heartless\", \"Amazing\"); Deezer does not carry it.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/e5/69/da/e569daec-0425-9a98-6f0d-31633e6b4535/08UMGIM26620.rgb.jpg/760x760bb.jpg",
+        "sourceHash": "b035bb3b31167449",
+        "files": {
+          "wall.avif": "7676f11e209152a8",
+          "wall.webp": "9c6fbb368a1ee988"
+        }
+      }
+    },
+    {
+      "id": "history-0ef9fb46d8530a7c",
+      "artist": "Tame Impala",
+      "album": "InnerSpeaker",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/76298222",
+        "artist": "Tame Impala",
+        "album": "InnerSpeaker",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/5bf6a2d836429e215be5f0213882ad1f/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"InnerSpeaker\" by Tame Impala with 2 of the 3 tracks Dan played (\"Expectation\", \"It Is Not Meant To Be\"); the third, \"Sundown Syndrome\", is a bonus track on other editions of the same album.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/5bf6a2d836429e215be5f0213882ad1f/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "462891be021570a6",
+        "files": {
+          "wall.avif": "c44be67e199a6d33",
+          "wall.webp": "2f8a3976d1da8476"
+        }
+      }
+    },
+    {
+      "id": "history-c1300aba2c18cde4",
+      "artist": "Young Fathers",
+      "album": "Heavy Heavy",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/399541677",
+        "artist": "Young Fathers",
+        "album": "Heavy Heavy",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/3d820eda3a10fba8fee10be2763e96c9/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Heavy Heavy\" by Young Fathers and it has all 3 tracks Dan played (\"Geronimo\", \"Rice\", \"I Saw\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/3d820eda3a10fba8fee10be2763e96c9/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "334de26422f39b93",
+        "files": {
+          "wall.avif": "049e1996946e6bb3",
+          "wall.webp": "dea698039a550488"
+        }
+      }
+    },
+    {
+      "id": "history-02fa1531429d3e20",
+      "artist": "Woo",
+      "album": "Into the Heart of Love",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/13455269",
+        "artist": "WOO",
+        "album": "Into the Heart of Love",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/ddb22e3b5f84f7ee1aca5f929ee76ce7/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Into the Heart of Love\" by WOO and it has all 3 tracks Dan played (\"Make Me Tea\", \"The Frog's Fandango\", \"It's Love\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/ddb22e3b5f84f7ee1aca5f929ee76ce7/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "7255c4fc2f7220d2",
+        "files": {
+          "wall.avif": "bd3a63c8ed51c033",
+          "wall.webp": "91fa28ce325b25c6"
+        }
+      }
+    },
+    {
+      "id": "history-2cb850974db5c12b",
+      "artist": "A Tribe Called Quest",
+      "album": "We got it from Here... Thank You 4 Your service",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/14521020",
+        "artist": "A Tribe Called Quest",
+        "album": "We got it from Here... Thank You 4 Your service",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/b6c2edcd791348b9040fbfdf87a0adf5/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"We got it from Here... Thank You 4 Your service\" by A Tribe Called Quest and it has all 3 tracks Dan played (\"The Space Program\", \"Melatonin (feat. Marsha Ambrosius & Yebba)\", \"Lost Somebody (feat. Katia Cadet)\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/b6c2edcd791348b9040fbfdf87a0adf5/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "c02f0afac5cd76a0",
+        "files": {
+          "wall.avif": "de67bfde0c4dec22",
+          "wall.webp": "82de7cd59daf16bd"
+        }
+      }
+    },
+    {
+      "id": "history-576235dd559d8bb2",
+      "artist": "Thom Yorke",
+      "album": "ANIMA",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/100674742",
+        "artist": "Thom Yorke",
+        "album": "ANIMA",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/e8679978abb780b5e923383c575a7803/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"ANIMA\" by Thom Yorke and it has all 3 tracks Dan played (\"Dawn Chorus\", \"Twist\", \"The Axe\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/e8679978abb780b5e923383c575a7803/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "67d7f18e874ac310",
+        "files": {
+          "wall.avif": "4654431e99fa16b3",
+          "wall.webp": "f09880695ee4d483"
+        }
+      }
+    },
+    {
+      "id": "history-c35ac91d6333ab88",
+      "artist": "Dirty Projectors",
+      "album": "Dirty Projectors",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/15429634",
+        "artist": "Dirty Projectors",
+        "album": "Dirty Projectors",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/d7204ad32f97bf799c3564a0a152b973/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Dirty Projectors\" by Dirty Projectors and it has all 3 tracks Dan played (\"Up In Hudson\", \"Keep Your Name\", \"Little Bubble\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/d7204ad32f97bf799c3564a0a152b973/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "286786eece575633",
+        "files": {
+          "wall.avif": "d620d5e6ebf8ec37",
+          "wall.webp": "ee2c02b00164a78c"
+        }
+      }
+    },
+    {
+      "id": "history-0ab748367890053a",
+      "artist": "Daft Punk",
+      "album": "Human After All",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/303459",
+        "artist": "Daft Punk",
+        "album": "Human After All",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/48701ef0699add067f257045a72d06af/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Human After All\" by Daft Punk and it has all 3 tracks Dan played (\"Make Love\", \"Emotion\", \"The Prime Time of Your Life\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/48701ef0699add067f257045a72d06af/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "7a0f47e29d865fb9",
+        "files": {
+          "wall.avif": "9485a57065965b07",
+          "wall.webp": "58201b3d4d2eaae4"
+        }
+      }
+    },
+    {
+      "id": "history-ac3eb9e04559d0c4",
+      "artist": "toe",
+      "album": "For Long Tomorrow",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/277999942",
+        "artist": "toe",
+        "album": "For Long Tomorrow",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/b946c97c5fffefd6d1c09aacae177c90/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"For Long Tomorrow\" by toe with \"Goodbye -Album Version-\" and \"Two Moons\"; Dan's third title, \"グッドバイ -album version-\", is the Japanese title of the same \"Goodbye\".",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/b946c97c5fffefd6d1c09aacae177c90/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "69b129d198051d3c",
+        "files": {
+          "wall.avif": "d4694394bffb2b3b",
+          "wall.webp": "774acf9fcb4fcc97"
+        }
+      }
+    },
+    {
+      "id": "history-37cd66b46a2b4348",
+      "artist": "Fiona Apple",
+      "album": "Fetch The Bolt Cutters",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/141631152",
+        "artist": "Fiona Apple",
+        "album": "Fetch The Bolt Cutters",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/f0ccd157f390a6aadc0f61e245138f1c/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Fetch The Bolt Cutters\" by Fiona Apple and it has all 3 tracks Dan played (\"For Her\", \"I Want You To Love Me\", \"Under The Table\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/f0ccd157f390a6aadc0f61e245138f1c/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "2bafbb85be47c4b3",
+        "files": {
+          "wall.avif": "a56a4f6e8af7302e",
+          "wall.webp": "af55de3523e19264"
+        }
+      }
+    },
+    {
+      "id": "history-a7b1e59aee65e0ab",
+      "artist": "Max Richter",
+      "album": "Memoryhouse",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/232940232",
+        "artist": "Max Richter",
+        "album": "Memoryhouse",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/4487a076ebde6c0af57334476d6cebbf/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Memoryhouse\" by Max Richter and it has all 3 tracks Dan played (\"November\", \"Europe\", \"Maria\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/4487a076ebde6c0af57334476d6cebbf/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "95f574e5d02a603f",
+        "files": {
+          "wall.avif": "58c95c461d640177",
+          "wall.webp": "cadbcccfece59afc"
+        }
+      }
+    },
+    {
+      "id": "history-d7cc856320d625ee",
+      "artist": "Stevie Wonder",
+      "album": "Talking Book",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/246245",
+        "artist": "Stevie Wonder",
+        "album": "Talking Book",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/cedeeaceb07483dede6538bcd9afc012/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Talking Book\" by Stevie Wonder and it has all 3 tracks Dan played (\"Maybe Your Baby\", \"You Are The Sunshine Of My Life\", \"Lookin' For Another Pure Love\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/cedeeaceb07483dede6538bcd9afc012/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "541985f8eb1dfb8e",
+        "files": {
+          "wall.avif": "5c4de0236b10ccc0",
+          "wall.webp": "ef7e140406b3ebd6"
+        }
+      }
+    },
+    {
+      "id": "history-6ad80b72acc4d4bd",
+      "artist": "Alex Cameron",
+      "album": "Late to Set",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/953348521",
+        "artist": "Alex Cameron",
+        "album": "Late to Set",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/e00e857fc82c146ac8a367fff7a4a7eb/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Late to Set\" by Alex Cameron and it has all 3 tracks Dan played (\"No Soldier\", \"Statue Down\", \"Stand-in Man\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/e00e857fc82c146ac8a367fff7a4a7eb/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "169235d0efa323a1",
+        "files": {
+          "wall.avif": "ff233adcaefb368f",
+          "wall.webp": "a3aebf169c774386"
+        }
+      }
+    },
+    {
+      "id": "history-6266bd80f6d88783",
+      "artist": "The Durutti Column",
+      "album": "Vini Reilly",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/52146552",
+        "artist": "The Durutti Column",
+        "album": "Vini Reilly",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/791e5b29344ddb8f01544b122efdf402/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Vini Reilly\" by The Durutti Column and it has all 3 tracks Dan played (\"Otis - 2024 Remaster\", \"Requiem Again - 2024 Remaster\", \"Pol in G - 2024 Remaster\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/791e5b29344ddb8f01544b122efdf402/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "a3196fa65ce1e6ad",
+        "files": {
+          "wall.avif": "3e885cc186bd1e22",
+          "wall.webp": "7643a09c370b2348"
+        }
+      }
+    },
+    {
+      "id": "history-cd7734fdc04e654d",
+      "artist": "Sigur Rós",
+      "album": "Takk...",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/301184",
+        "artist": "Sigur Rós",
+        "album": "Takk...",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/4ae42f52c87a57306f835064bec2aba0/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Takk...\" by Sigur Rós and it has all 3 tracks Dan played (\"Glósóli\", \"Sé Lest\", \"Mílanó\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/4ae42f52c87a57306f835064bec2aba0/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "22628c384ae987a4",
+        "files": {
+          "wall.avif": "c33489f0e9b31c38",
+          "wall.webp": "da6af1b6f8dbeba0"
+        }
+      }
+    },
+    {
+      "id": "history-aefa3d36dac562ad",
+      "artist": "@",
+      "album": "Mind Palace Music",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/354997317",
+        "artist": "@",
+        "album": "Mind Palace Music",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/249c27f445901dcb5fa6621112d0b8ad/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Mind Palace Music\" by @ and it has all 3 tracks Dan played (\"Letters\", \"My Garden\", \"Major Blue Empty\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/249c27f445901dcb5fa6621112d0b8ad/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "2f3a6fa3acdd5441",
+        "files": {
+          "wall.avif": "85ba3e4766dd2b12",
+          "wall.webp": "f1aaf6c0301a239e"
+        }
+      }
+    },
+    {
+      "id": "history-35b47b9f804f4c12",
+      "artist": "Deerhoof",
+      "album": "The Magic",
+      "source": {
+        "provider": "Apple Music",
+        "url": "https://music.apple.com/gb/album/the-magic/1283617494",
+        "artist": "Deerhoof",
+        "album": "The Magic",
+        "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/2b/44/83/2b448329-1e14-3db2-91f6-9d874776ec38/8288870085200_cover.jpg/760x760bb.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Apple's \"The Magic\" by Deerhoof (2016) has all 3 tracks Dan played (\"The Devil and His Anarchic Surrealist Retinue\", \"Criminals of the Dream\", \"Kafe Mania!\"); Deezer does not carry it.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://is1-ssl.mzstatic.com/image/thumb/Music118/v4/2b/44/83/2b448329-1e14-3db2-91f6-9d874776ec38/8288870085200_cover.jpg/760x760bb.jpg",
+        "sourceHash": "45cda32d269136b1",
+        "files": {
+          "wall.avif": "0214a18a04a0dc95",
+          "wall.webp": "9ab34f6384d62379"
+        }
+      }
+    },
+    {
+      "id": "history-c50b4d3a9673fa3c",
+      "artist": "Alex G",
+      "album": "Rocket",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/15507084",
+        "artist": "Alex G",
+        "album": "Rocket",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/d4bccce76ca152bfc5e784020f3237dd/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Rocket\" by Alex G and it has all 3 tracks Dan played (\"Proud\", \"Powerful Man\", \"Poison Root\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/d4bccce76ca152bfc5e784020f3237dd/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "b09f5ca3f8998f23",
+        "files": {
+          "wall.avif": "8ed35ad54fac9a1e",
+          "wall.webp": "03c2572ef7d20200"
+        }
+      }
+    },
+    {
+      "id": "history-8f946e00554010ab",
+      "artist": "Spiritualized",
+      "album": "Sweet Heart Sweet Light",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/1679251",
+        "artist": "Spiritualized",
+        "album": "Sweet Heart Sweet Light",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/0cbbb6b273512bc95856b114e3c14a9c/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Sweet Heart Sweet Light\" by Spiritualized and it has all 3 tracks Dan played (\"Hey Jane\", \"So Long You Pretty Thing\", \"Headin' For The Top Now\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/0cbbb6b273512bc95856b114e3c14a9c/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "85db6aeac9111075",
+        "files": {
+          "wall.avif": "5fdf23a28f04c4fe",
+          "wall.webp": "41832ac37a9b057f"
+        }
+      }
+    },
+    {
+      "id": "history-ccb89bc7bca2398f",
+      "artist": "Elbow",
+      "album": "Asleep In The Back",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/426882",
+        "artist": "Elbow",
+        "album": "Asleep In The Back",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/649175ad92a9fe6760db9a096a5de71f/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Asleep In The Back\" by Elbow and it has all 3 tracks Dan played (\"Scattered Black and Whites\", \"Newborn\", \"Asleep In The Back\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/649175ad92a9fe6760db9a096a5de71f/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "2ba74049b23fa9eb",
+        "files": {
+          "wall.avif": "6fa26b8c2aa07692",
+          "wall.webp": "688956ab764f47a6"
+        }
+      }
+    },
+    {
+      "id": "history-15de0d8bf4279062",
+      "artist": "King Crimson",
+      "album": "Lizard",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/95694172",
+        "artist": "King Crimson",
+        "album": "Lizard",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/891da42503f00ad876a40cd63e6b9ea4/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Lizard\" by King Crimson and it has the track Dan played, \"Lizard (Prince Rupert Awakes/Bolero/The Battle of Glass Tears/Big Top)\".",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/891da42503f00ad876a40cd63e6b9ea4/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "0695ab94c836d4b5",
+        "files": {
+          "wall.avif": "8d38bee9433ad445",
+          "wall.webp": "cadf5024cc8c03ef"
+        }
+      }
+    },
+    {
+      "id": "history-49b58a6750233d98",
+      "artist": "Miles Davis",
+      "album": "Bitches Brew",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/645702",
+        "artist": "Miles Davis",
+        "album": "Bitches Brew",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/bbc96da10e597caa2cb32e98f9af037a/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Bitches Brew\" by Miles Davis and it has all 3 tracks Dan played (\"Pharaoh's Dance\", \"Bitches Brew (feat. Wayne Shorter, Bennie Maupin, John McLaughlin, Chick Corea, Joe Zawinul, Dave Holland & Harvey Brooks)\", \"Spanish Key (feat. Wayne Shorter, Bennie Maupin, John McLaughlin, Chick Corea, Joe Zawinul, Dave Holland & Harvey Brooks)\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/bbc96da10e597caa2cb32e98f9af037a/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "27bfad81314aabdd",
+        "files": {
+          "wall.avif": "28d9b9edeeceb6f6",
+          "wall.webp": "7c0d117202fda07b"
+        }
+      }
+    },
+    {
+      "id": "history-32343960640cea10",
+      "artist": "Yo La Tengo",
+      "album": "Prisoners of Love - A Smattering of Scintillating Senescent Songs 1985-2003",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/176560252",
+        "artist": "Yo La Tengo",
+        "album": "Prisoners of Love: A Smattering of Scintillating Senescent Songs 1985-2003 PLUS A Smattering of Outtakes and Rarities 1986-2002",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/2a104adbe3d03e60e0c9d269227ce984/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer's 42-track \"Prisoners of Love ... PLUS A Smattering of Outtakes and Rarities 1986-2002\" is the 3-CD edition of the same compilation (MusicBrainz files the 2-CD and 3-CD editions in one release group, and its scan has the same front), and it has all 3 tracks Dan played.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/2a104adbe3d03e60e0c9d269227ce984/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "067f340f624cd0a1",
+        "files": {
+          "wall.avif": "6148c79b48e2f579",
+          "wall.webp": "4b25db9b22c8867e"
+        }
+      }
+    },
+    {
+      "id": "history-e9e25cf6087ea513",
+      "artist": "Mouth's Cradle",
+      "album": "The Next Big Thing",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/7817343",
+        "artist": "Mouth's Cradle",
+        "album": "The Next Big Thing",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/fde72e848e8cad77b2ff46160e95eb2f/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"The Next Big Thing\" by Mouth's Cradle and it has all 3 tracks Dan played (\"Princess of the Beatz\", \"Video Game\", \"Demon\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/fde72e848e8cad77b2ff46160e95eb2f/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "6d5a95ae9e7d454f",
+        "files": {
+          "wall.avif": "3dd09c66463660fd",
+          "wall.webp": "179b0e11c6b93fc0"
+        }
+      }
+    },
+    {
+      "id": "history-9ba2fa8c538357c3",
+      "artist": "Taken By Trees",
+      "album": "East Of Eden",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/383821",
+        "artist": "Taken By Trees",
+        "album": "East of Eden",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/835754c895fb6b9f59fe548340ecafb6/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"East of Eden\" by Taken By Trees and it has all 3 tracks Dan played (\"Anna\", \"To Lose Someone\", \"Watch The Waves\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/835754c895fb6b9f59fe548340ecafb6/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "96a3bf43d89db37e",
+        "files": {
+          "wall.avif": "5937a81fad0ba44c",
+          "wall.webp": "4ec58c39244581c3"
+        }
+      }
+    },
+    {
+      "id": "history-fbda80949e1a63ca",
+      "artist": "Kurt Vile",
+      "album": "Childish Prodigy",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/396213",
+        "artist": "Kurt Vile",
+        "album": "Childish Prodigy",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/04777bab6e5fe17511e2b0bc6737609e/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Childish Prodigy\" by Kurt Vile and it has both tracks Dan played (\"Freak Train\", \"Blackberry Song\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/04777bab6e5fe17511e2b0bc6737609e/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "705463785d113b99",
+        "files": {
+          "wall.avif": "4f31eb76595496fe",
+          "wall.webp": "8b3bcdbf25e5e57d"
+        }
+      }
+    },
+    {
+      "id": "history-30baf430bb449093",
+      "artist": "Becky and the Birds",
+      "album": "Trasslig",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/146563992",
+        "artist": "Becky and the Birds",
+        "album": "Trasslig",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/9e4f9adf92e4f7923eb9530d6924fe2d/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Trasslig\" by Becky and the Birds and it has all 3 tracks Dan played (\"Paris\", \"Wondering\", \"Pass Me By\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/9e4f9adf92e4f7923eb9530d6924fe2d/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "e81e6c826fdc68b1",
+        "files": {
+          "wall.avif": "0b81ddb0a904839e",
+          "wall.webp": "840d27e70839aa5a"
+        }
+      }
+    },
+    {
+      "id": "history-610fb78229178069",
+      "artist": "Oasis",
+      "album": "Definitely Maybe",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/153710432",
+        "artist": "Oasis",
+        "album": "Definitely Maybe (Deluxe Edition Remastered)",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/c2ba6e9c72949c33df02ce5fac4580f8/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Definitely Maybe (Deluxe Edition Remastered)\" by Oasis, the same album under an edition label, and it has all 3 tracks Dan played (\"Whatever - Remastered\", \"Half The World Away\", \"Take Me Away - Remastered\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/c2ba6e9c72949c33df02ce5fac4580f8/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "4caa725fa8e31e13",
+        "files": {
+          "wall.avif": "88dd4dca1007cf10",
+          "wall.webp": "74865e79a6c83f8c"
+        }
+      }
+    },
+    {
+      "id": "history-5752c9fdf35991f1",
+      "artist": "Kanye West",
+      "album": "Yeezus",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/6694046",
+        "artist": "Kanye West",
+        "album": "Yeezus",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/5a56530f7906bd9786fa47bd0be421b3/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Yeezus\" by Kanye West and it has all 3 tracks Dan played (\"Bound 2\", \"New Slaves\", \"I Am A God\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/5a56530f7906bd9786fa47bd0be421b3/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "41cb98ec23b1e244",
+        "files": {
+          "wall.avif": "62e9f2dc675334b5",
+          "wall.webp": "e3091575265fe28f"
+        }
+      }
+    },
+    {
+      "id": "history-af996313931ee297",
+      "artist": "Stella Donnelly",
+      "album": "Beware of the Dogs",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/84708362",
+        "artist": "Stella Donnelly",
+        "album": "Beware of the Dogs",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/221aad377e8d3d42b59e837d67bfa45d/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Beware of the Dogs\" by Stella Donnelly and it has all 3 tracks Dan played (\"Beware of the Dogs\", \"Mosquito\", \"Old Man\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/221aad377e8d3d42b59e837d67bfa45d/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "4ea4fa8b7f7c6a92",
+        "files": {
+          "wall.avif": "2bfbd3a2c7e8f3c1",
+          "wall.webp": "50f8e89c340b097e"
+        }
+      }
+    },
+    {
+      "id": "history-ff87d7c54044509b",
+      "artist": "Lady Blackbird",
+      "album": "Black Acid Soul",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/898046902",
+        "artist": "Lady Blackbird",
+        "album": "Black Acid Soul",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/854f97b11ab9038286baba43edbba136/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Black Acid Soul\" by Lady Blackbird and it has all 3 tracks Dan played (\"Collage\", \"Fix It\", \"Blackbird\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/854f97b11ab9038286baba43edbba136/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "d258d70043991829",
+        "files": {
+          "wall.avif": "01fea977e7977efe",
+          "wall.webp": "b96357491e259e01"
+        }
+      }
+    },
+    {
+      "id": "history-39f97ca83d6634f3",
+      "artist": "Mark Pritchard",
+      "album": "Under The Sun",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/13031118",
+        "artist": "Mark Pritchard",
+        "album": "Under The Sun",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/46ebcf73cae84d047d1cdc87f649a65e/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Under The Sun\" by Mark Pritchard and it has all 3 tracks Dan played (\"Beautiful People\", \"Give It Your Choir\", \"?\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/46ebcf73cae84d047d1cdc87f649a65e/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "99c77c5aa57bda09",
+        "files": {
+          "wall.avif": "032aa1e32ba5edfc",
+          "wall.webp": "e240b7800d958870"
+        }
+      }
+    },
+    {
+      "id": "history-953bfa80bc85f66f",
+      "artist": "illuminati hotties",
+      "album": "Let Me Do One More",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/230856352",
+        "artist": "illuminati hotties",
+        "album": "Let Me Do One More",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/555198b75748ae219f254e629c666ee8/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Let Me Do One More\" by illuminati hotties and it has all 3 tracks Dan played (\"Pool Hopping\", \"Threatening Each Other re: Capitalism\", \"Cheap Shoes\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/555198b75748ae219f254e629c666ee8/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "3b4c961128cd86a5",
+        "files": {
+          "wall.avif": "52c84ebd3d95e4bc",
+          "wall.webp": "4809a481d6ad7fb6"
+        }
+      }
+    },
+    {
+      "id": "history-18360c798cbf5d5c",
+      "artist": "HAIM",
+      "album": "The Steps",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/133887402",
+        "artist": "HAIM",
+        "album": "The Steps",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/ec424f3074f96b953e03cafe9ac21ce4/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "MusicBrainz shows \"The Steps\" by HAIM (2020) was issued both as a one-track single and as a four-track single that adds \"Now I'm In It\", \"Summer Girl\" and \"Hallelujah\", the three songs Dan played; Deezer's \"The Steps\" has the same front as the four-track release's Cover Art Archive scan.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/ec424f3074f96b953e03cafe9ac21ce4/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "b79ff63b4281a9ce",
+        "files": {
+          "wall.avif": "f688f13715df5dfd",
+          "wall.webp": "293fccbce3ae43c5"
+        }
+      }
+    },
+    {
+      "id": "history-a0ae68fbda538a77",
+      "artist": "Arthur Russell",
+      "album": "Iowa Dream",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/112359262",
+        "artist": "Arthur Russell",
+        "album": "Iowa Dream",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/63be56070cca24a2848355f837ccfe9b/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Iowa Dream\" by Arthur Russell and it has all 3 tracks Dan played (\"You Did It Yourself\", \"I Never Get Lonesome\", \"Come To Life\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/63be56070cca24a2848355f837ccfe9b/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "859ea0673658cf0d",
+        "files": {
+          "wall.avif": "869a94c5d211717f",
+          "wall.webp": "97f6ba8aae36d00a"
+        }
+      }
+    },
+    {
+      "id": "history-95187d23f9e69633",
+      "artist": "Alexandre Desplat",
+      "album": "Moonrise Kingdom (Original Score)",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/3571321",
+        "artist": "Various Artists",
+        "album": "Moonrise Kingdom (Original Score)",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/912d3474e82c9d90b4c6e4021a9f0c6c/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer's \"Moonrise Kingdom (Original Score)\" (ABKCO, 2012, credited to Various Artists) is the six-track Desplat score release and carries all three \"Heroic Weather-Conditions of the Universe\" parts Dan played.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/912d3474e82c9d90b4c6e4021a9f0c6c/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "ffdbe2ee1cc8bffc",
+        "files": {
+          "wall.avif": "f174d71a9c79afa6",
+          "wall.webp": "3b4d7260db82946c"
+        }
+      }
+    },
+    {
+      "id": "history-034525376c96efc1",
+      "artist": "Adrianne Lenker",
+      "album": "songs",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/165298402",
+        "artist": "Adrianne Lenker",
+        "album": "songs",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/47d9814838d91d12d636946ff45734f7/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"songs\" by Adrianne Lenker and it has all 3 tracks Dan played (\"anything\", \"two reverse\", \"ingydar\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/47d9814838d91d12d636946ff45734f7/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "c48ad5d67c3822ba",
+        "files": {
+          "wall.avif": "32115105acf6e200",
+          "wall.webp": "c520ca8c0f8185f3"
+        }
+      }
+    },
+    {
+      "id": "history-18eebca51ae5824a",
+      "artist": "Joan Armatrading",
+      "album": "To The Limit",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/1543629",
+        "artist": "Joan Armatrading",
+        "album": "To The Limit",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/f316ff3a15e762591bdb88803f11eb9c/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"To The Limit\" by Joan Armatrading and it has all 3 tracks Dan played (\"Barefoot And Pregnant\", \"Baby I\", \"You Rope You Tie Me\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/f316ff3a15e762591bdb88803f11eb9c/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "fd40483b5eb5cf57",
+        "files": {
+          "wall.avif": "2e979bffeca34e33",
+          "wall.webp": "3995136cb1dbbfc8"
+        }
+      }
+    },
+    {
+      "id": "history-59b465871ea40300",
+      "artist": "Madvillain",
+      "album": "Madvillainy",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/54307722",
+        "artist": "Madvillain",
+        "album": "Madvillainy",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/22d68d10ed024e92b65d010d5df24c04/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Madvillainy\" by Madvillain and it has all 3 tracks Dan played (\"Raid\", \"All Caps\", \"Meat Grinder\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/22d68d10ed024e92b65d010d5df24c04/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "1d9ad56fb1752311",
+        "files": {
+          "wall.avif": "33cbd63210a9afa4",
+          "wall.webp": "a1e5d1fb721a84a5"
+        }
+      }
+    },
+    {
+      "id": "history-031b96e576fb344f",
+      "artist": "Sampha",
+      "album": "Lahai",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/493742831",
+        "artist": "Sampha",
+        "album": "Lahai",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/ba7baa737fe4f9110d26fdec3d2d0105/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Lahai\" by Sampha and it has all 3 tracks Dan played (\"Spirit 2.0\", \"Only\", \"Dancing Circles\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/ba7baa737fe4f9110d26fdec3d2d0105/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "89ff893c54ab0929",
+        "files": {
+          "wall.avif": "af3f2d5d657c59e2",
+          "wall.webp": "22c9fc5960e276d1"
+        }
+      }
+    },
+    {
+      "id": "history-846f977ee7d7c061",
+      "artist": "The Shins",
+      "album": "Heartworms",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/15578742",
+        "artist": "The Shins",
+        "album": "Heartworms",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/bb03dfec61c4eccee41284db1457f05d/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Heartworms\" by The Shins and it has all 3 tracks Dan played (\"Mildenhall\", \"Rubber Ballz\", \"So Now What\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/bb03dfec61c4eccee41284db1457f05d/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "011b489dce3c5c7f",
+        "files": {
+          "wall.avif": "43e28e6f654e2dcc",
+          "wall.webp": "6563478b61336f4b"
+        }
+      }
+    },
+    {
+      "id": "history-392497d1c246bb36",
+      "artist": "Perfume Genius",
+      "album": "Set My Heart On Fire Immediately",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/147133422",
+        "artist": "Perfume Genius",
+        "album": "Set My Heart On Fire Immediately",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/54700ef348afad721deb62655c65e953/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Set My Heart On Fire Immediately\" by Perfume Genius and it has all 3 tracks Dan played (\"Whole Life\", \"Describe\", \"On the Floor\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/54700ef348afad721deb62655c65e953/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "656f57c883594bf9",
+        "files": {
+          "wall.avif": "14c3a7210464aca4",
+          "wall.webp": "daeb21d399255e56"
+        }
+      }
+    },
+    {
+      "id": "history-87ffba12bb2d857e",
+      "artist": "Vince Staples",
+      "album": "Vince Staples",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/241466642",
+        "artist": "Vince Staples",
+        "album": "Vince Staples",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/b056a6fb60963c6832b413d77cf5eb56/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Vince Staples\" by Vince Staples and it has all 3 tracks Dan played (\"ARE YOU WITH THAT?\", \"LAW OF AVERAGES\", \"THE SHINING\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/b056a6fb60963c6832b413d77cf5eb56/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "f26641f4861bfdf1",
+        "files": {
+          "wall.avif": "0fda3f936cd92596",
+          "wall.webp": "f8319b23a7352a61"
+        }
+      }
+    },
+    {
+      "id": "history-cb83be1f83971b03",
+      "artist": "J Dilla",
+      "album": "Donuts",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/54294542",
+        "artist": "J Dilla",
+        "album": "Donuts",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/20dca341e5524df8e34036fa076bf42f/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Donuts\" by J Dilla and it has all 3 tracks Dan played (\"Workinonit\", \"Don't Cry\", \"Time: The Donut of the Heart\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/20dca341e5524df8e34036fa076bf42f/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "6d31df905f003686",
+        "files": {
+          "wall.avif": "79f2bea0b94084b6",
+          "wall.webp": "2a52937c3ff24ed3"
+        }
+      }
+    },
+    {
+      "id": "history-ba94b44130f01279",
+      "artist": "The 1975",
+      "album": "A Brief Inquiry Into Online Relationships",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/79884272",
+        "artist": "The 1975",
+        "album": "A Brief Inquiry Into Online Relationships",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/bb46fb170ee3b428e14e2b247bc0a23c/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"A Brief Inquiry Into Online Relationships\" by The 1975 and it has all 3 tracks Dan played (\"The 1975\", \"Love It If We Made It\", \"Sincerity Is Scary\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/bb46fb170ee3b428e14e2b247bc0a23c/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "3de0d01b1e662402",
+        "files": {
+          "wall.avif": "8b5fc811179a40f0",
+          "wall.webp": "eb0f8c66aaae6ce5"
+        }
+      }
+    },
+    {
+      "id": "history-ada59f72053c3a62",
+      "artist": "Tune-Yards",
+      "album": "Nikki Nack",
+      "source": {
+        "provider": "Cover Art Archive",
+        "url": "https://musicbrainz.org/release-group/95610184-0523-4fa5-92b9-3cb12425062a",
+        "artist": "tUnE-yArDs",
+        "album": "Nikki Nack",
+        "artworkUrl": "https://coverartarchive.org/release-group/95610184-0523-4fa5-92b9-3cb12425062a/front-1200"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Dan's title is the original 2014 \"Nikki Nack\"; Deezer and Apple now carry only the 2024 deluxe edition, whose sleeve adds the word \"deluxe\", so this is the original sleeve from the album's MusicBrainz release group, otherwise identical artwork.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://coverartarchive.org/release-group/95610184-0523-4fa5-92b9-3cb12425062a/front-1200",
+        "sourceHash": "46ab0f65d0e4abb0",
+        "files": {
+          "wall.avif": "15455c2939ccd35c",
+          "wall.webp": "296b6f3dbf58390d"
+        }
+      }
+    },
+    {
+      "id": "history-7b185e222e92a804",
+      "artist": "Florist",
+      "album": "Florist",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/302896257",
+        "artist": "Florist",
+        "album": "Florist",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/46b146af693fb1f37324affc6b74aaa2/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Florist\" by Florist and it has all 3 tracks Dan played (\"Red Bird Pt. 2 (Morning)\", \"43\", \"Sci-fi Silence\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/46b146af693fb1f37324affc6b74aaa2/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "6ce2e7507ad3a3e7",
+        "files": {
+          "wall.avif": "edfa7e478c181587",
+          "wall.webp": "e2056b446ebb4fb1"
+        }
+      }
+    },
+    {
+      "id": "history-1dfe5075c1476634",
+      "artist": "Sampha",
+      "album": "Process",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/15188983",
+        "artist": "Sampha",
+        "album": "Process",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/60d3c764e8925c0eb855b605b09a7434/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"Process\" by Sampha and it has all 3 tracks Dan played (\"(No One Knows Me) Like the Piano\", \"Kora Sings\", \"Plastic 100°C\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/60d3c764e8925c0eb855b605b09a7434/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "d5517c71731ef80b",
+        "files": {
+          "wall.avif": "98870750cc8ac40b",
+          "wall.webp": "af1dd70a9a98547d"
+        }
+      }
+    },
+    {
+      "id": "history-9fe53238103ce9dc",
+      "artist": "Julianna Barwick",
+      "album": "The Magic Place",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/68095842",
+        "artist": "Julianna Barwick",
+        "album": "The Magic Place",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/9e8d272f2963709ed056310798da726c/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer lists \"The Magic Place\" by Julianna Barwick and it has all 3 tracks Dan played (\"Prizewinning\", \"White Flag\", \"Envelop\").",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/9e8d272f2963709ed056310798da726c/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "24ca632941e7622d",
+        "files": {
+          "wall.avif": "07ffb39939a57f89",
+          "wall.webp": "1970202fef756707"
+        }
+      }
+    },
+    {
+      "id": "history-9e830d85733e4b9d",
+      "artist": "The Who",
+      "album": "The Rolling Stones Rock And Roll Circus",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/68181361",
+        "artist": "Various Artists",
+        "album": "The Rolling Stones Rock And Roll Circus",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/753e87f6445dad6eb7158d43fb5723ed/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "No single of The Who's \"A Quick One While He's Away\" exists on Deezer, Apple or MusicBrainz, so this is the cover of The Rolling Stones Rock And Roll Circus (ABKCO, 1996, credited to Various Artists), the album Dan's live recording is on.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/753e87f6445dad6eb7158d43fb5723ed/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "e4a342498fecb987",
+        "files": {
+          "wall.avif": "f94ec6ff8cfdacbc",
+          "wall.webp": "93c703e3a90f79bb"
+        }
+      }
+    },
+    {
+      "id": "history-50f59ed1a222eb54",
+      "artist": "Grateful Dead",
+      "album": "From the Mars Hotel",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/7407462",
+        "artist": "Grateful Dead",
+        "album": "From the Mars Hotel",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/809120da8ae792a8919662975dc0cf5f/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "No single of \"Unbroken Chain\" exists on Deezer, Apple or MusicBrainz, so this is the cover of From the Mars Hotel (Grateful Dead, 1974), the album the song is on.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/809120da8ae792a8919662975dc0cf5f/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "fc9d79e33aa35609",
+        "files": {
+          "wall.avif": "7b89c0d265caacbc",
+          "wall.webp": "1a4fb1f468848bd9"
+        }
+      }
+    },
+    {
+      "id": "single-8d1ca45bf06a8014",
+      "kind": "single",
+      "artist": "Phil Oakey",
+      "song": "Together In Electric Dreams",
+      "source": {
+        "provider": "Cover Art Archive",
+        "url": "https://musicbrainz.org/release-group/32df8ee7-251a-3448-9eca-43858e618ca4",
+        "artist": "Giorgio Moroder with Philip Oakey",
+        "album": "Together in Electric Dreams",
+        "artworkUrl": "https://coverartarchive.org/release-group/32df8ee7-251a-3448-9eca-43858e618ca4/front-500",
+        "releaseYear": 1984
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "The song's own single is Giorgio Moroder with Philip Oakey's \"Together in Electric Dreams\" (Virgin, 1984); Deezer and Apple only carry album and karaoke versions, so this is the single's sleeve from its MusicBrainz release group.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://coverartarchive.org/release-group/32df8ee7-251a-3448-9eca-43858e618ca4/front-500",
+        "sourceHash": "544cff05e74524cf",
+        "files": {
+          "wall.avif": "8c6d2b53b8a04f18",
+          "wall.webp": "c00d5da1b62fb78f"
+        }
+      }
+    },
+    {
+      "id": "single-3a916af591f641a9",
+      "kind": "single",
+      "artist": "Hot 8 Brass Band",
+      "song": "Sexual Healing",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/866900262",
+        "artist": "Hot 8 Brass Band",
+        "album": "Sexual Healing",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/54d2306d63e635798b65756e39cb4e02/1000x1000-000000-80-0-0.jpg",
+        "releaseYear": 2007
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer's \"Sexual Healing\" single by Hot 8 Brass Band (Tru Thoughts, 2007) leads with the same \"Sexual Healing\" recording that is on Rock With the Hot 8; Apple lists the same single.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/54d2306d63e635798b65756e39cb4e02/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "3e9a124f06558caf",
+        "files": {
+          "wall.avif": "99dbae2d1ab6e75f",
+          "wall.webp": "89cbd13d6a56b826"
+        }
+      }
+    },
+    {
+      "id": "history-7529dcf7be6848ce",
+      "artist": "Islands",
+      "album": "Return to the Sea",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/14177146",
+        "artist": "Islands",
+        "album": "Return to the Sea (10th Anniversary Remaster)",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/f658b73067da5ba190559da94c8e26a7/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "No single of \"Swans (Life After Death)\" exists on Deezer, Apple or MusicBrainz, so this is the cover of Return to the Sea (Islands, 2006), the album it opens; Deezer and Apple only carry its 10th Anniversary Remaster, which this is.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/f658b73067da5ba190559da94c8e26a7/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "54d4fcf81d01111e",
+        "files": {
+          "wall.avif": "c5a65688b40dc8eb",
+          "wall.webp": "58cc0d514c8c63c0"
+        }
+      }
+    },
+    {
+      "id": "single-c52742441dbf5fac",
+      "kind": "single",
+      "artist": "36",
+      "song": "Sine Dust",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/9911968",
+        "artist": "36",
+        "album": "Sine Dust",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/b27d17a1e1574bc157d8d97650cb9a54/1000x1000-000000-80-0-0.jpg",
+        "releaseYear": 2015
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer's \"Sine Dust\" by 36 (3six Recordings, 2015) is the four-track EP named after the song and contains it; Dan played it from the companion EP Sine Dust Versions.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/b27d17a1e1574bc157d8d97650cb9a54/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "ff0d87cf40e80ef7",
+        "files": {
+          "wall.avif": "ebe827396f8ceedb",
+          "wall.webp": "335a0ce323f21be5"
+        }
+      }
+    },
+    {
+      "id": "single-c0c44faf7d2c2be5",
+      "kind": "single",
+      "artist": "Sheryl Lee Ralph",
+      "song": "In The Evening - Extended 12 Inch Version",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/6444861",
+        "artist": "Sheryl Lee Ralph",
+        "album": "In The Evening",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/3cf4d94373ce0c31e9faf2744fccfaeb/1000x1000-000000-80-0-0.jpg",
+        "releaseYear": 1984
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer's \"In The Evening\" by Sheryl Lee Ralph is the song's own 1984 single (original extended mix, radio edit, instrumental); Apple lists the same three tracks as \"In the Evening - EP\" with the same front.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/3cf4d94373ce0c31e9faf2744fccfaeb/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "35347fc8df1f0e9d",
+        "files": {
+          "wall.avif": "2b6b86d215638492",
+          "wall.webp": "3780d1f540983e21"
+        }
+      }
+    },
+    {
+      "id": "history-0ab3374a42496025",
+      "artist": "Jeff Buckley",
+      "album": "So Real: Songs From Jeff Buckley",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/107796212",
+        "artist": "Jeff Buckley",
+        "album": "So Real: Songs from Jeff Buckley (Expanded Edition)",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/e312a454530da3adade0274820fedb46/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "No single of \"I Know It's Over\" exists on Deezer, Apple or MusicBrainz, so this is the cover of So Real: Songs from Jeff Buckley (2007), the album that carries this Sony Studios recording; Deezer's Expanded Edition has the same front as Apple's standard edition.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/e312a454530da3adade0274820fedb46/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "09cec762f129019a",
+        "files": {
+          "wall.avif": "029b82e2dfe05e5f",
+          "wall.webp": "f17bd01efaee3ed7"
+        }
+      }
+    },
+    {
+      "id": "single-8844c4ea1e5529b5",
+      "kind": "single",
+      "artist": "UGK",
+      "song": "Int'l Players Anthem (I Choose You)",
+      "source": {
+        "provider": "Cover Art Archive",
+        "url": "https://musicbrainz.org/release-group/87b43fc5-9be6-4441-9c65-dd5483072427",
+        "artist": "UGK feat. OutKast",
+        "album": "Int’l Players Anthem (I Choose You)",
+        "artworkUrl": "https://coverartarchive.org/release-group/87b43fc5-9be6-4441-9c65-dd5483072427/front-1200",
+        "releaseYear": 2007
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "The song's own single is UGK featuring OutKast's \"Int'l Players Anthem (I Choose You)\" (Jive, 2007); Deezer and Apple only carry album and karaoke versions, so this is the single's sleeve from its MusicBrainz release group.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://coverartarchive.org/release-group/87b43fc5-9be6-4441-9c65-dd5483072427/front-1200",
+        "sourceHash": "fb01133c7906641c",
+        "files": {
+          "wall.avif": "6e346f1204952633",
+          "wall.webp": "44d2c545e05aa03e"
+        }
+      }
+    },
+    {
+      "id": "history-8d5138d02761e75e",
+      "artist": "Joni Mitchell",
+      "album": "Both Sides Now",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/91502",
+        "artist": "Joni Mitchell",
+        "album": "Both Sides Now",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/9ea4e89ea9aa186b8a5c37fea5d745c3/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Dan's track is the title song of Joni Mitchell's 2000 album Both Sides Now, which this is; her streaming singles of the song are other recordings (a 2020 live archive single and the 2021 Clouds remaster), so the album cover is used.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/9ea4e89ea9aa186b8a5c37fea5d745c3/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "392f790c59f64b5a",
+        "files": {
+          "wall.avif": "323312768235661a",
+          "wall.webp": "151fff21701eda80"
+        }
+      }
+    },
+    {
+      "id": "history-8393ec1a6a0f94ef",
+      "artist": "Crazy P",
+      "album": "The Wicked Is Music",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/6641388",
+        "artist": "Crazy P",
+        "album": "The Wicked Is Music",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/1db59d2a6548dfcac0e37e98c2492fb3/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "The only single with the song is the 2003 split \"Fling Up Your Wig / There's A Better Place\", which carries a different mix (Magik Johnson Mix), so this is the cover of The Wicked Is Music (Crazy Penis, Paper Recordings, 1998), the album Dan's version is on.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/1db59d2a6548dfcac0e37e98c2492fb3/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "d25218a6c94176c8",
+        "files": {
+          "wall.avif": "6c050614d5e8c4dd",
+          "wall.webp": "71d9a38c19939cc9"
+        }
+      }
+    },
+    {
+      "id": "history-7a842021522d78fe",
+      "artist": "Mojave 3",
+      "album": "Excuses for Travellers",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/84945282",
+        "artist": "Mojave 3",
+        "album": "Excuses for Travellers",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/e1fc0da894ba5f75e57fdcf72c830cbf/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "No single of \"My Life in Art\" exists on Deezer, Apple or MusicBrainz, so this is the cover of Excuses for Travellers (Mojave 3, 4AD, 2000), the album it is on; Apple's 2000 edition has the same front.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/e1fc0da894ba5f75e57fdcf72c830cbf/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "732e8e660ef55903",
+        "files": {
+          "wall.avif": "2f973185c6017107",
+          "wall.webp": "2d65535d86360b8d"
+        }
+      }
+    },
+    {
+      "id": "single-fa71bc6227cccad1",
+      "kind": "single",
+      "artist": "Kanye West",
+      "song": "Only One",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/9443702",
+        "artist": "Kanye West",
+        "album": "Only One",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/b849705f601429e0f116a0008eaa5e21/1000x1000-000000-80-0-0.jpg",
+        "releaseYear": 2014
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "Deezer's \"Only One\" single by Kanye West (with Paul McCartney) is the one-track 2014 single release of the song; MusicBrainz and Apple date it 31 December 2014.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/b849705f601429e0f116a0008eaa5e21/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "a527b32d7ab7e816",
+        "files": {
+          "wall.avif": "047065e9f5223e6c",
+          "wall.webp": "5934c5b2bf86eedf"
+        }
+      }
+    },
+    {
+      "id": "history-4cc5eaacad132e0d",
+      "artist": "Isaiah Rashad",
+      "album": "The Sun's Tirade",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/117783362",
+        "artist": "Isaiah Rashad",
+        "album": "The Sun's Tirade",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/68b91e9c4ae6fb67b82829ad07cdcb4d/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "\"Wat's Wrong\" (with Zacari and Kendrick Lamar) was never issued as a single on Deezer, Apple or MusicBrainz, so this is the cover of The Sun's Tirade (Isaiah Rashad, 2016), the album it is on.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/68b91e9c4ae6fb67b82829ad07cdcb4d/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "74cec0eaa5ad9d3c",
+        "files": {
+          "wall.avif": "26b7900ebbd05c7a",
+          "wall.webp": "18faf06341d64f37"
+        }
+      }
+    },
+    {
+      "id": "history-b495be04734fdc90",
+      "artist": "Car Seat Headrest",
+      "album": "Teens of Style",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/14880683",
+        "artist": "Car Seat Headrest",
+        "album": "Teens of Style",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/082d611dd7c2c541d7f64de25ef91974/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "\"Maud Gone\" has no single release on Deezer, Apple or MusicBrainz, so this is the cover of Teens of Style (Car Seat Headrest, Matador, 2015), the album it is on.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/082d611dd7c2c541d7f64de25ef91974/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "ce8cd2839d4f1ccb",
+        "files": {
+          "wall.avif": "b1b38be06f0c8445",
+          "wall.webp": "32b9ea240b578737"
+        }
+      }
+    },
+    {
+      "id": "history-d45eb5c33f993e1e",
+      "artist": "Smog",
+      "album": "Red Apple Falls",
+      "source": {
+        "provider": "Deezer",
+        "url": "https://www.deezer.com/album/60355332",
+        "artist": "Smog",
+        "album": "Red Apple Falls",
+        "artworkUrl": "https://cdn-images.dzcdn.net/images/cover/f06d176fb1c6a0f22382cf93c7bc2fb6/1000x1000-000000-80-0-0.jpg"
+      },
+      "verifiedAt": "2026-11-18",
+      "verification": "\"To Be Of Use\" has no single release on Deezer, Apple or MusicBrainz, so this is the cover of Red Apple Falls (Smog, Drag City, 1997), the album it is on.",
+      "derived": {
+        "pressVersion": "press-1",
+        "sourceKey": "https://cdn-images.dzcdn.net/images/cover/f06d176fb1c6a0f22382cf93c7bc2fb6/1000x1000-000000-80-0-0.jpg",
+        "sourceHash": "765fe8d0ae172b1a",
+        "files": {
+          "wall.avif": "1cfbb49c14d812fe",
+          "wall.webp": "1a7ed029159f142f"
+        }
+      }
     }
   ]
 }
