@@ -240,28 +240,28 @@ html.js .music-bar {
 }
 
 html.ready .music-sign svg {
-  animation: flower-grows 900ms cubic-bezier(0.34, 1.4, 0.64, 1) 80ms both;
+  animation: mark-arrives 800ms cubic-bezier(0.34, 1.4, 0.64, 1) 80ms both;
 }
 
-@keyframes flower-grows {
+@keyframes mark-arrives {
   from {
     opacity: 0;
-    transform: scale(0.3) rotate(-30deg);
+    transform: scale(0.5) rotate(-12deg);
   }
 }
 
-/* The signature, as at the foot of ohlifestudios.com: the flower from the
-   mark's border set like a letter, then the name. */
-/* Its line is the bar's 44px, so its letters stand level with the orders'. */
+/* The signature (Dan, 18 November 2026): the mark, then the name in the
+   orders' own size and spacing, so the whole bar reads as one line of
+   words. Its line is the bar's 44px. */
 .music-sign {
   display: inline-flex;
-  align-items: baseline;
-  gap: 0.5em;
+  align-items: center;
+  gap: 0.9em;
   min-height: 44px;
   padding: 0;
   color: var(--ink);
-  font: 500 clamp(18px, 1.2vw + 13px, 24px)/44px "Alegreya SC", var(--serif);
-  letter-spacing: 0.22em;
+  font: 500 clamp(11px, 0.25vw + 10px, 13px)/44px "Alegreya SC", var(--serif);
+  letter-spacing: clamp(0.1em, 0.5vw - 0.6px, 0.24em);
   text-transform: lowercase;
   text-decoration: none;
   white-space: nowrap;
@@ -272,25 +272,19 @@ html.ready .music-sign svg {
   outline-offset: 2px;
 }
 
-/* The flower is centred on the small capitals, point and all (Dan, 16
-   November 2026): its box is its outline, 0.62em tall against the letters'
-   0.508em, let down a little from the baseline so the overhang is even. */
-/* Under the pointer the flower sways on its stem, and settles back. */
+/* The flower stands a little taller than the words, and sways on its stem
+   under the pointer, settling back. */
 .music-sign svg {
+  flex: none;
+  width: 1.45em;
+  height: 1.4em;
   transform-origin: 50% 96%;
-  transition: rotate 700ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: rotate 600ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .music-sign:hover svg,
 .music-sign:focus-visible svg {
   rotate: -14deg;
-}
-
-.music-sign svg {
-  position: relative;
-  top: 0.056em;
-  width: 0.65em;
-  height: 0.62em;
 }
 
 /* What is under the pointer, in a small card that follows it (Dan, 18
@@ -361,6 +355,18 @@ html.ready .music-sign svg {
   gap: 0 clamp(10px, 1.8vw, 22px);
 }
 
+/* Every item in the bar the same distance apart (Dan, 18 November 2026:
+   "can all the top bar be equidistant"): the signature, the orders, singles
+   and the search share one evenly spaced row at every width. */
+.music-bar {
+  justify-content: space-between;
+}
+
+.music-bar .music-tools,
+.music-bar .music-order {
+  display: contents;
+}
+
 /* The orders and the search, kept to the right of the signature. */
 .music-tools {
   position: relative;
@@ -407,8 +413,11 @@ html.ready .music-sign svg {
 }
 
 .music-order-way {
-  display: inline-block;
-  margin-left: 0.3em;
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  margin: -0.5lh 0 0 0.25em;
+  line-height: 1lh;
   font-family: "Alegreya", var(--serif);
   letter-spacing: 0;
   opacity: 0;
@@ -524,8 +533,9 @@ html.ready .music-sign svg {
   /* A smaller signature, and the orders spread evenly over the rest of
      the row (Dan, 16 November 2026: "using the space properly"). */
   .music-sign {
-    font-size: clamp(14px, 3.9vw, 16px);
-    letter-spacing: 0.2em;
+    gap: 0.7em;
+    font-size: clamp(10px, 3vw, 12.5px);
+    letter-spacing: clamp(0.08em, 0.9vw - 1.6px, 0.16em);
   }
 
   .music-tools {
@@ -621,8 +631,8 @@ html.ready .music-sign svg {
   }
 
   .music-sign {
-    font-size: 13px;
-    letter-spacing: 0.15em;
+    font-size: 10px;
+    letter-spacing: 0.04em;
   }
 
   .music-order {

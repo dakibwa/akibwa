@@ -200,5 +200,8 @@ YouTube deliver their histories as exports on request, and the current
 history covers Spotify to 1 October 2026 and YouTube to 3 October 2026 (the
 song ranking was rebuilt from it with the Daybook's
 `tools/build-song-ranking.py` on 18 November 2026). Last.fm scrobbles after
-those dates add plays to the catalogue but no hours.
+those dates add plays to the catalogue, and to the shelf's hours at each
+song's usual Spotify length (three and a half minutes for a song new since
+then), on the album Last.fm names in its raw captures; a scrobble the history
+matched to a YouTube watch is not counted twice (Dan, 18 November 2026).
 Then run `npm run publish:ready` before committing.

@@ -17,7 +17,7 @@
  * left out of the songs. Covers come from the committed album sleeves where
  * artist and album match.
  */
-import { createReadStream, readFileSync, writeFileSync } from "node:fs";
+import { createReadStream, existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { createInterface } from "node:readline";
 import { browseAlbums } from "../components/album-catalogue.mjs";
@@ -107,6 +107,58 @@ for (const release of releases.values()) {
 }
 const various = (release) => fold(release.best.artist) === "various artists";
 const everyTrack = [...ranking.allSourceTracks, ...ranking.excludedTracks];
+
+/*
+ * Last.fm since the Spotify export ends (Dan, 18 November 2026: "Yes, count
+ * them"): each scrobble after the export's last day counts as a play, at that
+ * song's usual Spotify length, or three and a half minutes for a song he has
+ * not played on Spotify, on the album Last.fm names for it. A scrobble the
+ * private history already matched to a YouTube watch is not counted twice.
+ */
+const SPOTIFY_END = ranking.sourceCoverage.spotify.coverage.latestLocalDate;
+const USUAL_MS = 210000;
+const lastfmDir = resolve(root, "private/lastfm");
+const jsonLines = (path) => (existsSync(path) ? readFileSync(path, "utf8").split("\n").filter(Boolean).map((line) => JSON.parse(line)) : []);
+const counted = new Set(jsonLines(resolve(lastfmDir, "media-reconciliation.jsonl")).filter((row) => row.reconciliation?.match?.direct).map((row) => row.id));
+// The album Last.fm named for each scrobble, from the raw captures.
+const albumAt = new Map();
+const captures = resolve(lastfmDir, "api-captures");
+for (const day of existsSync(captures) ? readdirSync(captures) : []) {
+  const folder = resolve(captures, day);
+  let pages = [];
+  try { pages = readdirSync(folder).filter((name) => name.endsWith(".json")); } catch { continue; }
+  for (const page of pages) {
+    const tracks = JSON.parse(readFileSync(resolve(folder, page), "utf8"))?.recenttracks?.track ?? [];
+    for (const track of Array.isArray(tracks) ? tracks : [tracks]) {
+      const when = Number(track?.date?.uts);
+      const album = track?.album?.["#text"];
+      if (when && album) albumAt.set(`${fold(track.artist?.["#text"] ?? track.artist?.name ?? "")}|${fold(track.name ?? "")}|${when}`, album);
+    }
+  }
+}
+const trackOf = new Map();
+for (const track of everyTrack) trackOf.set(`${fold(track.artist)}|${fold(songTitle(track.track))}`, track);
+const lastfmPlays = [];
+for (const scrobble of jsonLines(resolve(lastfmDir, "scrobbles.jsonl"))) {
+  if (scrobble.mediaType !== "track_scrobble" || !(String(scrobble.localDate).slice(0, 10) > SPOTIFY_END) || counted.has(scrobble.id)) continue;
+  const artist = scrobble.creator ?? "";
+  const title = scrobble.name ?? "";
+  if (!artist || !title) continue;
+  const album = albumAt.get(`${fold(artist)}|${fold(title)}|${Math.floor(Date.parse(scrobble.occurredAt) / 1000)}`) ?? null;
+  let track = trackOf.get(`${fold(artist)}|${fold(songTitle(title))}`);
+  if (!track) {
+    // A song new since the export: it counts on the album Last.fm names.
+    if (!album) continue;
+    track = { artist, track: title, songKey: ["lastfm", fold(artist), fold(title)], listens: 0, spotifyListens: 0, spotifyTotalPlayedMs: 0, albums: {}, catalogueUris: [], fromLastfm: true };
+    everyTrack.push(track);
+    trackOf.set(`${fold(artist)}|${fold(songTitle(title))}`, track);
+  }
+  const usual = track.spotifyListens && !track.fromLastfm ? track.spotifyTotalPlayedMs / track.spotifyListens : USUAL_MS;
+  track.listens += 1;
+  track.spotifyTotalPlayedMs += usual;
+  if (album) track.albums = { ...track.albums, [album]: (track.albums?.[album] ?? 0) + 1 };
+  lastfmPlays.push({ track, year: Number(String(scrobble.localDate).slice(0, 4)), ms: usual });
+}
 // The releases a song was played on, with its plays on each.
 const candidatesOf = new Map();
 for (const track of everyTrack) {
@@ -246,7 +298,7 @@ const packet = {
   schemaVersion: 2,
   asOf: ranking.generatedAt.slice(0, 10),
   counts: "Spotify plays of at least 30 seconds plus identified YouTube song watches. Two ambient albums are left out of the songs.",
-  hours: "Spotify playback time; YouTube records no durations. The shelf is the top 1,000 records by these hours.",
+  hours: "Spotify playback time, and since the Spotify export ends, Last.fm plays at each song's usual Spotify length (three and a half minutes for a song new since then); YouTube records no durations. The shelf is the top 1,000 records by these hours.",
   names,
   songs: songs.map((song) => [song.title, index.get(song.artist), song.plays, song.youtube, song.art, song.minutes]),
   albums: albums.map(row),
@@ -289,6 +341,14 @@ for await (const line of lines) {
     const tallies = albumYears[position];
     add(tallies.any, year, event.msPlayed);
   }
+}
+
+// Last.fm plays since the export add to their record's years.
+const recordOfTrack = new Map();
+records.forEach((record, position) => record.songs.forEach((song) => song.tracks.forEach((track) => recordOfTrack.set(track, position))));
+for (const { track, year, ms } of lastfmPlays) {
+  const position = recordOfTrack.get(track);
+  if (position !== undefined) add(albumYears[position].any, year, ms);
 }
 
 // Whole minutes per year that add up to `total` (largest remainders).
