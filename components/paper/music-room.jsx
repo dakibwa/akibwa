@@ -804,11 +804,11 @@ export function MusicRoom({ initial, active }) {
           }}
         >
           {/* The logo is Dan's drawing of himself (Dan, 18 November 2026: "the
-              little character should be the logo"): his head, halo and record
-              in his own strokes, set in a perfectly square illuminated tile with
-              gold flower bands and a starry navy sky (Dan, 19 November 2026:
-              "closer to this"), with no wordmark beside it. */}
-          <img className="music-mark" src="/akibwa-mark.svg?v=tile" alt="" width="52" height="52" draggable="false" />
+              little character should be the logo"), redrawn in his own strokes,
+              colours and hatched ground, cropped to his head, halo and record so
+              it reads small, inside a thin gold border (Dan, 19 November 2026),
+              with no wordmark beside it. */}
+          <img className="music-mark" src="/akibwa-mark.svg?v=redraw" alt="" width="50" height="52" draggable="false" />
         </a>
         <Now say={say} order={shown} years={years} kinds={kinds} meta={meta} />
         <div className="music-tools" data-finding={finding || Boolean(query)}>

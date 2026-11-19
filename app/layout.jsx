@@ -41,11 +41,11 @@ export const metadata = {
   // the page (feeds, robots.txt); iOS draws its own corners on the touch icon.
   icons: {
     icon: [
-      { url: "/favicon.ico?v=tile", sizes: "16x16 32x32 48x48", type: "image/x-icon" },
-      { url: "/favicon.svg?v=tile", type: "image/svg+xml", sizes: "any" }
+      { url: "/favicon.ico?v=redraw", sizes: "16x16 32x32 48x48", type: "image/x-icon" },
+      { url: "/favicon.svg?v=redraw", type: "image/svg+xml", sizes: "any" }
     ],
-    shortcut: [{ url: "/favicon.svg?v=tile", type: "image/svg+xml", sizes: "any" }],
-    apple: [{ url: "/apple-touch-icon.png?v=tile", sizes: "180x180" }]
+    shortcut: [{ url: "/favicon.svg?v=redraw", type: "image/svg+xml", sizes: "any" }],
+    apple: [{ url: "/apple-touch-icon.png?v=redraw", sizes: "180x180" }]
   }
 };
 
