@@ -221,7 +221,10 @@ main {
   flex-wrap: nowrap;
   align-items: center;
   column-gap: clamp(14px, 3.2vw, 40px);
-  padding: clamp(4px, 1vw, 10px) 0;
+  /* The logo's height; its halo and rays (19.12% of it) rise above the
+     square into the top padding, so the row centres on the square. */
+  --mark: clamp(56px, 4vw + 32px, 72px);
+  padding: calc(clamp(4px, 1vw, 10px) + var(--mark) * 0.1912) 0 clamp(4px, 1vw, 10px);
   background: var(--paper);
 }
 
@@ -284,11 +287,15 @@ html.ready .music-mark {
 /* The logo, Dan's little character, top left; it keeps still. */
 /* Big enough to see who it is (Dan, 18 November 2026: "it's kind of
    weirdly small now"). */
+/* The words line up on the centre of the dark square, not of the whole
+   picture (Dan, 19 November 2026: "fully central aligned to the image"): the
+   halo and rays above the square hang out of the logo's box. */
 .music-mark {
   display: block;
   flex: none;
   width: auto;
-  height: clamp(56px, 4vw + 32px, 72px);
+  height: var(--mark);
+  margin-top: calc(var(--mark) * -0.1912);
   -webkit-user-drag: none;
 }
 
@@ -466,18 +473,28 @@ html.ready .music-mark {
     font-size: clamp(13px, 1.75vw - 4.5px, 24px);
   }
 
-  .music-search {
+  /* The search a touch under the words' size, its mark with it (Dan, 19
+     November 2026: "a tad smaller too so it's all consistent"); never under
+     16px, so a tablet does not zoom into it. These outrank the search's own
+     rules further down. */
+  .music-bar .music-search {
     width: clamp(200px, 14vw, 300px);
+    font-size: clamp(16px, 1.55vw - 3.6px, 22px);
   }
 
-  .music-search input {
-    font-size: clamp(17px, 1.2vw + 5px, 24px);
+  .music-bar .music-search input {
+    font-size: inherit;
+  }
+
+  .music-bar .music-search svg {
+    width: 0.9em;
+    height: 0.9em;
   }
 }
 
 @media (min-width: 1200px) {
-  .music-mark {
-    height: clamp(72px, 3vw + 36px, 96px);
+  .music-bar {
+    --mark: clamp(72px, 3vw + 36px, 96px);
   }
 }
 
@@ -524,7 +541,7 @@ html.ready .music-mark {
   outline: none;
   background: none;
   color: var(--ink);
-  font: italic 400 17px/1.2 "Alegreya", var(--serif);
+  font: italic 400 16px/1.2 "Alegreya", var(--serif);
   user-select: text;
 }
 
@@ -580,10 +597,7 @@ html.ready .music-mark {
   .music-bar {
     flex-wrap: nowrap;
     column-gap: 10px;
-  }
-
-  .music-mark {
-    height: 52px;
+    --mark: 52px;
   }
 
   /* A smaller signature, and the orders spread evenly over the rest of
