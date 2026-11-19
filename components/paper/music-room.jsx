@@ -803,10 +803,12 @@ export function MusicRoom({ initial, active }) {
             window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
           }}
         >
-          {/* The logo is Dan's drawing of himself, traced as he drew it (Dan,
-              18 November 2026: "the little character should be the logo"),
+          {/* The logo is Dan's drawing of himself (Dan, 18 November 2026: "the
+              little character should be the logo"), redrawn in his own strokes,
+              colours and hatched ground, cropped to his head, halo and record so
+              it reads small, inside a thin gold border (Dan, 19 November 2026),
               with no wordmark beside it. */}
-          <img className="music-mark" src="/akibwa-mark.svg?v=drawing" alt="" width="34" height="40" draggable="false" />
+          <img className="music-mark" src="/akibwa-mark.svg?v=redraw" alt="" width="50" height="52" draggable="false" />
         </a>
         <Now say={say} order={shown} years={years} kinds={kinds} meta={meta} />
         <div className="music-tools" data-finding={finding || Boolean(query)}>
