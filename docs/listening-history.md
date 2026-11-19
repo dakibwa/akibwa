@@ -46,6 +46,9 @@ minutes of Spotify playback per song, album and album track.
 
 ## Presentation and refresh
 
+The display notes below describe the September album catalogue. For the current
+single-page layout, track sheets and interactions, use [the music shelf guide](music-shelf.md).
+
 Hover/focus shows only the number and a short label, without provider branding.
 Touch layouts keep the count visible. Cards are focusable articles for reading
 the counts; clicking, tapping, Enter and old detail hashes do not open a modal

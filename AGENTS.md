@@ -1,52 +1,56 @@
-# Akibwa Core Site Notes
+# Working on akibwa.com
 
-This repository is the public `akibwa.com` website.
+This public repository serves one page, the music shelf at `/`. Everything committed
+here is public. Git records the implementation and the live site shows what shipped.
 
-- Treat everything committed here as public.
-- Do not add credentials, tokens, `.env` files, booking references, account numbers, raw source exports, identifiers, or similar secrets.
-- The career roles, taste curation and podcast picks were removed with everything else but the music shelf on 16 November 2026 (`data/taste-curation.json` is gone). Their earlier approval is not permission to restore them or other removed personal data. Do not publish the owner's full name, residential history, future-move dates, personal email in static HTML, daily GPS traces, health details, family details, or identifying third-party information.
-- The standalone Trek was retired at Dan’s request on 17 November 2026. Its former publication approval is historical. Keep the route, photographs and journal out of new site exports. Old Trek URLs return 404.
-- Dan approved album counts from all available Spotify, YouTube and Last.fm listening history (5 September 2026); the podcast counts were removed on 16 November 2026. `public/listening-catalogue.json` owns the reconciled public album aggregates the music tools build from; [docs/listening-history.md](docs/listening-history.md) defines matching, overlap bounds and regeneration. Raw events, account identifiers and private source paths stay outside this public repository. Counts are recorded plays/views, not completed albums. Recorded duration is Spotify playback, and since 18 November 2026 (Dan: "Yes, count them") Last.fm plays after the Spotify export ends count at each song's usual Spotify length (three and a half minutes for a song new since then), on the album Last.fm names; never infer YouTube watch time.
-- Keep only `/` in the sitemap unless a route has been explicitly approved for search. Standalone detail surfaces must use `noindex`, and `robots.txt` must continue allowing crawlers to read that directive.
-- Dan retired the remaining page aliases on 17 November 2026. The shelf at `/` is the only public page. Delete retired routes, styles, data and artwork. Missing page paths must return 404.
-- From 16 November 2026 (Dan's instruction) akibwa.com is one page, the music shelf, and nothing else is on it: the front page, the trek and career rooms, the mascot, the name change, the contact links, the studio link and the night paper were retired (deleted, not hidden). `public/features/` stays because features.games serves it. Old room bookmarks open the shelf and the address bar shows the bare homepage. The career and podcast data, their logos, project art and podcast covers, and the image-variant pipeline that served them were deleted the same day; album sleeves are the only artwork.
-- Dan asked on 24 September 2026 for his top 1,000 songs and top albums with the hours he listened, and on 25 September for one albums/songs switch over square sleeves (covers never cropped) packed with no holes and sized by hours, Music for Psychedelic Therapy a touch larger than Graceland and Discreet Music a little smaller (their true hours still shown), all 1,000 songs at once, a visible minimum size with small sleeves growing on hover, high-resolution sleeves, and no explanatory text. Later that day he asked for the switch and the bar to answer at once, the map to rearrange smoothly on resize, a track sheet that doesn't select with each bar washing in its own colour on hover, the Features game reaching the edges of its paper frame (framed like the trek), and on the front page music drawn as large as the other things, the cards, windows, trek route and career trail drawing in, and Castle Bank's mark on the back window. `public/music-ranking.json` publishes only titles, artists, plays, the YouTube share and minutes played (Spotify playback), and for each of the top 100 albums the tracks he played with their plays and minutes, built by `scripts/build-music-ranking.mjs` from the private history's prepared ranking; dates, track URIs, raw events and account detail never leave the private history. On 26 September 2026 Dan approved publishing each of those albums' and songs' hours by calendar year for a line of years in the room (`public/music-years.json`: whole years and Spotify minutes only, never a day, time or event), and asked for songs to open their album's track list, Spotify and Apple Music links on every sheet (`public/music-links.json`, or a search where no release is confirmed), every sleeve checked against an independent cover of its album or by eye (`data/music-sources.json`, enforced by `check:navigation`), and one command to rebuild the room from the history (`npm run music:refresh -- --history-root …`; the path is never committed).
-- The shelf (Dan, 16 November 2026): "super minimalist and simple", set in the Akibwa signature's style (Alegreya small capitals spaced wide, an italic for a name, thin ink edges, flat paper, colour only in the sleeves). The shelf holds Dan's top 1,000 records by hours, albums and singles together (Dan, 18 November 2026: "can we do the top 1000 so it's simple?"), from the whole listening history (`npm run music:refresh`; the private history currently runs to 1 October 2026 for Spotify and 3 October for YouTube), each as large as its hours. Every song counts on one record only: the release most of its plays came from, unless that is a single or EP and the song is on a fuller album by its artist he played, which takes it (Bubblegum Dog on Loss of Life), and an album's editions fold into one record (Desire, I Want to Turn Into You takes its Everasking Edition); `data/music-folds.json` adds singles Apple lists on one of his albums. A record over 90% one song is that song's single, with the single's own cover where one is published (the top 150 albums stay albums, so Discreet Music does). The shelf opens on the albums (`albums`, the top 150 by plays, and `sleeves`, the rest, in `public/music-ranking.json`); the bar's "singles" button switches it to the singles (`singles`), every order working on either, and search finds both. A record with no cover of its own borrows one from another release its songs were played on; covers come from Apple Music, Deezer or the Cover Art Archive, each reviewed in `data/listening-artwork.json`. Every square in a row shares one size, taken from those records' hours between a floor (big enough to see, about 60 px on a laptop and 44 px on a phone) and a cap (none dominates, about 200 px; four to a row on a phone), with one 4 px gap across and down and each full row filling the width, so more fit on screen. One pinned bar, with no rules or underlines, holds everything: the logo, Dan's drawing of himself, alone at the top left with no wordmark (`public/akibwa-mark.svg`, also the favicon; Dan, 18 November 2026): redrawn from his photo in his own strokes, his warm colours and his marker streaks, on his hatched dark ground (no flat blue; Dan, 19 November 2026: "ensure it's the same quality as the original"), with the small dots taken out, cropped to his head, halo, rays and the record he holds so it reads at the bar's size, and a thin gold border inside the frame to make it more distinct (Dan, 19 November 2026, choosing from options), its dark panel a perfect square with straight edges, the halo and rays rising above it as in his drawing (Dan, 19 November 2026: "just make the black a square"; the illuminated tile with bands and stars was reverted), and the sheet he holds a page of handwriting, its lines running across the page as he would write them, instead of the disc that read as a globe (Dan, 19 November 2026: "a piece of paper with writing on instead of a world"); under the pointer its halo glows, a soft gold ring that fades in and breathes, the order (hours; year, from `public/music-years.json`, where each year holds every record played an hour or more that year, as large as that year's hours (Dan, 18 November 2026); genre (named "kind" in code), from `public/music-kinds.json`, one curated kind per artist; a to z, the chosen one turning the flower's red, with no dot or line; pressing year or a to z again turns it round, oldest year first or z to a) and the search, in one row at every width, the logo set a little in from the shelf's left edge so it reads as the signature rather than a sleeve, and on screens 1,000 px and wider the words, search and logo growing with the screen so they fill the row, the words lifting under the pointer, the whole row centred on the logo's dark square (its halo and rays rise above it) and the search a touch under the words' size (Dan, 19 November 2026) (on a phone the search waits behind its mark and is drawn out over the orders from the right edge, its cross clearing and putting it away; Dan, 16 November 2026); whatever is under the pointer is named in a small card that follows the pointer a little behind (under the sleeve for the keyboard), reading artist, year, then hours. Choosing an order sorts the whole shelf with a glide and shows only the headings it needs; there are no separate pages and no explanatory text. Searching drops the order (one plain group, most listened first); choosing an order clears the search; the signature returns to the start (hours, no search, the top). A record's sheet is a mosaic like the shelf, with one 4 px gap (Dan, 16 November 2026): one inked card at the top holding the sleeve on its left and, beside it, the title, artist and year, then one line along the sleeve's foot with the hours and plays and Spotify and Apple Music as their marks at its right end (Dan, 19 November 2026: "so much empty space where the music buttons could go"), and a fine ink × in its corner (one card from 18 November); then the tracks share out the rest by hours (`trackMap`), soft tints with the name and hours inside, a short box setting both on one line. The whole sheet fits the screen with no scrolling: the mosaic takes the room under the card, and when the quietest songs would be too small to read they share one "N more" box. The clicked sleeve grows out of the shelf into the sheet's corner through the browser's view transition (where a browser has none, the sheet simply fades in). The search has no box around it. No record slides out of the sleeve. Under the pointer a sleeve keeps its size and its own artwork turns glossy: light blended into the art, a band running once across at that sleeve's own angle, speed and direction, a soft gloss on its corner and its colours deepened a touch (Dan, 18 November 2026: "unique to each one"). The page appears whole once its small capitals have loaded (no stand-in face): the bar and the logo fade in, the first screen of sleeves lifts in one after another, each cover fades in as it arrives, and rows lift in as they scroll into view. Motion is quick and soft (one cubic-bezier(0.16, 1, 0.3, 1) curve, transform and opacity only) and stops for reduced motion. This replaces September's packed map with no holes, hours on each sleeve, sleeves growing under the pointer, the line of years and the albums/songs switch; search, track lists and the listening links remain. Merging, sizes, rows and orders live in `components/paper/music-shelf.mjs` so the build checks run them on the real albums and songs.
-- Product and client-site credits belong at Oh Life! Studios; akibwa.com carries none of them and no link to the studio.
-- The site is a static Next.js export (`output: "export"`) deployed from `main` to Cloudflare Workers Static Assets. The Cloudflare dashboard owns the `akibwa.com` Custom Domain; omit `route` and `routes` from Wrangler so asset deploys preserve it. [docs/cloudflare-config.md](docs/cloudflare-config.md) records hosting, credentials and the manual GitHub Pages fallback.
-- Fast pre-push check: `npm run check:fast`.
-- Release check: `npm run check:release` (the same build and rendered homepage check).
-- Public surface registry: `data/public-surfaces.json`.
-- Publication checks: use the scoped commands under Default Publish Flow below.
-- Hosting verification: `npm run check:hosting -- <origin>` after building and deploying the exact export.
-- Features lives only at `features.games`. The Features repository owns its client and API and publishes the game into `public/features/`; that copy is what `features-site` serves at `features.games` through `wrangler-features.jsonc` (see the Features section of `docs/cloudflare-config.md`), so keep it. Both the Cloudflare upload and the manual Pages fallback exclude the game from akibwa.com.
+## Public data and routes
 
-## Artwork and images
+- Publish only the approved music aggregates from Spotify, YouTube and Last.fm.
+  Counts mean recorded plays or views. Use Spotify playback for known duration.
+  After the Spotify export ends, use each song's usual Spotify length for its Last.fm
+  plays, or three and a half minutes for a new song, on the album Last.fm names.
+  YouTube contributes views only. [Counting, matching and refresh](docs/listening-history.md)
+- Keep raw exports, events, track URIs, timestamps, private source paths, account identifiers,
+  booking references, account numbers, credentials, tokens and `.env` files out of the repo.
+  Public listening history may be grouped by whole calendar year. Never publish the owner's
+  full name, residential history, move dates, personal email in static HTML, daily GPS
+  traces, health or family details, or identifying information about anyone else.
+- Dan retired the front page, rooms, mascot, name change, contact and studio links, night
+  paper, career roles, taste curation and podcasts on 16 November 2026. The Trek, its route,
+  photographs and journal and the remaining page aliases were retired by 17 November.
+  Earlier publication approvals do not carry forward. Retired routes, styles, data, logos and
+  artwork stay out. Product and client credits belong at Oh Life! Studios.
+- List only `/` in the sitemap unless Dan explicitly approves another route for search.
+  Old room bookmarks open the shelf at the bare homepage. Missing page paths return HTTP 404.
+  Any approved standalone detail surface needs `noindex` with crawling allowed in `robots.txt`.
+  [Public surface registry](data/public-surfaces.json) · [Route checks](docs/publication-workflow.md#public-routes)
 
-`output: "export"` forces `images.unoptimized`, so `next/image` cannot resize
-anything — it emits a plain `<img>` with the original file. The only artwork
-is album sleeves, pre-rendered and committed.
+## The music shelf
 
-- Render a sleeve with `<AlbumArtImage>` (`components/site-image.jsx`), never a
-  bare `<img>` or `next/image`. It emits AVIF with a WebP fallback: one 264px
-  rung (`public/album-art/<id>-wall.*`) and, for sleeves drawn large, a
-  `-large` rung (`scripts/build-music-art.mjs`).
-- **Export artwork once, at final size.** Re-encoding an already-lossy WebP
-  keeps the previous generation's artefacts as detail and inflates the file:
-  `contact-blue-clouds.webp` costs 437K for 899x1198 that way, and no amount of
-  re-encoding recovers it — only resizing does.
+The shelf holds the top 1,000 records by listening hours. It opens on albums, with a singles
+switch, search across both and a track sheet for each record. For changes to ranking, covers,
+the signature, layout, keyboard, motion or the track sheet, read [the shelf guide](docs/music-shelf.md).
+The [listening history guide](docs/listening-history.md) covers how to regenerate public data
+from the private source.
 
-## Default Publish Flow
+## Publish a change
 
-**Standing policy (Dan, 2026-06-23): completed changes go live immediately. Ship by default — do not ask for per-change approval, and do not park finished work behind an unmerged PR or leave it local-only.**
-
-- For completed public Akibwa site changes: validate locally (`npm run check:fast`), commit the scoped change, get it onto `main` (push directly, or open a PR and merge it straight away once checks pass — don't wait for a separate "please publish"), then confirm the Cloudflare deploy succeeded and verify the live `akibwa.com` surface. GitHub Pages is a manual fallback, not the automatic publication target.
-- `check:fast` and `check:release` build once and check that the exported homepage includes the shelf and opens a record. Use `npm run publish:ready` when publication metadata, public surface routing, cloud refresh checks, or generated public data are touched.
-- Use the smallest relevant check while iterating. Markdown and `docs/**`-only changes do not require a site build or deployment; the Cloudflare workflow intentionally ignores them.
-- Do not leave finished changes local-only unless Dan explicitly asks for a preview, local-only work, or a paused WIP state.
-- If the checkout has unrelated local edits, use a clean worktree based on `origin/main` and stage only the intended files. Do not include, revert, or overwrite unrelated worktree changes.
-- Pause before pushing only when validation fails, the change could expose private or sensitive data, the intended behaviour is ambiguous or high-impact, or credentials/secrets/public-data boundaries are involved. Outside those cases, ship without asking.
-
-## Documentation
-
-- Git and the live site own implementation and delivery truth. Update the relevant repository documentation in the same commit whenever a material change alters public behaviour, architecture, publishing, or the next product milestone.
+- Use the smallest relevant check while editing. For a site change, `npm run check:fast`
+  or `npm run check:release` builds once and checks that the exported shelf opens a record.
+  Run `npm run publish:ready` for publication metadata, routing, cloud refresh checks or
+  generated public data. Markdown and `docs/**`-only changes skip site builds and deployments.
+- Dan's standing instruction is to ship completed public changes immediately unless he asks
+  for a preview, local-only work or a pause. Stage the scoped change, get it onto `main`,
+  confirm the Cloudflare deployment succeeded and verify the affected live surface.
+  `npm run check:hosting -- <origin>` checks the exact built export after deployment.
+  When the checkout contains other work, use a clean worktree from `origin/main`.
+- Pause before pushing on failed validation, ambiguous or high-impact behaviour, or a change
+  involving credentials, secrets, private data or public-data permissions. Update the owning
+  document in the same commit when behaviour, architecture, publishing or the next milestone changes.
+- A static Next.js export goes from `main` to Cloudflare Workers Static Assets. The dashboard
+  owns the Custom Domain. Keep `route` and `routes` out of Wrangler. GitHub Pages is the
+  manual fallback. [Hosting and deployment](docs/cloudflare-config.md)
+- Keep `public/features/`. The Features repository publishes its client there for
+  `features-site` at `features.games` through `wrangler-features.jsonc` and owns its API.
+  Both the Akibwa upload and the Pages fallback exclude the game from akibwa.com.
+  [Features hosting](docs/cloudflare-config.md#features-standalone-domain)
