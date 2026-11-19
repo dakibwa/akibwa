@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'sha256-9cAbtC16SzqvZygKGXS6XdfU3MI5ZBuDIkT8HAAE/Aw=' 'sha256-hADS0RB4Xhf/VD2r6oJmjrTsgOIeXnH2FKp1EdkGMpA='; connect-src 'self'; img-src 'self'; font-src data:; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'sha256-9cAbtC16SzqvZygKGXS6XdfU3MI5ZBuDIkT8HAAE/Aw=' 'sha256-0CMjKA/cYbN/DFg6G+sImqaG9jQsEjUJEQbKp/8u9eI='; connect-src 'self'; img-src 'self'; font-src data:; base-uri 'none'; form-action 'none'">
 <meta name="robots" content="noindex, nofollow">
 <title>features · players</title>
 <link rel="icon" type="image/x-icon" sizes="32x32" href="favicon.ico?v=3ffa992228ee">
@@ -491,12 +491,12 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
       {key:'signyesterday',label:'from play yesterday · free account',n:period('play.signyesterday'),d:period('play.signopen'),of:'cards opened'},
       {key:'signsettings',label:'from settings',n:period('play.signsettings'),d:period('play.signopen'),of:'cards opened'},
       {key:'signgo',label:'asked for a code or pressed google',n:period('play.signgo'),d:period('play.signopen'),of:'cards opened'},
-      /* the ways back the game offers, each shown and each taken (index.html, showTell, remindMe and
-         homeAsk). the reminder is asked for between two boards, on a first day's plate and once more
-         on a day a player came back, and on a finished day's card, so it reads against new players;
+      /* the ways back, each shown and each taken (index.html, showTell, remindMe and homeAsk).
+         from 19 Nov 2026 the first day offers the reminder on its finished card alone.
+         the plate on coming back still has its own counts;
          the mails' own counts are the Worker's (worker/links.js, countOwn) */
-      {key:'told',label:"were shown a first day's plate",n:period('play.told'),d:period('play.played'),of:'new players'},
-      {key:'tellyes',label:"pressed remind me on a first day's plate",n:period('play.tellyes'),d:period('play.told'),of:'plates'},
+      {key:'told',label:'saw the first-day plate (retired 19 nov)',n:period('play.told'),d:period('play.played'),of:'new players'},
+      {key:'tellyes',label:'pressed remind me on that retired plate',n:period('play.tellyes'),d:period('play.told'),of:'plates'},
       {key:'backtold',label:'were shown the plate on coming back',n:period('play.backtold'),d:period('play.back'),of:'players who came back'},
       {key:'backyes',label:'pressed remind me on coming back',n:period('play.backyes'),d:period('play.backtold'),of:'plates'},
       {key:'remindask',label:'opened the reminder card',n:period('play.remindask'),d:period('play.played'),of:'new players'},
@@ -532,11 +532,11 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
     // the once-a-device counts need no board-by-board history, so they read every full day shown, as the page's own blocks do
     const wide=tag=>m.rows.reduce((n,r)=>n+(r.day>=m.start&&r.day<m.today&&r.tag===tag?r.n:0),0),shown=m.start+' to '+shiftDay(m.today,-1);
     const firstday=wide('play.firstday'),remind=wide('play.remind'),account=wide('play.account'),played=wide('play.played');
-    const asked=wide('play.remindask'),told=wide('play.told');
+    const asked=wide('play.remindask');
     if(played>=20&&remind<=played&&remind/played<.05)insights.push({kind:'reach',signal:'reminder milestone counts',title:'a way back',summary:`${say(remind)} / ${say(played)} turned on the reminder · ${percent(remind,played)}`,
       findings:[{figure:percent(remind,played),reading:'of new players turned on the daily reminder',sample:`${say(remind)} of ${say(played)}`,share:remind/played,color:'touch'}],
-      evidence:`Daily reminders turned on: ${say(remind)}, against ${say(played)} new players (${percent(remind,played)}), ${shown}. Told between two boards that new boards come every day: ${say(told)}. Reminder cards opened: ${say(asked)}. Devices signed in: ${say(account)}. The reminder is an email that asks only for an address, offered between two boards and on a finished day's card. These are milestone counts, not the same players followed.`,
-      action:'Test one change to the ask at a time: its words, or the board it follows. Keep sign-in for keeping stamps.',
+      evidence:`Daily reminders turned on: ${say(remind)}, against ${say(played)} new players (${percent(remind,played)}), ${shown}. Reminder cards opened: ${say(asked)}. Devices signed in: ${say(account)}. The finished day's card offers the reminder. A player who comes back can also see it once between boards. These are milestone counts, not the same players followed.`,
+      action:"Test the wording of the reminder on the finished day's card. Keep sign-in for keeping stamps.",
       measure:'Reminders turned on / new players, with cards opened and first emails confirmed beside them, then day-1 and day-7 retention. Watch finished sets so the ask does not get in the way.'});
     const groups=CHANNELS.map(([key,name])=>{const of=moment=>m.rows.reduce((n,r)=>{const cut=r.tag.indexOf('.');return n+(cut>0&&r.day>=m.start&&r.day<m.today&&r.tag.slice(cut+1)===moment&&!['play','cohort'].includes(r.tag.slice(0,cut))&&channelOf(r.tag.slice(0,cut))===key?r.n:0)},0);return {name,n:of('new'),played:of('played')}})
       .filter(g=>g.n>=20&&g.played<=g.n).sort((a,b)=>b.played/b.n-a.played/a.n);
