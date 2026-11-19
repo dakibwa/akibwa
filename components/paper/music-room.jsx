@@ -5,6 +5,7 @@ import { AlbumArtImage } from "../site-image";
 import { flushSync } from "react-dom";
 import { useMusicRanking } from "../use-music-ranking";
 import { LARGE_ART } from "./music-art.mjs";
+import MenuLabel from "./menu-label";
 import { indexItems, search } from "./music-search.mjs";
 import { ORDERS, arrange, listened, mergeShelf, rowsFor, songTitle, trackMap } from "./music-shelf.mjs";
 
@@ -819,15 +820,16 @@ export function MusicRoom({ initial, active }) {
           <div className="music-order" role="group" aria-label="Order">
             {ORDERS.map(([name, label]) => {
               const on = !searching && pressedOrder === name;
+              const word = name === "name" && reversed.name ? "z–a" : label;
               return (
                 <button
                   key={name}
                   type="button"
                   aria-pressed={on}
-                  aria-label={name === "year" && on ? `year, ${reversed.year ? "oldest" : "newest"} first` : undefined}
+                  aria-label={name === "year" && on ? `year, ${reversed.year ? "oldest" : "newest"} first` : word}
                   onClick={() => sort(name)}
                 >
-                  {name === "name" && reversed.name ? "z–a" : label}
+                  <MenuLabel label={word} />
                   {/* The year's way round: newest first, or oldest. */}
                   {name === "year" ? <span className="music-order-way" data-on={on} data-up={reversed.year} aria-hidden="true" /> : null}
                 </button>
@@ -836,6 +838,7 @@ export function MusicRoom({ initial, active }) {
             <button
               type="button"
               className="music-singles"
+              aria-label="singles"
               aria-pressed={!searching && singlesOn}
               onClick={() => {
                 say.current?.(null);
@@ -843,7 +846,7 @@ export function MusicRoom({ initial, active }) {
                 startTransition(() => setSinglesOn((on) => !on));
               }}
             >
-              singles
+              <MenuLabel label="singles" />
             </button>
           </div>
           <button

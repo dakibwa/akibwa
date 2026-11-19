@@ -41,6 +41,10 @@ The layout, merging and ordering code runs in the build checks against real reco
   mark's dark square, lift the words on hover and set the search slightly smaller. On a
   phone, its mark opens the borderless search from the right over the orders. The cross
   clears and closes it.
+- Each menu word begins with an original woodcut initial. Azlen's procedural drop-cap
+  film inspired the paper letters, dark ink, curling stems and small stars. The A–Z
+  button changes its initial to Z when reversed. Stems and leaves appear in sequence
+  on entry. Reduced motion shows the finished cuts immediately.
 
 ## The signature
 
