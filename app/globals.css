@@ -281,7 +281,59 @@ html.ready .music-mark {
    19 November 2026: "not completely aligned with the album on the left",
    choosing to nudge it right). */
 .music-sign {
+  position: relative;
   margin-left: clamp(6px, 1.4vw, 16px);
+}
+
+/* Under the pointer the halo glows (Dan, 19 November 2026: "the halo glows
+   or something"): a soft gold ring laid over the halo's rim, which fades in
+   and then breathes. Its place comes from the logo's own geometry: the
+   halo's centre is 22.74% of the logo's height in from the left and 11.53%
+   down from the square's top, and its radius is 20.88% of that height. */
+.music-sign::after {
+  --glow: calc(var(--mark) * 0.2088 * 1.45);
+  content: "";
+  position: absolute;
+  left: calc(var(--mark) * 0.2274 - var(--glow));
+  top: calc(50% - var(--mark) * 0.8088 / 2 + var(--mark) * 0.1153 - var(--glow));
+  width: calc(var(--glow) * 2);
+  height: calc(var(--glow) * 2);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(255 199 104 / 0) 52%, rgb(255 199 104 / 0.5) 70%, rgb(255 199 104 / 0.18) 86%, rgb(255 199 104 / 0) 100%);
+  /* Only round the top of the halo: the glow fades before his face. */
+  -webkit-mask-image: linear-gradient(to bottom, #000 42%, transparent 56%);
+  mask-image: linear-gradient(to bottom, #000 42%, transparent 56%);
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 420ms var(--shelf-ease), transform 620ms var(--shelf-ease);
+  pointer-events: none;
+}
+
+.music-sign:hover::after,
+.music-sign:focus-visible::after {
+  opacity: 1;
+  transform: scale(1);
+  animation: halo-breathes 2.6s ease-in-out 620ms infinite alternate;
+}
+
+@keyframes halo-breathes {
+  to {
+    opacity: 0.6;
+    transform: scale(1.04);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .music-sign::after {
+    transform: none;
+    transition: opacity 120ms linear;
+  }
+
+  .music-sign:hover::after,
+  .music-sign:focus-visible::after {
+    transform: none;
+    animation: none;
+  }
 }
 
 /* The logo, Dan's little character, top left; it keeps still. */
