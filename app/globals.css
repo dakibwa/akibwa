@@ -273,6 +273,14 @@ html.ready .music-mark {
   outline-offset: 2px;
 }
 
+/* The logo sits a little in from the shelf's left edge, so the square reads
+   as the signature, not one more sleeve at the head of the first row (Dan,
+   19 November 2026: "not completely aligned with the album on the left",
+   choosing to nudge it right). */
+.music-sign {
+  margin-left: clamp(6px, 1.4vw, 16px);
+}
+
 /* The logo, Dan's little character, top left; it keeps still. */
 /* Big enough to see who it is (Dan, 18 November 2026: "it's kind of
    weirdly small now"). */
@@ -432,6 +440,53 @@ html.ready .music-mark {
 .music-order button:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 2px;
+}
+
+/* The words answer the hand: a small lift under the pointer, a press when
+   chosen (Dan, 19 November 2026: "something that feels more dynamic"). */
+.music-order button {
+  transition: color 180ms ease, transform 320ms var(--shelf-ease, ease);
+}
+
+.music-order button:hover {
+  transform: translateY(-2px);
+}
+
+.music-order button:active {
+  transform: translateY(0) scale(0.95);
+  transition-duration: 90ms;
+}
+
+/* On a wide screen the bar grows with it, so its words and the logo fill
+   the row instead of floating in it (Dan, 19 November 2026: "better fonts
+   can be used so they fill the space better?"). Phones and laptops keep
+   their sizes. */
+@media (min-width: 1000px) {
+  .music-order button {
+    font-size: clamp(13px, 1.75vw - 4.5px, 24px);
+  }
+
+  .music-search {
+    width: clamp(200px, 14vw, 300px);
+  }
+
+  .music-search input {
+    font-size: clamp(17px, 1.2vw + 5px, 24px);
+  }
+}
+
+@media (min-width: 1200px) {
+  .music-mark {
+    height: clamp(72px, 3vw + 36px, 96px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .music-order button,
+  .music-order button:hover,
+  .music-order button:active {
+    transform: none;
+  }
 }
 
 .music-search {
@@ -1013,20 +1068,27 @@ html:has(.music-tracks[open]) {
   font-size: 14px;
 }
 
+/* The foot is one line along the bottom of the sleeve: hours and plays on
+   the left, the services' marks at the right end, under the close cross. */
 .music-tracks-foot {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0 10px;
+  gap: 0 6px;
   margin-top: auto;
   padding-top: 6px;
 }
 
 .music-tracks-totals {
-  padding-bottom: 6px;
+  min-width: 0;
   font-size: 14px;
   font-variant-numeric: tabular-nums;
+}
+
+.music-tracks-foot .music-listen {
+  flex: none;
+  margin: 0 -12px 0 0;
 }
 
 .music-tracks-totals > span {
@@ -1064,8 +1126,12 @@ html:has(.music-tracks[open]) {
     font-size: 11px;
   }
 
-  .music-tracks-card .music-listen {
-    margin-left: -10px;
+  .music-tracks-foot .music-listen {
+    margin-right: -10px;
+  }
+
+  .music-tracks-foot .music-listen a {
+    width: 36px;
   }
 }
 

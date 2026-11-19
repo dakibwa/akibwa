@@ -541,17 +541,19 @@ function Sheet({ cover, title, artist, byline, hours, count, links, label, onClo
             </button>
             <h2 id="music-tracks-title">{title}</h2>
             <p className="music-tracks-artist">{byline}</p>
+            {/* One line along the sleeve's foot: the hours and plays, then the
+                services' marks at its right end (Dan, 19 November 2026: "so
+                much empty space where the music buttons could go"). */}
             <div className="music-tracks-foot">
+              <p className="music-tracks-totals">
+                <span>{hours}<span className="visually-hidden"> listened</span></span> · <span>{count}</span>
+              </p>
               <p className="music-listen">
                 {links.map(([service, href]) => (
                   <a key={service} href={href} target="_blank" rel="noopener noreferrer" aria-label={`Listen on ${service}`} title={service}>
                     {SERVICE_MARKS[service]}
                   </a>
                 ))}
-              </p>
-              {/* Hours and plays keep together, and part only on a narrow sheet. */}
-              <p className="music-tracks-totals">
-                <span>{hours}<span className="visually-hidden"> listened</span></span> · <span>{count}</span>
               </p>
             </div>
           </div>
