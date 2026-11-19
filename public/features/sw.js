@@ -49,11 +49,27 @@ self.addEventListener('install', event => {
     route([{ condition: { not: { requestMode: 'navigate' } }, source: 'network' }])
       .catch(() => route([{ condition: { urlPattern: new URLPattern({ pathname: '/features/*' }) }, source: 'network' }]))
       .catch(() => {}));
-  // the first visit's page usually still stands in the browser's own cache:
-  // keeping it now opens the second visit without a download
-  event.waitUntil(fetch(ROOT, { cache: 'only-if-cached', mode: 'same-origin' })
-    .then(response => keep(response)).catch(() => {}));
+  event.waitUntil(keepFirstPage().catch(() => {}));
 });
+
+async function keepFirstPage() {
+  const name = await siteName();
+  if (!/^[0-9a-f]{16}$/.test(name)) return;
+  const kept = await (await caches.open(STORE)).match(ROOT);
+  if (kept?.headers.get(KEPT) === name) return;
+  const fromBrowser = async url => {
+    const cached = await fetch(url, { cache: 'only-if-cached', mode: 'same-origin', redirect: 'error' }).catch(() => null);
+    return keep(cached, name);
+  };
+  if (await fromBrowser(ROOT)) return;
+  // A shared link can leave just its query URL in the HTTP cache. Try one
+  // recent game window. Its query is never sent or used as a storage key.
+  const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true }).catch(() => []);
+  const linked = windows.slice(0, 4).find(client => client.url.startsWith(ROOT + '?'));
+  if (linked && await fromBrowser(linked.url)) return;
+  const fresh = await fetch(ROOT, { cache: 'no-store', credentials: 'omit', redirect: 'error' });
+  await keep(fresh, name);
+}
 
 self.addEventListener('activate', event => {
   event.waitUntil(caches.keys()
@@ -125,16 +141,17 @@ async function siteName() {
 }
 
 async function keep(response, name) {
-  if (!response || response.status !== 200 || response.type !== 'basic' || response.redirected) return;
-  if (!/^text\/html/i.test(response.headers.get('content-type') || '')) return;
+  if (!response || response.status !== 200 || response.type !== 'basic' || response.redirected) return false;
+  if (!/^text\/html/i.test(response.headers.get('content-type') || '')) return false;
   const body = await response.arrayBuffer();
   if (name === undefined) name = await siteName();
-  if (!/^[0-9a-f]{16}$/.test(name || '') || await bytesName(body) !== name) return;
+  if (!/^[0-9a-f]{16}$/.test(name || '') || await bytesName(body) !== name) return false;
   const headers = new Headers(response.headers);
   // the body is kept decoded, so it must not claim an encoding or a length
   headers.delete('content-encoding'); headers.delete('content-length');
   headers.set(KEPT, name);
   await (await caches.open(STORE)).put(ROOT, new Response(body, { status: 200, statusText: 'OK', headers }));
+  return true;
 }
 
 // tools/build-stamp.mjs: the first sixteen hex digits of the bytes' SHA-256
