@@ -20,9 +20,9 @@ here is public. Git records the implementation and the live site shows what ship
   photographs and journal and the remaining page aliases were retired by 17 November.
   Earlier publication approvals do not carry forward. Retired routes, styles, data, logos and
   artwork stay out. Product and client credits belong at Oh Life! Studios.
-- List only `/` in the sitemap unless Dan explicitly approves another route for search.
+- List only `/` in the sitemap; add another route only when Dan asks for it to be searchable.
   Old room bookmarks open the shelf at the bare homepage. Missing page paths return HTTP 404.
-  Any approved standalone detail surface needs `noindex` with crawling allowed in `robots.txt`.
+  Any standalone detail surface he asks for needs `noindex` with crawling allowed in `robots.txt`.
   [Public surface registry](data/public-surfaces.json) · [Route checks](docs/publication-workflow.md#public-routes)
 
 ## The music shelf
