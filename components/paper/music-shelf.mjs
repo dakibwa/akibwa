@@ -15,10 +15,14 @@ export const songTitle = (title) =>
 // The one gap between squares, across and down.
 export const GAP = 4;
 
-export const listened = (minutes) => {
-  if (minutes >= 600) return `${Math.round(minutes / 60).toLocaleString("en-GB")} h`;
-  if (minutes >= 60) return `${(minutes / 60).toFixed(1).replace(/\.0$/, "")} h`;
-  return `${Math.max(1, minutes)} min`;
+export const listened = (minutes, units = "short") => {
+  let value = Math.max(1, minutes);
+  if (minutes >= 600) value = Math.round(minutes / 60);
+  else if (minutes >= 60) value = Number((minutes / 60).toFixed(1));
+  const amount = value.toLocaleString("en-GB");
+  if (units === "short") return `${amount} ${minutes >= 60 ? "h" : "min"}`;
+  const unit = minutes >= 60 ? "hour" : "minute";
+  return `${amount} ${unit}${value === 1 ? "" : "s"}`;
 };
 
 /*

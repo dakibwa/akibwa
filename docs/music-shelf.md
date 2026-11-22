@@ -67,10 +67,13 @@ from the reverted version. The page he holds has lines of handwriting across it.
   tags and use the shelf’s broader genres and release years to guide the choice.
   Clicking or tapping keeps the same contrast while the songs are open.
 - Open the tracks directly under the selected sleeve’s row, most listened first.
-  Put the listening time beside each song title. Fill the background of each
-  label from the left in proportion to its listening time. The favourite fills
-  its label. Equal-width labels wrap to fit the shelf, with the album details
-  and listening links above them. Reduced motion shows the final fill immediately.
+  Set the album title in italic, then the artist and its total in words, such as
+  “1,006 hours listened”. Spotify and Apple Music are small text links. Songs
+  read down balanced columns, with each label filled from the left relative to
+  the favourite and its hours beside its name. The columns become one on a
+  phone. Above twelve rows, show ten rows and a button to reveal the rest.
+  Omit a lone song only when the header already gives its title and time.
+  Keep the page still on opening. Reduced motion shows the final fill immediately.
   Selecting another sleeve moves the list there. The same sleeve, the close
   button or Escape folds it away. [Listening links](../public/music-links.json)
 - Reveal the page once its small capitals have loaded. Fade in the bar and mark, lift

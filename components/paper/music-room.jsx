@@ -406,26 +406,36 @@ function Now({ say, order, kinds, meta, hidden }) {
   );
 }
 
-// The services' marks, drawn in the page's ink.
-const SERVICE_MARKS = {
-  Spotify: (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M12 1.5a10.5 10.5 0 1 0 0 21 10.5 10.5 0 0 0 0-21Zm4.8 15.2a.65.65 0 0 1-.9.2c-2.5-1.5-5.6-1.9-9.3-1a.65.65 0 1 1-.3-1.3c4-.9 7.5-.5 10.3 1.2.3.2.4.6.2.9Zm1.3-2.9a.8.8 0 0 1-1.1.3c-2.8-1.7-7.2-2.3-10.6-1.2a.8.8 0 1 1-.5-1.6c3.9-1.2 8.7-.6 11.9 1.4.4.2.5.7.3 1.1Zm.1-3c-3.4-2-9-2.2-12.2-1.2a1 1 0 1 1-.6-1.9c3.7-1.1 9.9-.9 13.8 1.4a1 1 0 0 1-1 1.7Z" />
-    </svg>
-  ),
-  "Apple Music": (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M19 3.2v11.6a3 3 0 1 1-1.6-2.7V7.4l-8 1.8v7.9a3 3 0 1 1-1.6-2.7V6.6c0-.4.3-.8.7-.9l9.5-2.2c.5-.1 1 .2 1 .7Z" />
-    </svg>
-  )
-};
-
 // Tracks expand in place immediately after the selected shelf row.
-function AlbumTracks({ album, year, links, loading, loadError, retry, onClose }) {
+function AlbumTracks({ album, links, loading, loadError, retry, onClose }) {
   const panel = useRef(null);
   const known = album.tracks ?? (loading || loadError ? null : album.fallback);
   const tracks = useMemo(() => known && [...known].sort((a, b) => b.minutes - a.minutes), [known]);
   const mostMinutes = tracks?.[0]?.minutes || 1;
+
+  const list = useRef(null);
+  const [expanded, setExpanded] = useState(false);
+  const [columns, setColumns] = useState(1);
+  const count = tracks?.length ?? 0;
+  const maxColumns = Math.max(1, Math.ceil(count / 3));
+  const limit = count > 12 * columns ? 10 * columns : count;
+  // A single's matching title and time are already in the header.
+  const duplicate = count === 1 && songTitle(tracks[0].title) === album.title && tracks[0].minutes === album.minutes;
+
+  useLayoutEffect(() => {
+    const element = list.current;
+    if (!element || count <= 12) return;
+    const measure = () => {
+      const style = getComputedStyle(element);
+      const gap = parseFloat(style.columnGap);
+      const width = parseFloat(style.columnWidth);
+      setColumns(Math.max(1, Math.min(maxColumns, Math.floor((element.clientWidth + gap) / (width + gap)))));
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [count, maxColumns]);
 
   useLayoutEffect(() => {
     panel.current.focus({ preventScroll: true });
@@ -453,24 +463,37 @@ function AlbumTracks({ album, year, links, loading, loadError, retry, onClose })
     <section id="record-tracks" className="music-tracks" ref={panel} tabIndex={-1} aria-labelledby="music-tracks-title">
       <header className="music-release">
         <h2 id="music-tracks-title">{album.title}</h2>
-        <span className="music-release-info">{album.artist}{year && ` · ${year}`} · {listened(album.minutes)} · {plays(album.plays)}</span>
-        <span className="music-listen">
-          {links.map(([service, href]) => (
-            <a key={service} href={href} target="_blank" rel="noopener noreferrer" aria-label={`Listen on ${service}`} title={service}>{SERVICE_MARKS[service]}</a>
-          ))}
-        </span>
+        <div className="music-release-meta">
+          <p className="music-release-info">
+            <span className="music-release-by">{album.artist}</span>
+            <span className="music-release-total"><b>{listened(album.minutes, "long")}</b> listened</span>
+          </p>
+          <span className="music-listen">
+            {links.map(([service, href]) => (
+              <a key={service} href={href} target="_blank" rel="noopener noreferrer" aria-label={`Listen on ${service} (opens in a new tab)`}>{service}</a>
+            ))}
+          </span>
+        </div>
       </header>
-      <button type="button" className="music-tracks-close" onClick={() => onClose()} aria-label="Close the track list">×</button>
-      {tracks?.length ? (
-        <ol className="music-track-list">
-          {tracks.map((track, index) => (
+      <button type="button" className="music-tracks-close" onClick={() => onClose()} aria-label="Close the track list">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 3.5 9 9m0-9-9 9" /></svg>
+      </button>
+      {count > 0 && !duplicate && (
+        <ol id="record-songs" ref={list} className="music-track-list" aria-label="Songs, most listened first" style={{ "--song-columns": maxColumns }}>
+          {(expanded ? tracks : tracks.slice(0, limit)).map((track, index) => (
             <li key={index} style={{ "--listening-share": track.minutes / mostMinutes, "--bar-delay": `${Math.min(index, 12) * 36}ms` }}>
               <span className="music-track-title">{songTitle(track.title)}</span>
               <span className="music-track-hours">{listened(track.minutes)}<span className="visually-hidden"> listened, {plays(track.plays)}</span></span>
             </li>
           ))}
         </ol>
-      ) : (
+      )}
+      {limit < count && (
+        <button type="button" className="music-tracks-more" aria-controls="record-songs" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>
+          {expanded ? "Fewer songs" : `${count - limit} more songs`}
+        </button>
+      )}
+      {count === 0 && (
         <div className="music-tracks-note" role="status">
           {loading ? "Fetching the tracks…" : "The tracks could not be loaded."}
           {loadError && !loading && <button type="button" className="chip" onClick={retry}>try again</button>}
@@ -663,14 +686,13 @@ export function MusicRoom({ initial, active }) {
     <AlbumTracks
       key={record.key}
       album={record}
-      year={record.year || meta?.years?.[record.art] || null}
       links={listenLinks(record.kind === "album" ? links?.albums?.[record.id] : null, record.artist, record.title)}
       loading={music.loading}
       loadError={music.loadError}
       retry={music.retry}
       onClose={close}
     />
-  ) : null, [active, record, links, meta, music.loading, music.loadError, music.retry, close]);
+  ) : null, [active, record, links, music.loading, music.loadError, music.retry, close]);
 
   return (
     <div className="room-body music">

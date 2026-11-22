@@ -985,60 +985,253 @@ html {
 }
 
 .music-tracks {
+  /* The card's type grows with the shelf, as the bar's words do: phone and
+     laptop sizes hold until the sleeves grow past a laptop's. */
+  --title-size: clamp(19px, 0.75cqi + 11px, 27px);
+  --song-size: clamp(15px, 0.45cqi + 9.5px, 18px);
+  --small-size: clamp(12.5px, 0.35cqi + 8.6px, 15px);
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  min-width: 0;
-  border-block: 1px solid var(--paper-deep);
+  grid-template-areas:
+    "release close"
+    "list list"
+    "more more";
+  column-gap: 8px;
+  padding: 9px 12px 12px;
+  border: 1px solid #d6c7ae;
+  border-radius: 2px;
   background: var(--paper-light);
   transition: opacity 200ms ease;
 }
 
 @starting-style {
-  .music-tracks { opacity: 0; }
+  .music-tracks {
+    opacity: 0;
+  }
 }
 
-.music-tile:has(.music-face[aria-expanded="true"])::after {
+/* Where the browser can, the card unfolds to its height as the rows below
+   make room, rather than jumping. */
+@supports (interpolate-size: allow-keywords) {
+  .music-tracks {
+    interpolate-size: allow-keywords;
+    overflow: clip;
+    overflow-clip-margin: 6px;
+    transition: opacity 200ms ease, height 360ms var(--shelf-ease);
+  }
+
+  @starting-style {
+    .music-tracks {
+      height: 0;
+    }
+  }
+}
+
+.music-tracks:focus-visible {
+  outline: 1px solid var(--ink-soft);
+  outline-offset: -3px;
+  border-radius: 2px;
+}
+
+/* The notch: the card's edge rises to a point under the open sleeve, in the
+   4px gap, so it reads as that record's. Two triangles: the line, then the
+   paper, which also opens the card's top edge beneath it. */
+.music-tile:has(> .music-face[aria-expanded="true"])::before,
+.music-tile:has(> .music-face[aria-expanded="true"])::after {
   content: "";
   position: absolute;
+  z-index: 2;
   bottom: -5px;
-  left: calc(50% - 5px);
-  border: 5px solid transparent;
-  border-top-color: var(--ink-soft);
-  border-bottom: 0;
+  left: 50%;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
   pointer-events: none;
 }
 
-.music-release {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0 14px;
-  padding-inline: 8px;
-  overflow-wrap: anywhere;
+.music-tile:has(> .music-face[aria-expanded="true"])::before {
+  width: 14px;
+  height: 7px;
+  margin-left: -7px;
+  background: #d6c7ae;
 }
 
-.music-tracks:focus-visible, .music-tracks-close:focus-visible {
-  outline: 1px solid var(--ink-soft);
-  outline-offset: -2px;
+.music-tile:has(> .music-face[aria-expanded="true"])::after {
+  width: 11.2px;
+  height: 5.6px;
+  margin-left: -5.6px;
+  background: var(--paper-light);
+}
+
+/* What it is, how long, and where to hear it: one line on a laptop. The
+   title leads in italic, as every name on the shelf; the byline and the
+   links follow in the bar's small capitals. The byline and links wrap
+   under the title together when the line runs out. */
+.music-release {
+  grid-area: release;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 1px 20px;
+  min-width: 0;
 }
 
 #music-tracks-title {
+  flex: 0 1 auto;
+  min-width: 0;
   margin: 0;
-  font: 500 14px/1.3 "Alegreya SC", var(--serif);
+  font: italic 400 var(--title-size)/1.2 "Alegreya", var(--serif);
+  overflow-wrap: anywhere;
+  text-wrap: balance;
 }
 
-.music-track-list, .music-tracks .music-tracks-note {
-  grid-column: 1 / -1;
+.music-release-meta {
+  flex: 1 1 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0 20px;
 }
 
-.music-track-list {
+/* "jon hopkins · 1,006 hours listened": the hours in words, the figure in
+   ink. Year and plays are gone from view. */
+.music-release-info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 1.25em;
+  margin: 0;
+  overflow-x: clip;
+  color: var(--ink-soft);
+  font: 500 var(--small-size)/1.6 "Alegreya SC", var(--serif);
+  letter-spacing: 0.12em;
+  text-transform: lowercase;
+  font-variant-numeric: tabular-nums;
+}
+
+.music-release-by {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* The total never breaks; when it starts a line of its own, its dot falls
+   outside the line and is clipped away. */
+.music-release-total {
+  position: relative;
+  white-space: nowrap;
+}
+
+.music-release-total::before {
+  content: "·";
+  position: absolute;
+  right: 100%;
+  margin-right: 0.45em;
+  color: var(--ink-faint);
+}
+
+.music-release-info b {
+  color: var(--ink);
+  font-weight: inherit;
+}
+
+/* Named links, in words: a target of 44px reached without taking the room. */
+.music-listen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 18px;
+  margin: 0;
+}
+
+.music-listen a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  color: var(--ink-soft);
+  font: 500 var(--small-size)/1 "Alegreya SC", var(--serif);
+  letter-spacing: 0.12em;
+  text-transform: lowercase;
+  text-decoration: none;
+  transition: color 180ms ease;
+}
+
+.music-listen a::after {
+  content: "";
+  position: absolute;
+  inset: calc((100% - 44px) / 2) -6px;
+}
+
+.music-listen a:hover {
+  color: #934527;
+}
+
+.music-listen a:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.music-tracks-close {
+  grid-area: close;
+  align-self: start;
+  position: relative;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 138px), 1fr));
-  gap: 3px;
-  padding: 0 4px 4px;
-  margin: 0;
+  place-items: center;
+  width: 36px;
+  height: 32px;
+  margin: -4px -3px 0 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: color 180ms ease;
+}
+
+/* 44px to touch, reaching only 2px towards the links so the two never
+   overlap. */
+.music-tracks-close::after {
+  content: "";
+  position: absolute;
+  inset: -6px -6px -6px -2px;
+}
+
+.music-tracks-close svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.music-tracks-close:hover {
+  color: var(--ink);
+}
+
+.music-tracks-close:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: -2px;
+  border-radius: 2px;
+}
+
+/* Read down each column. Keep short track lists together. */
+.music-track-list {
+  --song-column: 14.4em;
+  grid-area: list;
+  max-width: calc(var(--song-columns, 6) * 28em + (var(--song-columns, 6) - 1) * 14px);
+  columns: var(--song-column) var(--song-columns, auto);
+  column-gap: 14px;
+  margin: 10px 0 0;
+  padding: 0;
   list-style: none;
+  font-size: var(--song-size);
+}
+
+@container (min-width: 900px) {
+  .music-track-list {
+    --song-column: 16em;
+  }
 }
 
 .music-track-list li {
@@ -1047,11 +1240,15 @@ html {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 6px;
-  padding: 5px 8px;
+  gap: 0.8em;
+  margin: 0 0 2px;
+  padding: 0.34em 0.6em 0.4em;
   background: var(--paper);
+  break-inside: avoid;
 }
 
+/* Each label fills from the left by its listening time; the favourite
+   fills its label. */
 .music-track-list li::before {
   content: "";
   position: absolute;
@@ -1060,41 +1257,91 @@ html {
   background: #dfbb9e;
   transform-origin: left;
   transform: scaleX(var(--listening-share));
-  animation: track-ink 460ms ease-out var(--bar-delay) backwards;
+  animation: track-ink 520ms var(--shelf-ease) var(--bar-delay) backwards;
 }
 
 @keyframes track-ink {
-  from { transform: scaleX(0); }
+  from {
+    transform: scaleX(0);
+  }
 }
 
 @media (forced-colors: active) {
-  .music-track-list li::before { border-inline-end: 2px solid CanvasText; }
+  .music-track-list li::before {
+    border-inline-end: 2px solid CanvasText;
+  }
 }
 
-.music-track-title { overflow-wrap: anywhere; }
-.music-track-hours { white-space: nowrap; }
+.music-track-title {
+  min-width: 0;
+  font: italic 400 1em/1.25 "Alegreya", var(--serif);
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+}
 
-.music-track-title, .music-tracks-note {
+.music-track-hours {
+  flex: none;
+  color: #4d443b;
+  font: 500 0.84em/1.25 "Alegreya SC", var(--serif);
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Past twelve rows, the first ten show and this opens the rest in place. */
+.music-tracks-more {
+  grid-area: more;
+  justify-self: start;
+  min-height: 32px;
+  margin: 4px 0 -6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink-soft);
+  font: 500 var(--small-size)/32px "Alegreya SC", var(--serif);
+  letter-spacing: 0.12em;
+  text-transform: lowercase;
+  cursor: pointer;
+  transition: color 180ms ease;
+}
+
+.music-tracks-more:hover {
+  color: var(--ink);
+}
+
+.music-tracks-more:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.music-tracks-note {
+  grid-area: list;
+  margin: 8px 0 0;
+  color: var(--ink-soft);
   font: italic 400 15px/1.3 "Alegreya", var(--serif);
 }
 
-.music-track-hours, .music-release-info {
-  font: 500 13px/1.3 "Alegreya SC", var(--serif);
-  color: var(--ink-soft);
-  font-variant-numeric: tabular-nums;
-}
+/* A phone: the card's paper reaches nearer its edge, the title steps down,
+   and the byline and the links take a line each when they must. */
+@container (max-width: 559px) {
+  .music-tracks {
+    padding: 8px 10px 10px;
+  }
 
-.music-tracks-close {
-  flex: none;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border: 0;
-  border-inline-start: 1px solid var(--paper-deep);
-  background: transparent;
-  color: var(--ink-soft);
-  font: 400 19px/1 var(--serif);
-  cursor: pointer;
+  .music-release-info,
+  .music-listen a {
+    letter-spacing: 0.1em;
+  }
+
+  .music-listen a {
+    min-height: 26px;
+  }
+
+  .music-track-list {
+    margin-top: 6px;
+  }
 }
 
 .music-more p {
@@ -1149,37 +1396,6 @@ html:not(.js) .music-bar {
   max-width: var(--cap);
   height: auto;
   aspect-ratio: 1;
-}
-
-/* Where to hear it: each service's own mark, the release or a search there. */
-.music-listen {
-  display: flex;
-  gap: 0;
-  margin: 0 0 0 -12px;
-}
-
-.music-listen a {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  color: var(--ink);
-  transition: color 180ms ease;
-}
-
-.music-listen a:hover {
-  color: #db552d;
-}
-
-.music-listen svg {
-  width: 18px;
-  height: 18px;
-  fill: currentColor;
-}
-
-.music-listen a:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: -4px;
 }
 
 /* A pencil-underlined text link: the way home from a missing page. */
