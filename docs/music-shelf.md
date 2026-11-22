@@ -67,11 +67,11 @@ from the reverted version. The page he holds has lines of handwriting across it.
   tags and use the shelf’s broader genres and release years to guide the choice.
   Clicking or tapping keeps the same contrast while the songs are open.
 - Open the tracks directly under the selected sleeve’s row, most listened first.
-  Set the album title in italic, then the artist and its total in words, such as
-  “1,006 hours listened”. Spotify and Apple Music are small text links. Songs
-  read across compact rows. Fit as many equal-width labels across as the shelf
-  allows. Each background fills in proportion to the most-listened song on that
-  record, with the listening time in bold Georgia beside the italic title. Above twelve rows, show ten rows and a button to reveal the rest.
+  Set the album title in soft italic Fraunces, followed by its artist and total
+  time. Use compact Spotify and Apple Music links. Song labels fit their names
+  in Nunito Sans, with bold Fraunces listening times directly beside them.
+  Fill each label in proportion to the album favourite. Let the songs flow
+  left to right. Above twelve lines, show ten and a button to reveal the rest.
   Shorten song labels by dropping guest credits, remaster notes and composition
   attributions. Keep subtitles and version names that identify the song.
   Omit a lone song only when the header already gives its title and time.

@@ -984,35 +984,37 @@ html {
   grid-template-columns: minmax(0, 1fr);
 }
 
+/* Inline album details. */
 .music-tracks {
-  /* The card's type grows with the shelf, as the bar's words do: phone and
-     laptop sizes hold until the sleeves grow past a laptop's. */
-  --title-size: clamp(19px, 0.75cqi + 11px, 27px);
-  --song-size: clamp(15px, 0.45cqi + 9.5px, 18px);
-  --small-size: clamp(12.5px, 0.35cqi + 8.6px, 15px);
+  --sheet-title: clamp(21px, 0.7cqi + 16px, 30px);
+  --sheet-text: clamp(14px, 0.1cqi + 13.6px, 15.5px);
+  --sheet-small: clamp(12.5px, 0.08cqi + 11.8px, 13.5px);
+  --base: var(--paper);
+  --fill: #dfbb9e;
+  --edge: #dccdb6;
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   grid-template-areas:
-    "release close"
-    "list list"
-    "more more";
-  column-gap: 8px;
-  padding: 9px 12px 12px;
-  border: 1px solid #d6c7ae;
-  border-radius: 2px;
+    "release listen close"
+    "list list list"
+    "more more more";
+  column-gap: 10px;
+  padding: 11px 12px 12px 14px;
+  border: 1px solid var(--edge);
+  border-radius: 8px;
   background: var(--paper-light);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: var(--sheet-text);
+  line-height: 1.3;
   transition: opacity 200ms ease;
 }
 
 @starting-style {
-  .music-tracks {
-    opacity: 0;
-  }
+  .music-tracks { opacity: 0; }
 }
 
-/* Where the browser can, the card unfolds to its height as the rows below
-   make room, rather than jumping. */
 @supports (interpolate-size: allow-keywords) {
   .music-tracks {
     interpolate-size: allow-keywords;
@@ -1020,23 +1022,17 @@ html {
     overflow-clip-margin: 6px;
     transition: opacity 200ms ease, height 360ms var(--shelf-ease);
   }
-
   @starting-style {
-    .music-tracks {
-      height: 0;
-    }
+    .music-tracks { height: 0; }
   }
 }
 
 .music-tracks:focus-visible {
-  outline: 1px solid var(--ink-soft);
-  outline-offset: -3px;
-  border-radius: 2px;
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
 }
 
-/* The notch: the card's edge rises to a point under the open sleeve, in the
-   4px gap, so it reads as that record's. Two triangles: the line, then the
-   paper, which also opens the card's top edge beneath it. */
+/* The notch rises to the open sleeve through the 4px gap. */
 .music-tile:has(> .music-face[aria-expanded="true"])::before,
 .music-tile:has(> .music-face[aria-expanded="true"])::after {
   content: "";
@@ -1047,14 +1043,12 @@ html {
   clip-path: polygon(50% 0, 100% 100%, 0 100%);
   pointer-events: none;
 }
-
 .music-tile:has(> .music-face[aria-expanded="true"])::before {
   width: 14px;
   height: 7px;
   margin-left: -7px;
-  background: #d6c7ae;
+  background: #dccdb6;
 }
-
 .music-tile:has(> .music-face[aria-expanded="true"])::after {
   width: 11.2px;
   height: 5.6px;
@@ -1062,113 +1056,98 @@ html {
   background: var(--paper-light);
 }
 
-/* What it is, how long, and where to hear it: one line on a laptop. The
-   title leads in italic, as every name on the shelf; the byline and the
-   links follow in the bar's small capitals. The byline and links wrap
-   under the title together when the line runs out. */
+/* Header: one line on a laptop. Name, who · when · how long; where to
+   hear it stays at the top right while the name and byline wrap. */
 .music-release {
   grid-area: release;
+  align-self: baseline;
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 1px 20px;
+  gap: 2px 14px;
   min-width: 0;
 }
 
 #music-tracks-title {
-  flex: 0 1 auto;
-  min-width: 0;
   margin: 0;
-  font: italic 400 var(--title-size)/1.2 "Alegreya", var(--serif);
+  font: italic 600 var(--sheet-title)/1.1 var(--serif);
+  letter-spacing: -0.01em;
   overflow-wrap: anywhere;
   text-wrap: balance;
 }
 
-.music-release-meta {
-  flex: 1 1 auto;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0 20px;
-}
-
-/* "jon hopkins · 1,006 hours listened": the hours in words, the figure in
-   ink. Year and plays are gone from view. */
+/* A wrapped byline drops its leading separator outside the clip. */
 .music-release-info {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  column-gap: 1.25em;
+  column-gap: 1.05em;
   margin: 0;
   overflow-x: clip;
   color: var(--ink-soft);
-  font: 500 var(--small-size)/1.6 "Alegreya SC", var(--serif);
-  letter-spacing: 0.12em;
-  text-transform: lowercase;
-  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  line-height: 1.45;
 }
-
-.music-release-by {
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-
-/* The total never breaks; when it starts a line of its own, its dot falls
-   outside the line and is clipped away. */
-.music-release-total {
+.music-release-info > span {
   position: relative;
   white-space: nowrap;
 }
-
-.music-release-total::before {
+.music-release-info > .music-release-by {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.music-release-info > span + span::before {
   content: "·";
   position: absolute;
   right: 100%;
-  margin-right: 0.45em;
+  margin-right: 0.38em;
   color: var(--ink-faint);
 }
-
-.music-release-info b {
+.music-release-by {
   color: var(--ink);
-  font-weight: inherit;
+  font-weight: 700;
+}
+.music-release-total b {
+  color: var(--ink);
+  font: 700 1.06em/1 var(--serif);
 }
 
-/* Named links, in words: a target of 44px reached without taking the room. */
+/* Where to hear it: two small pills, 44px to touch. */
 .music-listen {
+  grid-area: listen;
+  align-self: baseline;
   display: flex;
   flex-wrap: wrap;
-  gap: 0 18px;
-  margin: 0;
+  gap: 6px;
 }
-
 .music-listen a {
   position: relative;
   display: inline-flex;
   align-items: center;
-  min-height: 28px;
+  gap: 5px;
+  height: 26px;
+  padding: 0 10px 0 9px;
+  border: 1px solid rgb(42 36 32 / 0.17);
+  border-radius: 999px;
   color: var(--ink-soft);
-  font: 500 var(--small-size)/1 "Alegreya SC", var(--serif);
-  letter-spacing: 0.12em;
-  text-transform: lowercase;
+  font: 650 var(--sheet-small)/1 var(--sans);
   text-decoration: none;
-  transition: color 180ms ease;
+  white-space: nowrap;
+  transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease;
 }
-
 .music-listen a::after {
   content: "";
   position: absolute;
-  inset: calc((100% - 44px) / 2) -6px;
+  inset: -10px -3px;
 }
-
 .music-listen a:hover {
-  color: #934527;
+  border-color: rgb(42 36 32 / 0.36);
+  background: var(--base);
+  color: var(--ink);
 }
-
 .music-listen a:focus-visible {
   outline: 2px solid var(--ink);
-  outline-offset: 3px;
-  border-radius: 2px;
+  outline-offset: 2px;
 }
 
 .music-tracks-close {
@@ -1177,150 +1156,171 @@ html {
   position: relative;
   display: grid;
   place-items: center;
-  width: 36px;
+  width: 32px;
   height: 32px;
-  margin: -4px -3px 0 0;
+  margin: -5px -3px 0 0;
   padding: 0;
   border: 0;
+  border-radius: 999px;
   background: none;
   color: var(--ink-soft);
   cursor: pointer;
-  transition: color 180ms ease;
+  transition: color 160ms ease, background-color 160ms ease;
 }
-
-/* 44px to touch, reaching only 2px towards the links so the two never
-   overlap. */
 .music-tracks-close::after {
   content: "";
   position: absolute;
-  inset: -6px -6px -6px -2px;
+  inset: -6px;
 }
-
 .music-tracks-close svg {
-  width: 13px;
-  height: 13px;
+  width: 12px;
+  height: 12px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.5;
+  stroke-width: 1.6;
   stroke-linecap: round;
 }
-
 .music-tracks-close:hover {
+  background: var(--base);
   color: var(--ink);
 }
-
 .music-tracks-close:focus-visible {
   outline: 2px solid var(--ink);
-  outline-offset: -2px;
-  border-radius: 2px;
+  outline-offset: 0;
 }
 
-/* Equal-width cells keep the listening-time fills comparable within an album. */
+/* Songs read left to right as content-sized chips, most listened first.
+   Each full line is justified; the last keeps its natural widths. A name
+   wider than the line wraps inside its own chip, which then has the line
+   to itself, so it never stretches its neighbours. */
 .music-track-list {
   grid-area: list;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.75em), 1fr));
-  gap: 3px 5px;
-  margin: 8px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 10px 0 0;
   padding: 0;
   list-style: none;
-  font-size: var(--song-size);
+  font-weight: 500;
 }
-
-.music-track-list li {
+.music-track-list::after {
+  content: "";
+  flex: 1000 1 0px;
+}
+.music-track-list > li {
   position: relative;
   isolation: isolate;
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.4em;
-  padding: 0.3em 0.45em;
-  background: var(--paper);
+  flex: 1 1 auto;
+  max-width: 100%;
+  padding: 4px 10px 5px;
+  border-radius: 6px;
+  background: var(--base);
+  overflow: hidden;
+  overflow-wrap: break-word;
 }
-
-.music-track-list li::before {
+/* The listening bar fills the chip's full height, in proportion to the
+   record's most-played song, never thinner than a sliver. */
+.music-track-list > li::before {
   content: "";
   position: absolute;
-  inset: 0;
   z-index: -1;
-  background: #dfbb9e;
-  transform-origin: left;
-  transform: scaleX(var(--listening-share));
-  animation: track-fill 320ms var(--shelf-ease);
+  inset: 0 auto 0 0;
+  width: max(4px, calc(var(--listening-share, 1) * 100%));
+  background: var(--fill);
+  transform-origin: left center;
+  animation: track-fill 560ms var(--shelf-ease) backwards;
 }
-
 @keyframes track-fill {
   from { transform: scaleX(0); }
 }
 
-.music-track-title {
-  min-width: 0;
-  font: italic 400 1em/1.25 "Alegreya", var(--serif);
-  overflow-wrap: anywhere;
-  text-wrap: pretty;
+/* A note that tells two recordings apart: live, demo, take. */
+.music-track-sub {
+  color: var(--ink-soft);
+  font-size: 0.86em;
+  font-weight: 450;
 }
 
+/* The time, bold in the record's voice; its unit quiet in the reader's. */
 .music-track-hours {
-  flex: none;
+  margin-left: 0.55em;
   color: var(--ink);
-  font: 0.9em/1.25 Georgia, serif;
-  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
+.music-track-hours strong {
+  font: 700 1em/1 var(--serif);
+  letter-spacing: 0.005em;
+}
+.music-track-hours small {
+  margin-left: 0.2em;
+  color: var(--ink-soft);
+  font: 650 0.76em/1 var(--sans);
+}
 
-/* Past twelve rows, the first ten show and this opens the rest in place. */
+/* Measure the complete list when the available width or fonts change. */
+.music-track-list[data-measuring] > li[hidden] { display: list-item; }
+
 .music-tracks-more {
   grid-area: more;
   justify-self: start;
   min-height: 32px;
-  margin: 4px 0 -6px;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--ink-soft);
-  font: 500 var(--small-size)/32px "Alegreya SC", var(--serif);
-  letter-spacing: 0.12em;
-  text-transform: lowercase;
-  cursor: pointer;
-  transition: color 180ms ease;
-}
-
-.music-tracks-more:hover {
+  margin-top: 4px;
+  padding: 0 10px;
+  border: 1px dashed var(--edge);
+  border-radius: 6px;
+  background: transparent;
   color: var(--ink);
-}
-
-.music-tracks-more:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 2px;
-  border-radius: 2px;
+  font: 650 var(--sheet-small)/1 var(--sans);
+  cursor: pointer;
 }
 
 .music-tracks-note {
   grid-area: list;
   margin: 8px 0 0;
   color: var(--ink-soft);
-  font: italic 400 15px/1.3 "Alegreya", var(--serif);
 }
 
-/* A phone: the card's paper reaches nearer its edge, the title steps down,
-   and the byline and the links take a line each when they must. */
+/* A phone: the paper reaches nearer its edge; the pills take their own line. */
 @container (max-width: 559px) {
   .music-tracks {
-    padding: 8px 10px 10px;
+    padding: 9px 10px 10px 11px;
+    border-radius: 6px;
   }
-
-  .music-release-info,
+  .music-tracks {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "release close"
+      "listen listen"
+      "list list"
+      "more more";
+  }
+  .music-release {
+    column-gap: 10px;
+  }
+  .music-listen {
+    margin-top: 5px;
+  }
   .music-listen a {
-    letter-spacing: 0.1em;
+    height: 25px;
   }
-
-  .music-listen a {
-    min-height: 26px;
-  }
-
   .music-track-list {
-    margin-top: 6px;
+    margin-top: 8px;
   }
+  .music-track-list > li {
+    padding: 4px 8px 5px;
+  }
+  .music-track-hours {
+    margin-left: 0.45em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .music-track-list > li::before { animation: none; }
+}
+
+@media (forced-colors: active) {
+  .music-track-list > li { border: 1px solid CanvasText; }
+  .music-track-list > li::before { background: Highlight; forced-color-adjust: none; opacity: 0.35; }
 }
 
 .music-more p {

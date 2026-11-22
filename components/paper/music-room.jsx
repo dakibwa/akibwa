@@ -411,6 +411,19 @@ function Now({ say, order, kinds, meta, hidden }) {
   );
 }
 
+function TrackLabel({ track }) {
+  const [title, note] = track.label.split(/\s+(?=\((?:demo|live|early version|take \d+|\d{4} mix)\b[^()]*\)$|[-–—] (?:demo|live|early version|take \d+|\d{4} mix)\b.*$)/i, 2);
+  const [amount, unit] = listened(track.minutes).split(" ");
+  return (
+    <>
+      <span className="music-track-title" title={track.title}>
+        {title}{note && <> <span className="music-track-sub">{note}</span></>}
+      </span>
+      <span className="music-track-hours"><strong>{amount}</strong> <small>{unit}</small><span className="visually-hidden"> listened, {plays(track.plays)}</span></span>
+    </>
+  );
+}
+
 // Tracks expand in place immediately after the selected shelf row.
 function AlbumTracks({ album, links, loading, loadError, retry, onClose }) {
   const panel = useRef(null);
@@ -428,25 +441,44 @@ function AlbumTracks({ album, links, loading, loadError, retry, onClose }) {
 
   const list = useRef(null);
   const [expanded, setExpanded] = useState(false);
-  const [columns, setColumns] = useState(1);
+  const [foldAt, setFoldAt] = useState(Infinity);
   const count = tracks?.length ?? 0;
   const mostMinutes = tracks?.[0]?.minutes || 1;
-  const limit = count > 12 * columns ? 10 * columns : count;
+  const limit = Math.min(count, foldAt);
   // A single's matching title and time are already in the header.
   const duplicate = count === 1 && tracks[0].label === recordLabel(album) && tracks[0].minutes === album.minutes;
 
   useLayoutEffect(() => {
     const element = list.current;
-    if (!element || count <= 12) return;
+    if (!element || count <= 12) {
+      setFoldAt(Infinity);
+      return;
+    }
+    let alive = true;
+    let width = 0;
     const measure = () => {
-      const widths = getComputedStyle(element).gridTemplateColumns;
-      setColumns(widths.split(" ").length);
+      if (!alive) return;
+      element.dataset.measuring = "";
+      const rows = [];
+      let previousTop;
+      for (const [index, song] of Array.from(element.children).entries()) {
+        const top = song.offsetTop;
+        if (top !== previousTop) rows.push(index);
+        previousTop = top;
+      }
+      delete element.dataset.measuring;
+      setFoldAt(rows.length > 12 ? rows[10] : Infinity);
+      width = element.clientWidth;
     };
     measure();
-    const observer = new ResizeObserver(measure);
+    document.fonts.ready.then(measure);
+    const observer = new ResizeObserver(() => {
+      if (element.clientWidth !== width) measure();
+    });
     observer.observe(element);
-    return () => observer.disconnect();
-  }, [count]);
+    return () => { alive = false; observer.disconnect(); };
+  }, [tracks]);
+
 
   useLayoutEffect(() => {
     panel.current.focus({ preventScroll: true });
@@ -474,27 +506,24 @@ function AlbumTracks({ album, links, loading, loadError, retry, onClose }) {
     <section id="record-tracks" className="music-tracks" ref={panel} tabIndex={-1} aria-labelledby="music-tracks-title">
       <header className="music-release">
         <h2 id="music-tracks-title">{recordLabel(album)}</h2>
-        <div className="music-release-meta">
-          <p className="music-release-info">
-            <span className="music-release-by">{album.artist}</span>
-            <span className="music-release-total"><b>{listened(album.minutes, "long")}</b> listened</span>
-          </p>
-          <span className="music-listen">
-            {links.map(([service, href]) => (
-              <a key={service} href={href} target="_blank" rel="noopener noreferrer" aria-label={`Listen on ${service} (opens in a new tab)`}>{service}</a>
-            ))}
-          </span>
-        </div>
+        <p className="music-release-info">
+          <span className="music-release-by">{album.artist}</span>
+          <span className="music-release-total"><b>{listened(album.minutes, "long")}</b> listened</span>
+        </p>
       </header>
+      <span className="music-listen">
+        {links.map(([service, href]) => (
+          <a key={service} href={href} target="_blank" rel="noopener noreferrer" aria-label={`Listen on ${service} (opens in a new tab)`}>{service}</a>
+        ))}
+      </span>
       <button type="button" className="music-tracks-close" onClick={() => onClose()} aria-label="Close the track list">
         <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 3.5 9 9m0-9-9 9" /></svg>
       </button>
       {count > 0 && !duplicate && (
         <ol id="record-songs" ref={list} className="music-track-list" aria-label="Songs, most listened first">
-          {(expanded ? tracks : tracks.slice(0, limit)).map((track, index) => (
-            <li key={index} style={{ "--listening-share": track.minutes / mostMinutes }}>
-              <span className="music-track-title" title={track.title}>{track.label}</span>
-              <span className="music-track-hours"><strong>{listened(track.minutes)}</strong><span className="visually-hidden"> listened, {plays(track.plays)}</span></span>
+          {tracks.map((track, index) => (
+            <li key={index} hidden={!expanded && index >= limit} style={{ "--listening-share": track.minutes / mostMinutes }}>
+              <TrackLabel track={track} />
             </li>
           ))}
         </ol>
