@@ -72,6 +72,8 @@ from the reverted version. The page he holds has lines of handwriting across it.
   read across compact rows. Fit as many equal-width labels across as the shelf
   allows. Each background fills in proportion to the most-listened song on that
   record, with the listening time in bold Georgia beside the italic title. Above twelve rows, show ten rows and a button to reveal the rest.
+  Shorten song labels by dropping guest credits, remaster notes and composition
+  attributions. Keep subtitles and version names that identify the song.
   Omit a lone song only when the header already gives its title and time.
   Keep the page still on opening.
   Selecting another sleeve moves the list there. The same sleeve, the close

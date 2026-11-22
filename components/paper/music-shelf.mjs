@@ -12,6 +12,17 @@ export const songTitle = (title) =>
     .replace(/\s*[([]feat\.[^)\]]*[)\]]/i, "")
     .trim();
 
+// Display labels only. Matching, search and listening totals use the source names.
+export function songLabel(title) {
+  const short = songTitle(title)
+    .replace(/\s*[([](?:with\s+(?!anyone else but me\b)|(?:feat(?:uring)?|ft)\.?\s+|variations?\s+on\s+)[^()[\]]+[)\]]/gi, "")
+    .replace(/\s*[([](?:\d{4}\s+)?(?:digital\s+)?remaster(?:ed)?\b[^()[\]]*[)\]]/gi, "")
+    .replace(/\s*[/;]\s*(?:\d{4}\s+)?(?:digital\s+)?remaster(?:ed)?\b.*$/i, "")
+    .replace(/\s+(?:[-–—]\s+)?(?:feat\.|ft\.|featuring)\s+.+$/i, "")
+    .trim();
+  return short || title;
+}
+
 // The one gap between squares, across and down.
 export const GAP = 4;
 

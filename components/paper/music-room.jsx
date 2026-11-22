@@ -6,7 +6,7 @@ import { flushSync } from "react-dom";
 import { useMusicRanking } from "../use-music-ranking";
 import { LARGE_ART } from "./music-art.mjs";
 import { indexItems, relatedRecords, search } from "./music-search.mjs";
-import { ORDERS, arrange, listened, mergeShelf, rowsFor, songTitle } from "./music-shelf.mjs";
+import { ORDERS, arrange, listened, mergeShelf, rowsFor, songLabel } from "./music-shelf.mjs";
 
 // Albums and the records behind the top songs share one shelf. Sorting,
 // searching and opening a track sheet all work in place.
@@ -337,8 +337,13 @@ function sheenFor(key) {
   };
 }
 
+function recordLabel(item) {
+  return item.kind === "single" ? songLabel(item.title) : item.title;
+}
+
 const Tile = memo(function Tile({ item, expanded, side, share, priority, onOpen, onPoint }) {
-  const described = `${item.title}, ${item.artist}. ${listened(item.allMinutes ?? item.minutes)} listened, ${plays(item.plays)}.`;
+  const title = recordLabel(item);
+  const described = `${title}, ${item.artist}. ${listened(item.allMinutes ?? item.minutes)} listened, ${plays(item.plays)}.`;
   return (
     <li className="music-tile" data-key={item.key} data-record={item.record} style={{ "--side": side, "--share": share, "--tint": item.art ? undefined : tintFor(item.artist), ...sheenFor(item.record ?? item.key) }}>
       <button
@@ -362,8 +367,8 @@ const Tile = memo(function Tile({ item, expanded, side, share, priority, onOpen,
           <AlbumArtImage id={item.art} alt="" priority={priority} large={LARGE_ART[item.art]} sizes={`${Math.ceil(side)}px`} />
         ) : (
           <span className="music-type" aria-hidden="true">
-            <b className="music-initial">{item.title.charAt(0)}</b>
-            {side >= 96 ? <strong>{item.title}</strong> : null}
+            <b className="music-initial">{title.charAt(0)}</b>
+            {side >= 96 ? <strong>{title}</strong> : null}
           </span>
         )}
       </button>
@@ -384,7 +389,7 @@ function Now({ say, order, kinds, meta, hidden }) {
   let hours = "";
   let side = "";
   if (item) {
-    main = item.title;
+    main = recordLabel(item);
     hours = listened(item.allMinutes ?? item.minutes);
     const facts = [item.artist];
     if (order === "kind" && kinds) {
@@ -410,7 +415,16 @@ function Now({ say, order, kinds, meta, hidden }) {
 function AlbumTracks({ album, links, loading, loadError, retry, onClose }) {
   const panel = useRef(null);
   const known = album.tracks ?? (loading || loadError ? null : album.fallback);
-  const tracks = useMemo(() => known && [...known].sort((a, b) => b.minutes - a.minutes), [known]);
+  const tracks = useMemo(() => {
+    if (!known) return null;
+    const sorted = [...known].sort((a, b) => b.minutes - a.minutes)
+      .map(track => ({ ...track, label: songLabel(track.title) }));
+    const counts = new Map();
+    for (const { label } of sorted) counts.set(label, (counts.get(label) ?? 0) + 1);
+    // Keep the original credit when two recordings would share a label.
+    for (const track of sorted) if (counts.get(track.label) > 1) track.label = track.title;
+    return sorted;
+  }, [known]);
 
   const list = useRef(null);
   const [expanded, setExpanded] = useState(false);
@@ -419,7 +433,7 @@ function AlbumTracks({ album, links, loading, loadError, retry, onClose }) {
   const mostMinutes = tracks?.[0]?.minutes || 1;
   const limit = count > 12 * columns ? 10 * columns : count;
   // A single's matching title and time are already in the header.
-  const duplicate = count === 1 && songTitle(tracks[0].title) === album.title && tracks[0].minutes === album.minutes;
+  const duplicate = count === 1 && tracks[0].label === recordLabel(album) && tracks[0].minutes === album.minutes;
 
   useLayoutEffect(() => {
     const element = list.current;
@@ -459,7 +473,7 @@ function AlbumTracks({ album, links, loading, loadError, retry, onClose }) {
   return (
     <section id="record-tracks" className="music-tracks" ref={panel} tabIndex={-1} aria-labelledby="music-tracks-title">
       <header className="music-release">
-        <h2 id="music-tracks-title">{album.title}</h2>
+        <h2 id="music-tracks-title">{recordLabel(album)}</h2>
         <div className="music-release-meta">
           <p className="music-release-info">
             <span className="music-release-by">{album.artist}</span>
@@ -479,7 +493,7 @@ function AlbumTracks({ album, links, loading, loadError, retry, onClose }) {
         <ol id="record-songs" ref={list} className="music-track-list" aria-label="Songs, most listened first">
           {(expanded ? tracks : tracks.slice(0, limit)).map((track, index) => (
             <li key={index} style={{ "--listening-share": track.minutes / mostMinutes }}>
-              <span className="music-track-title">{songTitle(track.title)}</span>
+              <span className="music-track-title" title={track.title}>{track.label}</span>
               <span className="music-track-hours"><strong>{listened(track.minutes)}</strong><span className="visually-hidden"> listened, {plays(track.plays)}</span></span>
             </li>
           ))}
