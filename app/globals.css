@@ -69,6 +69,13 @@
   --paper: #f3ecdf;
   --paper-light: #faf6ee;
   --paper-deep: #e8dcc6;
+  --paper-edge: #d6c7ae;
+  --rust-deep: #934527;
+  --rust-tint: #f3dccf;
+  --gold-tint: #f2dfb8;
+  --kraft: #e6d2ad;
+  --ui-size: clamp(14px, 0.2vw + 12.6px, 16px);
+  --chip-h: 34px;
   --paper-band: rgb(205 181 136 / 0.075);
   --ink: #2a2420;
   --ink-soft: #5f554b;
@@ -212,26 +219,6 @@ main {
   gap: 10px;
 }
 
-/* One pinned row. On a phone the search opens over the orders. */
-.music-bar {
-  position: sticky;
-  top: 0;
-  z-index: 3;
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  column-gap: clamp(14px, 3.2vw, 40px);
-  /* The logo's height; its halo and rays (19.12% of it) rise above the
-     square into the top padding, so the row centres on the square. */
-  --mark: clamp(56px, 4vw + 32px, 72px);
-  padding: calc(clamp(4px, 1vw, 10px) + var(--mark) * 0.1912) 0 clamp(4px, 1vw, 10px);
-  background: var(--paper);
-}
-
-/* The page appears whole once its type has arrived: the bar fades in, the
-   flower grows from its stem, and the first sleeves lift in one after
-   another (Dan, 18 November 2026: "make it super smooth"). Without script
-   everything simply shows. */
 html.js:not(.ready) .music-bar,
 html.js:not(.ready) .music-map,
 html.js .music-map[data-measured="false"] {
@@ -254,42 +241,45 @@ html.ready .music-mark {
   }
 }
 
-/* The signature (Dan, 18 November 2026): the mark, then the name in the
-   orders' own size and spacing, so the whole bar reads as one line of
-   words. Its line is the bar's 44px. */
-.music-sign {
-  display: inline-flex;
+.music-bar {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  --mark: clamp(56px, 3vw + 28px, 84px);
+  display: flex;
   align-items: center;
-  gap: 0.9em;
-  min-height: 44px;
-  padding: 0;
-  color: var(--ink);
-  font: 500 clamp(11px, 0.25vw + 10px, 13px)/44px "Alegreya SC", var(--serif);
-  letter-spacing: clamp(0.1em, 0.5vw - 0.6px, 0.24em);
-  text-transform: lowercase;
-  text-decoration: none;
-  white-space: nowrap;
+  gap: clamp(16px, 2.2vw, 32px);
+  padding: calc(8px + var(--mark) * 0.1912) 0 8px;
+  background: var(--paper);
 }
 
-.music-sign:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 2px;
+/* Once the shelf scrolls under it, a soft fall of paper, not a rule. */
+.music-bar::after {
+  content: "";
+  position: absolute;
+  inset: 100% 0 auto;
+  height: 14px;
+  background: linear-gradient(var(--paper), rgb(243 236 223 / 0));
+  opacity: 0;
+  transition: opacity 200ms ease;
+  pointer-events: none;
+}
+@supports (animation-timeline: scroll()) {
+  .music-bar::after { animation: bar-fade linear both; animation-timeline: scroll(); animation-range: 0px 24px; }
+  @keyframes bar-fade { to { opacity: 1; } }
 }
 
-/* The logo sits a little in from the shelf's left edge, so the square reads
-   as the signature, not one more sleeve at the head of the first row (Dan,
-   19 November 2026: "not completely aligned with the album on the left",
-   choosing to nudge it right). */
+/* The signature: unchanged, Dan's drawing alone, a little in from the edge. */
 .music-sign {
   position: relative;
-  margin-left: clamp(6px, 1.4vw, 16px);
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  min-height: 44px;
+  margin-left: clamp(4px, 1vw, 12px);
+  border-radius: 4px;
 }
-
-/* Under the pointer the halo glows (Dan, 19 November 2026: "the halo glows
-   or something"): a soft gold ring laid over the halo's rim, which fades in
-   and then breathes. Its place comes from the logo's own geometry: the
-   halo's centre is 22.74% of the logo's height in from the left and 11.53%
-   down from the square's top, and its radius is 20.88% of that height. */
+.music-mark { height: var(--mark); width: auto; margin-top: calc(var(--mark) * -0.1912); -webkit-user-drag: none; }
 .music-sign::after {
   --glow: calc(var(--mark) * 0.2088 * 1.45);
   content: "";
@@ -300,7 +290,6 @@ html.ready .music-mark {
   height: calc(var(--glow) * 2);
   border-radius: 50%;
   background: radial-gradient(closest-side, rgb(255 199 104 / 0) 52%, rgb(255 199 104 / 0.5) 70%, rgb(255 199 104 / 0.18) 86%, rgb(255 199 104 / 0) 100%);
-  /* Only round the top of the halo: the glow fades before his face. */
   -webkit-mask-image: linear-gradient(to bottom, #000 42%, transparent 56%);
   mask-image: linear-gradient(to bottom, #000 42%, transparent 56%);
   opacity: 0;
@@ -308,471 +297,259 @@ html.ready .music-mark {
   transition: opacity 420ms var(--shelf-ease), transform 620ms var(--shelf-ease);
   pointer-events: none;
 }
+.music-sign:hover::after, .music-sign:focus-visible::after { opacity: 1; transform: scale(1); animation: halo-breathes 2.6s ease-in-out 620ms infinite alternate; }
+@keyframes halo-breathes { to { opacity: 0.6; transform: scale(1.04); } }
 
-.music-sign:hover::after,
-.music-sign:focus-visible::after {
-  opacity: 1;
-  transform: scale(1);
-  animation: halo-breathes 2.6s ease-in-out 620ms infinite alternate;
-}
-
-@keyframes halo-breathes {
-  to {
-    opacity: 0.6;
-    transform: scale(1.04);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .music-sign::after {
-    transform: none;
-    transition: opacity 120ms linear;
-  }
-
-  .music-sign:hover::after,
-  .music-sign:focus-visible::after {
-    transform: none;
-    animation: none;
-  }
-}
-
-/* The logo, Dan's little character, top left; it keeps still. */
-/* Big enough to see who it is (Dan, 18 November 2026: "it's kind of
-   weirdly small now"). */
-/* The words line up on the centre of the dark square, not of the whole
-   picture (Dan, 19 November 2026: "fully central aligned to the image"): the
-   halo and rays above the square hang out of the logo's box. */
-.music-mark {
-  display: block;
-  flex: none;
-  width: auto;
-  height: var(--mark);
-  margin-top: calc(var(--mark) * -0.1912);
-  -webkit-user-drag: none;
-}
-
-/* The caption sits at the paper's edge while the pointer crosses the art. */
-.music-now {
-  position: fixed;
-  bottom: max(10px, env(safe-area-inset-bottom));
-  left: max(10px, env(safe-area-inset-left));
-  z-index: 4;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: baseline;
-  gap: 1px 12px;
-  max-width: min(320px, calc(100vw - 20px));
-  padding: 5px 10px;
-  overflow: hidden;
-  border: 1px solid var(--paper-deep);
-  border-radius: 2px;
-  background: var(--paper-light);
-  white-space: nowrap;
-  pointer-events: none;
-  transition: opacity 180ms ease;
-}
-
-.music-now[data-empty="true"] {
-  opacity: 0;
-}
-
-.music-now strong {
-  overflow: hidden;
-  font: italic 400 16px/1.2 "Alegreya", var(--serif);
-  text-overflow: ellipsis;
-}
-
-.music-now span,
-.music-order button,
-.music-group-head {
-  font-family: "Alegreya SC", var(--serif);
-  font-weight: 500;
-  letter-spacing: 0.24em;
-  text-transform: lowercase;
-}
-
-/* Who and when, a little faded under the title (Dan, 18 November 2026). */
-.music-now span {
-  grid-column: 1 / -1;
-  overflow: hidden;
-  color: color-mix(in srgb, var(--ink-soft) 80%, var(--paper-light));
-  font-size: 11px;
-  text-overflow: ellipsis;
-}
-
-/* The hours sit at the top right, on the title's line. */
-.music-now-hours {
-  color: var(--ink);
-  font: 500 12px/1 "Alegreya SC", var(--serif);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.14em;
-  text-transform: lowercase;
-}
-
-.music-order {
-  display: flex;
-  gap: 0 clamp(10px, 1.8vw, 22px);
-}
-
-/* Every item in the bar the same distance apart (Dan, 18 November 2026:
-   "can all the top bar be equidistant"): the signature, the orders, singles
-   and the search share one evenly spaced row at every width. */
-.music-bar {
-  justify-content: space-between;
-}
-
-.music-bar .music-tools,
-.music-bar .music-order {
-  display: contents;
-}
-
-/* The orders and the search, kept to the right of the signature. */
 .music-tools {
   position: relative;
   display: flex;
+  flex: 1;
   align-items: center;
-  column-gap: clamp(14px, 3.2vw, 40px);
-  margin-left: auto;
+  min-width: 0;
+  gap: clamp(10px, 2vw, 28px);
 }
 
-.music-find {
-  display: none;
+/* What is on the shelf: albums or singles, a two-way switch in one capsule.
+   The chosen side is a paper chip raised off the capsule. */
+.music-crate {
+  display: inline-flex;
+  flex: none;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--paper-deep);
+}
+.music-crate button {
+  position: relative;
+  height: calc(var(--chip-h) - 6px);
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-soft);
+  font: 700 var(--ui-size)/1 var(--sans);
+  cursor: pointer;
+  transition: background-color 180ms ease, color 180ms ease, box-shadow 180ms ease;
+}
+.music-crate button::after { content: ""; position: absolute; inset: -8px 0; }
+.music-crate button:hover { color: var(--ink); }
+.music-crate button[aria-pressed="true"] {
+  background: var(--paper-light);
+  color: var(--ink);
+  box-shadow: 0 1px 2px rgb(42 36 32 / 0.18), 0 0 0 0.5px rgb(42 36 32 / 0.08);
 }
 
-
+/* The order: four plain words; the chosen one sits on a rust-tinted chip. */
+.music-order { display: flex; flex: none; align-items: center; gap: 2px; }
 .music-order button {
   position: relative;
-  min-height: 44px;
-  padding: 0;
-  line-height: 44px;
-  /* One line always: a squeezed button never drops its arrow below its word. */
-  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  height: var(--chip-h);
+  padding: 0 12px;
   border: 0;
-  background: none;
+  border-radius: 999px;
+  background: transparent;
   color: var(--ink-soft);
-  font-size: clamp(11px, 0.25vw + 10px, 13px);
-  letter-spacing: clamp(0.1em, 0.5vw - 0.6px, 0.24em);
+  font: 700 var(--ui-size)/1 var(--sans);
+  white-space: nowrap;
   cursor: pointer;
-  transition: color 180ms ease;
+  transition: background-color 180ms ease, color 180ms ease;
 }
+.music-order button::after { content: ""; position: absolute; inset: -5px 0; }
+.music-order button:hover { background: var(--paper-deep); color: var(--ink); }
+.music-order button[aria-pressed="true"] { background: var(--rust-tint); color: var(--rust-deep); }
+.music-order button:active, .music-crate button:active { transform: scale(0.96); transition-duration: 90ms; }
 
-/* The chosen order turns the flower's red (Dan, 18 November 2026: "can we
-   just have it change colour?"); no dot, no line. */
-.music-order button:hover {
-  color: var(--ink);
-}
-
-.music-order button[aria-pressed="true"] {
-  color: #934527;
-}
-
-/* The year order's way round, shown while it is chosen. */
-.music-order-way::before {
-  content: "↓";
-}
-
+/* The year's way round. Its room is always kept, so nothing shifts; it shows
+   faintly as a hint and firmly when year is chosen. */
+.music-order-way::before { content: "↓"; }
 .music-order-way {
-  position: absolute;
-  top: 50%;
-  left: 100%;
-  margin: -.5em 0 0 .2em;
-  font-size: .9em;
-  line-height: 1;
-  font-family: "Alegreya", var(--serif);
-  letter-spacing: 0;
-  opacity: 0;
-  transition: opacity 180ms ease, rotate 320ms var(--shelf-ease, ease);
+  display: inline-block;
+  width: 0.8em;
+  margin-left: 0.15em;
+  margin-right: -0.2em;
+  text-align: center;
+  opacity: 0.38;
+  transition: opacity 180ms ease, rotate 320ms var(--shelf-ease);
 }
+.music-order-way[data-on="true"] { opacity: 1; }
+.music-order-way[data-up="true"] { rotate: 180deg; }
 
-.music-order-way[data-on="true"] {
-  opacity: 1;
-}
-
-.music-order-way[data-up="true"] {
-  rotate: 180deg;
-}
-
-.music-order button:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 2px;
-}
-
-/* The words answer the hand: a small lift under the pointer, a press when
-   chosen (Dan, 19 November 2026: "something that feels more dynamic"). */
-.music-order button {
-  transition: color 180ms ease, transform 320ms var(--shelf-ease, ease);
-}
-
-.music-order button:hover {
-  transform: translateY(-2px);
-}
-
-.music-order button:active {
-  transform: translateY(0) scale(0.95);
-  transition-duration: 90ms;
-}
-
-/* On a wide screen the bar grows with it, so its words and the logo fill
-   the row instead of floating in it (Dan, 19 November 2026: "better fonts
-   can be used so they fill the space better?"). Phones and laptops keep
-   their sizes. */
-@media (min-width: 1000px) {
-  .music-order button {
-    font-size: clamp(13px, 1.75vw - 4.5px, 24px);
-  }
-
-  /* The search a touch under the words' size, its mark with it (Dan, 19
-     November 2026: "a tad smaller too so it's all consistent"); never under
-     16px, so a tablet does not zoom into it. These outrank the search's own
-     rules further down. */
-  .music-bar .music-search {
-    width: clamp(200px, 14vw, 300px);
-    font-size: clamp(16px, 1.55vw - 3.6px, 22px);
-  }
-
-  .music-bar .music-search input {
-    font-size: inherit;
-  }
-
-  .music-bar .music-search svg {
-    width: 0.9em;
-    height: 0.9em;
-  }
-}
-
-@media (min-width: 1200px) {
-  .music-bar {
-    --mark: clamp(72px, 3vw + 36px, 96px);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .music-order button,
-  .music-order button:hover,
-  .music-order button:active {
-    transform: none;
-  }
-}
-
+/* Search: a soft capsule of deeper paper, no ruled box. */
 .music-search {
   display: flex;
   align-items: center;
   gap: 8px;
-  width: clamp(110px, 16vw, 200px);
-  min-height: 44px;
+  width: clamp(272px, 21vw, 330px);
+  height: 40px;
+  margin-left: auto;
+  padding: 0 6px 0 14px;
+  border-radius: 999px;
+  background: var(--paper-deep);
+  transition: background-color 180ms ease, box-shadow 180ms ease;
 }
-
-.music-search-mark {
-  display: grid;
-  align-items: center;
-  align-self: stretch;
-  cursor: text;
-}
-
-.music-search svg {
-  flex: none;
-  fill: none;
-  stroke: var(--ink-soft);
-  stroke-width: 2;
-  stroke-linecap: round;
-}
-
-.music-search:focus-within svg {
-  stroke: var(--ink);
-}
-
+.music-search:focus-within { background: var(--paper-light); box-shadow: 0 0 0 2px var(--ink); }
+.music-search-mark { display: grid; place-items: center; align-self: stretch; cursor: text; color: var(--ink-soft); }
+.music-search svg, .music-find svg, .music-search-clear svg { fill: none; stroke: currentColor; stroke-linecap: round; }
+.music-search-mark svg { width: 17px; height: 17px; stroke-width: 2.2; }
 .music-search input {
   flex: 1;
   min-width: 0;
+  height: 100%;
   padding: 0;
   border: 0;
   outline: none;
   background: none;
   color: var(--ink);
-  font: italic 400 16px/1.2 "Alegreya", var(--serif);
-  user-select: text;
+  font: 600 var(--ui-size)/1.2 var(--sans);
 }
-
-/* The search has no box around it (Dan, 18 November 2026: "the square bar
-   around search is ugly"): its caret and its mark turning ink show where
-   the keys go. */
-
-.music-search input::placeholder {
+.music-search input::placeholder { color: var(--ink-soft); opacity: 1; font-weight: 500; }
+.music-search input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+.music-search kbd {
+  flex: none;
+  min-width: 24px;
+  margin-right: 4px;
+  padding: 4px 6px;
+  border: 1px solid var(--paper-edge);
+  border-radius: 6px;
+  background: var(--paper-light);
   color: var(--ink-soft);
+  font: 800 12px/1 var(--sans);
+  text-align: center;
 }
-
-.music-search input::-webkit-search-cancel-button {
-  -webkit-appearance: none;
-  appearance: none;
-}
-
+.music-search:focus-within kbd, .music-search[data-filled="true"] kbd { display: none; }
 .music-search-clear {
-  display: grid;
+  display: none;
   place-items: center;
   flex: none;
   width: 32px;
-  height: 44px;
-  margin-right: -8px;
+  height: 32px;
   padding: 0;
   border: 0;
-  background: none;
+  border-radius: 999px;
+  background: transparent;
   color: var(--ink-soft);
   cursor: pointer;
-  transition: color 180ms ease;
 }
+.music-search-clear:hover { background: var(--paper-deep); color: var(--ink); }
+.music-search-clear svg { width: 12px; height: 12px; stroke-width: 2; }
+.music-search[data-filled="true"] .music-search-clear, .music-tools[data-finding="true"] .music-search-clear { display: grid; }
 
-.music-search-clear svg,
-.music-find svg {
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-}
-
-.music-search-clear svg {
-  width: 13px;
-  height: 13px;
-  stroke-width: 1.5;
-}
-
-.music-search-clear:hover {
+.music-find {
+  display: none;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  margin-left: auto;
+  margin-right: -6px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
   color: var(--ink);
+  cursor: pointer;
 }
+.music-find:hover { background: var(--paper-deep); }
+.music-find svg { width: 21px; height: 21px; stroke-width: 2.2; }
 
-/* A phone keeps everything in one row (Dan, 16 November 2026: "we can have
-   it all at the top"): the signature, the orders, and the search's mark,
-   which slides the search out over the orders; its cross puts it away. */
-@media (max-width: 559px) {
-  .music-bar {
-    flex-wrap: nowrap;
-    column-gap: 3px;
-    --mark: 52px;
-  }
-
-  /* A smaller signature, and the orders spread evenly over the rest of
-     the row (Dan, 16 November 2026: "using the space properly"). */
-  .music-sign {
-    gap: 0.7em;
-    font-size: clamp(10px, 3vw, 12.5px);
-    letter-spacing: clamp(0.08em, 0.9vw - 1.6px, 0.16em);
-  }
-
-  .music-tools {
-    flex: 1 1 auto;
-    min-width: 0;
-    column-gap: 0;
-  }
-
-  .music-order {
-    flex: 1 1 auto;
-    justify-content: space-evenly;
-    gap: 0 6px;
-  }
-
-  .music-order button {
-    flex: 0 0 auto;
-    font-size: clamp(10px, 3vw, 12.5px);
-    letter-spacing: clamp(0.08em, 0.9vw - 1.6px, 0.16em);
-  }
-
-  .music-order button:has(.music-order-way) {
-    padding-inline-end: .8em;
-  }
-
-  .music-order-way {
-    right: 0;
-    left: auto;
-    margin-inline: 0;
-  }
-
-  .music-order,
-  .music-find {
-    visibility: visible;
-    transition: opacity 130ms ease, transform 200ms var(--shelf-ease);
-  }
-
-  .music-find {
-    display: grid;
-    place-items: center;
-    flex: none;
-    width: 44px;
-    height: 44px;
-    margin-right: -8px;
-    padding: 0;
-    border: 0;
-    background: none;
-    color: var(--ink-soft);
-    cursor: pointer;
-  }
-
-  .music-find svg {
-    stroke-width: 2;
-  }
-
-  .music-find:hover {
-    color: var(--ink);
-  }
-
-  .music-find:focus-visible {
-    outline: 2px solid var(--ink);
-    outline-offset: -4px;
-  }
-
+/* Narrower than a laptop: search waits behind its mark and opens over the
+   tools from the right; its cross clears and closes it. */
+@media (max-width: 899px) {
+  .music-find { display: grid; }
   .music-search {
     position: absolute;
-    inset: 0;
+    top: 50%;
+    right: 0;
+    left: 0;
     width: auto;
-    padding-left: 2px;
-    background: var(--paper);
-    transform: translateX(8px);
+    margin: 0;
+    background: var(--paper-light);
+    box-shadow: 0 0 0 1.5px var(--paper-edge);
     opacity: 0;
     visibility: hidden;
+    transform: translate(10px, -50%);
     pointer-events: none;
-    interactivity: inert;
-    transition: opacity 140ms ease, transform 200ms var(--shelf-ease), visibility 0s linear 200ms;
+    transition: opacity 140ms ease, transform 220ms var(--shelf-ease), visibility 0s linear 220ms;
   }
-
-  .music-tools[data-finding="true"] .music-search {
-    transform: none;
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    interactivity: auto;
-    transition-delay: 0s;
-  }
-
-  .music-tools[data-finding="true"] .music-order,
-  .music-tools[data-finding="true"] .music-find {
-    opacity: 0;
-    pointer-events: none;
-    interactivity: inert;
-    visibility: hidden;
-    transform: translateX(-6px);
-    transition: opacity 130ms ease, transform 200ms var(--shelf-ease), visibility 0s linear 130ms;
-  }
+  .music-search input { font-size: 16px; }
+  .music-search kbd { display: none; }
+  .music-tools[data-finding="true"] .music-search { opacity: 1; visibility: visible; transform: translate(0, -50%); pointer-events: auto; transition-delay: 0s; }
+  .music-tools > :not(.music-search) { transition: opacity 130ms ease, transform 220ms var(--shelf-ease), visibility 0s; }
+  .music-tools[data-finding="true"] > :not(.music-search) { opacity: 0; visibility: hidden; transform: translateX(-8px); pointer-events: none; transition: opacity 130ms ease, transform 220ms var(--shelf-ease), visibility 0s linear 130ms; }
 }
 
-/* The narrowest phones still hold the whole bar in one row. */
-@media (max-width: 380px) {
-  .music-sign {
-    font-size: 10px;
-    letter-spacing: 0.04em;
+/* A phone: one row still. The switch shows only its singles side, as an
+   outlined chip that fills when on; the orders tighten. */
+@media (max-width: 619px) {
+  .music-bar { --mark: 52px; gap: 10px; --chip-h: 34px; }
+  .music-sign { margin-left: 4px; }
+  .music-tools { gap: 6px; }
+  .music-crate { padding: 0; background: none; }
+  .music-albums { display: none; }
+  .music-crate .music-singles {
+    height: 30px;
+    padding: 0 11px;
+    box-shadow: inset 0 0 0 1.5px var(--paper-edge);
+    font-size: 14px;
   }
-
-  .music-order {
-    gap: 0 3px;
-  }
-
-  .music-order button {
-    font-size: 10px;
-    letter-spacing: 0.04em;
-  }
+  .music-crate .music-singles[aria-pressed="true"] { background: var(--ink); color: var(--paper-light); box-shadow: none; }
+  .music-order { gap: 0; }
+  .music-order button { padding: 0 8px; font-size: 14px; }
+  .music-order-way { width: 0.7em; }
+}
+@media (max-width: 400px) {
+  .music-bar { gap: 6px; }
+  .music-tools { gap: 2px; }
+  .music-order button { padding: 0 6px; font-size: 13px; }
+  .music-crate .music-singles { padding: 0 9px; font-size: 13px; }
+}
+@media (max-width: 374px) {
+  .music-bar { --mark: 48px; }
+}
+@media (max-width: 359px) {
+  .music-bar { gap: 4px; }
+  .music-order button { padding: 0 4px; font-size: 12px; }
+  .music-crate .music-singles { padding: 0 7px; font-size: 12px; }
 }
 
-.music-none {
-  margin: 0;
-  color: var(--ink-soft);
-  font: italic 400 18px/1.3 "Alegreya", var(--serif);
+/* ================================================================== caption
+   The record under the pointer or keyboard focus, as a sticker at the foot of
+   the screen: its title in Fraunces, who and when, and the hours on a small
+   gold price-sticker. */
+.music-now {
+  position: fixed;
+  left: max(14px, env(safe-area-inset-left));
+  bottom: max(14px, env(safe-area-inset-bottom));
+  z-index: 4;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "title hours" "meta hours";
+  align-items: center;
+  column-gap: 16px;
+  max-width: min(400px, calc(100vw - 28px));
+  padding: 9px 10px 10px 15px;
+  border-radius: 12px;
+  background: var(--paper-light);
+  box-shadow: 0 1px 2px rgb(42 36 32 / 0.14), 0 14px 30px -14px rgb(42 36 32 / 0.55);
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity 160ms ease, transform 240ms var(--shelf-ease);
 }
+.music-now[data-empty="true"] { opacity: 0; transform: translateY(6px); }
+.music-now strong { grid-area: title; overflow: hidden; font: 600 18px/1.25 var(--serif); text-overflow: ellipsis; }
+.music-now span { grid-area: meta; overflow: hidden; color: var(--ink-soft); font: 600 13px/1.35 var(--sans); text-overflow: ellipsis; }
+.music-now b {
+  grid-area: hours;
+  grid-row: 1 / span 2;
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: var(--gold-tint);
+  color: var(--ink);
+  font: 800 14px/1 var(--sans);
+  font-variant-numeric: tabular-nums;
+}
+
 
 /* The shelf: squares stand on a shared line, as records do, each as large
    as its hours between the floor and the cap the room sets. A square still
@@ -785,29 +562,88 @@ html.ready .music-mark {
 
 .music-map {
   display: grid;
-  gap: 22px;
+  gap: 26px;
 }
 
 .music-group {
   display: grid;
-  gap: 8px;
+  gap: 10px;
+  scroll-margin-top: clamp(80px, 7vw + 22px, 116px);
 }
 
-.music-group-head {
+.music-group-head, .music-found {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 4px 14px;
+  margin: 0;
+  font-weight: inherit;
+}
+.music-group-head::after, .music-found::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 3px;
+  border-radius: 0 2px 2px 0;
+  background: var(--kraft);
+}
+.music-group-label {
+  position: relative;
+  z-index: 1;
+  padding: 8px 15px 6px;
+  border-radius: 10px 10px 0 0;
+  background: var(--kraft);
+  color: var(--ink);
+  font: 600 clamp(19px, 0.6vw + 14px, 24px)/1.1 var(--serif);
+}
+/* Genres stay lowercase in the data ("hip-hop & soul"); only the first
+   letter is set as a capital. */
+.music-group-label::first-letter, .music-index button::first-letter { text-transform: uppercase; }
+.music-group-figures {
+  padding-bottom: 9px;
+  color: var(--ink-soft);
+  font: 650 13px/1.2 var(--sans);
+  font-variant-numeric: tabular-nums;
+}
+.music-group-figures b { color: var(--ink); font-weight: 800; }
+
+/* A search shown as its own small crate: the words, then what was found. */
+.music-found { flex-wrap: wrap; margin-bottom: 10px; }
+.music-found .music-group-label { background: var(--paper-light); }
+.music-found::after { height: 1px; background: var(--paper-edge); }
+.music-found q { min-width: 0; overflow-wrap: anywhere; quotes: "“" "”"; }
+
+/* In a grouped order, a quiet row of its groups at the head of the shelf
+   jumps to each one. It scrolls away with the shelf; the bar stays still. */
+.music-index {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 16px;
-  margin: 0;
-  color: var(--ink);
-  font-size: 15px;
-  line-height: 1.2;
+  gap: 2px 4px;
+  margin: 0 0 -10px -10px;
+  padding: 0;
+  list-style: none;
+}
+.music-index button {
+  height: 30px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-soft);
+  font: 700 13px/1 var(--sans);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+.music-index button:hover { background: var(--paper-deep); color: var(--ink); }
+.music-index.is-letters button { min-width: 30px; padding: 0 8px; }
+@container (max-width: 559px) {
+  .music-index { margin-left: -8px; }
+  .music-index button { height: 30px; padding: 0 8px; }
+  .music-index.is-letters button { min-width: 28px; padding: 0 4px; }
 }
 
-.music-group-figures {
-  color: var(--ink-soft);
-  font-size: 11px;
-}
+.music-none { margin: 4px 0 0; color: var(--ink-soft); font: 600 15px/1.4 var(--sans); }
 
 /* Rows of one size each, with one 4px gap across and down (GAP in
    music-shelf.mjs); a full row fills the width exactly. */
@@ -840,8 +676,9 @@ html.ready .music-mark {
   height: 100%;
   padding: 0;
   overflow: hidden;
-  border: 1px solid var(--ink);
-  border-radius: 2px;
+  border: 0;
+  box-shadow: 0 1px 1px rgb(42 36 32 / 12%), 0 3px 6px -3px rgb(42 36 32 / 30%);
+  border-radius: 3px;
   background: var(--paper-deep);
   color: var(--ink);
   cursor: pointer;
@@ -901,6 +738,8 @@ html.ready .music-mark {
 }
 
 @media (hover: hover) and (pointer: fine) {
+  .music-face:hover { transform: translateY(-3px); }
+
   .music-face:hover::after {
     opacity: 1;
     background-position: var(--sheen-to, -30%) 0, 0 0;
@@ -962,7 +801,7 @@ html.ready .music-mark {
 }
 
 .music-initial {
-  font: 500 clamp(18px, calc(var(--side, 80) * 0.3px), 40px)/1 "Alegreya SC", var(--serif);
+  font: 500 clamp(18px, calc(var(--side, 80) * 0.3px), 40px)/1 var(--sans);
   letter-spacing: 0.06em;
   text-transform: lowercase;
 }
@@ -970,7 +809,7 @@ html.ready .music-mark {
 .music-type strong {
   display: -webkit-box;
   overflow: hidden;
-  font: italic 400 14px/1.2 "Alegreya", var(--serif);
+  font: 550 14px/1.2 var(--serif);
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
 }
@@ -1326,7 +1165,7 @@ html {
 .music-more p {
   margin: 0;
   color: var(--ink-soft);
-  font: italic 400 16px/1.3 "Alegreya", var(--serif);
+  font: 500 16px/1.3 var(--sans);
 }
 
 .music-more .chip,
@@ -1337,9 +1176,8 @@ html {
   border: 1px solid var(--ink);
   border-radius: 2px;
   background: none;
-  font: 500 13px/1 "Alegreya SC", var(--serif);
-  letter-spacing: 0.24em;
-  text-transform: lowercase;
+  font: 500 13px/1 var(--sans);
+
   cursor: pointer;
 }
 

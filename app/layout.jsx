@@ -24,7 +24,7 @@ export const metadata = {
     // captured at 1200×630.
     images: [
       {
-        url: "/share-card-music.jpg",
+        url: "/share-card-shelf.jpg",
         width: 1200,
         height: 630,
         alt: "Akibwa: album sleeves on a shelf, each as large as the hours listened"
@@ -35,7 +35,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "Akibwa",
     description,
-    images: ["/share-card-music.jpg"]
+    images: ["/share-card-shelf.jpg"]
   },
   // The sized .ico serves browsers without SVG icons and requests that skip
   // the page (feeds, robots.txt); iOS draws its own corners on the touch icon.
@@ -61,7 +61,7 @@ export const viewport = {
 const boot = `(function(){
   var page = document.documentElement;
   page.classList.add("js");
-  // The page shows itself once its small capitals have arrived, so the bar
+  // The page shows itself once its typefaces have arrived, so the bar
   // never flashes in a stand-in face (Dan, 18 November 2026: "super smooth").
   function ready() {
     if (page.classList.contains("ready")) return;
@@ -70,7 +70,7 @@ const boot = `(function(){
   }
   if (document.fonts && document.fonts.load) {
     Promise.race([
-      Promise.all([document.fonts.load('500 16px "Alegreya SC"'), document.fonts.load('italic 400 16px "Alegreya"')]),
+      Promise.all([document.fonts.load('700 16px "Akibwa Sans"'), document.fonts.load('600 16px "Fraunces"')]),
       new Promise(function (done) { setTimeout(done, 900); })
     ]).then(ready, ready);
   } else ready();
@@ -83,9 +83,9 @@ const boot = `(function(){
 })()`;
 
 export default function RootLayout({ children }) {
-  // The bar's small capitals and the titles' italic arrive with the page.
-  preload("/fonts/alegreya-sc-500-latin.woff2", { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
-  preload("/fonts/alegreya-italic-latin.woff2", { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
+  // The menu and title fonts arrive with the page.
+  preload("/fonts/nunito-sans-latin.woff2", { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
+  preload("/fonts/fraunces-soft.woff2", { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
   return (
     <html lang="en-GB" suppressHydrationWarning>
       <body>

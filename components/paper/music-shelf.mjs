@@ -90,11 +90,11 @@ export function rowsFor(entries, width, reference, limits = bounds(width)) {
 }
 
 export const ORDERS = [
-  ["hours", "hours"],
-  ["year", "year"],
+  ["hours", "Hours"],
+  ["year", "Year"],
   // Named genre (Dan, 18 November 2026); its file is still music-kinds.json.
-  ["kind", "genre"],
-  ["name", "a–z"]
+  ["kind", "Genre"],
+  ["name", "A–Z"]
 ];
 
 // The year a list of [year, minutes] pairs peaks in, with its minutes.
@@ -179,7 +179,7 @@ export function arrange(order, entries, { years, kinds, reverse = false } = {}) 
     }
     return [...map]
       .sort(([a], [b]) => (a === "#" ? -1 : b === "#" ? 1 : way * a.localeCompare(b)))
-      .map(([letter, list]) => ({ key: letter, label: letter, figures: String(list.length), entries: list }));
+      .map(([letter, list]) => ({ key: letter, label: letter, figures: `${list.length} ${list.length === 1 ? "record" : "records"}`, entries: list }));
   }
   if (order === "year" && years) {
     // Every record played for an hour or more in a year, as large as its
@@ -201,7 +201,7 @@ export function arrange(order, entries, { years, kinds, reverse = false } = {}) 
         return {
           key: String(year),
           label: String(year),
-          figures: `${list.length} records · ${listened(list.reduce((sum, entry) => sum + entry.item.minutes, 0))}`,
+          figures: `${list.length} ${list.length === 1 ? "record" : "records"} · ${listened(list.reduce((sum, entry) => sum + entry.item.minutes, 0), "long")}`,
           entries: list,
           // Each year's largest record reaches the cap.
           reference: list[Math.min(2, list.length - 1)].item.minutes
@@ -214,7 +214,7 @@ export function arrange(order, entries, { years, kinds, reverse = false } = {}) 
     return [...map]
       .map(([name, list]) => ({ name, list, minutes: list.reduce((sum, entry) => sum + entry.item.minutes, 0) }))
       .sort((a, b) => b.minutes - a.minutes)
-      .map(({ name, list, minutes }) => ({ key: name, label: name, figures: `${Math.round((minutes / total) * 100)}% · ${listened(minutes)}`, entries: list }));
+      .map(({ name, list, minutes }) => ({ key: name, label: name, figures: `${Math.round((minutes / total) * 100)}% of listening · ${listened(minutes, "long")}`, entries: list }));
   }
   return [{ key: "all", label: null, figures: null, entries }];
 }

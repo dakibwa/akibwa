@@ -272,14 +272,27 @@ class GlidingShelf extends PureComponent {
         role="region"
         aria-label={`The records I play most, ${order === "hours" ? "most listened first" : order === "name" ? "a to z" : `by ${order}`}`}
       >
+        {arrangement.length > 1 && arrangement[0].label && (
+          <nav aria-label={`Jump to a ${order === "kind" ? "genre" : order === "name" ? "letter" : "year"}`}>
+            <ul className="music-index">
+              {arrangement.map((group, index) => (
+                <li key={group.key}><button type="button" onClick={() => {
+                  const heading = document.getElementById(`shelf-group-${index}`);
+                  heading?.focus({ preventScroll: true });
+                  heading?.scrollIntoView({ block: "start", behavior: this.motion.matches ? "instant" : "smooth" });
+                }}>{group.label}</button></li>
+              ))}
+            </ul>
+          </nav>
+        )}
         {arrangement.map((group, groupIndex) => {
           const rows = group.rows.map((row) => ({ ...row, shown: row.entries.filter(() => drawn++ < count) })).filter((row) => row.shown.length);
           if (!rows.length) return null;
           return (
-            <section key={group.key} className="music-group">
+            <section key={group.key} className="music-group" id={`shelf-group-${groupIndex}`} tabIndex={-1} aria-label={group.label || undefined}>
               {group.label ? (
                 <h2 className="music-group-head">
-                  <span>{group.label}</span>
+                  <span className="music-group-label">{group.label}</span>
                   <span className="music-group-figures">{group.figures}</span>
                 </h2>
               ) : null}
@@ -565,6 +578,17 @@ export function MusicRoom({ initial, active }) {
   const [finding, setFinding] = useState(false);
   const finder = useRef(null);
   const findButton = useRef(null);
+  useEffect(() => {
+    const shortcut = event => {
+      if (event.key !== "/" || event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey ||
+          event.target.closest?.("input, textarea, [contenteditable=true]")) return;
+      event.preventDefault();
+      flushSync(() => setFinding(true));
+      finder.current?.focus({ preventScroll: true });
+    };
+    window.addEventListener("keydown", shortcut);
+    return () => window.removeEventListener("keydown", shortcut);
+  }, []);
   const endSearch = () => {
     flushSync(() => {
       setQuery("");
@@ -764,10 +788,30 @@ export function MusicRoom({ initial, active }) {
         </a>
         <Now say={say} hidden={Boolean(open)} order={shown} kinds={kinds} meta={meta} />
         <div className="music-tools" data-finding={finding || Boolean(query)}>
+          <div className="music-crate" role="group" aria-label="Albums or singles">
+            <button type="button" className="music-albums" aria-pressed={!searching && !singlesOn} onClick={() => {
+              clearSelection();
+              setQuery("");
+              startTransition(() => setSinglesOn(false));
+            }}>Albums</button>
+            <button
+              type="button"
+              className="music-singles"
+              aria-label="Singles"
+              aria-pressed={!searching && singlesOn}
+              onClick={() => {
+                clearSelection();
+                setQuery("");
+                startTransition(() => setSinglesOn((on) => !on));
+              }}
+            >
+              Singles
+            </button>
+          </div>
           <div className="music-order" role="group" aria-label="Order">
             {ORDERS.map(([name, label]) => {
               const on = !searching && pressedOrder === name;
-              const word = name === "name" && reversed.name ? "z–a" : label;
+              const word = name === "name" && reversed.name ? "Z–A" : label;
               return (
                 <button
                   key={name}
@@ -782,19 +826,6 @@ export function MusicRoom({ initial, active }) {
                 </button>
               );
             })}
-            <button
-              type="button"
-              className="music-singles"
-              aria-label="singles"
-              aria-pressed={!searching && singlesOn}
-              onClick={() => {
-                clearSelection();
-                setQuery("");
-                startTransition(() => setSinglesOn((on) => !on));
-              }}
-            >
-              singles
-            </button>
           </div>
           <button
             type="button"
@@ -849,11 +880,12 @@ export function MusicRoom({ initial, active }) {
                   endSearch();
                 }
               }}
-              placeholder="search"
+              placeholder="Search artists, genres, eras"
               aria-label="Search the records by artist, song, genre or era"
               autoComplete="off"
               spellCheck={false}
             />
+            {!query && !finding && <kbd aria-hidden="true">/</kbd>}
             {query || finding ? (
               <button type="button" className="music-search-clear" onClick={endSearch} aria-label="Clear the search">
                 <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
@@ -874,10 +906,15 @@ export function MusicRoom({ initial, active }) {
 
       {/* Measured here, around the shelf. */}
       <div className="music-map-frame" ref={map} onPointerLeave={() => onPoint(null)}>
+        {filter && filter === query.trim() && (
+          <div className="music-found" role="status">
+            <q className="music-group-label">{filter}</q>
+            <span className="music-group-figures">{entries.length ? `${entries.length} ${entries.length === 1 ? "record" : "records"} · ${listened(entries.reduce((sum, entry) => sum + entry.item.minutes, 0), "long")}` : "Nothing on the shelf"}</span>
+          </div>
+        )}
         <GlidingShelf tracks={tracks} openTile={open?.tile} arrangement={arrangement} measured={measured} order={shown} count={count} reference={reference} onOpen={onOpen} onPoint={onPoint} />
       </div>
 
-      {filter && filter === query.trim() && !entries.length ? <p className="music-none" role="status">Nothing matches.</p> : null}
 
       {music.loadError ? (
         <div className="music-more">

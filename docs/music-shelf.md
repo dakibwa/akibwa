@@ -1,8 +1,8 @@
 # The music shelf
 
 Dan asked for the listening hours on 24 September 2026 and made the shelf the whole
-site on 16 November. His direction was “super minimalist and simple”. Use Alegreya
-small capitals spaced wide, italic names, thin ink edges and flat paper. The sleeves
+site on 16 November. His direction was “super minimalist and simple”. Use Nunito Sans for controls and facts, soft Fraunces for titles and headings,
+and warm paper under the covers. The sleeves
 supply the colour. Keep the page free of explanatory text.
 
 ## Which records appear
@@ -36,12 +36,12 @@ The layout, merging and ordering code runs in the build checks against real reco
 - Glide the whole shelf into order and use only the headings it needs. Search finds albums
   and singles together in one group, most listened first. Choosing an order clears search.
   The signature returns to hours, clears the search and scrolls to the top.
-- Use one pinned, unruled bar at every width. Set the signature just inside the left edge.
-  From 1,000 px up, grow the mark, words and search with the screen. Centre the row on the
-  mark's dark square, lift the words on hover and set the search slightly smaller. On a
-  phone, its mark opens the borderless search from the right over the orders. The cross
-  clears and closes it.
-- Set each menu word in plain Alegreya small caps. A–Z reads Z–A when reversed.
+- Keep one pinned row. Group Albums and Singles beside the signature and put
+  the four sort orders together. A soft rust background marks the chosen sort.
+  Below 620 px, Singles toggles the view on its own. Search opens from the
+  right below 900 px. Pressing / focuses it, and Escape clears it.
+- Set group names on kraft tabs, with a row of jumps for years, genres or
+  letters. A search shows its query, number of matches and listening time.
 
 ## The signature
 
@@ -56,7 +56,7 @@ from the reverted version. The page he holds has lines of handwriting across it.
 ## Opening and inspecting a record
 
 - Resting the pointer on a sleeve or focusing it shows its title, artist, year and
-  hours in a small caption at the bottom left. A quick pass across the gaps keeps
+  hours in a small caption at the bottom left, with the time on a gold tag. A quick pass across the gaps keeps
   the previous selection until the pointer settles. Keep the sleeve the same size. Blend light into
   its artwork, sweeping one band at its own angle, speed and direction, with a soft corner
   gloss and slightly deeper colours.
@@ -78,7 +78,7 @@ from the reverted version. The page he holds has lines of handwriting across it.
   Keep the page still on opening.
   Selecting another sleeve moves the list there. The same sleeve, the close
   button or Escape folds it away. [Listening links](../public/music-links.json)
-- Reveal the page once its small capitals have loaded. Fade in the bar and mark, lift
+- Reveal the page once its menu and title fonts have loaded. Fade in the bar and mark, lift
   the first screen of sleeves in sequence, fade covers as they arrive, and lift later
   rows as they scroll into view. Use transform and opacity with `cubic-bezier(0.16, 1, 0.3, 1)`.
   Stop motion for reduced motion.

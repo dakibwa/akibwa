@@ -15,6 +15,6 @@ The shelf at `/` is the only public page and the only entry in the sitemap. On 1
 - `npm run publish:check`: verify registered public surfaces and exported routes.
 - `npm run publish:ready`: run the full publication gate.
 - `node scripts/build-music-ranking.mjs --history-root PRIVATE_HISTORY_DIRECTORY`: refresh the public song and artist ranking from the private history's prepared top 1,000.
-- The link-preview card, `public/share-card-music.jpg`, is the shelf's first screen captured at 1200×630 with headless Chrome once the sleeves have loaded. When the first screen changes, capture it again under a new filename so link previews drop their cached copy.
+- The link-preview card, `public/share-card-shelf.jpg`, is the shelf's first screen captured at 1200×630 with headless Chrome once the sleeves have loaded. When the first screen changes, capture it again under a new filename so link previews drop their cached copy.
 
 Public surface metadata lives in `data/public-surfaces.json`. API-backed refreshes belong in Cloudflare Workers rather than local schedulers or data-mutating GitHub Actions. See [Publication Workflow](docs/publication-workflow.md).
