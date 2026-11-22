@@ -66,13 +66,11 @@ from the reverted version. The page he holds has lines of handwriting across it.
   more sleeves by different artists, starting with those in view. Match their genre
   tags and use the shelf’s broader genres and release years to guide the choice.
   Clicking or tapping keeps the same contrast while the songs are open.
-- Open one slim track list directly under the selected sleeve’s row. Show every
-  song, most listened first, with its listening time beside the title. Equal-width
-  ink bars fill from left to right. The longest bar represents the most-listened
-  song on that album, and half the hours gives half the bar. A long row moves
-  slowly from the first song to the last and stops. The reader can pause or
-  scroll by hand. Reduced motion starts with the finished bars and a still row.
-  The album details and listening links follow the songs.
+- Open the tracks directly under the selected sleeve’s row, most listened first.
+  Put the listening time beside each song title. Fill the background of each
+  label from the left in proportion to its listening time. The favourite fills
+  its label. Equal-width labels wrap to fit the shelf, with the album details
+  and listening links above them. Reduced motion shows the final fill immediately.
   Selecting another sleeve moves the list there. The same sleeve, the close
   button or Escape folds it away. [Listening links](../public/music-links.json)
 - Reveal the page once its small capitals have loaded. Fade in the bar and mark, lift

@@ -979,15 +979,16 @@ html {
   scrollbar-gutter: stable;
 }
 
-/* The open sleeve adds just one line to the shelf. */
+/* Track labels wrap within the shelf beneath the selected sleeve. */
 .music-map, .music-group, .music-shelf {
   grid-template-columns: minmax(0, 1fr);
 }
 
 .music-tracks {
-  display: flex;
-  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
+  min-width: 0;
   border-block: 1px solid var(--paper-deep);
   background: var(--paper-light);
   transition: opacity 200ms ease;
@@ -1008,76 +1009,55 @@ html {
   pointer-events: none;
 }
 
-.music-track-rail, .music-track-list, .music-track-list li {
+.music-release {
   display: flex;
-  align-items: baseline;
-  white-space: nowrap;
-}
-
-.music-track-rail {
-  position: relative;
-  flex: 1;
-  min-width: 0;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 18px;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scrollbar-width: thin;
-  scrollbar-color: var(--ink-faint) transparent;
-  padding-inline: 10px;
+  gap: 0 14px;
+  padding-inline: 8px;
+  overflow-wrap: anywhere;
 }
 
-.music-track-rail > * { flex: none; }
-
-@media (prefers-reduced-motion: no-preference) {
-  .music-track-rail { animation: reveal-tracks 480ms ease-out; }
-}
-
-@keyframes reveal-tracks {
-  from { clip-path: inset(0 100% 0 0); }
-  to { clip-path: inset(0); }
-}
-
-.music-track-rail:focus-visible, .music-tracks-motion:focus-visible, .music-tracks-close:focus-visible {
+.music-tracks:focus-visible, .music-tracks-close:focus-visible {
   outline: 1px solid var(--ink-soft);
   outline-offset: -2px;
 }
 
 #music-tracks-title {
   margin: 0;
-  max-width: min(27vw, 220px);
-  overflow: hidden;
-  text-overflow: ellipsis;
   font: 500 14px/1.3 "Alegreya SC", var(--serif);
 }
 
+.music-track-list, .music-tracks .music-tracks-note {
+  grid-column: 1 / -1;
+}
+
 .music-track-list {
-  gap: 0;
-  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 138px), 1fr));
+  gap: 3px;
+  padding: 0 4px 4px;
   margin: 0;
   list-style: none;
 }
 
 .music-track-list li {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 4px 7px;
-  padding-inline: 13px;
-  border-inline-start: 1px solid var(--paper-deep);
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 5px 8px;
+  background: var(--paper);
 }
 
-.music-track-meter {
-  grid-column: 1 / -1;
-  width: 100px;
-  height: 5px;
-  background: var(--paper-deep);
-}
-
-.music-track-meter::before {
+.music-track-list li::before {
   content: "";
-  display: block;
-  height: 100%;
-  background: #934527;
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: #dfbb9e;
   transform-origin: left;
   transform: scaleX(var(--listening-share));
   animation: track-ink 460ms ease-out var(--bar-delay) backwards;
@@ -1088,9 +1068,11 @@ html {
 }
 
 @media (forced-colors: active) {
-  .music-track-meter { background: Canvas; outline: 1px solid GrayText; }
-  .music-track-meter::before { background: CanvasText; forced-color-adjust: none; }
+  .music-track-list li::before { border-inline-end: 2px solid CanvasText; }
 }
+
+.music-track-title { overflow-wrap: anywhere; }
+.music-track-hours { white-space: nowrap; }
 
 .music-track-title, .music-tracks-note {
   font: italic 400 15px/1.3 "Alegreya", var(--serif);
@@ -1102,12 +1084,7 @@ html {
   font-variant-numeric: tabular-nums;
 }
 
-@media (max-width: 559px) {
-  #music-tracks-title, .music-release-info, .music-track-rail .music-listen { order: 1; }
-  .music-track-list li:first-child { padding-inline-start: 0; border-inline-start: 0; }
-}
-
-.music-tracks-close, .music-tracks-motion {
+.music-tracks-close {
   flex: none;
   width: 44px;
   height: 44px;

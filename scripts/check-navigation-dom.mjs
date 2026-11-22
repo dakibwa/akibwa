@@ -463,14 +463,14 @@ const checkPublicLanding = async () => {
   })()`), "an open phone sheet fits its actual width when its tracks arrive on retry");
   check(await evaluate(`(() => {
     const strip = document.querySelector("#record-tracks");
-    const rail = strip.querySelector(".music-track-rail");
+    const list = strip.querySelector(".music-track-list");
     const tracks = [...strip.querySelectorAll("li")];
-    rail.scrollLeft = rail.scrollWidth;
+    const box = strip.getBoundingClientRect();
     return strip.previousElementSibling.contains(document.querySelector('.music-face[aria-expanded="true"]'))
       && tracks.length === ${shelf[0].tracks.length}
-      && tracks.every(track => track.offsetTop === tracks[0].offsetTop && track.querySelector(".music-track-hours")?.textContent)
-      && rail.scrollLeft > 0 && strip.offsetHeight < 64 && document.documentElement.scrollWidth <= innerWidth + 1;
-  })()`), "the phone lists every track and its time in one sideways-scrolling line under the selected row");
+      && tracks.every(track => track.getBoundingClientRect().right <= box.right + 1 && track.querySelector(".music-track-hours")?.textContent)
+      && tracks.at(-1).offsetTop > tracks[0].offsetTop && list.scrollWidth <= list.clientWidth + 1 && document.documentElement.scrollWidth <= innerWidth + 1;
+  })()`), "the phone lists every track and its time in a wrapping list under the selected row");
 
   await cdp.send("Fetch.enable", { patterns: [{ urlPattern: "*music-ranking.json", requestStage: "Request" }] });
   paused = cdp.waitFor("Fetch.requestPaused");

@@ -420,66 +420,15 @@ const SERVICE_MARKS = {
   )
 };
 
-// The track list occupies one line immediately after the selected shelf row.
+// Tracks expand in place immediately after the selected shelf row.
 function AlbumTracks({ album, year, links, loading, loadError, retry, onClose }) {
   const panel = useRef(null);
-  const rail = useRef(null);
-  const list = useRef(null);
-  const motionButton = useRef(null);
-  const [end, setEnd] = useState(0);
-  const [moving, setMoving] = useState(() => !matchMedia("(prefers-reduced-motion: reduce)").matches);
   const known = album.tracks ?? (loading || loadError ? null : album.fallback);
   const tracks = useMemo(() => known && [...known].sort((a, b) => b.minutes - a.minutes), [known]);
   const mostMinutes = tracks?.[0]?.minutes || 1;
 
   useLayoutEffect(() => {
-    if (!list.current) {
-      setEnd(0);
-      return;
-    }
-    const measure = () => {
-      const right = list.current.offsetLeft + list.current.offsetWidth;
-      const overflow = right - rail.current.clientWidth;
-      // Reserve a pause button only when the songs overflow without one.
-      setEnd(overflow > (motionButton.current?.offsetWidth ?? 0) + 1 ? Math.min(overflow + 1, rail.current.scrollWidth - rail.current.clientWidth) : 0);
-    };
-    const observer = new ResizeObserver(measure);
-    observer.observe(rail.current);
-    observer.observe(list.current);
-    measure();
-    return () => observer.disconnect();
-  }, [tracks]);
-
-  useEffect(() => {
-    const preference = matchMedia("(prefers-reduced-motion: reduce)");
-    const changed = () => { if (preference.matches) setMoving(false); };
-    preference.addEventListener("change", changed);
-    return () => preference.removeEventListener("change", changed);
-  }, []);
-
-  useEffect(() => {
-    if (!end || !moving) return;
-    const element = rail.current;
-    let position = element.scrollLeft;
-    let previous;
-    let frame;
-    const advance = (time) => {
-      position = Math.min(end, position + Math.min(time - (previous ?? time), 50) * 0.028);
-      element.scrollLeft = position;
-      previous = time;
-      if (position < end) frame = requestAnimationFrame(advance);
-      else setMoving(false);
-    };
-    const timer = setTimeout(() => { frame = requestAnimationFrame(advance); }, 1000);
-    return () => { clearTimeout(timer); cancelAnimationFrame(frame); };
-  }, [end, moving]);
-
-  useLayoutEffect(() => {
-    rail.current.scrollLeft = 0;
-    rail.current.focus({ preventScroll: true });
-    if (panel.current.getBoundingClientRect().bottom > window.innerHeight) {
-      panel.current.scrollIntoView({ block: "nearest", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
-    }
+    panel.current.focus({ preventScroll: true });
   }, [album.key]);
 
   useEffect(() => {
@@ -501,47 +450,32 @@ function AlbumTracks({ album, year, links, loading, loadError, retry, onClose })
   }, [onClose]);
 
   return (
-    <section id="record-tracks" className="music-tracks" ref={panel} aria-labelledby="music-tracks-title">
-      <div className="music-track-rail" ref={rail} tabIndex={0} role="group" aria-label={`Songs and listening time for ${album.title}`}
-        onPointerDown={() => setMoving(false)} onWheel={() => setMoving(false)} onKeyDown={() => setMoving(false)}
-        onFocus={(event) => { if (event.target !== rail.current) setMoving(false); }}>
-        <h2 id="music-tracks-title" title={album.title}>{album.title}</h2>
-        {tracks?.length ? (
-          <ol className="music-track-list" ref={list}>
-            {tracks.map((track, index) => (
-              <li key={index} style={{ "--listening-share": track.minutes / mostMinutes, "--bar-delay": `${Math.min(index, 12) * 36}ms` }}>
-                <span className="music-track-title">{songTitle(track.title)}</span>
-                <span className="music-track-hours">{listened(track.minutes)}<span className="visually-hidden"> listened, {plays(track.plays)}</span></span>
-                <span className="music-track-meter" aria-hidden="true" />
-              </li>
-            ))}
-          </ol>
-        ) : (
-          <div className="music-tracks-note" role="status">
-            {loading ? "Fetching the tracks…" : "The tracks could not be loaded."}
-            {loadError && !loading && <button type="button" className="chip" onClick={retry}>try again</button>}
-          </div>
-        )}
+    <section id="record-tracks" className="music-tracks" ref={panel} tabIndex={-1} aria-labelledby="music-tracks-title">
+      <header className="music-release">
+        <h2 id="music-tracks-title">{album.title}</h2>
         <span className="music-release-info">{album.artist}{year && ` · ${year}`} · {listened(album.minutes)} · {plays(album.plays)}</span>
         <span className="music-listen">
           {links.map(([service, href]) => (
             <a key={service} href={href} target="_blank" rel="noopener noreferrer" aria-label={`Listen on ${service}`} title={service}>{SERVICE_MARKS[service]}</a>
           ))}
         </span>
-      </div>
-      {end > 0 && (
-        <button type="button" className="music-tracks-motion" ref={motionButton}
-          aria-label={moving ? "Pause track scrolling" : "Play track scrolling"}
-          onClick={() => {
-            if (!moving && rail.current.scrollLeft >= end - 1) rail.current.scrollLeft = 0;
-            setMoving(!moving);
-          }}>
-          <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
-            <path fill="currentColor" d={moving ? "M2 1h2.5v10H2zM7.5 1H10v10H7.5z" : "M3 1l8 5-8 5z"} />
-          </svg>
-        </button>
-      )}
+      </header>
       <button type="button" className="music-tracks-close" onClick={() => onClose()} aria-label="Close the track list">×</button>
+      {tracks?.length ? (
+        <ol className="music-track-list">
+          {tracks.map((track, index) => (
+            <li key={index} style={{ "--listening-share": track.minutes / mostMinutes, "--bar-delay": `${Math.min(index, 12) * 36}ms` }}>
+              <span className="music-track-title">{songTitle(track.title)}</span>
+              <span className="music-track-hours">{listened(track.minutes)}<span className="visually-hidden"> listened, {plays(track.plays)}</span></span>
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <div className="music-tracks-note" role="status">
+          {loading ? "Fetching the tracks…" : "The tracks could not be loaded."}
+          {loadError && !loading && <button type="button" className="chip" onClick={retry}>try again</button>}
+        </div>
+      )}
     </section>
   );
 }
