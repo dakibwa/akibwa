@@ -5,8 +5,7 @@ import { AlbumArtImage } from "../site-image";
 import { flushSync } from "react-dom";
 import { useMusicRanking } from "../use-music-ranking";
 import { LARGE_ART } from "./music-art.mjs";
-import MenuLabel from "./menu-label";
-import { indexItems, search } from "./music-search.mjs";
+import { indexItems, relatedRecords, search } from "./music-search.mjs";
 import { ORDERS, arrange, listened, mergeShelf, rowsFor, songTitle, trackMap } from "./music-shelf.mjs";
 
 // Albums and the records behind the top songs share one shelf. Sorting,
@@ -329,7 +328,7 @@ function sheenFor(key) {
 const Tile = memo(function Tile({ item, side, share, priority, onOpen, onPoint }) {
   const described = `${item.title}, ${item.artist}. ${listened(item.allMinutes ?? item.minutes)} listened, ${plays(item.plays)}.`;
   return (
-    <li className="music-tile" data-key={item.key} style={{ "--side": side, "--share": share, "--tint": item.art ? undefined : tintFor(item.artist), ...sheenFor(item.record ?? item.key) }}>
+    <li className="music-tile" data-key={item.key} data-record={item.record} style={{ "--side": side, "--share": share, "--tint": item.art ? undefined : tintFor(item.artist), ...sheenFor(item.record ?? item.key) }}>
       <button
         type="button"
         className="music-face"
@@ -710,12 +709,17 @@ export function MusicRoom({ initial, active }) {
     }
   }, [active, open]);
   const say = useRef(null);
+  const [pointed, setPointed] = useState(null);
+  const onPoint = useCallback((item, anchor) => {
+    say.current?.(item, anchor);
+    setPointed(item?.record ?? item?.key ?? null);
+  }, []);
   const [width, measured] = useSettledWidth(map);
   // Choosing an order ends a search; while searching, the shelf is one
   // plain group, most listened first (Dan, 16 November 2026).
   const searching = Boolean(query.trim());
   const sort = (name) => {
-    say.current?.(null);
+    onPoint(null);
     const turn = name === pressedOrder && !searching && name in reversed;
     setQuery("");
     setPressedOrder(name);
@@ -744,10 +748,10 @@ export function MusicRoom({ initial, active }) {
   // menu button too"), or what the search finds among both.
   const entries = useMemo(() => {
     const found = search(index, filter);
-    if (!found) return records.filter((entry) => (entry.item.kind === "single") === singlesOn);
+    if (!found) return index.entries.filter((entry) => (entry.item.kind === "single") === singlesOn);
     const kept = new Set(found.map((record) => record.key));
-    return records.filter((entry) => kept.has(entry.item.key));
-  }, [records, index, filter, singlesOn]);
+    return index.entries.filter((entry) => kept.has(entry.item.key));
+  }, [index, filter, singlesOn]);
 
   // Sizes come from the whole shelf, so a search or an order never rescales
   // them; each row's size comes from its records' hours (rowsFor in
@@ -760,12 +764,38 @@ export function MusicRoom({ initial, active }) {
   const flat = useMemo(() => arrangement.flatMap((group) => group.entries), [arrangement]);
   const count = useProgressive(flat);
 
+  // Mark just the matching covers, including repeats in the year order.
+  // Moving between sleeves leaves the shelf's layout and animations alone.
+  const highlight = open ?? pointed;
+  useLayoutEffect(() => {
+    if (!active || !highlight) return;
+    const visible = new Set();
+    for (const row of map.current.querySelectorAll(".music-row")) {
+      const box = row.getBoundingClientRect();
+      if (box.top >= window.innerHeight) break;
+      if (box.bottom <= 0) continue;
+      for (const tile of row.children) visible.add(tile.dataset.record ?? tile.dataset.key);
+    }
+    const matches = relatedRecords(entries, highlight, kinds, visible);
+    const marked = [];
+    for (const tile of map.current.querySelectorAll(".music-tile")) {
+      if (matches.has(tile.dataset.record ?? tile.dataset.key)) {
+        tile.classList.add("is-related");
+        marked.push(tile);
+      }
+    }
+    return () => {
+      for (const tile of marked) tile.classList.remove("is-related");
+    };
+  }, [active, highlight, entries, kinds, arrangement, count]);
+
   const launch = useRef(null);
   const onOpen = useCallback((item, button) => {
     say.current?.(null);
     opener.current = { button, key: item.key };
     // A year's square opens its record.
     const key = item.record ?? item.key;
+    setPointed(key);
     // The browser morphs the sleeve into the sheet's cover where it can;
     // elsewhere the sheet simply fades in.
     if (document.startViewTransition && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -780,10 +810,12 @@ export function MusicRoom({ initial, active }) {
       setOpen(key);
     }
   }, []);
-  const onPoint = useCallback((item, anchor) => say.current?.(item, anchor), []);
   const record = open ? records.find((entry) => entry.item.key === open)?.item ?? null : null;
 
   const close = () => {
+    // On touch the sheet can cover most of the shelf. Keep its matches in
+    // view on return, until the next sleeve or menu interaction.
+    setPointed(open);
     setOpen(null);
   };
 
@@ -829,7 +861,7 @@ export function MusicRoom({ initial, active }) {
                   aria-label={name === "year" && on ? `year, ${reversed.year ? "oldest" : "newest"} first` : word}
                   onClick={() => sort(name)}
                 >
-                  <MenuLabel label={word} />
+                  {word}
                   {/* The year's way round: newest first, or oldest. */}
                   {name === "year" ? <span className="music-order-way" data-on={on} data-up={reversed.year} aria-hidden="true" /> : null}
                 </button>
@@ -841,12 +873,12 @@ export function MusicRoom({ initial, active }) {
               aria-label="singles"
               aria-pressed={!searching && singlesOn}
               onClick={() => {
-                say.current?.(null);
+                onPoint(null);
                 setQuery("");
                 startTransition(() => setSinglesOn((on) => !on));
               }}
             >
-              <MenuLabel label="singles" />
+              singles
             </button>
           </div>
           <button
@@ -888,7 +920,9 @@ export function MusicRoom({ initial, active }) {
               type="search"
               name="search"
               value={query}
+              onFocus={() => onPoint(null)}
               onChange={(event) => {
+                onPoint(null);
                 setQuery(event.target.value);
                 if (window.scrollY) window.scrollTo({ top: 0, behavior: "instant" });
               }}
@@ -924,7 +958,7 @@ export function MusicRoom({ initial, active }) {
       )}
 
       {/* Measured here, around the shelf. */}
-      <div className="music-map-frame" ref={map} onPointerLeave={() => say.current?.(null)}>
+      <div className="music-map-frame" ref={map} onPointerLeave={() => onPoint(null)}>
         <GlidingShelf arrangement={arrangement} measured={measured} order={shown} count={count} reference={reference} onOpen={onOpen} onPoint={onPoint} />
       </div>
 

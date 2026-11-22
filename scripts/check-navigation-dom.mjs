@@ -284,11 +284,20 @@ const checkPublicLanding = async () => {
     check(nodeIds.length === RECORDS && RECORDS > 0, `the homepage ships the music shelf before JavaScript [${nodeIds.length} of ${RECORDS}]`);
     await cdp.send("Emulation.setScriptExecutionDisabled", { value: false });
     await goto("/");
+    const personPitch = `document.querySelector('.music-face[aria-label^="Person Pitch, Panda Bear."]')`;
+    const relatedFeels = `document.querySelector('.is-related .music-face[aria-label^="Feels, Animal Collective."]')`;
+    check(await waitFor(`(() => {
+      ${personPitch}?.dispatchEvent(new PointerEvent("pointerover", { bubbles: true, pointerType: "mouse" }));
+      return Boolean(${relatedFeels});
+    })()`), "hovering Panda Bear highlights Animal Collective");
+    await evaluate(`${personPitch}?.dispatchEvent(new PointerEvent("pointerout", { bubbles: true, pointerType: "mouse" }))`);
+    check(await waitFor(`!document.querySelector(".music-tile.is-related")`), "leaving the sleeve clears its highlights");
     check(await waitFor(`(() => {
       if (document.querySelector("dialog.music-tracks[open]")) return true;
-      document.querySelector(".music-tile button")?.click();
+      ${personPitch}?.click();
       return false;
     })()`), "choosing a record opens its sheet");
+    check(await evaluate(`Boolean(${relatedFeels})`), "opening a record without hovering highlights its related sleeves");
     return;
   }
   // Dan, 16 November 2026: akibwa.com is one page, the music shelf.

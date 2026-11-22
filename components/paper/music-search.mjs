@@ -101,7 +101,7 @@ export function indexItems(items, { meta, yearOf, extraText = () => "" }) {
     for (const part of credits(name)) if (fold(part) !== fold(name)) link(fold(name), fold(part));
   }
   const entries = items.map((item) => {
-    const own = fold(item.artist);
+    const own = fold(item.artist) || item.artist;
     const circle = new Set([own, ...credits(item.artist).map(fold), ...(circles.get(own) ?? [])]);
     const genres = new Set();
     for (const name of [item.artist, ...credits(item.artist)]) for (const genre of artists[name]?.genres ?? []) genres.add(fold(genre));
@@ -111,6 +111,7 @@ export function indexItems(items, { meta, yearOf, extraText = () => "" }) {
     }
     return {
       item,
+      artist: own,
       circle: [...circle],
       genres: [...genres],
       year: yearOf(item),
@@ -121,6 +122,43 @@ export function indexItems(items, { meta, yearOf, extraText = () => "" }) {
   // including an artist who has songs but no album in the top albums.
   const names = [...Object.keys(artists), ...items.map((item) => item.artist)];
   return { entries, credited: [...new Set(names.flatMap((name) => [fold(name), ...credits(name).map(fold)]))] };
+}
+
+// Keep every direct artist connection. For discovery, pick up to four
+// other artists, starting with musically similar sleeves in view.
+export function relatedRecords(entries, key, kinds, visible) {
+  const matches = new Set();
+  const source = entries.find(({ item }) => item.key === key);
+  if (!source) return matches;
+  const kind = kinds?.artists?.[source.item.artist];
+  const similar = [];
+  for (const entry of entries) {
+    if (entry === source) continue;
+    if (source.circle.includes(entry.artist) || entry.circle.includes(source.artist)) {
+      matches.add(entry.item.key);
+      continue;
+    }
+    const shared = entry.genres.filter((genre) => source.genres.includes(genre)).length;
+    const sameKind = kind != null && kinds.artists[entry.item.artist] === kind;
+    const missingTags = !source.genres.length || !entry.genres.length;
+    if (!shared && !(sameKind && missingTags)) continue;
+    const overlap = shared ? shared / (source.genres.length + entry.genres.length - shared) : 0;
+    const yearsApart = source.year && entry.year ? Math.abs(source.year - entry.year) : Infinity;
+    similar.push({ entry, visible: visible.has(entry.item.key), overlap, sameKind, yearsApart });
+  }
+  // Equal matches keep the shelf's original listening-hours order.
+  similar.sort((a, b) =>
+    b.visible - a.visible || b.overlap - a.overlap ||
+    b.sameKind - a.sameKind || a.yearsApart - b.yearsApart
+  );
+  const artists = new Set();
+  for (const { entry } of similar) {
+    if (artists.has(entry.artist)) continue;
+    artists.add(entry.artist);
+    matches.add(entry.item.key);
+    if (artists.size === 4) break;
+  }
+  return matches;
 }
 
 // Every word starts a word of the text.

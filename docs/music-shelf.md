@@ -31,7 +31,7 @@ The layout, merging and ordering code runs in the build checks against real reco
 - Hours, year, genre and A to Z work in either view. Year includes records played at least
   an hour that calendar year and sizes them by that year's hours. Genre is `kind` in code,
   one curated kind per artist. Selecting year or A to Z again reverses the order, to oldest
-  first or Z to A. The chosen order turns the flower's red without a dot or underline.
+  first or Z to A. The chosen order appears in muted rust.
   [Year totals](../public/music-years.json) · [Artist genres](../public/music-kinds.json)
 - Glide the whole shelf into order and use only the headings it needs. Search finds albums
   and singles together in one group, most listened first. Choosing an order clears search.
@@ -41,10 +41,7 @@ The layout, merging and ordering code runs in the build checks against real reco
   mark's dark square, lift the words on hover and set the search slightly smaller. On a
   phone, its mark opens the borderless search from the right over the orders. The cross
   clears and closes it.
-- Each menu word begins with an original woodcut initial. Azlen's procedural drop-cap
-  film inspired the paper letters, dark ink, curling stems and small stars. The A–Z
-  button changes its initial to Z when reversed. Stems and leaves appear in sequence
-  on entry. Reduced motion shows the finished cuts immediately.
+- Set each menu word in plain Alegreya small caps. A–Z reads Z–A when reversed.
 
 ## The signature
 
@@ -62,6 +59,12 @@ from the reverted version. The page he holds has lines of handwriting across it.
   Keyboard focus puts it under the sleeve. Keep the sleeve the same size. Blend light into
   its artwork, sweeping one band at its own angle, speed and direction, with a soft corner
   gloss and slightly deeper colours.
+- Hovering or focusing a sleeve gives related covers a faint gold edge. Include other
+  releases by the artist and their connected bands or collaborators. Pick up to four
+  more sleeves by different artists, starting with those in view. Match their genre
+  tags and use the shelf’s broader genres and release years to guide the choice.
+  Clicking or tapping keeps those covers lit behind the track sheet and as you
+  return to the shelf.
 - Open the clicked sleeve into the top card of a screen-fitting track sheet, using a view
   transition where available and a fade elsewhere. The record stays in its sleeve. The
   header card holds the sleeve on the left with title, artist and year beside it. Its foot

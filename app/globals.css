@@ -468,75 +468,7 @@ html.ready .music-mark {
 }
 
 .music-order button[aria-pressed="true"] {
-  color: #c4461f;
-}
-
-/* A small woodcut opens each word. The paper letter has a clear edge even
-   where a sprig curls behind it. Its text also works in forced colours. */
-.menu-initial {
-  position: relative;
-  display: inline-block;
-  width: clamp(16px, 1.65em, 39px);
-  aspect-ratio: 1;
-  margin-inline-end: .1em;
-  vertical-align: middle;
-  line-height: 1;
-  letter-spacing: 0;
-}
-
-.menu-initial svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  color: var(--ink);
-  transition: color 180ms ease;
-}
-
-.music-order button[aria-pressed="true"] .menu-initial svg {
-  color: #88391f;
-}
-
-.menu-initial-cuts {
-  fill: #e8d2a6;
-  stroke: #e8d2a6;
-}
-
-.menu-initial-letter {
-  fill: var(--paper-light);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  html.ready .menu-initial-stem {
-    stroke-dasharray: 1;
-    animation: initial-stem 720ms var(--shelf-ease) backwards;
-  }
-
-  html.ready .menu-initial-leaf {
-    animation: initial-leaf 440ms 180ms ease-out backwards;
-  }
-}
-
-@keyframes initial-stem {
-  from { stroke-dashoffset: 1; }
-  to { stroke-dashoffset: 0; }
-}
-
-@keyframes initial-leaf {
-  from { opacity: 0; }
-}
-
-@media (forced-colors: active) {
-  .menu-initial {
-    display: inline;
-    margin: 0;
-    vertical-align: baseline;
-    letter-spacing: inherit;
-  }
-
-  .menu-initial svg {
-    display: none;
-  }
+  color: #934527;
 }
 
 /* The year order's way round, shown while it is chosen. */
@@ -757,10 +689,6 @@ html.ready .music-mark {
     margin-inline: 0;
   }
 
-  .menu-initial-fine {
-    display: none;
-  }
-
   .music-order,
   .music-find {
     visibility: visible;
@@ -938,6 +866,34 @@ html.ready .music-mark {
    soft gloss stays on its upper corner while the colours deepen a touch. */
 .music-face {
   isolation: isolate;
+}
+
+/* A quiet gold edge and a little reflected light on related sleeves. */
+.music-face::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  border-radius: inherit;
+  background: rgb(255 226 170 / 0.10);
+  box-shadow: inset 0 0 0 2px rgb(252 215 145 / 0.85), inset 0 0 9px rgb(197 145 65 / 0.35);
+  opacity: 0;
+  transition: opacity 180ms ease;
+  pointer-events: none;
+}
+
+.music-tile.is-related .music-face::before {
+  opacity: 1;
+}
+
+@media (forced-colors: active) {
+  .music-tile.is-related .music-face::before {
+    border: 2px solid Highlight;
+  }
+
+  .music-order button[aria-pressed="true"] {
+    text-decoration: underline;
+  }
 }
 
 .music-face::after {
