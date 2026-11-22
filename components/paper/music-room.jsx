@@ -1,12 +1,12 @@
 "use client";
 
-import { PureComponent, createRef, memo, startTransition, useCallback, useDeferredValue, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Fragment, PureComponent, createRef, memo, startTransition, useCallback, useDeferredValue, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { AlbumArtImage } from "../site-image";
 import { flushSync } from "react-dom";
 import { useMusicRanking } from "../use-music-ranking";
 import { LARGE_ART } from "./music-art.mjs";
 import { indexItems, relatedRecords, search } from "./music-search.mjs";
-import { ORDERS, arrange, listened, mergeShelf, rowsFor, songTitle, trackMap } from "./music-shelf.mjs";
+import { ORDERS, arrange, listened, mergeShelf, rowsFor, songTitle } from "./music-shelf.mjs";
 
 // Albums and the records behind the top songs share one shelf. Sorting,
 // searching and opening a track sheet all work in place.
@@ -108,6 +108,14 @@ function visibleTiles(list) {
     }
   }
   return visible;
+}
+
+function markRelatedRow(row, matches) {
+  for (const tile of row.children) {
+    const related = matches?.has(tile.dataset.record ?? tile.dataset.key) ?? false;
+    tile.classList.toggle("is-related", related);
+  }
+  row.toggleAttribute("data-inspecting", Boolean(matches));
 }
 
 class GlidingShelf extends PureComponent {
@@ -218,6 +226,7 @@ class GlidingShelf extends PureComponent {
   }
 
   componentDidUpdate(previous, state, before) {
+    if (previous.arrangement === this.props.arrangement && previous.count === this.props.count && previous.measured === this.props.measured) return;
     this.opening();
     this.settle();
     this.watch();
@@ -253,7 +262,7 @@ class GlidingShelf extends PureComponent {
   }
 
   render() {
-    const { order, arrangement, count, reference, measured, onOpen, onPoint } = this.props;
+    const { order, arrangement, count, reference, measured, onOpen, onPoint, openTile, tracks } = this.props;
     let drawn = 0;
     return (
       <div
@@ -276,11 +285,14 @@ class GlidingShelf extends PureComponent {
               ) : null}
               <div className="music-shelf">
                 {rows.map((row, at) => (
-                  <ol key={at} className="music-row">
-                    {row.shown.map(({ item }, position) => (
-                      <Tile key={item.key} item={item} side={row.side} share={Math.min(1, Math.sqrt(item.minutes / reference))} priority={groupIndex === 0 && at === 0 && position === 0} onOpen={onOpen} onPoint={onPoint} />
-                    ))}
-                  </ol>
+                  <Fragment key={at}>
+                    <ol className="music-row">
+                      {row.shown.map(({ item }, position) => (
+                        <Tile key={item.key} item={item} expanded={item.key === openTile} side={row.side} share={Math.min(1, Math.sqrt(item.minutes / reference))} priority={groupIndex === 0 && at === 0 && position === 0} onOpen={onOpen} onPoint={onPoint} />
+                      ))}
+                    </ol>
+                    {openTile && row.shown.some(({ item }) => item.key === openTile) ? tracks : null}
+                  </Fragment>
                 ))}
               </div>
             </section>
@@ -325,17 +337,24 @@ function sheenFor(key) {
   };
 }
 
-const Tile = memo(function Tile({ item, side, share, priority, onOpen, onPoint }) {
+const Tile = memo(function Tile({ item, expanded, side, share, priority, onOpen, onPoint }) {
   const described = `${item.title}, ${item.artist}. ${listened(item.allMinutes ?? item.minutes)} listened, ${plays(item.plays)}.`;
   return (
     <li className="music-tile" data-key={item.key} data-record={item.record} style={{ "--side": side, "--share": share, "--tint": item.art ? undefined : tintFor(item.artist), ...sheenFor(item.record ?? item.key) }}>
       <button
         type="button"
         className="music-face"
+        aria-expanded={expanded}
+        aria-controls={expanded ? "record-tracks" : undefined}
         onClick={(event) => onOpen(item, event.currentTarget)}
-        onPointerEnter={(event) => { if (event.pointerType !== "touch") onPoint(item); }}
-        onPointerLeave={() => onPoint(null)}
-        onFocus={(event) => { if (event.currentTarget.matches(":focus-visible")) onPoint(item, event.currentTarget.getBoundingClientRect()); }}
+        onPointerEnter={(event) => { if (event.pointerType !== "touch") onPoint(item, 45); }}
+        onPointerLeave={(event) => {
+          if (event.pointerType === "touch") return;
+          // In a gutter cancel the pending hover and keep the last settled sleeve.
+          if (event.relatedTarget?.closest?.(".music-shelf")) onPoint();
+          else onPoint(null);
+        }}
+        onFocus={(event) => { if (event.currentTarget.matches(":focus-visible")) onPoint(item); }}
         onBlur={() => onPoint(null)}
         aria-label={`${described} ${item.kind === "single" ? "Show it" : "Show its tracks"}.`}
       >
@@ -352,101 +371,15 @@ const Tile = memo(function Tile({ item, side, share, priority, onOpen, onPoint }
   );
 });
 
-/*
- * What is under the pointer, in a small label that follows it a little
- * behind (Dan, 18 November 2026: "closer to where you are hovering"), or
- * under the sleeve the keyboard is on. It keeps its own state and moves by
- * transform alone, so pointing never draws the shelf again.
- */
-const NEAR = 16;
-function Now({ say, order, years, kinds, meta }) {
+// One quiet caption at the shelf edge, shared by pointer and keyboard.
+function Now({ say, order, kinds, meta, hidden }) {
   const [{ item, visible }, setLabel] = useState({ item: null, visible: false });
-  const box = useRef(null);
-  const at = useRef({ x: 0, y: 0, tx: 0, ty: 0, px: null, py: null, anchor: null, frame: 0, jump: true });
-  // Beside the pointer, or under the sleeve, turning back from the edges.
-  const aim = useCallback(() => {
-    const state = at.current;
-    const label = box.current;
-    if (!label) return;
-    const width = label.offsetWidth;
-    const height = label.offsetHeight;
-    let x;
-    let y;
-    if (state.anchor) {
-      x = state.anchor.left;
-      y = state.anchor.bottom + 8;
-      if (y + height > innerHeight - 8) y = state.anchor.top - height - 8;
-    } else if (state.px !== null) {
-      x = state.px + NEAR;
-      y = state.py + NEAR + 4;
-      if (x + width > innerWidth - 8) x = state.px - NEAR - width;
-      if (y + height > innerHeight - 8) y = state.py - NEAR - height;
-    } else {
-      return;
-    }
-    state.tx = Math.max(8, Math.min(x, innerWidth - width - 8));
-    state.ty = Math.max(8, y);
-    const place = () => {
-      label.style.transform = `translate3d(${Math.round(state.x)}px, ${Math.round(state.y)}px, 0)`;
-    };
-    if (state.jump) {
-      cancelAnimationFrame(state.frame);
-      state.frame = 0;
-      state.x = state.tx;
-      state.y = state.ty;
-      state.jump = false;
-      place();
-      return;
-    }
-    if (state.frame) return;
-    const glide = () => {
-      const dx = state.tx - state.x;
-      const dy = state.ty - state.y;
-      if (Math.abs(dx) < 0.4 && Math.abs(dy) < 0.4) {
-        state.x = state.tx;
-        state.y = state.ty;
-        state.frame = 0;
-      } else {
-        state.x += dx * 0.32;
-        state.y += dy * 0.32;
-        state.frame = requestAnimationFrame(glide);
-      }
-      place();
-    };
-    state.frame = requestAnimationFrame(glide);
-  }, []);
   useEffect(() => {
-    const state = at.current;
-    const move = (event) => {
-      if (event.pointerType === "touch") return;
-      state.px = event.clientX;
-      state.py = event.clientY;
-      state.anchor = null;
-      aim();
-    };
-    window.addEventListener("pointermove", move, { passive: true });
-    say.current = (next, anchor = null) => setLabel((last) => {
-      if (!next) return last.visible ? { ...last, visible: false } : last;
-      state.anchor = anchor;
-      // A label that appears starts where it is wanted, not where it was.
-      if (!last.visible || anchor) state.jump = true;
-      return { item: next, visible: true };
-    });
-    return () => {
-      window.removeEventListener("pointermove", move);
-      cancelAnimationFrame(state.frame);
-      state.frame = 0;
-      say.current = null;
-    };
-  }, [say, aim]);
-  // Its size changes with its words, so it is aimed once they are drawn.
-  useLayoutEffect(() => {
-    if (visible) aim();
-  }, [item, visible, aim]);
-  // The title with its total hours at the top right, then who and when, the
-  // same in every order (Dan, 18 November 2026: "can the hours just go top
-  // right and not have the word listened"; a year's own hours are not needed,
-  // "it can just be total").
+    say.current = (next) => setLabel((last) => next
+      ? { item: next, visible: true }
+      : last.visible ? { ...last, visible: false } : last);
+    return () => { say.current = null; };
+  }, [say]);
   let main = "";
   let hours = "";
   let side = "";
@@ -465,17 +398,13 @@ function Now({ say, order, years, kinds, meta }) {
   // Nothing to say until something is pointed at (Dan, 16 November 2026:
   // “super minimalist and simple”).
   return (
-    <output className="music-now" ref={box} aria-live="off" aria-hidden={!visible} data-empty={!visible}>
+    <output className="music-now" aria-live="off" aria-hidden={!visible || hidden} data-empty={!visible || hidden}>
       <strong>{main}</strong>
       <b className="music-now-hours">{hours}</b>
       <span>{side}</span>
     </output>
   );
 }
-
-// The colours the track bars take under the pointer, one after another: the
-// cast's orange, periwinkle and raspberry among the rooms' inks.
-const BARS = ["#fe7735", "#7d7afb", "#eb5772", "#2b5fb8", "#3f7634", "#e3a21a", "#24709f", "#a72d28"];
 
 // The services' marks, drawn in the page's ink.
 const SERVICE_MARKS = {
@@ -491,171 +420,67 @@ const SERVICE_MARKS = {
   )
 };
 
-// A sheet over the shelf, set as a mosaic like the shelf (Dan, 16 November
-// 2026): the sleeve first at the top left, a card with everything about the
-// record and the way out beside it, then the listens.
-function Sheet({ cover, title, artist, byline, hours, count, links, label, onClose, head, from, children }) {
+// The track list occupies one line immediately after the selected shelf row.
+function AlbumTracks({ album, year, links, loading, loadError, retry, onClose }) {
   const panel = useRef(null);
+  const rail = useRef(null);
+  const known = album.tracks ?? (loading || loadError ? null : album.fallback);
+  const tracks = useMemo(() => known && [...known].sort((a, b) => b.minutes - a.minutes), [known]);
+
   useLayoutEffect(() => {
-    const dialog = panel.current;
-    // Opened from a sleeve, the view transition grows that sleeve into the
-    // sheet's cover (Dan, 18 November 2026: "grow out into the middle").
-    if (from?.grow) dialog.dataset.grow = "true";
-    dialog.showModal();
-    return () => dialog.close();
-  }, []);
+    rail.current.scrollLeft = 0;
+    rail.current.focus({ preventScroll: true });
+    if (panel.current.getBoundingClientRect().bottom > window.innerHeight) {
+      panel.current.scrollIntoView({ block: "nearest", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+    }
+  }, [album.key]);
 
-  const dismiss = () => {
-    const dialog = panel.current;
-    if (!dialog?.open || dialog.dataset.closing) return;
-    dialog.dataset.closing = "true";
-    const transitions = dialog.querySelector(".music-tracks-sheet").getAnimations();
-    Promise.allSettled(transitions.map((effect) => effect.finished)).then(() => {
-      if (dialog.open) onClose();
-    });
-  };
-
-  return (
-    <dialog
-      className="music-tracks"
-      ref={panel}
-      aria-labelledby="music-tracks-title"
-      onCancel={(event) => {
+  useEffect(() => {
+    const escape = (event) => {
+      if (event.key === "Escape" && !event.defaultPrevented) {
         event.preventDefault();
-        dismiss();
-      }}
-      onClick={(event) => {
-        if (event.target === panel.current) dismiss();
-      }}
-    >
-      <div className="music-tracks-sheet">
-        <header className="music-tracks-head" ref={head}>
-          <span className="music-tracks-cover">
-            {cover ? <AlbumArtImage id={cover} alt="" large={LARGE_ART[cover]} sizes="200px" /> : <span className="music-blank" style={{ "--tint": tintFor(artist) }} aria-hidden="true">{title.charAt(0)}</span>}
-          </span>
-          <div className="music-tracks-card">
-            <button type="button" className="music-tracks-close" onClick={dismiss} aria-label={label}>
-              <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-                <path d="M3.5 3.5l9 9M12.5 3.5l-9 9" />
-              </svg>
-            </button>
-            <h2 id="music-tracks-title">{title}</h2>
-            <p className="music-tracks-artist">{byline}</p>
-            {/* One line along the sleeve's foot: the hours and plays, then the
-                services' marks at its right end (Dan, 19 November 2026: "so
-                much empty space where the music buttons could go"). */}
-            <div className="music-tracks-foot">
-              <p className="music-tracks-totals">
-                <span>{hours}<span className="visually-hidden"> listened</span></span> · <span>{count}</span>
-              </p>
-              <p className="music-listen">
-                {links.map(([service, href]) => (
-                  <a key={service} href={href} target="_blank" rel="noopener noreferrer" aria-label={`Listen on ${service}`} title={service}>
-                    {SERVICE_MARKS[service]}
-                  </a>
-                ))}
-              </p>
-            </div>
-          </div>
-        </header>
-        {children}
-      </div>
-    </dialog>
-  );
-}
-
-/*
- * A record's tracks share out the sheet by how much each was listened to,
- * as the shelf does (trackMap in music-shelf.mjs): soft tints, the name and
- * hours inside, a deeper tint under the pointer.
- */
-// The room under a sheet's head, so the whole sheet fits the screen.
-function useRoomUnder(head) {
-  const [room, setRoom] = useState(Infinity);
-  useLayoutEffect(() => {
-    const top = head.current;
-    if (!top) return undefined;
-    const read = () => {
-      const screen = window.visualViewport?.height ?? window.innerHeight;
-      // The sheet's own height limit, less its padding, edge and the gap under its head.
-      setRoom(Math.max(160, Math.floor(Math.min(screen * 0.88, 900) - top.offsetHeight - 16)));
+        onClose();
+      }
     };
-    read();
-    const observer = new ResizeObserver(read);
-    observer.observe(top);
-    window.addEventListener("resize", read);
+    const outside = (event) => {
+      if (!panel.current?.contains(event.target) && !event.target.closest(".music-face")) onClose(false);
+    };
+    document.addEventListener("keydown", escape);
+    document.addEventListener("click", outside);
     return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", read);
+      document.removeEventListener("keydown", escape);
+      document.removeEventListener("click", outside);
     };
-  }, [head]);
-  return room;
-}
+  }, [onClose]);
 
-function AlbumTracks({ album, year, found, loading, loadError, retry, onClose, from }) {
-  const frame = useRef(null);
-  const head = useRef(null);
-  const [width] = useSettledWidth(frame, 550);
-  const room = useRoomUnder(head);
-  // An album's own tracks, or once the ranking has loaded without them, the
-  // songs of it among the top 1,000.
-  const known = album.tracks ?? (loading || loadError ? null : album.fallback ?? null);
-  const map = useMemo(() => trackMap(known ?? [], width, room), [known, width, room]);
   return (
-    <Sheet
-      cover={album.id}
-      title={album.title}
-      artist={album.artist}
-      byline={`${album.artist}${year ? ` · ${year}` : ""}`}
-      hours={listened(album.minutes)}
-      count={plays(album.plays)}
-      links={listenLinks(found, album.artist, album.title)}
-      label="Close the track list"
-      onClose={onClose}
-      head={head}
-      from={from}
-    >
-      <div className="music-track-frame" ref={frame}>
-        {known ? (
-          <ol className="music-track-list" style={{ height: map.height }}>
-            {map.cells.map(({ track, x, y, w, h }, index) => {
-              const size = Math.max(12, Math.min(24, Math.min(w, h * 1.8) * 0.085));
-              const lines = Math.floor((h - 34) / (size * 1.15));
-              // A box too short for the name above its hours sets both on one line.
-              const tight = lines < 1;
-              return (
-                <li
-                  key={track.rest ? "rest" : track.title}
-                  title={track.rest ? track.rest.map(songTitle).join(", ") : track.title}
-                  className={[tight ? "is-tight" : "", track.rest ? "is-rest" : ""].join(" ").trim() || undefined}
-                  style={{
-                    left: x,
-                    top: y,
-                    width: w,
-                    height: h,
-                    "--size": `${(tight ? Math.min(size, 14) : size).toFixed(1)}px`,
-                    "--lines": Math.max(1, lines),
-                    "--pad": `${Math.round(Math.max(6, Math.min(11, w * 0.09)))}px`,
-                    "--bar": BARS[index % BARS.length]
-                  }}
-                >
-                  <span className="music-track-title">{songTitle(track.title)}</span>
-                  <span className="music-track-hours">
-                    {listened(track.minutes)}
-                    <span className="visually-hidden">, {plays(track.plays)}</span>
-                  </span>
-                </li>
-              );
-            })}
+    <section id="record-tracks" className="music-tracks" ref={panel} aria-labelledby="music-tracks-title">
+      <div className="music-track-rail" ref={rail} tabIndex={0} role="group" aria-label={`Songs and listening time for ${album.title}`}>
+        <h2 id="music-tracks-title" title={album.title}>{album.title}</h2>
+        {tracks?.length ? (
+          <ol className="music-track-list">
+            {tracks.map((track, index) => (
+              <li key={index}>
+                <span className="music-track-title">{songTitle(track.title)}</span>
+                <span className="music-track-hours">{listened(track.minutes)}<span className="visually-hidden"> listened, {plays(track.plays)}</span></span>
+              </li>
+            ))}
           </ol>
         ) : (
-          <div className="music-tracks-note">
-            <p role="status">{loading ? "Fetching the tracks…" : "The tracks could not be loaded."}</p>
-            {loadError && !loading ? <button type="button" className="chip" onClick={retry}>try loading again</button> : null}
+          <div className="music-tracks-note" role="status">
+            {loading ? "Fetching the tracks…" : "The tracks could not be loaded."}
+            {loadError && !loading && <button type="button" className="chip" onClick={retry}>try again</button>}
           </div>
         )}
+        <span className="music-release-info">{album.artist}{year && ` · ${year}`} · {listened(album.minutes)} · {plays(album.plays)}</span>
+        <span className="music-listen">
+          {links.map(([service, href]) => (
+            <a key={service} href={href} target="_blank" rel="noopener noreferrer" aria-label={`Listen on ${service}`} title={service}>{SERVICE_MARKS[service]}</a>
+          ))}
+        </span>
       </div>
-    </Sheet>
+      <button type="button" className="music-tracks-close" onClick={() => onClose()} aria-label="Close the track list">×</button>
+    </section>
   );
 }
 
@@ -698,7 +523,7 @@ export function MusicRoom({ initial, active }) {
       setOpen(null);
       opener.current = null;
     } else if (!open) {
-      // Wait until the modal has been removed and the shelf accepts focus.
+      // Return focus to the sleeve when the reader dismisses its details.
       const origin = opener.current;
       if (origin) {
         const button = origin.button.isConnected ? origin.button
@@ -710,16 +535,29 @@ export function MusicRoom({ initial, active }) {
   }, [active, open]);
   const say = useRef(null);
   const [pointed, setPointed] = useState(null);
-  const onPoint = useCallback((item, anchor) => {
-    say.current?.(item, anchor);
-    setPointed(item?.record ?? item?.key ?? null);
+  const hoverTimer = useRef(0);
+  useEffect(() => () => clearTimeout(hoverTimer.current), [active]);
+  const onPoint = useCallback((item, delay = 0) => {
+    clearTimeout(hoverTimer.current);
+    if (item === undefined) return;
+    const point = () => {
+      say.current?.(item);
+      setPointed(item?.record ?? item?.key ?? null);
+    };
+    if (delay) hoverTimer.current = setTimeout(point, delay);
+    else point();
   }, []);
   const [width, measured] = useSettledWidth(map);
+  const clearSelection = () => {
+    opener.current = null;
+    setOpen(null);
+    onPoint(null);
+  };
   // Choosing an order ends a search; while searching, the shelf is one
   // plain group, most listened first (Dan, 16 November 2026).
   const searching = Boolean(query.trim());
   const sort = (name) => {
-    onPoint(null);
+    clearSelection();
     const turn = name === pressedOrder && !searching && name in reversed;
     setQuery("");
     setPressedOrder(name);
@@ -764,64 +602,78 @@ export function MusicRoom({ initial, active }) {
   const flat = useMemo(() => arrangement.flatMap((group) => group.entries), [arrangement]);
   const count = useProgressive(flat);
 
-  // Mark just the matching covers, including repeats in the year order.
-  // Moving between sleeves leaves the shelf's layout and animations alone.
-  const highlight = open ?? pointed;
+  // Reuse the rows around the viewport as the pointer moves. Newly visible
+  // rows pick up the current selection before their artwork scrolls into view.
+  const nearRows = useRef(new Set());
+  const currentMatches = useRef(null);
   useLayoutEffect(() => {
-    if (!active || !highlight) return;
-    const frame = map.current;
-    const visible = new Set();
-    for (const row of frame.querySelectorAll(".music-row")) {
-      const box = row.getBoundingClientRect();
-      if (box.top >= window.innerHeight) break;
-      if (box.bottom <= 0) continue;
-      for (const tile of row.children) visible.add(tile.dataset.record ?? tile.dataset.key);
+    const near = nearRows.current;
+    const rows = map.current.querySelectorAll(".music-row");
+    const observe = typeof IntersectionObserver !== "undefined";
+    const observer = observe && new IntersectionObserver((entries) => {
+      for (const { target, isIntersecting } of entries) {
+        if (isIntersecting) near.add(target);
+        else if (!near.delete(target)) continue;
+        markRelatedRow(target, isIntersecting ? currentMatches.current : null);
+      }
+    }, { rootMargin: "120px 0px" });
+    for (const row of rows) {
+      if (observer) observer.observe(row);
+      else near.add(row);
     }
-    const matches = relatedRecords(entries, highlight, kinds, visible);
-    matches.add(highlight);
-    const marked = [];
-    for (const tile of frame.querySelectorAll(".music-tile")) {
-      if (matches.has(tile.dataset.record ?? tile.dataset.key)) {
-        tile.classList.add("is-related");
-        marked.push(tile);
+    return () => {
+      if (observer) observer.disconnect();
+      for (const row of near) markRelatedRow(row, null);
+      near.clear();
+    };
+  }, [arrangement, count]);
+
+  const highlight = open?.record ?? pointed;
+  useLayoutEffect(() => {
+    const visible = new Set();
+    if (highlight && active) {
+      for (const row of nearRows.current) {
+        const box = row.getBoundingClientRect();
+        if (box.bottom <= 0 || box.top >= innerHeight) continue;
+        for (const tile of row.children) visible.add(tile.dataset.record ?? tile.dataset.key);
       }
     }
-    if (marked.length) frame.dataset.inspecting = "";
-    return () => {
-      delete frame.dataset.inspecting;
-      for (const tile of marked) tile.classList.remove("is-related");
-    };
+    const matches = highlight && active ? relatedRecords(entries, highlight, kinds, visible) : null;
+    matches?.add(highlight);
+    currentMatches.current = matches;
+    for (const row of nearRows.current) markRelatedRow(row, matches);
   }, [active, highlight, entries, kinds, arrangement, count]);
 
-  const launch = useRef(null);
   const onOpen = useCallback((item, button) => {
+    clearTimeout(hoverTimer.current);
     say.current?.(null);
     opener.current = { button, key: item.key };
     // A year's square opens its record.
     const key = item.record ?? item.key;
     setPointed(key);
-    // The browser morphs the sleeve into the sheet's cover where it can;
-    // elsewhere the sheet simply fades in.
-    if (document.startViewTransition && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      launch.current = { grow: true };
-      button.style.viewTransitionName = "record-sleeve";
-      document.startViewTransition(() => {
-        button.style.viewTransitionName = "";
-        flushSync(() => setOpen(key));
-      });
-    } else {
-      launch.current = null;
-      setOpen(key);
-    }
+    setOpen((last) => last?.tile === item.key ? null : { tile: item.key, record: key });
   }, []);
-  const record = open ? records.find((entry) => entry.item.key === open)?.item ?? null : null;
+  const record = open ? records.find((entry) => entry.item.key === open.record)?.item ?? null : null;
 
-  const close = () => {
-    // On touch the sheet can cover most of the shelf. Keep its matches in
-    // view on return, until the next sleeve or menu interaction.
-    setPointed(open);
+  const close = useCallback((restoreFocus = true) => {
+    clearTimeout(hoverTimer.current);
+    if (!restoreFocus) opener.current = null;
+    say.current?.(null);
+    setPointed(restoreFocus ? open?.record : null);
     setOpen(null);
-  };
+  }, [open]);
+
+  const tracks = useMemo(() => active && record ? (
+    <AlbumTracks
+      album={record}
+      year={record.year || meta?.years?.[record.art] || null}
+      links={listenLinks(record.kind === "album" ? links?.albums?.[record.id] : null, record.artist, record.title)}
+      loading={music.loading}
+      loadError={music.loadError}
+      retry={music.retry}
+      onClose={close}
+    />
+  ) : null, [active, record, links, meta, music.loading, music.loadError, music.retry, close]);
 
   return (
     <div className="room-body music">
@@ -851,7 +703,7 @@ export function MusicRoom({ initial, active }) {
               beside it. */}
           <img className="music-mark" src="/akibwa-mark.svg?v=writing" alt="" width="42" height="52" draggable="false" />
         </a>
-        <Now say={say} order={shown} years={years} kinds={kinds} meta={meta} />
+        <Now say={say} hidden={Boolean(open)} order={shown} kinds={kinds} meta={meta} />
         <div className="music-tools" data-finding={finding || Boolean(query)}>
           <div className="music-order" role="group" aria-label="Order">
             {ORDERS.map(([name, label]) => {
@@ -877,7 +729,7 @@ export function MusicRoom({ initial, active }) {
               aria-label="singles"
               aria-pressed={!searching && singlesOn}
               onClick={() => {
-                onPoint(null);
+                clearSelection();
                 setQuery("");
                 startTransition(() => setSinglesOn((on) => !on));
               }}
@@ -924,9 +776,9 @@ export function MusicRoom({ initial, active }) {
               type="search"
               name="search"
               value={query}
-              onFocus={() => onPoint(null)}
+              onFocus={clearSelection}
               onChange={(event) => {
-                onPoint(null);
+                clearSelection();
                 setQuery(event.target.value);
                 if (window.scrollY) window.scrollTo({ top: 0, behavior: "instant" });
               }}
@@ -963,7 +815,7 @@ export function MusicRoom({ initial, active }) {
 
       {/* Measured here, around the shelf. */}
       <div className="music-map-frame" ref={map} onPointerLeave={() => onPoint(null)}>
-        <GlidingShelf arrangement={arrangement} measured={measured} order={shown} count={count} reference={reference} onOpen={onOpen} onPoint={onPoint} />
+        <GlidingShelf tracks={tracks} openTile={open?.tile} arrangement={arrangement} measured={measured} order={shown} count={count} reference={reference} onOpen={onOpen} onPoint={onPoint} />
       </div>
 
       {filter && filter === query.trim() && !entries.length ? <p className="music-none" role="status">Nothing matches.</p> : null}
@@ -976,18 +828,7 @@ export function MusicRoom({ initial, active }) {
         </div>
       ) : null}
 
-      {active && record ? (
-        <AlbumTracks
-          album={record}
-          year={record.year || meta?.years?.[record.art] || null}
-          found={record.kind === "album" ? links?.albums?.[record.id] : null}
-          loading={music.loading}
-          loadError={music.loadError}
-          retry={music.retry}
-          onClose={close}
-          from={launch.current}
-        />
-      ) : null}
+
     </div>
   );
 }

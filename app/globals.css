@@ -351,34 +351,29 @@ html.ready .music-mark {
   -webkit-user-drag: none;
 }
 
-/* What is under the pointer, in a small card that follows it (Dan, 18
-   November 2026: "closer to where you are hovering"), or under the sleeve
-   the keyboard is on; nothing when nothing is. Script places it by
-   transform; it rises a little as it appears. */
+/* The caption sits at the paper's edge while the pointer crosses the art. */
 .music-now {
   position: fixed;
-  top: 0;
-  left: 0;
+  bottom: max(10px, env(safe-area-inset-bottom));
+  left: max(10px, env(safe-area-inset-left));
   z-index: 4;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: baseline;
-  gap: 2px 16px;
-  max-width: min(380px, calc(100vw - 16px));
-  padding: 7px 11px 8px;
+  gap: 1px 12px;
+  max-width: min(320px, calc(100vw - 20px));
+  padding: 5px 10px;
   overflow: hidden;
-  border: 1px solid var(--ink);
+  border: 1px solid var(--paper-deep);
   border-radius: 2px;
   background: var(--paper-light);
   white-space: nowrap;
   pointer-events: none;
-  translate: 0 0;
-  transition: opacity 120ms ease, translate 200ms var(--shelf-ease);
+  transition: opacity 180ms ease;
 }
 
 .music-now[data-empty="true"] {
   opacity: 0;
-  translate: 0 4px;
 }
 
 .music-now strong {
@@ -878,11 +873,11 @@ html.ready .music-mark {
   background: #000;
   forced-color-adjust: none;
   opacity: 0;
-  transition: opacity 180ms ease;
+  transition: opacity 280ms ease-in-out;
   pointer-events: none;
 }
 
-.music-map-frame[data-inspecting] .music-tile:not(.is-related) .music-face::before {
+.music-row[data-inspecting] .music-tile:not(.is-related) .music-face::before {
   opacity: 0.42;
 }
 
@@ -980,297 +975,112 @@ html.ready .music-mark {
   -webkit-box-orient: vertical;
 }
 
-/* A song without a sleeve gets a plain paper one with its name on. */
-.music-blank {
-  display: grid;
-  place-items: center;
-  width: 100%;
-  height: 100%;
-  padding: 8px;
-  background: var(--tint, var(--paper-light));
-  font: 500 42px/1 "Alegreya SC", var(--serif);
-  text-align: center;
-}
-
-.music-more {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-
 html {
   scrollbar-gutter: stable;
 }
 
-html:has(.music-tracks[open]) {
-  overflow: hidden;
+/* The open sleeve adds just one line to the shelf. */
+.music-map, .music-group, .music-shelf {
+  grid-template-columns: minmax(0, 1fr);
 }
 
-/* A record's sheet (Dan, 16 November 2026): a mosaic like the shelf, with
-   one 4px gap throughout. The sleeve comes first at the top left, a card
-   beside it holds the title, who and when, where to hear it, the hours and
-   the way out, and the listens share out the rest. */
 .music-tracks {
-  width: min(560px, calc(100vw - 24px));
-  max-width: none;
-  max-height: min(88dvh, 900px);
-  padding: 0;
-  overflow: visible;
-  border: 0;
-  background: transparent;
-}
-
-/* The sheet is looked at, not copied from (Dan, 25 September 2026). */
-.music-tracks {
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-.music-tracks::backdrop {
-  background: rgb(42 36 32 / 0.34);
-  opacity: 1;
-  transition: opacity 180ms ease;
-}
-
-.music-tracks-sheet {
-  position: relative;
-  container-type: inline-size;
-  max-height: min(88dvh, 900px);
-  overflow: auto;
-  overscroll-behavior: contain;
-  padding: 6px;
-  border: 1px solid var(--ink);
-  border-radius: 2px;
-  background: var(--paper);
-  opacity: 1;
-  transform: none;
-  transition: opacity 180ms ease, transform 240ms var(--shelf-ease);
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  border-block: 1px solid var(--paper-deep);
+  background: var(--paper-light);
+  transition: opacity 200ms ease;
 }
 
 @starting-style {
-  .music-tracks[open]::backdrop {
-    opacity: 0;
-  }
-
-  .music-tracks[open] .music-tracks-sheet {
-    opacity: 0;
-    transform: translateY(8px) scale(0.99);
-  }
-
-  /* When a sleeve grows into it, the view transition fades the sheet in. */
-  .music-tracks[open][data-grow] .music-tracks-sheet {
-    opacity: 1;
-    transform: none;
-  }
-
-  .music-tracks[open][data-grow]::backdrop {
-    opacity: 1;
-  }
+  .music-tracks { opacity: 0; }
 }
 
-.music-tracks[data-closing]::backdrop,
-.music-tracks[data-closing] .music-tracks-sheet {
-  opacity: 0;
-  transition-duration: 140ms;
+.music-tile:has(.music-face[aria-expanded="true"])::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: calc(50% - 5px);
+  border: 5px solid transparent;
+  border-top-color: var(--ink-soft);
+  border-bottom: 0;
+  pointer-events: none;
 }
 
-.music-tracks[data-closing] .music-tracks-sheet {
-  transform: translateY(5px) scale(0.995);
-}
-
-/* One card (Dan, 18 November 2026: "simplified into one card"): the sleeve
-   fills its left side and everything about the record sits beside it. */
-.music-tracks-head {
-  display: grid;
-  grid-template-columns: clamp(118px, 36%, 200px) minmax(0, 1fr);
-  align-items: stretch;
-  margin-bottom: 2px;
-  overflow: hidden;
-  border: 1px solid var(--ink);
-  border-radius: 2px;
-  background: var(--paper-light);
-}
-
-.music-tracks-cover {
-  display: block;
-  align-self: start;
-  aspect-ratio: 1;
-  overflow: hidden;
-}
-
-/* A clicked sleeve grows out of the shelf into the sheet's corner (Dan, 18
-   November 2026), through the browser's own view transition: the sleeve
-   carries the name until the sheet's cover takes it. */
-.music-tracks[data-grow] .music-tracks-cover {
-  view-transition-name: record-sleeve;
-}
-
-::view-transition-group(record-sleeve) {
-  animation-duration: 520ms;
-  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-::view-transition-old(record-sleeve),
-::view-transition-new(record-sleeve) {
-  height: 100%;
-  object-fit: cover;
-  animation: none;
-}
-
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: 280ms;
-}
-
-.music-tracks-cover img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* The card is as tall as the sleeve, or taller for a long title. */
-.music-tracks-card {
-  position: relative;
+.music-track-rail, .music-track-list, .music-track-list li {
   display: flex;
-  flex-direction: column;
-  align-self: stretch;
-  min-width: 0;
-  padding: 10px 12px 3px;
-}
-
-.music-tracks-card h2 {
-  margin: 0;
-  padding-right: 29px;
-  font: italic 400 clamp(18px, 3.4vw, 25px)/1.12 "Alegreya", var(--serif);
-  overflow-wrap: anywhere;
-  text-wrap: pretty;
-}
-
-.music-tracks-artist,
-.music-tracks-totals {
-  margin: 0;
-  color: var(--ink);
-  font-family: "Alegreya SC", var(--serif);
-  font-weight: 500;
-  letter-spacing: 0.16em;
-  text-transform: lowercase;
-}
-
-.music-tracks-artist {
-  margin-top: 5px;
-  font-size: 14px;
-}
-
-/* The foot is one line along the bottom of the sleeve: hours and plays on
-   the left, the services' marks at the right end, under the close cross. */
-.music-tracks-foot {
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0 6px;
-  margin-top: auto;
-  padding-top: 6px;
-}
-
-.music-tracks-totals {
-  min-width: 0;
-  font-size: 14px;
-  font-variant-numeric: tabular-nums;
-}
-
-.music-tracks-foot .music-listen {
-  flex: none;
-  margin: 0 -12px 0 0;
-}
-
-.music-tracks-totals > span {
+  align-items: baseline;
   white-space: nowrap;
 }
 
-/* A narrow sheet (Dan, 18 November 2026: "on small phones they are weird
-   too"): a smaller sleeve and smaller type, so the card's words keep inside
-   it. */
-@container (max-width: 400px) {
-  .music-tracks-head {
-    grid-template-columns: clamp(84px, 34%, 200px) minmax(0, 1fr);
-  }
-
-  .music-tracks-card {
-    padding: 8px 10px 2px;
-  }
-
-  .music-tracks-card h2 {
-    padding-right: 26px;
-    font-size: 17px;
-  }
-
-  .music-tracks-artist {
-    font-size: 11px;
-    letter-spacing: 0.1em;
-  }
-
-  .music-tracks-totals {
-    font-size: 11px;
-    letter-spacing: 0.08em;
-  }
-
-  .music-track-hours {
-    font-size: 11px;
-  }
-
-  .music-tracks-foot .music-listen {
-    margin-right: -10px;
-  }
-
-  .music-tracks-foot .music-listen a {
-    width: 36px;
-  }
+.music-track-rail {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  gap: 18px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink-faint) transparent;
+  padding-inline: 10px;
 }
 
-/* The way out: a fine ink cross in the card's top right corner. */
+.music-track-rail > * { flex: none; }
+
+.music-track-rail:focus-visible, .music-tracks-close:focus-visible {
+  outline: 1px solid var(--ink-soft);
+  outline-offset: -2px;
+}
+
+#music-tracks-title {
+  margin: 0;
+  max-width: min(27vw, 220px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font: 500 14px/1.3 "Alegreya SC", var(--serif);
+}
+
+.music-track-list {
+  gap: 0;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.music-track-list li {
+  gap: 7px;
+  padding-inline: 13px;
+  border-inline-start: 1px solid var(--paper-deep);
+}
+
+.music-track-title, .music-tracks-note {
+  font: italic 400 15px/1.3 "Alegreya", var(--serif);
+}
+
+.music-track-hours, .music-release-info {
+  font: 500 13px/1.3 "Alegreya SC", var(--serif);
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 559px) {
+  #music-tracks-title, .music-release-info, .music-track-rail .music-listen { order: 1; }
+  .music-track-list li:first-child { padding-inline-start: 0; border-inline-start: 0; }
+}
+
 .music-tracks-close {
-  position: absolute;
-  top: 0;
-  right: 0;
-  display: grid;
-  place-items: center;
+  flex: none;
   width: 44px;
   height: 44px;
   padding: 0;
   border: 0;
-  background: none;
+  border-inline-start: 1px solid var(--paper-deep);
+  background: transparent;
   color: var(--ink-soft);
+  font: 400 19px/1 var(--serif);
   cursor: pointer;
-  transition: color 180ms ease;
-}
-
-.music-tracks-close svg {
-  width: 14px;
-  height: 14px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.5;
-  stroke-linecap: round;
-}
-
-.music-tracks-close:hover {
-  color: #db552d;
-}
-
-.music-tracks-close:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: -6px;
-}
-
-.music-tracks-note {
-  margin: 0;
-  padding: 12px;
-  color: var(--ink-soft);
-  font: italic 400 16px/1.3 "Alegreya", var(--serif);
 }
 
 .music-more p {
@@ -1327,10 +1137,6 @@ html:not(.js) .music-bar {
   aspect-ratio: 1;
 }
 
-.music-tracks-cover .music-blank {
-  aspect-ratio: 1;
-}
-
 /* Where to hear it: each service's own mark, the release or a search there. */
 .music-listen {
   display: flex;
@@ -1360,84 +1166,6 @@ html:not(.js) .music-bar {
 .music-listen a:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: -4px;
-}
-
-/* The tracks share out the sheet by how much each was listened to (trackMap
-   in music-shelf.mjs): soft tints with the name and hours inside, a deeper
-   tint under the pointer in the track's own colour (Dan, 25 September 2026). */
-.music-track-frame {
-  margin: 0 -2px -2px;
-}
-
-.music-track-list {
-  position: relative;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.music-track-list li {
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 4px;
-  padding: 9px var(--pad, 11px) 8px;
-  overflow: hidden;
-  border-radius: 2px;
-  background: color-mix(in srgb, var(--bar) 18%, var(--paper-light));
-  transition: background-color 180ms ease;
-}
-
-/* The quietest songs, when there are too many to read, share one box. */
-.music-track-list li.is-rest {
-  background: color-mix(in srgb, var(--ink) 5%, var(--paper-light));
-}
-
-.music-track-list li.is-rest .music-track-title {
-  color: var(--ink-soft);
-  font-style: italic;
-}
-
-.music-track-list li:hover {
-  background: color-mix(in srgb, var(--bar) 36%, var(--paper-light));
-}
-
-.music-track-title {
-  display: -webkit-box;
-  overflow: hidden;
-  color: var(--ink);
-  font: 400 var(--size)/1.15 "Alegreya", var(--serif);
-  overflow-wrap: break-word;
-  hyphens: auto;
-  -webkit-line-clamp: var(--lines);
-  -webkit-box-orient: vertical;
-}
-
-.music-track-list li.is-tight {
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
-  padding-block: 0;
-}
-
-.music-track-list li.is-tight .music-track-title {
-  display: block;
-  flex: 1 1 auto;
-  min-width: 0;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.music-track-hours {
-  color: var(--ink-soft);
-  font-family: "Alegreya SC", var(--serif);
-  font-size: 13px;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.12em;
-  text-transform: lowercase;
-  white-space: nowrap;
 }
 
 /* A pencil-underlined text link: the way home from a missing page. */
@@ -1482,15 +1210,13 @@ html:not(.js) .music-bar {
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
-  *::after,
-  .music-tracks::backdrop {
+  *::after {
     animation: none !important;
     transition: none !important;
   }
 
   .music-face:hover,
-  .music-face:active,
-  .music-tracks[data-closing] .music-tracks-sheet {
+  .music-face:active {
     transform: none;
   }
 }

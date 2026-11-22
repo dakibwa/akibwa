@@ -296,11 +296,19 @@ const checkPublicLanding = async () => {
     await evaluate(`${personPitch}?.dispatchEvent(new PointerEvent("pointerout", { bubbles: true, pointerType: "mouse" }))`);
     check(await waitFor(`!document.querySelector(".music-tile.is-related") && ${shade(otherFace)} === 0`), "leaving restores the shelf to full brightness");
     check(await waitFor(`(() => {
-      if (document.querySelector("dialog.music-tracks[open]")) return true;
+      if (document.querySelector("#record-tracks")) return true;
       ${personPitch}?.click();
       return false;
     })()`), "choosing a record opens its sheet");
     check(await waitFor(onlyOthersDim), "opening a record without hovering dims unrelated sleeves");
+    const other = await evaluate(`(() => {
+      const box = document.querySelector(".music-face").getBoundingClientRect();
+      return { x: box.left + box.width / 2, y: box.top + box.height / 2 };
+    })()`);
+    for (const type of ["mousePressed", "mouseReleased"]) {
+      await cdp.send("Input.dispatchMouseEvent", { type, ...other, button: "left", clickCount: 1 });
+    }
+    check(await waitFor(`document.querySelector("#record-tracks h2")?.textContent === "Music for Psychedelic Therapy"`), "one click on the shelf switches the open track sheet");
     return;
   }
   // Dan, 16 November 2026: akibwa.com is one page, the music shelf.
@@ -351,7 +359,7 @@ const checkPublicLanding = async () => {
       inside: tiles.every((tile) => box(tile).left >= frame.left - 1 && box(tile).right <= frame.right + 1),
       lead: tiles[0].querySelector(".music-face").getAttribute("aria-label"),
       large: tiles[0].querySelector("img").srcset.includes("-large.webp"),
-      words: [...document.querySelectorAll(".music-page p")].filter((p) => !p.closest("dialog")).map((p) => p.textContent).join(""),
+      words: [...document.querySelectorAll(".music-page p")].filter((p) => !p.closest("#record-tracks")).map((p) => p.textContent).join(""),
       head: Boolean(document.querySelector(".music-page .room-head"))
     };
   })()`);
@@ -396,18 +404,18 @@ const checkPublicLanding = async () => {
   check(smallest >= 44, `the smallest square is big enough to see [${smallest}px]`);
   const graceland = `[...document.querySelectorAll(".music-page .music-face")].find((button) => button.getAttribute("aria-label").startsWith("Graceland"))`;
   await evaluate(`${graceland}.click()`);
-  check(await waitFor(`Boolean(document.querySelector(".music-page dialog.music-tracks[open] .music-track-list li"))`, 8000), "an album opens its track list once the file loads");
+  check(await waitFor(`Boolean(document.querySelector(".music-page #record-tracks .music-track-list li"))`, 8000), "an album opens its track list once the file loads");
   check(await evaluate(`document.querySelector("#music-tracks-title")?.textContent === "Graceland" && [...document.querySelectorAll(".music-track-list li")].length > 5`), "the track list shows the album's songs with plays and hours");
   await cdp.send("Input.dispatchKeyEvent", { type: "keyDown", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
   await cdp.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
   await sleep(500);
-  check(await evaluate(`!document.querySelector("dialog.music-tracks[open]")`), "Escape closes the track list");
+  check(await evaluate(`!document.querySelector("#record-tracks")`), "Escape closes the track list");
   check(await evaluate(`document.activeElement?.classList.contains("music-face") && document.activeElement?.getAttribute("aria-label").startsWith("Graceland")`), "closing a sheet returns keyboard focus to its album");
   check(await evaluate(`!document.body.innerHTML.includes("spotify:")`), "no track identifiers reach the page");
   await evaluate(`${graceland}.click()`);
-  await waitFor(`Boolean(document.querySelector("dialog:modal"))`);
+  await waitFor(`Boolean(document.querySelector("#record-tracks"))`);
   await goto("/");
-  check(await evaluate(`!document.querySelector("dialog:modal")`), "loading the page again does not reopen the previous sheet");
+  check(await evaluate(`!document.querySelector("#record-tracks")`), "loading the page again does not reopen the previous sheet");
   for (const width of [320, 360, 401, 414, 479, 480, 600, 720, 820]) {
     await setDesktop(width, 844);
     await sleep(500);
@@ -442,23 +450,27 @@ const checkPublicLanding = async () => {
   await navigation;
   check(await waitFor(`Boolean(document.querySelector(".music-page .music-more button"))`), "a failed ranking preserves the seed and offers recovery");
   await evaluate(`document.querySelector(".music-page .music-face").click()`);
-  check(await waitFor(`Boolean(document.querySelector("dialog[open] .music-tracks-note button"))`), "a failed track list can be retried from inside its modal");
+  check(await waitFor(`Boolean(document.querySelector("#record-tracks .music-tracks-note button"))`), "a failed track list can be retried from inside its track sheet");
   paused = cdp.waitFor("Fetch.requestPaused");
-  await evaluate(`document.querySelector("dialog .music-tracks-note button").click()`);
+  await evaluate(`document.querySelector("#record-tracks .music-tracks-note button").click()`);
   request = await paused;
   await cdp.send("Fetch.continueRequest", { requestId: request.requestId });
   await cdp.send("Fetch.disable");
-  check(await waitFor(`Boolean(document.querySelector("dialog[open] .music-track-list li"))`, 8000), "retrying fills the same open sheet with its tracks");
+  check(await waitFor(`Boolean(document.querySelector("#record-tracks .music-track-list li"))`, 8000), "retrying fills the same open sheet with its tracks");
   check(await evaluate(`(() => {
-    const sheet = document.querySelector("dialog .music-tracks-sheet");
+    const sheet = document.querySelector("#record-tracks");
     return sheet.scrollWidth <= sheet.clientWidth + 1;
   })()`), "an open phone sheet fits its actual width when its tracks arrive on retry");
-  // Dan, 18 November 2026: on a small phone the card's words keep inside it.
   check(await evaluate(`(() => {
-    const card = document.querySelector("dialog[open] .music-tracks-card").getBoundingClientRect();
-    return [...document.querySelectorAll("dialog[open] .music-tracks-card h2, dialog[open] .music-tracks-artist, dialog[open] .music-tracks-totals span, dialog[open] .music-listen a")]
-      .every((element) => { const box = element.getBoundingClientRect(); return box.left >= card.left - 0.5 && box.right <= card.right + 0.5; });
-  })()`), "a phone sheet's card keeps its words inside it");
+    const strip = document.querySelector("#record-tracks");
+    const rail = strip.querySelector(".music-track-rail");
+    const tracks = [...strip.querySelectorAll("li")];
+    rail.scrollLeft = rail.scrollWidth;
+    return strip.previousElementSibling.contains(document.querySelector('.music-face[aria-expanded="true"]'))
+      && tracks.length === ${shelf[0].tracks.length}
+      && tracks.every(track => track.offsetTop === tracks[0].offsetTop && track.querySelector(".music-track-hours")?.textContent)
+      && rail.scrollLeft > 0 && strip.offsetHeight < 64 && document.documentElement.scrollWidth <= innerWidth + 1;
+  })()`), "the phone lists every track and its time in one sideways-scrolling line under the selected row");
 
   await cdp.send("Fetch.enable", { patterns: [{ urlPattern: "*music-ranking.json", requestStage: "Request" }] });
   paused = cdp.waitFor("Fetch.requestPaused");

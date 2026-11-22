@@ -55,8 +55,9 @@ from the reverted version. The page he holds has lines of handwriting across it.
 
 ## Opening and inspecting a record
 
-- Hover shows the artist, year and hours on a card that trails the pointer slightly.
-  Keyboard focus puts it under the sleeve. Keep the sleeve the same size. Blend light into
+- Resting the pointer on a sleeve or focusing it shows its title, artist, year and
+  hours in a small caption at the bottom left. A quick pass across the gaps keeps
+  the previous selection until the pointer settles. Keep the sleeve the same size. Blend light into
   its artwork, sweeping one band at its own angle, speed and direction, with a soft corner
   gloss and slightly deeper colours.
 - Hovering or focusing a sleeve leaves it and its related covers at full brightness.
@@ -64,17 +65,12 @@ from the reverted version. The page he holds has lines of handwriting across it.
   releases by the artist and their connected bands or collaborators. Pick up to four
   more sleeves by different artists, starting with those in view. Match their genre
   tags and use the shelf’s broader genres and release years to guide the choice.
-  Clicking or tapping keeps the same contrast behind the track sheet and as you
-  return to the shelf.
-- Open the clicked sleeve into the top card of a screen-fitting track sheet, using a view
-  transition where available and a fade elsewhere. The record stays in its sleeve. The
-  header card holds the sleeve on the left with title, artist and year beside it. Its foot
-  shares one line between hours and plays on the left and Spotify and Apple Music marks on
-  the right. Put a fine ink × in the corner. Use a service search if no release is confirmed.
-  [Listening links](../public/music-links.json)
-- Use the same 4 px gap for the track mosaic. `trackMap` gives tracks room by hours.
-  Tint each softly and put the name and hours inside, on one line in short boxes.
-  Group the quietest unreadable tracks in one “N more” box so the sheet never scrolls.
+  Clicking or tapping keeps the same contrast while the songs are open.
+- Open one slim track list directly under the selected sleeve’s row. Show every
+  song, most listened first, with its listening time beside the title. Long lists
+  scroll sideways. The album details and listening links follow the songs.
+  Selecting another sleeve moves the list there. The same sleeve, the close
+  button or Escape folds it away. [Listening links](../public/music-links.json)
 - Reveal the page once its small capitals have loaded. Fade in the bar and mark, lift
   the first screen of sleeves in sequence, fade covers as they arrive, and lift later
   rows as they scroll into view. Use transform and opacity with `cubic-bezier(0.16, 1, 0.3, 1)`.

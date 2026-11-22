@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { unpackRanking } from "./paper/music-ranking.mjs";
 
 /*
@@ -39,5 +39,6 @@ export function useMusicRanking(seed, enabled) {
     };
   }, [enabled, request]);
 
-  return { ...ranking, loading, loadError, retry: () => setRequest((value) => value + 1) };
+  const retry = useCallback(() => setRequest((value) => value + 1), []);
+  return { ...ranking, loading, loadError, retry };
 }

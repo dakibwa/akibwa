@@ -78,8 +78,6 @@ requireText(music, "mergeShelf(music.albums, music.songs, music.sleeves, music.s
 requireText(music, 'className="music-singles"', "the bar must switch the shelf to the singles (Dan, 18 November 2026)");
 requireText(music, 'className="music-find"', "on a phone the bar must keep one row, the search waiting behind its mark (Dan, 16 November 2026)");
 requireText(css, ".music-tools[data-finding=\"true\"] .music-search {", "the phone's search must slide out over the orders");
-requireText(music, '<span className="music-tracks-cover">', "a sheet must open with its sleeve at the top left (Dan, 16 November 2026)");
-requireText(music, '<div className="music-tracks-card">\n            <button type="button" className="music-tracks-close"', "a sheet's way out must sit in its card, beside the sleeve");
 requireText(music, "rowsFor(group.entries, width, group.reference ?? reference)", "the shelf must be laid out in rows sized by hours between a floor and a cap");
 requireText(music, 'role="group" aria-label="Order"', "the bar must sort the whole shelf by hours, year, kind or name");
 requireText(music, '<output className="music-now"', "the bar must say what the shelf holds and what is under the pointer");
@@ -89,12 +87,10 @@ requireText(music, "LARGE_ART[item.art]", "sleeves drawn large must offer their 
 // Dan, 25 September 2026: resizing is smooth.
 requireText(music, "useSettledWidth(", "the shelf must lay out once the width settles");
 requireText(music, ".animate(", "the shelf's sleeves must glide to a new order");
-requireText(css, ".music-tracks {\n  -webkit-user-select: none;", "the track sheet must not select");
 // Dan, 26 September 2026: where to hear it.
 requireText(music, 'useRoomFile(active, "/music-years.json")', "the year order must place each album or song in the year it was played most");
 requireText(music, 'useRoomFile(active, "/music-kinds.json")', "the kind order must group the shelf by kind of music");
 requireText(music, "links={listenLinks(", "every music sheet must link to Spotify and Apple Music");
-requireText(css, ".music-track-list li:hover {\n  background: color-mix(in srgb, var(--bar)", "each track must take its own colour under the pointer");
 {
   // The shelf itself, on the real albums and songs (Dan, 16 November 2026):
   // one shelf of records, every album and every song placed once; rows of
