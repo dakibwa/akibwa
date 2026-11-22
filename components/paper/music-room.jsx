@@ -411,7 +411,6 @@ function AlbumTracks({ album, links, loading, loadError, retry, onClose }) {
   const panel = useRef(null);
   const known = album.tracks ?? (loading || loadError ? null : album.fallback);
   const tracks = useMemo(() => known && [...known].sort((a, b) => b.minutes - a.minutes), [known]);
-  const mostMinutes = tracks?.[0]?.minutes || 1;
 
   const list = useRef(null);
   const [expanded, setExpanded] = useState(false);
@@ -481,9 +480,9 @@ function AlbumTracks({ album, links, loading, loadError, retry, onClose }) {
       {count > 0 && !duplicate && (
         <ol id="record-songs" ref={list} className="music-track-list" aria-label="Songs, most listened first" style={{ "--song-columns": maxColumns }}>
           {(expanded ? tracks : tracks.slice(0, limit)).map((track, index) => (
-            <li key={index} style={{ "--listening-share": track.minutes / mostMinutes, "--bar-delay": `${Math.min(index, 12) * 36}ms` }}>
+            <li key={index}>
               <span className="music-track-title">{songTitle(track.title)}</span>
-              <span className="music-track-hours">{listened(track.minutes)}<span className="visually-hidden"> listened, {plays(track.plays)}</span></span>
+              <span className="music-track-hours"><strong>{listened(track.minutes)}</strong><span className="visually-hidden"> listened, {plays(track.plays)}</span></span>
             </li>
           ))}
         </ol>

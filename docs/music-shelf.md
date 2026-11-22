@@ -69,11 +69,10 @@ from the reverted version. The page he holds has lines of handwriting across it.
 - Open the tracks directly under the selected sleeve’s row, most listened first.
   Set the album title in italic, then the artist and its total in words, such as
   “1,006 hours listened”. Spotify and Apple Music are small text links. Songs
-  read down balanced columns, with each label filled from the left relative to
-  the favourite and its hours beside its name. The columns become one on a
+  read down balanced columns, with the listening time in bold beside each title. The columns become one on a
   phone. Above twelve rows, show ten rows and a button to reveal the rest.
   Omit a lone song only when the header already gives its title and time.
-  Keep the page still on opening. Reduced motion shows the final fill immediately.
+  Keep the page still on opening.
   Selecting another sleeve moves the list there. The same sleeve, the close
   button or Escape folds it away. [Listening links](../public/music-links.json)
 - Reveal the page once its small capitals have loaded. Fade in the bar and mark, lift

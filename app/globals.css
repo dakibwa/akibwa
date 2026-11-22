@@ -1236,40 +1236,11 @@ html {
 
 .music-track-list li {
   position: relative;
-  isolation: isolate;
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
-  gap: 0.8em;
-  margin: 0 0 2px;
-  padding: 0.34em 0.6em 0.4em;
-  background: var(--paper);
+  gap: 0.65em;
+  padding-block: 0.25em;
   break-inside: avoid;
-}
-
-/* Each label fills from the left by its listening time; the favourite
-   fills its label. */
-.music-track-list li::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  background: #dfbb9e;
-  transform-origin: left;
-  transform: scaleX(var(--listening-share));
-  animation: track-ink 520ms var(--shelf-ease) var(--bar-delay) backwards;
-}
-
-@keyframes track-ink {
-  from {
-    transform: scaleX(0);
-  }
-}
-
-@media (forced-colors: active) {
-  .music-track-list li::before {
-    border-inline-end: 2px solid CanvasText;
-  }
 }
 
 .music-track-title {
@@ -1281,10 +1252,8 @@ html {
 
 .music-track-hours {
   flex: none;
-  color: #4d443b;
-  font: 500 0.84em/1.25 "Alegreya SC", var(--serif);
-  letter-spacing: 0.08em;
-  text-transform: lowercase;
+  color: var(--ink);
+  font: 0.9em/1.25 Georgia, serif;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
