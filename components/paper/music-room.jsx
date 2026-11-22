@@ -416,7 +416,7 @@ function AlbumTracks({ album, links, loading, loadError, retry, onClose }) {
   const [expanded, setExpanded] = useState(false);
   const [columns, setColumns] = useState(1);
   const count = tracks?.length ?? 0;
-  const maxColumns = Math.max(1, Math.ceil(count / 3));
+  const mostMinutes = tracks?.[0]?.minutes || 1;
   const limit = count > 12 * columns ? 10 * columns : count;
   // A single's matching title and time are already in the header.
   const duplicate = count === 1 && songTitle(tracks[0].title) === album.title && tracks[0].minutes === album.minutes;
@@ -425,16 +425,14 @@ function AlbumTracks({ album, links, loading, loadError, retry, onClose }) {
     const element = list.current;
     if (!element || count <= 12) return;
     const measure = () => {
-      const style = getComputedStyle(element);
-      const gap = parseFloat(style.columnGap);
-      const width = parseFloat(style.columnWidth);
-      setColumns(Math.max(1, Math.min(maxColumns, Math.floor((element.clientWidth + gap) / (width + gap)))));
+      const widths = getComputedStyle(element).gridTemplateColumns;
+      setColumns(widths.split(" ").length);
     };
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(element);
     return () => observer.disconnect();
-  }, [count, maxColumns]);
+  }, [count]);
 
   useLayoutEffect(() => {
     panel.current.focus({ preventScroll: true });
@@ -478,9 +476,9 @@ function AlbumTracks({ album, links, loading, loadError, retry, onClose }) {
         <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 3.5 9 9m0-9-9 9" /></svg>
       </button>
       {count > 0 && !duplicate && (
-        <ol id="record-songs" ref={list} className="music-track-list" aria-label="Songs, most listened first" style={{ "--song-columns": maxColumns }}>
+        <ol id="record-songs" ref={list} className="music-track-list" aria-label="Songs, most listened first">
           {(expanded ? tracks : tracks.slice(0, limit)).map((track, index) => (
-            <li key={index}>
+            <li key={index} style={{ "--listening-share": track.minutes / mostMinutes }}>
               <span className="music-track-title">{songTitle(track.title)}</span>
               <span className="music-track-hours"><strong>{listened(track.minutes)}</strong><span className="visually-hidden"> listened, {plays(track.plays)}</span></span>
             </li>

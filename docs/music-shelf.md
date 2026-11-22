@@ -69,8 +69,9 @@ from the reverted version. The page he holds has lines of handwriting across it.
 - Open the tracks directly under the selected sleeve’s row, most listened first.
   Set the album title in italic, then the artist and its total in words, such as
   “1,006 hours listened”. Spotify and Apple Music are small text links. Songs
-  read down balanced columns, with the listening time in bold beside each title. The columns become one on a
-  phone. Above twelve rows, show ten rows and a button to reveal the rest.
+  read across compact rows. Fit as many equal-width labels across as the shelf
+  allows. Each background fills in proportion to the most-listened song on that
+  record, with the listening time in bold Georgia beside the italic title. Above twelve rows, show ten rows and a button to reveal the rest.
   Omit a lone song only when the header already gives its title and time.
   Keep the page still on opening.
   Selecting another sleeve moves the list there. The same sleeve, the close

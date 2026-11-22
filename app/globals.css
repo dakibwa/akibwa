@@ -1215,32 +1215,42 @@ html {
   border-radius: 2px;
 }
 
-/* Read down each column. Keep short track lists together. */
+/* Equal-width cells keep the listening-time fills comparable within an album. */
 .music-track-list {
-  --song-column: 14.4em;
   grid-area: list;
-  max-width: calc(var(--song-columns, 6) * 28em + (var(--song-columns, 6) - 1) * 14px);
-  columns: var(--song-column) var(--song-columns, auto);
-  column-gap: 14px;
-  margin: 10px 0 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.75em), 1fr));
+  gap: 3px 5px;
+  margin: 8px 0 0;
   padding: 0;
   list-style: none;
   font-size: var(--song-size);
 }
 
-@container (min-width: 900px) {
-  .music-track-list {
-    --song-column: 16em;
-  }
-}
-
 .music-track-list li {
   position: relative;
+  isolation: isolate;
   display: flex;
   align-items: baseline;
-  gap: 0.65em;
-  padding-block: 0.25em;
-  break-inside: avoid;
+  justify-content: space-between;
+  gap: 0.4em;
+  padding: 0.3em 0.45em;
+  background: var(--paper);
+}
+
+.music-track-list li::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: #dfbb9e;
+  transform-origin: left;
+  transform: scaleX(var(--listening-share));
+  animation: track-fill 320ms var(--shelf-ease);
+}
+
+@keyframes track-fill {
+  from { transform: scaleX(0); }
 }
 
 .music-track-title {
