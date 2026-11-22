@@ -59,11 +59,12 @@ from the reverted version. The page he holds has lines of handwriting across it.
   Keyboard focus puts it under the sleeve. Keep the sleeve the same size. Blend light into
   its artwork, sweeping one band at its own angle, speed and direction, with a soft corner
   gloss and slightly deeper colours.
-- Hovering or focusing a sleeve gives related covers a faint gold edge. Include other
+- Hovering or focusing a sleeve leaves it and its related covers at full brightness.
+  All other covers fade darker. Include other
   releases by the artist and their connected bands or collaborators. Pick up to four
   more sleeves by different artists, starting with those in view. Match their genre
   tags and use the shelf’s broader genres and release years to guide the choice.
-  Clicking or tapping keeps those covers lit behind the track sheet and as you
+  Clicking or tapping keeps the same contrast behind the track sheet and as you
   return to the shelf.
 - Open the clicked sleeve into the top card of a screen-fitting track sheet, using a view
   transition where available and a fade elsewhere. The record stays in its sleeve. The

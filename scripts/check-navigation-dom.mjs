@@ -286,18 +286,21 @@ const checkPublicLanding = async () => {
     await goto("/");
     const personPitch = `document.querySelector('.music-face[aria-label^="Person Pitch, Panda Bear."]')`;
     const relatedFeels = `document.querySelector('.is-related .music-face[aria-label^="Feels, Animal Collective."]')`;
+    const shade = (face) => `Number(getComputedStyle(${face}, "::before").opacity)`;
+    const otherFace = 'document.querySelector(".music-tile:not(.is-related) .music-face")';
+    const onlyOthersDim = `Boolean(${relatedFeels}) && ${shade(personPitch)} === 0 && ${shade(relatedFeels)} === 0 && ${shade(otherFace)} > 0.2`;
     check(await waitFor(`(() => {
       ${personPitch}?.dispatchEvent(new PointerEvent("pointerover", { bubbles: true, pointerType: "mouse" }));
-      return Boolean(${relatedFeels});
-    })()`), "hovering Panda Bear highlights Animal Collective");
+      return ${onlyOthersDim};
+    })()`), "hovering Panda Bear dims other sleeves and keeps Animal Collective bright");
     await evaluate(`${personPitch}?.dispatchEvent(new PointerEvent("pointerout", { bubbles: true, pointerType: "mouse" }))`);
-    check(await waitFor(`!document.querySelector(".music-tile.is-related")`), "leaving the sleeve clears its highlights");
+    check(await waitFor(`!document.querySelector(".music-tile.is-related") && ${shade(otherFace)} === 0`), "leaving restores the shelf to full brightness");
     check(await waitFor(`(() => {
       if (document.querySelector("dialog.music-tracks[open]")) return true;
       ${personPitch}?.click();
       return false;
     })()`), "choosing a record opens its sheet");
-    check(await evaluate(`Boolean(${relatedFeels})`), "opening a record without hovering highlights its related sleeves");
+    check(await waitFor(onlyOthersDim), "opening a record without hovering dims unrelated sleeves");
     return;
   }
   // Dan, 16 November 2026: akibwa.com is one page, the music shelf.

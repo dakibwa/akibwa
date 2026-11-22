@@ -769,22 +769,26 @@ export function MusicRoom({ initial, active }) {
   const highlight = open ?? pointed;
   useLayoutEffect(() => {
     if (!active || !highlight) return;
+    const frame = map.current;
     const visible = new Set();
-    for (const row of map.current.querySelectorAll(".music-row")) {
+    for (const row of frame.querySelectorAll(".music-row")) {
       const box = row.getBoundingClientRect();
       if (box.top >= window.innerHeight) break;
       if (box.bottom <= 0) continue;
       for (const tile of row.children) visible.add(tile.dataset.record ?? tile.dataset.key);
     }
     const matches = relatedRecords(entries, highlight, kinds, visible);
+    matches.add(highlight);
     const marked = [];
-    for (const tile of map.current.querySelectorAll(".music-tile")) {
+    for (const tile of frame.querySelectorAll(".music-tile")) {
       if (matches.has(tile.dataset.record ?? tile.dataset.key)) {
         tile.classList.add("is-related");
         marked.push(tile);
       }
     }
+    if (marked.length) frame.dataset.inspecting = "";
     return () => {
+      delete frame.dataset.inspecting;
       for (const tile of marked) tile.classList.remove("is-related");
     };
   }, [active, highlight, entries, kinds, arrangement, count]);

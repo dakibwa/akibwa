@@ -868,29 +868,25 @@ html.ready .music-mark {
   isolation: isolate;
 }
 
-/* A quiet gold edge and a little reflected light on related sleeves. */
+/* Fade the other sleeves into shade while a record is being inspected. */
 .music-face::before {
   content: "";
   position: absolute;
   z-index: 1;
   inset: 0;
   border-radius: inherit;
-  background: rgb(255 226 170 / 0.10);
-  box-shadow: inset 0 0 0 2px rgb(252 215 145 / 0.85), inset 0 0 9px rgb(197 145 65 / 0.35);
+  background: #000;
+  forced-color-adjust: none;
   opacity: 0;
   transition: opacity 180ms ease;
   pointer-events: none;
 }
 
-.music-tile.is-related .music-face::before {
-  opacity: 1;
+.music-map-frame[data-inspecting] .music-tile:not(.is-related) .music-face::before {
+  opacity: 0.42;
 }
 
 @media (forced-colors: active) {
-  .music-tile.is-related .music-face::before {
-    border: 2px solid Highlight;
-  }
-
   .music-order button[aria-pressed="true"] {
     text-decoration: underline;
   }
