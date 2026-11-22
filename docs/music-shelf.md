@@ -67,8 +67,12 @@ from the reverted version. The page he holds has lines of handwriting across it.
   tags and use the shelf’s broader genres and release years to guide the choice.
   Clicking or tapping keeps the same contrast while the songs are open.
 - Open one slim track list directly under the selected sleeve’s row. Show every
-  song, most listened first, with its listening time beside the title. Long lists
-  scroll sideways. The album details and listening links follow the songs.
+  song, most listened first, with its listening time beside the title. Equal-width
+  ink bars fill from left to right. The longest bar represents the most-listened
+  song on that album, and half the hours gives half the bar. A long row moves
+  slowly from the first song to the last and stops. The reader can pause or
+  scroll by hand. Reduced motion starts with the finished bars and a still row.
+  The album details and listening links follow the songs.
   Selecting another sleeve moves the list there. The same sleeve, the close
   button or Escape folds it away. [Listening links](../public/music-links.json)
 - Reveal the page once its small capitals have loaded. Fade in the bar and mark, lift
