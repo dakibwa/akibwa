@@ -14,8 +14,8 @@
      that name, so a half-finished deploy or an altered copy is never kept;
    - no connection: the kept page, so the game opens offline and plays the
      boards it already downloaded;
-   - a slow answer: the kept page after PATIENCE, and the answer is still
-     taken when it comes, so the next visit opens the new page;
+   - a slow build name or page: the kept page after PATIENCE, and the same
+     download carries on, so the next visit opens the validated new page;
    - any other answer (a missing or strange build.txt, an error): the
      network, as if there were no worker.
 
@@ -37,6 +37,8 @@ const STAMP = new URL('build.txt', ROOT).href;
 // the name of the kept page's bytes rides in a header of the kept copy
 const KEPT = 'x-features-build';
 const PATIENCE = 2500;
+const FETCH_LIMIT = 60000;
+let pageOrder = 0, lastKeptOrder = 0, cacheWrite = Promise.resolve();
 
 self.addEventListener('install', event => {
   self.skipWaiting();
@@ -53,13 +55,14 @@ self.addEventListener('install', event => {
 });
 
 async function keepFirstPage() {
+  const order = ++pageOrder;
   const name = await siteName();
   if (!/^[0-9a-f]{16}$/.test(name)) return;
   const kept = await (await caches.open(STORE)).match(ROOT);
   if (kept?.headers.get(KEPT) === name) return;
   const fromBrowser = async url => {
     const cached = await fetch(url, { cache: 'only-if-cached', mode: 'same-origin', redirect: 'error' }).catch(() => null);
-    return keep(cached, name);
+    return keep(cached, name, order);
   };
   if (await fromBrowser(ROOT)) return;
   // A shared link can leave just its query URL in the HTTP cache. Try one
@@ -68,7 +71,7 @@ async function keepFirstPage() {
   const linked = windows.slice(0, 4).find(client => client.url.startsWith(ROOT + '?'));
   if (linked && await fromBrowser(linked.url)) return;
   const fresh = await fetch(ROOT, { cache: 'no-store', credentials: 'omit', redirect: 'error' });
-  await keep(fresh, name);
+  await keep(fresh, name, order);
 }
 
 self.addEventListener('activate', event => {
@@ -86,36 +89,61 @@ self.addEventListener('fetch', event => {
 });
 
 async function page(event) {
-  const request = event.request;
+  const request = event.request, order = ++pageOrder;
   let kept = null;
   try { kept = await (await caches.open(STORE)).match(ROOT) } catch {}
   const mine = kept && kept.headers.get(KEPT);
   // the kept page, noting which build it is for the page to ask (below)
   const keptPage = () => { remember(event.resultingClientId, mine); return kept };
-  if (kept) {
-    const asked = siteName();
-    const name = await Promise.race([asked, new Promise(r => setTimeout(r, PATIENCE, 'slow'))]);
-    if (name === mine || name === 'offline') return keptPage();
-    if (name === 'slow') {
-      event.waitUntil(asked.then(late => late !== mine && /^[0-9a-f]{16}$/.test(late)
-        ? fetch(ROOT, { cache: 'no-store' }).then(response => keep(response, late)) : null).catch(() => {}));
-      return keptPage();
+  const incoming = (async () => {
+    let name;
+    if (kept) {
+      name = await siteName();
+      if (name === mine || name === 'offline') return null;
+      try { return await downloadPage(request, name ?? undefined, order) }
+      catch { return null }
     }
-  }
-  let response;
-  try { response = await fetch(request) }
-  catch (error) { if (kept) return keptPage(); throw error }
-  // the site itself failing is no reason to show an error page over a kept game
-  if (kept && response.status >= 500) return keptPage();
-  event.waitUntil(keep(response.clone()).catch(() => {}));
-  return response;
+    const response = await fetch(request);
+    event.waitUntil(keep(response.clone(), undefined, order).catch(() => {}));
+    return { response };
+  })();
+  if (!kept) return (await incoming).response;
+  /* One deadline covers the build name and the whole document. Keep
+     that same request alive after falling back, including its cache write. */
+  event.waitUntil(incoming.catch(() => {}));
+  let timer;
+  try {
+    const delivered = await Promise.race([incoming, new Promise(resolve => {
+      timer = setTimeout(resolve, PATIENCE, null);
+    })]);
+    if (!delivered) return keptPage();
+    if (delivered.build) remember(event.resultingClientId, delivered.build);
+    return delivered.response;
+  } finally { clearTimeout(timer) }
 }
 
-/* which build each page was given from the kept copy, by the page's client id.
-   That copy is older than the one build.txt names when the site was slow or
-   out of reach, and the page takes its first answer from build.txt as its own
-   build (checkFresh in index.html), so a tab opened on an older copy would
-   never learn it is behind and never swap. The page asks here first
+/* Read the whole document before offering it over a playable copy, so
+   headers alone cannot open a blank game. Each navigation keeps its own
+   request and response. Bound a stalled download so it can be retried. */
+async function downloadPage(request, name, order) {
+  const controller = new AbortController(), timer = setTimeout(() => controller.abort(), FETCH_LIMIT);
+  try {
+    const response = await fetch(request, { signal: controller.signal });
+    if (response.status >= 500) { response.body?.cancel().catch(() => {}); return null }
+    const body = await response.clone().arrayBuffer();
+    const build = await keep(response, name, order, body).catch(() => null);
+    // WebKit can finish a broken stream with short bytes instead of an
+    // error. A claimed game update that fails its hash is still a failed download.
+    if (name && build === false) return null;
+    return { response, build };
+  } finally { clearTimeout(timer) }
+}
+
+/* which verified build each page was given, by the page's client id. A kept
+   copy or a download another release overtook can be older than build.txt.
+   The page takes its first answer from build.txt as its own build
+   (checkFresh in index.html), so that older tab would never learn it is
+   behind and never swap. The page asks here first
    (keptBuild). Kept in memory alone: a worker stopped since remembers
    nothing, and the page then goes by build.txt, as it does with no worker. */
 const served = new Map();
@@ -132,26 +160,37 @@ self.addEventListener('message', event => {
 /* the site's name for the page it serves now: sixteen hex digits, 'offline'
    when no answer could come at all, or null for an answer that names nothing */
 async function siteName() {
+  const controller = new AbortController(), timer = setTimeout(() => controller.abort(), FETCH_LIMIT);
   try {
-    const response = await fetch(STAMP + '?sw=' + Date.now().toString(36), { cache: 'no-store', credentials: 'omit' });
+    const response = await fetch(STAMP + '?sw=' + Date.now().toString(36), { cache: 'no-store', credentials: 'omit', signal: controller.signal });
     if (!response.ok) { response.body?.cancel().catch(() => {}); return null }
     const text = (await response.text()).trim();
     return /^[0-9a-f]{16}$/.test(text) ? text : null;
   } catch { return 'offline' }
+  finally { clearTimeout(timer) }
 }
 
-async function keep(response, name) {
-  if (!response || response.status !== 200 || response.type !== 'basic' || response.redirected) return false;
-  if (!/^text\/html/i.test(response.headers.get('content-type') || '')) return false;
-  const body = await response.arrayBuffer();
+async function keep(response, name, order, downloaded) {
+  if (!response || response.status !== 200 || response.type !== 'basic' || response.redirected) return;
+  if (!/^text\/html/i.test(response.headers.get('content-type') || '')) return;
+  const body = downloaded ?? await response.arrayBuffer();
   if (name === undefined) name = await siteName();
-  if (!/^[0-9a-f]{16}$/.test(name || '') || await bytesName(body) !== name) return false;
+  if (!/^[0-9a-f]{16}$/.test(name || '')) return;
+  if (await bytesName(body) !== name) return false;
   const headers = new Headers(response.headers);
   // the body is kept decoded, so it must not claim an encoding or a length
   headers.delete('content-encoding'); headers.delete('content-length');
   headers.set(KEPT, name);
-  await (await caches.open(STORE)).put(ROOT, new Response(body, { status: 200, statusText: 'OK', headers }));
-  return true;
+  // A tab whose older download finishes last must not roll another tab's
+  // completed update back. Serialize writes as well as comparing their order.
+  cacheWrite = cacheWrite.catch(() => {}).then(async () => {
+    if (order < lastKeptOrder) return;
+    await (await caches.open(STORE)).put(ROOT, new Response(body, { status: 200, statusText: 'OK', headers }));
+    lastKeptOrder = order;
+  });
+  // A storage refusal still leaves a complete, verified page to open.
+  await cacheWrite.catch(() => {});
+  return name;
 }
 
 // tools/build-stamp.mjs: the first sixteen hex digits of the bytes' SHA-256
