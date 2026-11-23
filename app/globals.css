@@ -248,7 +248,7 @@ html.ready .music-mark {
   --mark: clamp(56px, 3vw + 28px, 84px);
   display: flex;
   align-items: center;
-  gap: clamp(16px, 2.2vw, 32px);
+  justify-content: space-between;
   padding: calc(8px + var(--mark) * 0.1912) 0 8px;
   background: var(--paper);
 }
@@ -300,14 +300,7 @@ html.ready .music-mark {
 .music-sign:hover::after, .music-sign:focus-visible::after { opacity: 1; transform: scale(1); animation: halo-breathes 2.6s ease-in-out 620ms infinite alternate; }
 @keyframes halo-breathes { to { opacity: 0.6; transform: scale(1.04); } }
 
-.music-tools {
-  position: relative;
-  display: flex;
-  flex: 1;
-  align-items: center;
-  min-width: 0;
-  gap: clamp(10px, 2vw, 28px);
-}
+.music-tools, .music-order { display: contents; }
 
 /* What is on the shelf: albums or singles, a two-way switch in one capsule.
    The chosen side is a paper chip raised off the capsule. */
@@ -339,7 +332,6 @@ html.ready .music-mark {
 }
 
 /* The order: four plain words; the chosen one sits on a rust-tinted chip. */
-.music-order { display: flex; flex: none; align-items: center; gap: 2px; }
 .music-order button {
   position: relative;
   display: inline-flex;
@@ -382,7 +374,6 @@ html.ready .music-mark {
   gap: 8px;
   width: clamp(272px, 21vw, 330px);
   height: 40px;
-  margin-left: auto;
   padding: 0 6px 0 14px;
   border-radius: 999px;
   background: var(--paper-deep);
@@ -441,7 +432,6 @@ html.ready .music-mark {
   flex: none;
   width: 44px;
   height: 44px;
-  margin-left: auto;
   margin-right: -6px;
   padding: 0;
   border: 0;
@@ -459,9 +449,9 @@ html.ready .music-mark {
   .music-find { display: grid; }
   .music-search {
     position: absolute;
-    top: 50%;
+    top: calc(50% + var(--mark) * 0.0956);
     right: 0;
-    left: 0;
+    left: calc(var(--mark) + 10px);
     width: auto;
     margin: 0;
     background: var(--paper-light);
@@ -475,16 +465,15 @@ html.ready .music-mark {
   .music-search input { font-size: 16px; }
   .music-search kbd { display: none; }
   .music-tools[data-finding="true"] .music-search { opacity: 1; visibility: visible; transform: translate(0, -50%); pointer-events: auto; transition-delay: 0s; }
-  .music-tools > :not(.music-search) { transition: opacity 130ms ease, transform 220ms var(--shelf-ease), visibility 0s; }
-  .music-tools[data-finding="true"] > :not(.music-search) { opacity: 0; visibility: hidden; transform: translateX(-8px); pointer-events: none; transition: opacity 130ms ease, transform 220ms var(--shelf-ease), visibility 0s linear 130ms; }
+  :is(.music-crate, .music-order button, .music-find) { transition: opacity 130ms ease, transform 220ms var(--shelf-ease), visibility 0s; }
+  .music-tools[data-finding="true"] :is(.music-crate, .music-order button, .music-find) { opacity: 0; visibility: hidden; transform: translateX(-8px); pointer-events: none; transition: opacity 130ms ease, transform 220ms var(--shelf-ease), visibility 0s linear 130ms; }
 }
 
 /* A phone: one row still. The switch shows only its singles side, as an
    outlined chip that fills when on; the orders tighten. */
 @media (max-width: 619px) {
-  .music-bar { --mark: 52px; gap: 10px; --chip-h: 34px; }
+  .music-bar { --mark: 52px; --chip-h: 34px; }
   .music-sign { margin-left: 4px; }
-  .music-tools { gap: 6px; }
   .music-crate { padding: 0; background: none; }
   .music-albums { display: none; }
   .music-crate .music-singles {
@@ -494,13 +483,10 @@ html.ready .music-mark {
     font-size: 14px;
   }
   .music-crate .music-singles[aria-pressed="true"] { background: var(--ink); color: var(--paper-light); box-shadow: none; }
-  .music-order { gap: 0; }
   .music-order button { padding: 0 8px; font-size: 14px; }
   .music-order-way { width: 0.7em; }
 }
 @media (max-width: 400px) {
-  .music-bar { gap: 6px; }
-  .music-tools { gap: 2px; }
   .music-order button { padding: 0 6px; font-size: 13px; }
   .music-crate .music-singles { padding: 0 9px; font-size: 13px; }
 }
@@ -508,7 +494,6 @@ html.ready .music-mark {
   .music-bar { --mark: 48px; }
 }
 @media (max-width: 359px) {
-  .music-bar { gap: 4px; }
   .music-order button { padding: 0 4px; font-size: 12px; }
   .music-crate .music-singles { padding: 0 7px; font-size: 12px; }
 }
@@ -738,8 +723,6 @@ html.ready .music-mark {
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .music-face:hover { transform: translateY(-3px); }
-
   .music-face:hover::after {
     opacity: 1;
     background-position: var(--sheen-to, -30%) 0, 0 0;

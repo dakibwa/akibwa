@@ -36,8 +36,8 @@ The layout, merging and ordering code runs in the build checks against real reco
 - Glide the whole shelf into order and use only the headings it needs. Search finds albums
   and singles together in one group, most listened first. Choosing an order clears search.
   The signature returns to hours, clears the search and scrolls to the top.
-- Keep one pinned row. Group Albums and Singles beside the signature and put
-  the four sort orders together. A soft rust background marks the chosen sort.
+- Keep one pinned row. Leave equal gaps between the signature, the Albums/Singles
+  switch, each sort option and search. A soft rust background marks the chosen sort.
   Below 620 px, Singles toggles the view on its own. Search opens from the
   right below 900 px. Pressing / focuses it, and Escape clears it.
 - Set group names on kraft tabs, with a row of jumps for years, genres or
@@ -57,7 +57,7 @@ from the reverted version. The page he holds has lines of handwriting across it.
 
 - Resting the pointer on a sleeve or focusing it shows its title, artist, year and
   hours in a small caption at the bottom left, with the time on a gold tag. A quick pass across the gaps keeps
-  the previous selection until the pointer settles. Keep the sleeve the same size. Blend light into
+  the previous selection until the pointer settles. Keep the sleeve fixed in place and at the same size. Blend light into
   its artwork, sweeping one band at its own angle, speed and direction, with a soft corner
   gloss and slightly deeper colours.
 - Hovering or focusing a sleeve leaves it and its related covers at full brightness.

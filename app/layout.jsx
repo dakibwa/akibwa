@@ -24,7 +24,7 @@ export const metadata = {
     // captured at 1200×630.
     images: [
       {
-        url: "/share-card-shelf.jpg",
+        url: "/share-card-record-shelf.jpg",
         width: 1200,
         height: 630,
         alt: "Akibwa: album sleeves on a shelf, each as large as the hours listened"
@@ -35,7 +35,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "Akibwa",
     description,
-    images: ["/share-card-shelf.jpg"]
+    images: ["/share-card-record-shelf.jpg"]
   },
   // The sized .ico serves browsers without SVG icons and requests that skip
   // the page (feeds, robots.txt); iOS draws its own corners on the touch icon.
