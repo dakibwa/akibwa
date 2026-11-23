@@ -318,6 +318,8 @@ const checkPublicLanding = async () => {
   await sleep(800);
   let state = await pageState();
   const ax = await cdp.send("Accessibility.getFullAXTree");
+  const accessibleAlbums = ax.nodes.filter(node => node.role?.value === "button" && node.name?.value?.includes(" listened,"));
+  check(accessibleAlbums.length === RECORDS, `every album is available to a screen reader before scrolling [${accessibleAlbums.length} of ${RECORDS}]`);
   const mainHeading = ax.nodes.find((node) => node.role?.value === "heading" && node.properties?.some((property) => property.name === "level" && property.value.value === 1));
   check(mainHeading?.name?.value === "Akibwa: the music I play most", `the h1 names the page for readers [${mainHeading?.name?.value}]`);
   check(state.tiles === RECORDS, `the page is the shelf of every record [${state.tiles} of ${RECORDS}]`);
@@ -441,26 +443,17 @@ const checkPublicLanding = async () => {
   await cdp.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
   check(await waitFor(`document.activeElement.matches(".music-find") && document.querySelector(".music-find").getAttribute("aria-expanded") === "false"`), "dismissing phone search returns focus to its visible button");
 
-  section("music loading recovery");
-  await cdp.send("Fetch.enable", { patterns: [{ urlPattern: "*music-ranking.json", requestStage: "Request" }] });
-  let paused = cdp.waitFor("Fetch.requestPaused");
-  let navigation = goto("/");
-  let request = await paused;
-  await cdp.send("Fetch.fulfillRequest", { requestId: request.requestId, responseCode: 503, body: Buffer.from("unavailable").toString("base64") });
-  await navigation;
-  check(await waitFor(`Boolean(document.querySelector(".music-page .music-more button"))`), "a failed ranking preserves the seed and offers recovery");
-  await evaluate(`document.querySelector(".music-page .music-face").click()`);
-  check(await waitFor(`Boolean(document.querySelector("#record-tracks .music-tracks-note button"))`), "a failed track list can be retried from inside its track sheet");
-  paused = cdp.waitFor("Fetch.requestPaused");
-  await evaluate(`document.querySelector("#record-tracks .music-tracks-note button").click()`);
-  request = await paused;
-  await cdp.send("Fetch.continueRequest", { requestId: request.requestId });
-  await cdp.send("Fetch.disable");
-  check(await waitFor(`Boolean(document.querySelector("#record-tracks .music-track-list li"))`, 8000), "retrying fills the same open sheet with its tracks");
+  section("album details from the exported catalogue");
+  await cdp.send("Network.enable");
+  await cdp.send("Network.setBlockedURLs", { urls: ["*music-ranking.json*", "*music-meta.json*", "*music-years.json*", "*music-kinds.json*", "*music-links.json*"] });
+  await goto("/");
+  await evaluate('document.querySelector(".music-face").click()');
+  check(await waitFor('Boolean(document.querySelector("#record-tracks .music-track-list li"))'), "album tracks open without a second data request");
+  check(await evaluate('document.querySelectorAll("#record-tracks a").length === 0'), "streaming services are absent from the album sheet");
   check(await evaluate(`(() => {
     const sheet = document.querySelector("#record-tracks");
     return sheet.scrollWidth <= sheet.clientWidth + 1;
-  })()`), "an open phone sheet fits its actual width when its tracks arrive on retry");
+  })()`), "an open phone sheet fits its actual width when its tracks open");
   check(await evaluate(`(() => {
     const strip = document.querySelector("#record-tracks");
     const list = strip.querySelector(".music-track-list");
@@ -472,19 +465,7 @@ const checkPublicLanding = async () => {
       && tracks.at(-1).offsetTop > tracks[0].offsetTop && list.scrollWidth <= list.clientWidth + 1 && document.documentElement.scrollWidth <= innerWidth + 1;
   })()`), "the phone lists every track and its time in a wrapping list under the selected row");
 
-  await cdp.send("Fetch.enable", { patterns: [{ urlPattern: "*music-ranking.json", requestStage: "Request" }] });
-  paused = cdp.waitFor("Fetch.requestPaused");
-  navigation = goto("/");
-  request = await paused;
-  await cdp.send("Fetch.fulfillRequest", {
-    requestId: request.requestId,
-    responseCode: 200,
-    responseHeaders: [{ name: "Content-Type", value: "application/json" }],
-    body: Buffer.from(JSON.stringify({ schemaVersion: 2, names: [], songs: [], albums: [] })).toString("base64")
-  });
-  await navigation;
-  check(await waitFor(`document.querySelectorAll(".music-page .music-tile").length === ${RECORDS} && Boolean(document.querySelector(".music-page .music-more button"))`), "an empty successful response cannot erase the shelf");
-  await cdp.send("Fetch.disable");
+  await cdp.send("Network.setBlockedURLs", { urls: [] });
 
   section("without JavaScript");
   await setDesktop(320, 568);

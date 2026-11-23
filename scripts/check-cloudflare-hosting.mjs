@@ -83,6 +83,7 @@ assert.equal(canonical.headers.get("location"), "https://akibwa.com/favicon.svg?
 const samples = [
   files.find((file) => file.path.startsWith("_next/static/") && file.path.endsWith(".css"))?.path,
   files.find((file) => file.path.startsWith("_next/static/") && file.path.endsWith(".js"))?.path,
+  files.find((file) => file.path.startsWith("_next/static/sleeves/") && file.path.endsWith(".avif"))?.path,
   files.find((file) => file.path.startsWith("album-art/") && file.path.endsWith(".avif"))?.path,
   "favicon.svg", "favicon.ico", "apple-touch-icon.png", "meditator/sw.js", "sw.js", "robots.txt", "sitemap.xml",
 ];

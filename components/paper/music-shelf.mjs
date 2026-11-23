@@ -191,7 +191,7 @@ export function arrange(order, entries, { years, kinds, reverse = false } = {}) 
       for (const [year, minutes] of yearPairs(entry.item, years) ?? []) {
         if (minutes < 60) continue;
         if (!map.has(year)) map.set(year, []);
-        map.get(year).push({ ...entry, item: { ...entry.item, key: `${year}:${entry.item.key}`, record: entry.item.key, minutes, inYear: year, allMinutes: entry.item.minutes } });
+        map.get(year).push({ item: { ...entry.item, key: `${year}:${entry.item.key}`, record: entry.item.key, minutes, inYear: year, allMinutes: entry.item.minutes } });
       }
     }
     return [...map]

@@ -1,6 +1,4 @@
 import { MusicRoom } from "@/components/paper/music-room";
-import { musicSeed } from "@/lib/paper-home.mjs";
-import ranking from "@/public/music-ranking.json";
 
 export const metadata = {
   title: { absolute: "Akibwa" },
@@ -27,7 +25,7 @@ export default function IndexPage() {
   return (
     <div className="music-page">
       <h1 className="visually-hidden">Akibwa: the music I play most</h1>
-      <MusicRoom initial={musicSeed(ranking)} active />
+      <MusicRoom active />
     </div>
   );
 }

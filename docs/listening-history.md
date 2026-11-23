@@ -173,14 +173,12 @@ offered once at least a dozen of the albums were played for an hour in it:
 2016–2026 on the current history (Spotify delivered no records for 2013 or
 2015, and few for 2012 and 2014).
 
-### Links and the cover check
+### The cover check
 
 `node scripts/build-music-sources.mjs` looks each album up on MusicBrainz and
 the Spotify and Apple Music albums its releases and Wikidata item link to,
 each confirmed by title (Spotify's public oEmbed, Apple's lookup), with
-Apple's search as a second way in. It writes `public/music-links.json`, which
-the track sheet links to (a search on each service where no album is
-confirmed), and `data/music-sources.json`: each sleeve compared with the same
+Apple's search as a second way in. It writes `data/music-sources.json` with each sleeve compared with the same
 album's cover on Deezer, Apple Music, the Cover Art Archive and Spotify. None
 of these needs a key. `check:navigation` fails while an album's sleeve neither
 matches an independent cover nor has been checked by eye (`REVIEWED` in the
@@ -190,8 +188,8 @@ September 2026) cannot reach the room.
 ### Refreshing the room
 
 One command rebuilds all of it from the owning history — the catalogue, the
-ranking and its years, the search's genres and years, the large sleeves, the
-links and the cover check — and stops on anything that needs a look:
+ranking and its years, the search's genres and years, the large sleeves and the
+cover check — and stops on anything that needs a look:
 
 ```sh
 npm run music:refresh -- --history-root /path/to/private/digital-history

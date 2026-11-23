@@ -645,12 +645,16 @@ html.ready .music-mark {
   list-style: none;
 }
 
-/* The row height is known from the shelf packing. Browsers can skip its
-   covers off screen while keeping scroll distances and keyboard order. */
+/* Row sizes are exact. Only skip decorative artwork offscreen so every
+   record button stays in the accessibility tree at all scroll positions. */
 .music-map[data-measured="true"] .music-row:not([data-near]) {
-  content-visibility: auto;
-  contain-intrinsic-block-size: calc(var(--side) * 1px);
+  contain: strict;
+  block-size: calc(var(--side) * 1px);
   overflow-clip-margin: 8px;
+}
+
+.music-map[data-measured="true"] .music-row:not([data-near]) picture {
+  content-visibility: auto;
 }
 
 .music-tile {
@@ -719,46 +723,45 @@ html.ready .music-mark {
   }
 }
 
-.music-face::after {
-  content: none;
+.music-gloss {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(var(--sheen-angle, 112deg), rgb(255 255 255 / 0) 34%, rgb(255 255 255 / 0.75) 46%, rgb(255 255 255 / 0.2) 52%, rgb(255 255 255 / 0) 62%) var(--sheen-from, 130%) 0 / 260% 100% no-repeat,
-    radial-gradient(120% 90% at var(--gloss-x, 18%) 6%, rgb(255 255 255 / 0.42), rgb(255 255 255 / 0) 58%);
+  background: radial-gradient(120% 90% at var(--gloss-x) 6%, rgb(255 255 255 / 0.42), transparent 58%);
   mix-blend-mode: overlay;
   opacity: 0;
-  transition: opacity 240ms ease, background-position 0s 240ms;
+  transition: opacity 240ms ease;
   pointer-events: none;
 }
 
-/* Only sleeves already inspected need a layer for the gloss. */
-.music-face[data-gloss]::after {
+/* The same oversized band travels across the cover on its own layer.
+   Its corner reflection stays in place as the band moves. */
+.music-gloss::after {
   content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 260%;
+  background: linear-gradient(var(--sheen-angle), transparent 34%, rgb(255 255 255 / 0.75) 46%, rgb(255 255 255 / 0.2) 52%, transparent 62%);
+  transform: translateX(var(--sheen-from));
+  transition: transform 0s 240ms;
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .music-face:hover::after {
+  .music-face:hover .music-gloss {
     opacity: 1;
-    background-position: var(--sheen-to, -30%) 0, 0 0;
-    transition: opacity 160ms ease, background-position var(--sheen-time, 1.1s) cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition-duration: 160ms;
   }
-
+  .music-face:hover .music-gloss::after {
+    transform: translateX(var(--sheen-to));
+    transition: transform var(--sheen-time) cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
   @starting-style {
-    .music-face:hover::after {
-      opacity: 0;
-      background-position: var(--sheen-from, 130%) 0, 0 0;
-    }
+    .music-face:hover .music-gloss { opacity: 0; }
+    .music-face:hover .music-gloss::after { transform: translateX(var(--sheen-from)); }
   }
-
-  .music-face:hover img {
-    filter: saturate(1.12) contrast(1.05);
-  }
+  .music-face:hover img { filter: saturate(1.12) contrast(1.05); }
 }
 
-.music-face:focus-visible::after {
-  opacity: 1;
-}
+.music-face:focus-visible .music-gloss { opacity: 1; }
 
 /* Scrolling introduces a row with one animation for all its covers. */
 .music-row[data-arriving] {
@@ -815,7 +818,7 @@ html.ready .music-mark {
   text-transform: lowercase;
 }
 
-.music-type strong {
+.music-type strong:not([hidden]) {
   display: -webkit-box;
   overflow: hidden;
   font: 550 14px/1.2 var(--serif);
@@ -842,11 +845,11 @@ html {
   --edge: #dccdb6;
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   grid-template-areas:
-    "release listen close"
-    "list list list"
-    "more more more";
+    "release close"
+    "list list"
+    "more more";
   column-gap: 10px;
   padding: 11px 12px 12px 14px;
   border: 1px solid var(--edge);
@@ -946,44 +949,6 @@ html {
 .music-release-total b {
   color: var(--ink);
   font: 700 1.06em/1 var(--serif);
-}
-
-/* Where to hear it: two small pills, 44px to touch. */
-.music-listen {
-  grid-area: listen;
-  align-self: baseline;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.music-listen a {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  height: 26px;
-  padding: 0 10px 0 9px;
-  border: 1px solid rgb(42 36 32 / 0.17);
-  border-radius: 999px;
-  color: var(--ink-soft);
-  font: 650 var(--sheet-small)/1 var(--sans);
-  text-decoration: none;
-  white-space: nowrap;
-  transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease;
-}
-.music-listen a::after {
-  content: "";
-  position: absolute;
-  inset: -10px -3px;
-}
-.music-listen a:hover {
-  border-color: rgb(42 36 32 / 0.36);
-  background: var(--base);
-  color: var(--ink);
-}
-.music-listen a:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 2px;
 }
 
 .music-tracks-close {
@@ -1121,17 +1086,9 @@ html {
   .music-tracks {
     padding: 9px 10px 10px 11px;
     border-radius: 6px;
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas:
-      "release close"
-      "list list"
-      "more more";
   }
   .music-release {
     column-gap: 10px;
-  }
-  .music-listen {
-    display: none;
   }
   .music-track-list {
     margin-top: 8px;
@@ -1153,26 +1110,7 @@ html {
   .music-track-list > li::before { background: Highlight; forced-color-adjust: none; opacity: 0.35; }
 }
 
-.music-more p {
-  margin: 0;
-  color: var(--ink-soft);
-  font: 500 16px/1.3 var(--sans);
-}
-
-.music-more .chip,
-.music-tracks-note .chip {
-  min-height: 44px;
-  margin-top: 10px;
-  padding: 0 16px;
-  border: 1px solid var(--ink);
-  border-radius: 2px;
-  background: none;
-  font: 500 13px/1 var(--sans);
-
-  cursor: pointer;
-}
-
-/* The static album list remains readable when scripting is unavailable. */
+/* The full sleeve grid also works without the interactive controls. */
 html:not(.js) .music-bar {
   display: none;
 }

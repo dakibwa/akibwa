@@ -1,57 +1,15 @@
 "use client";
 
-import { Fragment, PureComponent, createRef, memo, startTransition, useCallback, useDeferredValue, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { AlbumArtImage } from "../site-image";
+import { Fragment, PureComponent, createRef, startTransition, useCallback, useDeferredValue, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { ShelfTiles, firstCoverHint, initialRow, plays, recordLabel } from "./music-tiles.mjs";
 import { flushSync } from "react-dom";
-import { useMusicRanking } from "../use-music-ranking";
-import { LARGE_ART } from "./music-art.mjs";
-import { indexItems, relatedRecords, search } from "./music-search.mjs";
-import { ORDERS, arrange, listened, mergeShelf, rowsFor, songLabel } from "./music-shelf.mjs";
+import catalogue from "@/.shelf-build/catalogue.json";
+import { openCatalogue } from "./music-catalogue.mjs";
+import { relatedLookup, search } from "./music-search.mjs";
+import { ORDERS, arrange, listened, rowsFor, songLabel } from "./music-shelf.mjs";
 
 // Albums and the records behind the top songs share one shelf. Sorting,
 // searching and opening a track sheet all work in place.
-
-// A public file the room fetches once it opens: the search's genres and
-// years, the hours by year, the kinds, or where each album can be heard.
-function useRoomFile(active, path) {
-  const [data, setData] = useState(null);
-  const [failed, setFailed] = useState(false);
-  const [attempt, setAttempt] = useState(0);
-  const retry = useCallback(() => setAttempt((count) => count + 1), []);
-  useEffect(() => {
-    if (!active || data) return undefined;
-    const controller = new AbortController();
-    setFailed(false);
-    fetch(path, { signal: controller.signal })
-      .then((response) => {
-        if (!response.ok) throw new Error(String(response.status));
-        return response.json();
-      })
-      .then((packet) => { if (!controller.signal.aborted) setData(packet); })
-      .catch(() => { if (!controller.signal.aborted) setFailed(true); });
-    window.addEventListener("online", retry);
-    return () => {
-      controller.abort();
-      window.removeEventListener("online", retry);
-    };
-  }, [active, data, path, attempt, retry]);
-  return { data, failed, retry };
-}
-
-// Where to hear it: the release found on each service, or a search there.
-function listenLinks(found, artist, title) {
-  const term = encodeURIComponent(`${artist} ${title}`);
-  return [
-    ["Spotify", found?.spotify ?? `https://open.spotify.com/search/${term}`],
-    ["Apple Music", found?.apple ?? `https://music.apple.com/gb/search?term=${term}`]
-  ];
-}
-
-// Paper tints for the songs, one to an artist.
-const TINTS = ["#f6efdd", "#f1dcd4", "#dfe8ef", "#e3ead6", "#f4e3b8", "#e8dff0", "#f0d9c2", "#d9e6e0"];
-const tintFor = (artist) => TINTS[[...artist].reduce((hash, letter) => (hash * 31 + letter.charCodeAt(0)) >>> 0, 7) % TINTS.length];
-
-const plays = (count) => `${count.toLocaleString("en-GB")} ${count === 1 ? "play" : "plays"}`;
 
 /*
  * The width the shelf is laid out at. A room opening is laid out at once; a
@@ -120,14 +78,24 @@ function visibleTiles(list, animations = []) {
   return visible;
 }
 
-function prepareImages(row) {
-  for (const image of row.querySelectorAll("img")) {
-    if (!image.complete) image.dataset.loading = "true";
-  }
-}
-
 function imageSettled(event) {
   delete event.target.dataset.loading;
+}
+
+// An older open tab can outlive the deployment that supplied its hashed
+// artwork. The original album URL still serves that cover on the new site.
+function imageFailed(event) {
+  const image = event.target;
+  imageSettled(event);
+  if (image.tagName !== "IMG" || !image.currentSrc.includes("/_next/static/sleeves/")) return;
+  for (const element of image.parentElement.children) {
+    for (const name of ["srcset", "src"]) {
+      const value = element.getAttribute(name);
+      if (value?.includes("/_next/static/sleeves/")) {
+        element.setAttribute(name, value.replace(/\/_next\/static\/sleeves\/[a-f0-9]+\//g, "/album-art/"));
+      }
+    }
+  }
 }
 
 function markRelatedRow(row, matches) {
@@ -148,6 +116,7 @@ class GlidingShelf extends PureComponent {
   };
 
   componentDidMount() {
+    this.props.tiles.arrange(this.list.current, this.props.arrangement);
     this.motion = matchMedia("(prefers-reduced-motion: reduce)");
     this.motion.addEventListener("change", this.stop);
     this.ready = document.documentElement.classList.contains("ready");
@@ -183,30 +152,31 @@ class GlidingShelf extends PureComponent {
 
   // After the opening sequence, each newly visible row arrives together.
   revealed = new WeakSet();
+  below = new WeakSet();
 
   watch = () => {
-    const list = this.list.current;
-    // Rows have no place of their own until the shelf has been measured.
-    if (!list || !this.props.measured || this.motion.matches || typeof IntersectionObserver === "undefined") return;
-    if (!this.seer) {
-      this.seer = new IntersectionObserver((entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          const row = entry.target;
-          this.seer.unobserve(row);
+    if (!this.props.measured) return;
+    const visible = this.props.tiles.visibleRows;
+    visible.clear();
+    const rows = this.list.current.querySelectorAll(".music-row");
+    if (typeof IntersectionObserver === "undefined") {
+      for (const row of rows) visible.add(row);
+      return;
+    }
+    this.seer?.disconnect();
+    this.seer = new IntersectionObserver(entries => {
+      for (const { target: row, isIntersecting, boundingClientRect } of entries) {
+        if (isIntersecting) {
+          visible.add(row);
+          if (this.below.has(row) && !this.revealed.has(row) && !this.motion.matches) row.dataset.arriving = "";
           this.revealed.add(row);
-          if (!this.motion.matches) row.dataset.arriving = "";
+        } else {
+          visible.delete(row);
+          if (boundingClientRect.top >= window.innerHeight) this.below.add(row);
         }
-      }, { rootMargin: "0px 0px -4% 0px" });
-    }
-    // Release removed rows when the user changes orders.
-    this.seer.disconnect();
-    const fold = window.innerHeight;
-    for (const row of list.querySelectorAll(".music-row")) {
-      if (this.revealed.has(row)) continue;
-      if (row.getBoundingClientRect().top < fold) this.revealed.add(row);
-      else this.seer.observe(row);
-    }
+      }
+    });
+    for (const row of rows) this.seer.observe(row);
   };
 
   getSnapshotBeforeUpdate(previous) {
@@ -215,7 +185,12 @@ class GlidingShelf extends PureComponent {
   }
 
   componentDidUpdate(previous, state, before) {
-    if (previous.arrangement === this.props.arrangement && previous.count === this.props.count && previous.measured === this.props.measured) return;
+    const { tiles, openTile, arrangement, measured } = this.props;
+    if (openTile !== previous.openTile) tiles.select(previous.openTile, false);
+    const changed = arrangement !== previous.arrangement;
+    if (changed) tiles.arrange(this.list.current, arrangement);
+    if (openTile !== previous.openTile || changed) tiles.select(openTile, true);
+    if (!changed && measured === previous.measured) return;
     this.opening();
     this.watch();
     if (!before) return;
@@ -250,18 +225,50 @@ class GlidingShelf extends PureComponent {
   }
 
   render() {
-    const { order, arrangement, count, reference, measured, onOpen, onPoint, openTile, tracks } = this.props;
+    const { order, arrangement, reference, measured, onOpen, onPoint, openTile, tracks, tiles } = this.props;
+    const firstRow = !measured && arrangement[0]?.rows[0];
+    const first = firstRow?.entries?.[0]?.item;
     let drawn = 0;
     return (
       <div
         ref={this.list}
+        onClick={event => {
+          const face = event.target.closest(".music-face");
+          const entry = face && tiles.records.get(face.parentElement.dataset.key);
+          if (entry) onOpen(entry.item, face);
+        }}
+        onPointerOver={event => {
+          if (event.pointerType === "touch") return;
+          const face = event.target.closest(".music-face");
+          if (!face || face.contains(event.relatedTarget instanceof Node ? event.relatedTarget : null)) return;
+          const entry = tiles.records.get(face.parentElement.dataset.key);
+          if (entry) {
+            prepareSheen(face, entry.item.record ?? entry.item.key);
+            onPoint(entry.item, 45);
+          }
+        }}
+        onPointerOut={event => {
+          const face = event.target.closest(".music-face");
+          if (event.pointerType === "touch" || !face || face.contains(event.relatedTarget instanceof Node ? event.relatedTarget : null)) return;
+          onPoint(event.relatedTarget?.closest?.(".music-shelf") ? undefined : null);
+        }}
+        onFocus={event => {
+          const face = event.target.closest(".music-face:focus-visible");
+          const entry = face && tiles.records.get(face.parentElement.dataset.key);
+          if (entry) {
+            prepareSheen(face, entry.item.record ?? entry.item.key);
+            onPoint(entry.item);
+          }
+        }}
+        onBlur={event => { if (event.target.closest(".music-face")) onPoint(null); }}
         onLoadCapture={imageSettled}
-        onErrorCapture={imageSettled}
+        onErrorCapture={imageFailed}
         data-measured={measured}
         className={`music-map is-by-${order}`}
         role="region"
         aria-label={`The records I play most, ${order === "hours" ? "most listened first" : order === "name" ? "a to z" : `by ${order}`}`}
       >
+        {first?.art && <link rel="preload" {...firstCoverHint(first, firstRow.side)} />}
         {arrangement.length > 1 && arrangement[0].label && (
           <nav aria-label={`Jump to a ${order === "kind" ? "genre" : order === "name" ? "letter" : "year"}`}>
             <ul className="music-index">
@@ -276,7 +283,6 @@ class GlidingShelf extends PureComponent {
           </nav>
         )}
         {arrangement.map((group, groupIndex) => {
-          if (drawn >= count) return null;
           return (
             <section key={group.key} className="music-group" id={`shelf-group-${groupIndex}`} tabIndex={-1} aria-label={group.label || undefined}>
               {group.label ? (
@@ -287,13 +293,12 @@ class GlidingShelf extends PureComponent {
               ) : null}
               <div className="music-shelf">
                 {group.rows.map((row, at) => {
-                  const length = Math.min(count - drawn, row.entries.length);
-                  if (length <= 0) return null;
-                  drawn += length;
+                  const start = drawn;
+                  drawn += row.entries.length;
                   const selected = openTile && row.entries.some(({ item }) => item.key === openTile) ? openTile : null;
                   return (
                     <Fragment key={at}>
-                      <ShelfRow row={row} length={length} selected={selected} reference={reference} first={groupIndex === 0 && at === 0} onOpen={onOpen} onPoint={onPoint} />
+                      <ShelfRow row={row} start={start} reference={reference} tiles={tiles} />
                       {selected ? tracks : null}
                     </Fragment>
                   );
@@ -307,103 +312,38 @@ class GlidingShelf extends PureComponent {
   }
 }
 
-/*
- * The shelf is drawn in one pass, so the page holds every record before
- * scripting runs; a longer list would draw the rest a frame later.
- */
-const FIRST = 1000;
+// The initial HTML also works with JavaScript disabled. Keep this prop stable:
+// subsequent moves inside the row belong to ShelfTiles.
+class ShelfRow extends PureComponent {
+  html = { __html: this.props.tiles.ready ? "" : initialRow(this.props.row, this.props.reference, this.props.start) };
 
-function useProgressive(list) {
-  const [shown, setShown] = useState({ list, count: Math.min(list.length, FIRST) });
-  const current = shown.list === list ? shown : { list, count: Math.min(list.length, FIRST) };
-  if (current !== shown) setShown(current);
-  useEffect(() => {
-    if (current.count >= list.length) return undefined;
-    const frame = requestAnimationFrame(() => startTransition(() => setShown({ list, count: list.length })));
-    return () => cancelAnimationFrame(frame);
-  }, [list, current.count]);
-  return current.count;
+  render() {
+    return <ol className="music-row" style={{ "--side": this.props.row.side }} dangerouslySetInnerHTML={this.html} />;
+  }
 }
-
-// Opening a sheet changes only the previously and newly selected rows.
-const ShelfRow = memo(function ShelfRow({ row, length, selected, reference, first, onOpen, onPoint }) {
-  const entries = length === row.entries.length ? row.entries : row.entries.slice(0, length);
-  return (
-    <ol className="music-row" style={{ "--side": row.side }}>
-      {entries.map(({ item }, position) => (
-        <Tile key={item.key} item={item} expanded={item.key === selected} side={row.side} share={Math.min(1, Math.sqrt(item.minutes / reference))} priority={first && position === 0} onOpen={onOpen} onPoint={onPoint} />
-      ))}
-    </ol>
-  );
-});
 
 // Each sleeve catches the light its own way: an angle, a speed and a side
 // the gloss comes from, fixed by its record so it is the same every visit.
 function prepareSheen(face, key) {
   if (face.hasAttribute("data-gloss")) return;
   face.dataset.gloss = "";
+  const gloss = document.createElement("span");
+  gloss.className = "music-gloss";
+  gloss.setAttribute("aria-hidden", "true");
+  face.append(gloss);
   let hash = 2166136261;
   for (let at = 0; at < key.length; at += 1) hash = Math.imul(hash ^ key.charCodeAt(at), 16777619);
   hash >>>= 0;
   const fromLeft = hash & 1;
   face.style.setProperty("--sheen-angle", `${96 + (hash >>> 1) % 44}deg`);
   face.style.setProperty("--sheen-time", `${(0.85 + ((hash >>> 7) % 7) * 0.1).toFixed(2)}s`);
-  face.style.setProperty("--sheen-from", fromLeft ? "130%" : "-30%");
-  face.style.setProperty("--sheen-to", fromLeft ? "-30%" : "130%");
+  face.style.setProperty("--sheen-from", fromLeft ? "-80%" : "18.46154%");
+  face.style.setProperty("--sheen-to", fromLeft ? "18.46154%" : "-80%");
   face.style.setProperty("--gloss-x", `${12 + (hash >>> 11) % 70}%`);
 }
 
-function recordLabel(item) {
-  return item.kind === "single" ? songLabel(item.title) : item.title;
-}
-
-const Tile = memo(function Tile({ item, expanded, side, share, priority, onOpen, onPoint }) {
-  const title = recordLabel(item);
-  const described = `${title}, ${item.artist}. ${listened(item.allMinutes ?? item.minutes)} listened, ${plays(item.plays)}.`;
-  return (
-    <li className="music-tile" data-key={item.key} data-record={item.record} style={{ "--share": share, "--tint": item.art ? undefined : tintFor(item.artist) }}>
-      <button
-        type="button"
-        className="music-face"
-        aria-expanded={expanded}
-        aria-controls={expanded ? "record-tracks" : undefined}
-        onClick={(event) => onOpen(item, event.currentTarget)}
-        onPointerEnter={(event) => {
-          if (event.pointerType !== "touch") {
-            prepareSheen(event.currentTarget, item.record ?? item.key);
-            onPoint(item, 45);
-          }
-        }}
-        onPointerLeave={(event) => {
-          if (event.pointerType === "touch") return;
-          // In a gutter cancel the pending hover and keep the last settled sleeve.
-          if (event.relatedTarget?.closest?.(".music-shelf")) onPoint();
-          else onPoint(null);
-        }}
-        onFocus={(event) => {
-          if (event.currentTarget.matches(":focus-visible")) {
-            prepareSheen(event.currentTarget, item.record ?? item.key);
-            onPoint(item);
-          }
-        }}
-        onBlur={() => onPoint(null)}
-        aria-label={`${described} ${item.kind === "single" ? "Show it" : "Show its tracks"}.`}
-      >
-        {item.art ? (
-          <AlbumArtImage id={item.art} alt="" priority={priority} large={LARGE_ART[item.art]} sizes={`${Math.ceil(side)}px`} />
-        ) : (
-          <span className="music-type" aria-hidden="true">
-            <b className="music-initial">{title.charAt(0)}</b>
-            {side >= 96 ? <strong>{title}</strong> : null}
-          </span>
-        )}
-      </button>
-    </li>
-  );
-});
-
 // One quiet caption at the shelf edge, shared by pointer and keyboard.
-function Now({ say, order, kinds, meta, hidden }) {
+function Now({ say, order, kinds, hidden }) {
   const [{ item, visible }, setLabel] = useState({ item: null, visible: false });
   useEffect(() => {
     say.current = (next) => setLabel((last) => next
@@ -421,8 +361,8 @@ function Now({ say, order, kinds, meta, hidden }) {
     if (order === "kind" && kinds) {
       const name = kinds.kinds?.[kinds.artists?.[item.artist]];
       if (name) facts.push(name);
-    } else if (item.year || meta?.years?.[item.art]) {
-      facts.push(item.year || meta.years[item.art]);
+    } else if (item.year) {
+      facts.push(item.year);
     }
     side = facts.join(" · ");
   }
@@ -451,19 +391,17 @@ function TrackLabel({ track }) {
 }
 
 // Tracks expand in place immediately after the selected shelf row.
-function AlbumTracks({ album, links, loading, loadError, retry, onClose }) {
+function AlbumTracks({ album, onClose }) {
   const panel = useRef(null);
-  const known = album.tracks ?? (loading || loadError ? null : album.fallback);
   const tracks = useMemo(() => {
-    if (!known) return null;
-    const sorted = [...known].sort((a, b) => b.minutes - a.minutes)
-      .map(track => ({ ...track, label: songLabel(track.title) }));
+    const sorted = album.tracks.map(([title, plays, minutes]) => ({ title, plays, minutes, label: songLabel(title) }))
+      .sort((a, b) => b.minutes - a.minutes);
     const counts = new Map();
     for (const { label } of sorted) counts.set(label, (counts.get(label) ?? 0) + 1);
     // Keep the original credit when two recordings would share a label.
     for (const track of sorted) if (counts.get(track.label) > 1) track.label = track.title;
     return sorted;
-  }, [known]);
+  }, [album.tracks]);
 
   const list = useRef(null);
   const [expanded, setExpanded] = useState(false);
@@ -491,13 +429,14 @@ function AlbumTracks({ album, links, loading, loadError, retry, onClose }) {
         const top = song.offsetTop;
         if (top !== previousTop) rows.push(index);
         previousTop = top;
+        if (rows.length > 12) break;
       }
       delete element.dataset.measuring;
       setFoldAt(rows.length > 12 ? rows[10] : Infinity);
       width = element.clientWidth;
     };
     measure();
-    document.fonts.ready.then(measure);
+    if (document.fonts.status === "loading") document.fonts.ready.then(measure);
     const observer = new ResizeObserver(() => {
       if (element.clientWidth !== width) measure();
     });
@@ -537,11 +476,6 @@ function AlbumTracks({ album, links, loading, loadError, retry, onClose }) {
           <span className="music-release-total"><b>{listened(album.minutes, "long")}</b> listened</span>
         </p>
       </header>
-      <span className="music-listen">
-        {links.map(([service, href]) => (
-          <a key={service} href={href} target="_blank" rel="noopener noreferrer" aria-label={`Listen on ${service} (opens in a new tab)`}>{service}</a>
-        ))}
-      </span>
       <button type="button" className="music-tracks-close" onClick={() => onClose()} aria-label="Close the track list">
         <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 3.5 9 9m0-9-9 9" /></svg>
       </button>
@@ -561,22 +495,16 @@ function AlbumTracks({ album, links, loading, loadError, retry, onClose }) {
       )}
       {count === 0 && (
         <div className="music-tracks-note" role="status">
-          {loading ? "Fetching the tracks…" : "The tracks could not be loaded."}
-          {loadError && !loading && <button type="button" className="chip" onClick={retry}>try again</button>}
+          No individual song times are available for this record.
         </div>
       )}
     </section>
   );
 }
 
-export function MusicRoom({ initial, active }) {
-  const music = useMusicRanking(initial, active);
-  const { data: meta } = useRoomFile(active, "/music-meta.json");
-  const yearFile = useRoomFile(active, "/music-years.json");
-  const kindFile = useRoomFile(active, "/music-kinds.json");
-  const { data: links } = useRoomFile(active, "/music-links.json");
-  const years = yearFile.data;
-  const kinds = kindFile.data;
+export function MusicRoom({ active }) {
+  const [index] = useState(() => openCatalogue(catalogue));
+  const { entries: records, kinds, years } = index;
   // The orders answer at once; the shelf follows as a transition.
   const [pressedOrder, setPressedOrder] = useState("hours");
   const [order, setOrder] = useState("hours");
@@ -661,23 +589,6 @@ export function MusicRoom({ initial, active }) {
     if (turn) startTransition(() => setReversed((last) => ({ ...last, [name]: !last[name] })));
   };
   const shown = filter ? "hours" : order;
-  const orderFile = shown === "year" ? yearFile : shown === "kind" ? kindFile : null;
-
-  // One shelf of records, albums and the records his songs come from, the
-  // most listened first (mergeShelf in music-shelf.mjs).
-  const records = useMemo(
-    () => mergeShelf(music.albums, music.songs, music.sleeves, music.singles).map((item) => ({ item })),
-    [music.albums, music.songs, music.sleeves, music.singles]
-  );
-  const index = useMemo(
-    () =>
-      indexItems(records.map((entry) => entry.item), {
-        meta,
-        yearOf: (record) => Number(record.year) || meta?.years?.[record.art] || null,
-        extraText: (record) => [...(record.tracks ?? []), ...(record.songs ?? [])].map((track) => track.title).join(" ")
-      }),
-    [records, meta]
-  );
   // The albums, or the singles (Dan, 18 November 2026: "can we add a singles
   // menu button too"), or what the search finds among both.
   const entries = useMemo(() => {
@@ -691,12 +602,21 @@ export function MusicRoom({ initial, active }) {
   // them; each row's size comes from its records' hours (rowsFor in
   // music-shelf.mjs).
   const reference = records[Math.min(2, records.length - 1)]?.item.minutes || 1;
-  const arrangement = useMemo(
-    () => arrange(shown, entries, { years, kinds, reverse: reversed[shown] ?? false }).map((group) => ({ ...group, rows: rowsFor(group.entries, width, group.reference ?? reference) })),
-    [entries, width, reference, shown, years, kinds, reversed]
-  );
-  const flat = useMemo(() => arrangement.flatMap((group) => group.entries), [arrangement]);
-  const count = useProgressive(flat);
+  const layouts = useMemo(() => {
+    const cached = new Map();
+    return (order, reverse) => {
+      const key = `${order}:${reverse}`;
+      if (!cached.has(key)) {
+        const groups = arrange(order, entries, { years, kinds, reverse });
+        cached.set(key, groups.map(group => ({
+          ...group, rows: rowsFor(group.entries, width, group.reference ?? reference)
+        })));
+      }
+      return cached.get(key);
+    };
+  }, [entries, width, reference, years, kinds]);
+  const arrangement = layouts(shown, reversed[shown] ?? false);
+  const [tiles] = useState(() => new ShelfTiles());
 
   // Reuse the rows around the viewport as the pointer moves. Newly visible
   // rows pick up the current selection before their artwork scrolls into view.
@@ -710,18 +630,18 @@ export function MusicRoom({ initial, active }) {
       for (const { target, isIntersecting } of entries) {
         if (isIntersecting) {
           near.add(target);
-          prepareImages(target);
+          tiles.prepare(target);
         } else if (!near.delete(target)) continue;
         target.toggleAttribute("data-near", isIntersecting);
         markRelatedRow(target, isIntersecting ? currentMatches.current : null);
       }
-    }, { rootMargin: "120px 0px" });
+    }, { rootMargin: "160px 0px" });
     for (const row of rows) {
       if (observer) observer.observe(row);
       else {
         near.add(row);
         row.dataset.near = "";
-        prepareImages(row);
+        tiles.prepare(row);
       }
     }
     return () => {
@@ -732,23 +652,22 @@ export function MusicRoom({ initial, active }) {
       }
       near.clear();
     };
-  }, [arrangement, count]);
+  }, [arrangement, tiles]);
 
+  const related = useMemo(() => relatedLookup(entries, kinds), [entries, kinds]);
   const highlight = open?.record ?? pointed;
   useLayoutEffect(() => {
     const visible = new Set();
     if (highlight && active) {
-      for (const row of nearRows.current) {
-        const box = row.getBoundingClientRect();
-        if (box.bottom <= 0 || box.top >= innerHeight) continue;
+      for (const row of tiles.visibleRows) {
         for (const tile of row.children) visible.add(tile.dataset.record ?? tile.dataset.key);
       }
     }
-    const matches = highlight && active ? relatedRecords(entries, highlight, kinds, visible) : null;
+    const matches = highlight && active ? related(highlight, visible) : null;
     matches?.add(highlight);
     currentMatches.current = matches;
     for (const row of nearRows.current) markRelatedRow(row, matches);
-  }, [active, highlight, entries, kinds, arrangement, count]);
+  }, [active, highlight, related, arrangement, tiles]);
 
   const onOpen = useCallback((item, button) => {
     clearTimeout(hoverTimer.current);
@@ -773,13 +692,9 @@ export function MusicRoom({ initial, active }) {
     <AlbumTracks
       key={record.key}
       album={record}
-      links={listenLinks(record.kind === "album" ? links?.albums?.[record.id] : null, record.artist, record.title)}
-      loading={music.loading}
-      loadError={music.loadError}
-      retry={music.retry}
       onClose={close}
     />
-  ) : null, [active, record, links, music.loading, music.loadError, music.retry, close]);
+  ) : null, [active, record, close]);
 
   return (
     <div className="room-body music">
@@ -809,7 +724,7 @@ export function MusicRoom({ initial, active }) {
               beside it. */}
           <img className="music-mark" src="/akibwa-mark.svg?v=writing" alt="" width="42" height="52" draggable="false" />
         </a>
-        <Now say={say} hidden={Boolean(open)} order={shown} kinds={kinds} meta={meta} />
+        <Now say={say} hidden={Boolean(open)} order={shown} kinds={kinds} />
         <div className="music-tools" data-finding={finding || Boolean(query)}>
           <div className="music-crate" role="group" aria-label="Albums or singles">
             <button type="button" className="music-albums" aria-pressed={!searching && !singlesOn} onClick={() => {
@@ -920,13 +835,6 @@ export function MusicRoom({ initial, active }) {
         </div>
       </div>
 
-      {orderFile?.failed && (
-        <div className="music-more">
-          <p role="status">Couldn’t load the {shown} order.</p>
-          <button type="button" className="chip" onClick={orderFile.retry}>try again</button>
-        </div>
-      )}
-
       {/* Measured here, around the shelf. */}
       <div className="music-map-frame" ref={map} onPointerLeave={() => onPoint(null)}>
         {filter && filter === query.trim() && (
@@ -935,17 +843,8 @@ export function MusicRoom({ initial, active }) {
             <span className="music-group-figures">{entries.length ? `${entries.length} ${entries.length === 1 ? "record" : "records"} · ${listened(entries.reduce((sum, entry) => sum + entry.item.minutes, 0), "long")}` : "Nothing on the shelf"}</span>
           </div>
         )}
-        <GlidingShelf tracks={tracks} openTile={open?.tile} arrangement={arrangement} measured={measured} order={shown} count={count} reference={reference} onOpen={onOpen} onPoint={onPoint} />
+        <GlidingShelf tracks={tracks} openTile={open?.tile} arrangement={arrangement} measured={measured} order={shown} tiles={tiles} reference={reference} onOpen={onOpen} onPoint={onPoint} />
       </div>
-
-
-      {music.loadError ? (
-        <div className="music-more">
-          <button type="button" className="chip" onClick={music.retry}>
-            try loading again
-          </button>
-        </div>
-      ) : null}
 
 
     </div>

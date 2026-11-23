@@ -1,7 +1,7 @@
 /*
  * Repeat-visit cache. The host revalidates artwork on every request, so this
  * serves images and fonts from cache and refreshes them in the background.
- * Hashed Next.js chunks are cached first-hit forever (their names change when
+ * Fingerprinted sleeves and Next.js chunks are cached first-hit forever (their names change when
  * content changes). HTML is never touched, so new deploys always reach
  * returning visitors.
  */
@@ -31,13 +31,16 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-async function cacheFirst(request) {
+async function cacheFirst(request, event) {
   const cache = await caches.open(CACHE_NAME).catch(() => null);
   const cached = await cache?.match(request).catch(() => null);
   if (cached) return cached;
 
   const response = await fetch(request);
-  if (response.ok) await cache?.put(request, response.clone()).catch(() => {});
+  if (response.ok && cache) {
+    // The browser can decode this cover while the offline copy is written.
+    event.waitUntil(cache.put(request, response.clone()).catch(() => {}));
+  }
   return response;
 }
 
@@ -72,7 +75,7 @@ self.addEventListener("fetch", (event) => {
   if (request.mode === "navigate" || request.destination === "document") return;
 
   if (url.pathname.startsWith(IMMUTABLE_PATH)) {
-    event.respondWith(cacheFirst(request));
+    event.respondWith(cacheFirst(request, event));
     return;
   }
 

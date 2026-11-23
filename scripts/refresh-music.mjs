@@ -2,7 +2,7 @@
  * Rebuilds the Music room from the private listening history in one go (Dan,
  * 26 September 2026): the listening catalogue, the ranking and its hours by
  * year, the search's genres and years, the large sleeves, and each album's
- * links and cover check, then checks the lot. The history's location is
+ * cover check, then checks the lot. The history's location is
  * private, so it comes from the command line or AKIBWA_HISTORY_ROOT, never
  * from this repository.
  *

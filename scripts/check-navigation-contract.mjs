@@ -74,7 +74,6 @@ for (const room of ["trek", "career", "websites"]) forbidText(index + music, `id
 
 // Dan, 16 November 2026: one shelf, each row of squares as large as its
 // albums' hours between a floor and a cap, everything to know in the bar.
-requireText(music, "mergeShelf(music.albums, music.songs, music.sleeves, music.singles)", "albums, singles and songs must be one shelf of records (Dan, 16 and 18 November 2026)");
 requireText(music, 'className="music-singles"', "the bar must switch the shelf to the singles (Dan, 18 November 2026)");
 requireText(music, 'className="music-find"', "on a phone the bar must keep one row, the search waiting behind its mark (Dan, 16 November 2026)");
 requireText(css, ".music-tools[data-finding=\"true\"] .music-search {", "the phone's search must slide out over the orders");
@@ -83,14 +82,9 @@ requireText(music, 'role="group" aria-label="Order"', "the bar must sort the who
 requireText(music, '<output className="music-now"', "the bar must say what the shelf holds and what is under the pointer");
 requireText(music, "startTransition(() => setOrder(name))", "an order must answer before the shelf is sorted again");
 requireText(music, "<AlbumTracks", "an album must open its track list");
-requireText(music, "LARGE_ART[item.art]", "sleeves drawn large must offer their high-resolution rung");
 // Dan, 25 September 2026: resizing is smooth.
 requireText(music, "useSettledWidth(", "the shelf must lay out once the width settles");
 requireText(music, ".animate(", "the shelf's sleeves must glide to a new order");
-// Dan, 26 September 2026: where to hear it.
-requireText(music, 'useRoomFile(active, "/music-years.json")', "the year order must place each album or song in the year it was played most");
-requireText(music, 'useRoomFile(active, "/music-kinds.json")', "the kind order must group the shelf by kind of music");
-requireText(music, "links={listenLinks(", "every music sheet must link to Spotify and Apple Music");
 {
   // The shelf itself, on the real albums and songs (Dan, 16 November 2026):
   // one shelf of records, every album and every song placed once; rows of

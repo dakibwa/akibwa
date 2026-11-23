@@ -68,8 +68,7 @@ from the reverted version. The page he holds has lines of handwriting across it.
   Clicking or tapping keeps the same contrast while the songs are open.
 - Open the tracks directly under the selected sleeve’s row, most listened first.
   Set the album title in soft italic Fraunces, followed by its artist and total
-  time. Show Spotify and Apple Music in the top right on shelves at least
-  560 px wide. On narrower shelves the songs follow the album details directly. Song labels fit their names
+  time. The songs follow the album details directly. Song labels fit their names
   in Nunito Sans, with bold Fraunces listening times directly beside them.
   Fill each label in proportion to the album favourite. Let the songs flow
   left to right. Above twelve lines, show ten and a button to reveal the rest.
@@ -78,7 +77,7 @@ from the reverted version. The page he holds has lines of handwriting across it.
   Omit a lone song only when the header already gives its title and time.
   Keep the scroll position on opening. Fade the sheet in at its final height.
   Selecting another sleeve moves the list there. The same sleeve, the close
-  button or Escape folds it away. [Listening links](../public/music-links.json)
+  button or Escape folds it away.
 - Reveal the page once its menu and title fonts have loaded. Fade in the bar and mark, lift
   the first screen of sleeves in sequence, fade covers as they arrive, and lift later
   rows together as they scroll into view. Reserve each row’s height so the browser can
@@ -92,19 +91,24 @@ its own cover can borrow one from another release on which its songs were played
 each cover against an independent image or by eye. `check:navigation` enforces this.
 [Reviewed artwork](../data/listening-artwork.json) · [Cover checks](../data/music-sources.json)
 
-The static export uses unoptimised images. Render album sleeves with `AlbumArtImage`
-from `components/site-image.jsx`. It emits a 264 px `-wall` AVIF with a WebP fallback,
-and a `-large` rung where needed. Pre-render once at final size from the best source.
-Re-encoding lossy WebP preserves its artefacts and inflates the file.
-[Image component](../components/site-image.jsx) · [Artwork builder](../scripts/build-music-art.mjs)
+The build compiles track lists, artist connections, search facts and listening years
+from the public aggregates into one cacheable catalogue. Opening a record, searching
+and changing order all work with the data already in the page. Every record has a
+labelled button. Sorting moves those buttons and reuses their artwork. On a long shelf,
+art loads ahead of the viewport. The full set of covers is also in the HTML for visitors
+with scripting disabled.
+
+Each cover uses the original 264 px wall AVIF with a WebP fallback and the large rung
+where available. The export fingerprints those files so an unchanged cover can come
+straight from cache and replacement artwork gets a fresh URL.
+[Tile rendering](../components/paper/music-tiles.mjs) · [Catalogue build](../scripts/build-shelf.mjs)
 
 Use `npm run music:refresh -- --history-root <private-history-directory>` for the
-catalogue, ranking, years, covers, genres and links. Keep that path private. Publish
+catalogue, ranking, years, covers, genres. Keep that path private. Publish
 only approved aggregates and whole-year listening totals. Playback estimates for later
 Last.fm plays have been included since 18 November. Use the data guide for source
 coverage, counting rules and validation. [Listening history](listening-history.md)
 
 September's packed map, separate albums/songs view, hours written on every sleeve,
 growing hover covers and line of years were superseded by this November shelf.
-The earlier front-page and room designs were retired. Search, track lists and listening
-links carried forward.
+The earlier front-page and room designs were retired. Search and track lists carried forward.

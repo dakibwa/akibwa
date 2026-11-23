@@ -5,6 +5,7 @@
 
 node_modules/
 .next/
+.shelf-build/
 out/
 data/health-data*.json
 components/health-dashboard-preview.jsx

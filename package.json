@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "node scripts/build-shelf.mjs --dev && next dev",
     "check:fast": "npm run build && node scripts/check-navigation-dom.mjs --shelf",
     "check:release": "npm run check:fast",
     "check:hosting": "node scripts/check-cloudflare-hosting.mjs",
@@ -11,7 +11,7 @@
     "check:navigation": "node scripts/check-navigation-contract.mjs && node scripts/check-album-catalogue.mjs && node scripts/check-listening-counts.mjs && node scripts/check-music-room-data.mjs && node --test scripts/music-ranking.test.mjs",
     "check:navigation:dom": "node scripts/check-navigation-dom.mjs",
     "check:worker": "node --test scripts/service-worker.test.mjs",
-    "build": "npm run check:navigation && NEXT_TELEMETRY_DISABLED=1 next build",
+    "build": "npm run check:navigation && node scripts/build-shelf.mjs && NEXT_TELEMETRY_DISABLED=1 next build && cp -R .shelf-build/sleeves out/_next/static/",
     "publish:check": "node scripts/check-publication.mjs",
     "publish:ready": "npm run check:fast && npm run albums:art:check && npm run publish:check",
     "start": "next start",

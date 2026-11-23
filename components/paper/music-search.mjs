@@ -126,39 +126,59 @@ export function indexItems(items, { meta, yearOf, extraText = () => "" }) {
 
 // Keep every direct artist connection. For discovery, pick up to four
 // other artists, starting with musically similar sleeves in view.
-export function relatedRecords(entries, key, kinds, visible) {
-  const matches = new Set();
-  const source = entries.find(({ item }) => item.key === key);
-  if (!source) return matches;
+function rankRelated(entries, source, kinds) {
+  const direct = [];
   const kind = kinds?.artists?.[source.item.artist];
   const similar = [];
   for (const entry of entries) {
     if (entry === source) continue;
     if (source.circle.includes(entry.artist) || entry.circle.includes(source.artist)) {
-      matches.add(entry.item.key);
+      direct.push(entry.item.key);
       continue;
     }
-    const shared = entry.genres.filter((genre) => source.genres.includes(genre)).length;
+    let shared = 0;
+    for (const genre of entry.genres) if (source.genres.includes(genre)) shared++;
     const sameKind = kind != null && kinds.artists[entry.item.artist] === kind;
     const missingTags = !source.genres.length || !entry.genres.length;
     if (!shared && !(sameKind && missingTags)) continue;
     const overlap = shared ? shared / (source.genres.length + entry.genres.length - shared) : 0;
     const yearsApart = source.year && entry.year ? Math.abs(source.year - entry.year) : Infinity;
-    similar.push({ entry, visible: visible.has(entry.item.key), overlap, sameKind, yearsApart });
+    similar.push({ entry, overlap, sameKind, yearsApart });
   }
   // Equal matches keep the shelf's original listening-hours order.
   similar.sort((a, b) =>
-    b.visible - a.visible || b.overlap - a.overlap ||
+    b.overlap - a.overlap ||
     b.sameKind - a.sameKind || a.yearsApart - b.yearsApart
   );
-  const artists = new Set();
-  for (const { entry } of similar) {
-    if (artists.has(entry.artist)) continue;
-    artists.add(entry.artist);
-    matches.add(entry.item.key);
-    if (artists.size === 4) break;
-  }
-  return matches;
+  return { direct, similar };
+}
+
+// Ranking depends on the selected record. Choosing among equally useful
+// neighbours also depends on which covers are on screen right now.
+export function relatedLookup(entries, kinds) {
+  const byKey = new Map(entries.map(entry => [entry.item.key, entry]));
+  const recent = new Map();
+  return (key, visible) => {
+    const source = byKey.get(key);
+    if (!source) return new Set();
+    let ranked = recent.get(key);
+    if (!ranked) {
+      ranked = rankRelated(entries, source, kinds);
+      if (recent.size >= 24) recent.delete(recent.keys().next().value);
+      recent.set(key, ranked);
+    }
+    const matches = new Set(ranked.direct);
+    const artists = new Set();
+    for (const inView of [true, false]) {
+      for (const { entry } of ranked.similar) {
+        if (visible.has(entry.item.key) !== inView || artists.has(entry.artist)) continue;
+        artists.add(entry.artist);
+        matches.add(entry.item.key);
+        if (artists.size === 4) return matches;
+      }
+    }
+    return matches;
+  };
 }
 
 // Every word starts a word of the text.
@@ -177,7 +197,10 @@ function namedBy(entry, { words, phrase }) {
 }
 
 // Otherwise every word somewhere in its title, tracks, artist, circle or genres.
-const wordsIn = (entry, { words }) => words.every((word) => ` ${entry.text} ${entry.circle.join(" ")} ${entry.genres.join(" ")}`.includes(` ${word}`));
+const wordsIn = (entry, { words }) => {
+  const text = ` ${entry.text} ${entry.circle.join(" ")} ${entry.genres.join(" ")}`;
+  return words.every(word => text.includes(` ${word}`));
+};
 
 /*
  * Only what the query names, if it names anything: "paul simon" is Paul Simon
