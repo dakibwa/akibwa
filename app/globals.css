@@ -645,6 +645,14 @@ html.ready .music-mark {
   list-style: none;
 }
 
+/* The row height is known from the shelf packing. Browsers can skip its
+   covers off screen while keeping scroll distances and keyboard order. */
+.music-map[data-measured="true"] .music-row:not([data-near]) {
+  content-visibility: auto;
+  contain-intrinsic-block-size: calc(var(--side) * 1px);
+  overflow-clip-margin: 8px;
+}
+
 .music-tile {
   position: relative;
   flex: none;
@@ -681,13 +689,13 @@ html.ready .music-mark {
    its dark parts stay dark, a band of it runs once across at that sleeve's
    own angle, speed and direction (set per record in music-room.jsx), and a
    soft gloss stays on its upper corner while the colours deepen a touch. */
-.music-face {
+.music-face[data-gloss] {
   isolation: isolate;
 }
 
 /* Fade the other sleeves into shade while a record is being inspected. */
 .music-face::before {
-  content: "";
+  content: none;
   position: absolute;
   z-index: 1;
   inset: 0;
@@ -698,6 +706,8 @@ html.ready .music-mark {
   transition: opacity 280ms ease-in-out;
   pointer-events: none;
 }
+
+.music-row[data-near] .music-face::before { content: ""; }
 
 .music-row[data-inspecting] .music-tile:not(.is-related) .music-face::before {
   opacity: 0.42;
@@ -710,7 +720,7 @@ html.ready .music-mark {
 }
 
 .music-face::after {
-  content: "";
+  content: none;
   position: absolute;
   inset: 0;
   background:
@@ -722,11 +732,23 @@ html.ready .music-mark {
   pointer-events: none;
 }
 
+/* Only sleeves already inspected need a layer for the gloss. */
+.music-face[data-gloss]::after {
+  content: "";
+}
+
 @media (hover: hover) and (pointer: fine) {
   .music-face:hover::after {
     opacity: 1;
     background-position: var(--sheen-to, -30%) 0, 0 0;
     transition: opacity 160ms ease, background-position var(--sheen-time, 1.1s) cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  @starting-style {
+    .music-face:hover::after {
+      opacity: 0;
+      background-position: var(--sheen-from, 130%) 0, 0 0;
+    }
   }
 
   .music-face:hover img {
@@ -738,9 +760,13 @@ html.ready .music-mark {
   opacity: 1;
 }
 
-/* A row still below the screen waits to lift in as it arrives. */
-.music-row[data-waiting] .music-face {
-  opacity: 0;
+/* Scrolling introduces a row with one animation for all its covers. */
+.music-row[data-arriving] {
+  animation: row-arrives 320ms var(--shelf-ease);
+}
+
+@keyframes row-arrives {
+  from { opacity: 0.35; transform: translateY(6px); }
 }
 
 .music-face:active {
@@ -835,18 +861,6 @@ html {
 
 @starting-style {
   .music-tracks { opacity: 0; }
-}
-
-@supports (interpolate-size: allow-keywords) {
-  .music-tracks {
-    interpolate-size: allow-keywords;
-    overflow: clip;
-    overflow-clip-margin: 6px;
-    transition: opacity 200ms ease, height 360ms var(--shelf-ease);
-  }
-  @starting-style {
-    .music-tracks { height: 0; }
-  }
 }
 
 .music-tracks:focus-visible {

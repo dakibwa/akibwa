@@ -99,15 +99,35 @@ function useSettledWidth(ref, initial = 1100) {
 
 // Read the painted positions before React moves records between rows. This
 // includes any in-flight transform, even if the next sort replaces the node.
-function visibleTiles(list) {
+function visibleTiles(list, animations = []) {
+  const candidates = new Set();
+  const height = window.innerHeight;
+  for (const row of list.querySelectorAll(".music-row")) {
+    const box = row.getBoundingClientRect();
+    if (box.top >= height) break;
+    if (box.bottom <= 0) continue;
+    for (const tile of row.children) candidates.add(tile);
+  }
+  // A second sort can catch a moving cover outside its destination row.
+  for (const animation of animations) candidates.add(animation.effect.target);
   const visible = new Map();
-  for (const tile of list.querySelectorAll(".music-tile")) {
+  for (const tile of candidates) {
     const box = tile.getBoundingClientRect();
     if (box.bottom > 0 && box.top < window.innerHeight && box.right > 0 && box.left < window.innerWidth) {
       visible.set(tile.dataset.key, { tile, box, opacity: Number(getComputedStyle(tile).opacity) });
     }
   }
   return visible;
+}
+
+function prepareImages(row) {
+  for (const image of row.querySelectorAll("img")) {
+    if (!image.complete) image.dataset.loading = "true";
+  }
+}
+
+function imageSettled(event) {
+  delete event.target.dataset.loading;
 }
 
 function markRelatedRow(row, matches) {
@@ -133,7 +153,6 @@ class GlidingShelf extends PureComponent {
     this.ready = document.documentElement.classList.contains("ready");
     if (!this.ready) addEventListener("paperready", this.whenReady, { once: true });
     this.opening();
-    this.settle();
     this.watch();
   }
 
@@ -152,37 +171,17 @@ class GlidingShelf extends PureComponent {
     if (this.opened || !list || !this.props.measured || !this.ready) return;
     this.opened = true;
     if (this.motion.matches) return;
-    const fold = window.innerHeight;
+    const visible = visibleTiles(list);
     let index = 0;
-    for (const face of list.querySelectorAll(".music-face")) {
-      const box = face.getBoundingClientRect();
-      if (box.top >= fold) break;
-      face.animate(
+    for (const { tile } of visible.values()) {
+      tile.firstElementChild.animate(
         [{ opacity: 0, transform: "translateY(12px)" }, { opacity: 1, transform: "none" }],
         { duration: 620, delay: Math.min(index++ * 16, 520), easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "backwards" }
       );
     }
   };
 
-  // Each cover fades in when it has arrived, rather than appearing in pieces.
-  settle = () => {
-    const list = this.list.current;
-    if (!list) return;
-    for (const image of list.querySelectorAll(".music-face img")) {
-      if (image.complete || image.dataset.loading) continue;
-      image.dataset.loading = "true";
-      const done = () => delete image.dataset.loading;
-      image.addEventListener("load", done, { once: true });
-      image.addEventListener("error", done, { once: true });
-    }
-  };
-
-  /*
-   * The wall comes alive as it scrolls (Dan, 18 November 2026: "make the
-   * wall feel more dynamic"): a row that comes into view lifts in, a sleeve
-   * after its neighbour. Rows already on screen are left alone, so nothing
-   * that has been seen ever blinks.
-   */
+  // After the opening sequence, each newly visible row arrives together.
   revealed = new WeakSet();
 
   watch = () => {
@@ -196,39 +195,28 @@ class GlidingShelf extends PureComponent {
           const row = entry.target;
           this.seer.unobserve(row);
           this.revealed.add(row);
-          delete row.dataset.waiting;
-          if (this.motion.matches) continue;
-          row.querySelectorAll(".music-face").forEach((face, index) => {
-            face.animate(
-              [{ opacity: 0, transform: "translateY(14px)" }, { opacity: 1, transform: "none" }],
-              { duration: 560, delay: Math.min(index, 14) * 32, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "backwards" }
-            );
-          });
+          if (!this.motion.matches) row.dataset.arriving = "";
         }
       }, { rootMargin: "0px 0px -4% 0px" });
     }
+    // Release removed rows when the user changes orders.
+    this.seer.disconnect();
     const fold = window.innerHeight;
     for (const row of list.querySelectorAll(".music-row")) {
-      if (this.revealed.has(row) || row.dataset.waiting) continue;
-      // Only a row still below the screen waits to be revealed.
-      if (row.getBoundingClientRect().top < fold) {
-        this.revealed.add(row);
-        continue;
-      }
-      row.dataset.waiting = "true";
-      this.seer.observe(row);
+      if (this.revealed.has(row)) continue;
+      if (row.getBoundingClientRect().top < fold) this.revealed.add(row);
+      else this.seer.observe(row);
     }
   };
 
   getSnapshotBeforeUpdate(previous) {
-    if (!previous.measured || previous.arrangement === this.props.arrangement || this.motion.matches) return null;
-    return visibleTiles(this.list.current);
+    if (!this.opened || !previous.measured || previous.arrangement === this.props.arrangement || this.motion.matches) return null;
+    return visibleTiles(this.list.current, this.animations);
   }
 
   componentDidUpdate(previous, state, before) {
     if (previous.arrangement === this.props.arrangement && previous.count === this.props.count && previous.measured === this.props.measured) return;
     this.opening();
-    this.settle();
     this.watch();
     if (!before) return;
     this.stop();
@@ -267,6 +255,8 @@ class GlidingShelf extends PureComponent {
     return (
       <div
         ref={this.list}
+        onLoadCapture={imageSettled}
+        onErrorCapture={imageSettled}
         data-measured={measured}
         className={`music-map is-by-${order}`}
         role="region"
@@ -286,8 +276,7 @@ class GlidingShelf extends PureComponent {
           </nav>
         )}
         {arrangement.map((group, groupIndex) => {
-          const rows = group.rows.map((row) => ({ ...row, shown: row.entries.filter(() => drawn++ < count) })).filter((row) => row.shown.length);
-          if (!rows.length) return null;
+          if (drawn >= count) return null;
           return (
             <section key={group.key} className="music-group" id={`shelf-group-${groupIndex}`} tabIndex={-1} aria-label={group.label || undefined}>
               {group.label ? (
@@ -297,16 +286,18 @@ class GlidingShelf extends PureComponent {
                 </h2>
               ) : null}
               <div className="music-shelf">
-                {rows.map((row, at) => (
-                  <Fragment key={at}>
-                    <ol className="music-row">
-                      {row.shown.map(({ item }, position) => (
-                        <Tile key={item.key} item={item} expanded={item.key === openTile} side={row.side} share={Math.min(1, Math.sqrt(item.minutes / reference))} priority={groupIndex === 0 && at === 0 && position === 0} onOpen={onOpen} onPoint={onPoint} />
-                      ))}
-                    </ol>
-                    {openTile && row.shown.some(({ item }) => item.key === openTile) ? tracks : null}
-                  </Fragment>
-                ))}
+                {group.rows.map((row, at) => {
+                  const length = Math.min(count - drawn, row.entries.length);
+                  if (length <= 0) return null;
+                  drawn += length;
+                  const selected = openTile && row.entries.some(({ item }) => item.key === openTile) ? openTile : null;
+                  return (
+                    <Fragment key={at}>
+                      <ShelfRow row={row} length={length} selected={selected} reference={reference} first={groupIndex === 0 && at === 0} onOpen={onOpen} onPoint={onPoint} />
+                      {selected ? tracks : null}
+                    </Fragment>
+                  );
+                })}
               </div>
             </section>
           );
@@ -334,20 +325,32 @@ function useProgressive(list) {
   return current.count;
 }
 
+// Opening a sheet changes only the previously and newly selected rows.
+const ShelfRow = memo(function ShelfRow({ row, length, selected, reference, first, onOpen, onPoint }) {
+  const entries = length === row.entries.length ? row.entries : row.entries.slice(0, length);
+  return (
+    <ol className="music-row" style={{ "--side": row.side }}>
+      {entries.map(({ item }, position) => (
+        <Tile key={item.key} item={item} expanded={item.key === selected} side={row.side} share={Math.min(1, Math.sqrt(item.minutes / reference))} priority={first && position === 0} onOpen={onOpen} onPoint={onPoint} />
+      ))}
+    </ol>
+  );
+});
+
 // Each sleeve catches the light its own way: an angle, a speed and a side
 // the gloss comes from, fixed by its record so it is the same every visit.
-function sheenFor(key) {
+function prepareSheen(face, key) {
+  if (face.hasAttribute("data-gloss")) return;
+  face.dataset.gloss = "";
   let hash = 2166136261;
   for (let at = 0; at < key.length; at += 1) hash = Math.imul(hash ^ key.charCodeAt(at), 16777619);
   hash >>>= 0;
   const fromLeft = hash & 1;
-  return {
-    "--sheen-angle": `${96 + (hash >>> 1) % 44}deg`,
-    "--sheen-time": `${(0.85 + ((hash >>> 7) % 7) * 0.1).toFixed(2)}s`,
-    "--sheen-from": fromLeft ? "130%" : "-30%",
-    "--sheen-to": fromLeft ? "-30%" : "130%",
-    "--gloss-x": `${12 + (hash >>> 11) % 70}%`
-  };
+  face.style.setProperty("--sheen-angle", `${96 + (hash >>> 1) % 44}deg`);
+  face.style.setProperty("--sheen-time", `${(0.85 + ((hash >>> 7) % 7) * 0.1).toFixed(2)}s`);
+  face.style.setProperty("--sheen-from", fromLeft ? "130%" : "-30%");
+  face.style.setProperty("--sheen-to", fromLeft ? "-30%" : "130%");
+  face.style.setProperty("--gloss-x", `${12 + (hash >>> 11) % 70}%`);
 }
 
 function recordLabel(item) {
@@ -358,21 +361,31 @@ const Tile = memo(function Tile({ item, expanded, side, share, priority, onOpen,
   const title = recordLabel(item);
   const described = `${title}, ${item.artist}. ${listened(item.allMinutes ?? item.minutes)} listened, ${plays(item.plays)}.`;
   return (
-    <li className="music-tile" data-key={item.key} data-record={item.record} style={{ "--side": side, "--share": share, "--tint": item.art ? undefined : tintFor(item.artist), ...sheenFor(item.record ?? item.key) }}>
+    <li className="music-tile" data-key={item.key} data-record={item.record} style={{ "--share": share, "--tint": item.art ? undefined : tintFor(item.artist) }}>
       <button
         type="button"
         className="music-face"
         aria-expanded={expanded}
         aria-controls={expanded ? "record-tracks" : undefined}
         onClick={(event) => onOpen(item, event.currentTarget)}
-        onPointerEnter={(event) => { if (event.pointerType !== "touch") onPoint(item, 45); }}
+        onPointerEnter={(event) => {
+          if (event.pointerType !== "touch") {
+            prepareSheen(event.currentTarget, item.record ?? item.key);
+            onPoint(item, 45);
+          }
+        }}
         onPointerLeave={(event) => {
           if (event.pointerType === "touch") return;
           // In a gutter cancel the pending hover and keep the last settled sleeve.
           if (event.relatedTarget?.closest?.(".music-shelf")) onPoint();
           else onPoint(null);
         }}
-        onFocus={(event) => { if (event.currentTarget.matches(":focus-visible")) onPoint(item); }}
+        onFocus={(event) => {
+          if (event.currentTarget.matches(":focus-visible")) {
+            prepareSheen(event.currentTarget, item.record ?? item.key);
+            onPoint(item);
+          }
+        }}
         onBlur={() => onPoint(null)}
         aria-label={`${described} ${item.kind === "single" ? "Show it" : "Show its tracks"}.`}
       >
@@ -695,18 +708,28 @@ export function MusicRoom({ initial, active }) {
     const observe = typeof IntersectionObserver !== "undefined";
     const observer = observe && new IntersectionObserver((entries) => {
       for (const { target, isIntersecting } of entries) {
-        if (isIntersecting) near.add(target);
-        else if (!near.delete(target)) continue;
+        if (isIntersecting) {
+          near.add(target);
+          prepareImages(target);
+        } else if (!near.delete(target)) continue;
+        target.toggleAttribute("data-near", isIntersecting);
         markRelatedRow(target, isIntersecting ? currentMatches.current : null);
       }
     }, { rootMargin: "120px 0px" });
     for (const row of rows) {
       if (observer) observer.observe(row);
-      else near.add(row);
+      else {
+        near.add(row);
+        row.dataset.near = "";
+        prepareImages(row);
+      }
     }
     return () => {
       if (observer) observer.disconnect();
-      for (const row of near) markRelatedRow(row, null);
+      for (const row of near) {
+        row.removeAttribute("data-near");
+        markRelatedRow(row, null);
+      }
       near.clear();
     };
   }, [arrangement, count]);

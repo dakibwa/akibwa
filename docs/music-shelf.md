@@ -76,12 +76,13 @@ from the reverted version. The page he holds has lines of handwriting across it.
   Shorten song labels by dropping guest credits, remaster notes and composition
   attributions. Keep subtitles and version names that identify the song.
   Omit a lone song only when the header already gives its title and time.
-  Keep the page still on opening.
+  Keep the scroll position on opening. Fade the sheet in at its final height.
   Selecting another sleeve moves the list there. The same sleeve, the close
   button or Escape folds it away. [Listening links](../public/music-links.json)
 - Reveal the page once its menu and title fonts have loaded. Fade in the bar and mark, lift
   the first screen of sleeves in sequence, fade covers as they arrive, and lift later
-  rows as they scroll into view. Use transform and opacity with `cubic-bezier(0.16, 1, 0.3, 1)`.
+  rows together as they scroll into view. Reserve each row’s height so the browser can
+  skip offscreen artwork. Use transform and opacity with `cubic-bezier(0.16, 1, 0.3, 1)`.
   Stop motion for reduced motion.
 
 ## Artwork and data refresh
