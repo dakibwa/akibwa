@@ -1102,17 +1102,14 @@ html {
   color: var(--ink-soft);
 }
 
-/* A phone: the paper reaches nearer its edge; the pills take their own line. */
+/* Narrow shelves reserve the header for album details and the close button. */
 @container (max-width: 559px) {
   .music-tracks {
     padding: 9px 10px 10px 11px;
     border-radius: 6px;
-  }
-  .music-tracks {
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:
       "release close"
-      "listen listen"
       "list list"
       "more more";
   }
@@ -1120,10 +1117,7 @@ html {
     column-gap: 10px;
   }
   .music-listen {
-    margin-top: 5px;
-  }
-  .music-listen a {
-    height: 25px;
+    display: none;
   }
   .music-track-list {
     margin-top: 8px;

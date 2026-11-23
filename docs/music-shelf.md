@@ -68,7 +68,8 @@ from the reverted version. The page he holds has lines of handwriting across it.
   Clicking or tapping keeps the same contrast while the songs are open.
 - Open the tracks directly under the selected sleeve’s row, most listened first.
   Set the album title in soft italic Fraunces, followed by its artist and total
-  time. Use compact Spotify and Apple Music links. Song labels fit their names
+  time. Show Spotify and Apple Music in the top right on shelves at least
+  560 px wide. On narrower shelves the songs follow the album details directly. Song labels fit their names
   in Nunito Sans, with bold Fraunces listening times directly beside them.
   Fill each label in proportion to the album favourite. Let the songs flow
   left to right. Above twelve lines, show ten and a button to reveal the rest.
