@@ -44,8 +44,8 @@ The layout, merging and ordering code runs in the build checks against real reco
     (Dan, 25 November: “can we break these further into sub genres too using astra?”).
     A genre keeps its kraft tab and its share of listening; its sub-genres follow, most
     listened first, each under a smaller heading on a hairline with its records and
-    hours. Their names are jumps beside the genre's name on a wide shelf and under it
-    on a narrow one. The row of jumps at the head of the shelf stays the seven genres.
+    hours. A sub-genre has no jump of its own: the words on a genre's heading go to
+    the other six genres.
     An artist is filed by the records on this shelf, not by a whole career. A new
     artist needs a sub-genre in the kinds file, or the build check fails.
   - A record that does not belong where its artist does is filed on its own, by its id,
@@ -83,9 +83,21 @@ The layout, merging and ordering code runs in the build checks against real reco
   search. A soft rust background marks the chosen sort. The signature's panel starts on
   the sleeves' left edge and search ends on their right (Dan, 25 November: “align the
   logo”). Search is 40 px tall and every chip 34 px. Search opens from the right below
-  900 px. Pressing / focuses it, and Escape clears it.
-- Set group names on kraft tabs, with a row of jumps for genres, decades or years.
-  A search shows its query, number of matches and listening time.
+  900 px. Pressing / focuses it, and Escape clears it. The row closes up in steps as
+  the screen narrows, the last below 310 px for a folded phone's cover screen.
+- A group's heading is one line: its name on a kraft tab, its figures, then the other
+  genres, decades or years as quiet words to go to, at the far end (Dan, 25 November:
+  “is the genre bar placed somewhere better that fit's with the more minimalist
+  theme?”). There is no row of jumps apart from the headings, and no pill behind a
+  word: at the head of a phone's shelf the pill was cut off by the screen's edge (“the
+  pill can go off screen”). The tab and its figures never move. Where the words do not
+  all fit on some heading, every heading shortens its figures to the hours alone. Where
+  they still do not fit, a hairline parts the figures from the words, and the words
+  scroll sideways in the room that is left, fading at the edge they run past.
+- Nothing runs past the screen's edge at any width from 280 px up (“fix any bugs in
+  this regard”). Check a change to the bar or a heading at 280, 320, 390 and 720 px in
+  every order.
+- A search shows its query, number of matches and listening time.
 - A jump to a group within a screen and a half scrolls there. A jump further turns the
   page as a new order does: the shelf fades out, is put at the group at once and lifts
   in there. Scrolling smoothly to a far group dragged every row between through the

@@ -125,7 +125,34 @@ class GlidingShelf extends PureComponent {
     if (!this.ready) addEventListener("paperready", this.whenReady, { once: true });
     this.opening();
     this.watch();
+    this.list.current.addEventListener("scroll", this.lineScrolled, { capture: true, passive: true });
+    this.markLines();
+    document.fonts?.ready.then(this.markLines);
   }
+
+  // A heading keeps to one line, and its name stays put. Where the other
+  // groups do not all fit beside the figures on any heading, every heading
+  // says its hours alone (`data-fit="brief"`), so the headings match. Where
+  // they still do not fit (`data-fit="scroll"`), they scroll sideways in the
+  // room that is left and fade at the edge they run past (markMore, with the
+  // song names it also serves).
+  markLines = () => {
+    const list = this.list.current;
+    if (!list) return;
+    const lines = [...list.querySelectorAll(".music-group-line")];
+    const lists = lines.map(line => line.querySelector(".music-group-others"));
+    const over = () => lines.some((line, at) => line.firstElementChild.offsetWidth > line.clientWidth
+      || (lists[at] && lists[at].scrollWidth > lists[at].clientWidth + 1));
+    list.removeAttribute("data-fit");
+    if (over()) {
+      list.setAttribute("data-fit", "brief");
+      if (over()) list.setAttribute("data-fit", "scroll");
+    }
+    for (const others of lists) if (others) markMore(others);
+  };
+  lineScrolled = (event) => {
+    if (event.target.classList?.contains("music-group-others")) markMore(event.target);
+  };
 
   whenReady = () => {
     this.ready = true;
@@ -176,7 +203,7 @@ class GlidingShelf extends PureComponent {
       if (this.turning !== turning) return;
       this.turning = null;
       if (!this.motion.matches) {
-        for (const heading of list.querySelectorAll(".music-index, .music-group-head")) {
+        for (const heading of list.querySelectorAll(".music-group-top, .music-group-head.is-part")) {
           if (inView(heading)) heading.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 460, easing: "ease-out" });
         }
         const arriving = [...visibleTiles(list).values()];
@@ -272,7 +299,7 @@ class GlidingShelf extends PureComponent {
     if (this.opened && previous.tracks !== tracks && previous.arrangement === arrangement) {
       const list = this.list.current;
       const places = new Map();
-      for (const element of list.querySelectorAll(".music-row[data-near], .music-group-head, .music-index")) {
+      for (const element of list.querySelectorAll(".music-row[data-near], .music-group-top, .music-group-head.is-part")) {
         places.set(element, element.getBoundingClientRect().top);
       }
       const panel = list.querySelector(".music-tracks");
@@ -298,6 +325,7 @@ class GlidingShelf extends PureComponent {
     if (changed) tiles.arrange(this.list.current, arrangement);
     if (pinnedTile !== previous.pinnedTile || changed) tiles.select(pinnedTile, true);
     if (!changed && measured === previous.measured) return;
+    this.markLines();
     this.opening();
     this.watch();
     if (changed && this.props.veiled) this.turn();
@@ -329,6 +357,7 @@ class GlidingShelf extends PureComponent {
     this.motion.removeEventListener("change", this.stop);
     this.stop();
     this.seer?.disconnect();
+    this.list.current?.removeEventListener("scroll", this.lineScrolled, { capture: true });
     clearTimeout(this.jumping);
     removeEventListener("paperready", this.whenReady);
   }
@@ -357,6 +386,9 @@ class GlidingShelf extends PureComponent {
     const { order, arrangement, reference, measured, onOpen, onPoint, shownTile, above, tracks, tiles } = this.props;
     const firstRow = !measured && arrangement[0]?.rows[0];
     const first = firstRow?.entries?.[0]?.item;
+    // The groups a heading can go to: every genre, decade or year, each by
+    // the first of its sections.
+    const stops = arrangement.map((group, index) => [group, index]).filter(([group]) => group.label && (!group.within || group.head));
     let drawn = 0;
     return (
       <div
@@ -409,45 +441,50 @@ class GlidingShelf extends PureComponent {
         aria-label={`The records I play most, ${{ hours: "most listened first", kind: "by genre", released: "by release date", year: "by listen date" }[order]}`}
       >
         {first?.art && <link rel="preload" {...firstCoverHint(first, firstRow.side)} />}
-        {arrangement.length > 1 && arrangement[0].label && (
-          <nav aria-label={`Jump to a ${order === "kind" ? "genre" : order === "released" ? "decade" : "year"}`}>
-            <ul className="music-index">
-              {arrangement.map((group, index) => (group.within && !group.head ? null : (
-                <li key={group.key}><button type="button" onClick={() => this.jump(document.getElementById(`shelf-group-${index}`))}>{group.head?.label ?? group.label}</button></li>
-              )))}
-            </ul>
-          </nav>
-        )}
         {arrangement.map((group, groupIndex) => {
+          // A group's heading: its genre's when it is the first of a
+          // genre's sub-genres, its own otherwise, and none for a later
+          // sub-genre, which stands under its smaller heading alone.
+          const top = group.head ?? (group.within || !group.label ? null : group);
+          // The first heading's words are the page's one landmark for going
+          // about the shelf; under the other headings the same words are a
+          // plain group, so a screen reader's list of landmarks stays short.
+          const Others = stops[0]?.[0] === group ? "nav" : "div";
           return (
-            <section key={group.key} className={`music-group${group.within ? group.head ? " is-first-part" : " is-part" : ""}`} id={`shelf-group-${groupIndex}`} tabIndex={-1} aria-label={group.label || undefined}>
-              {/* A genre's heading stands over the first of its sub-genres,
-                  with the others a step away beside it. */}
-              {group.head ? (
+            <section key={group.key} className={`music-group${group.within && !group.head ? " is-part" : ""}`} id={`shelf-group-${groupIndex}`} tabIndex={-1} aria-label={group.label || undefined}>
+              {/* One line does the heading's work and the jumps' (Dan, 25
+                  November 2026: "is the genre bar placed somewhere better
+                  that fit's with the more minimalist theme?"): the group's
+                  tab and what it holds, then the other groups as quiet
+                  words to go to. With more of them than there is room
+                  for, they scroll sideways and the tab stays where it is. */}
+              {top ? (
                 <div className="music-group-top">
-                  <h2 className="music-group-head">
-                    <span className="music-group-label">{group.head.label}</span>
-                    <span className="music-group-figures">{group.head.figures}</span>
-                  </h2>
-                  <nav aria-label={`Jump to a kind of ${group.head.label}`}>
-                    <ul className="music-index is-within">
-                      {arrangement.map((part, index) => (part.within === group.within ? (
-                        <li key={part.key}><button type="button" onClick={() => this.jump(document.getElementById(`shelf-group-${index}`))}>{part.label}</button></li>
-                      ) : null))}
-                    </ul>
-                  </nav>
+                  <div className="music-group-line">
+                    <h2 className="music-group-head">
+                      <span className="music-group-label">{top.label}</span>
+                      <span className="music-group-figures">
+                        <span className="music-group-full">{top.figures}</span>
+                        <span className="music-group-brief">{top.brief}</span>
+                      </span>
+                    </h2>
+                    {stops.length > 1 ? (
+                      <Others className="music-group-others" role={Others === "div" ? "group" : undefined} aria-label={`Go to another ${order === "kind" ? "genre" : order === "released" ? "decade" : "year"}`}>
+                        <ul className="music-index">
+                          {stops.map(([other, index]) => (other === group ? null : (
+                            <li key={other.key}><button type="button" onClick={() => this.jump(document.getElementById(`shelf-group-${index}`))}>{other.head?.label ?? other.label}</button></li>
+                          )))}
+                        </ul>
+                      </Others>
+                    ) : null}
+                  </div>
                 </div>
               ) : null}
-              {group.label ? group.within ? (
+              {group.within && group.label ? (
                 <h3 className="music-group-head is-part">
                   <span className="music-group-label">{group.label}</span>
                   <span className="music-group-figures">{group.figures}</span>
                 </h3>
-              ) : (
-                <h2 className="music-group-head">
-                  <span className="music-group-label">{group.label}</span>
-                  <span className="music-group-figures">{group.figures}</span>
-                </h2>
               ) : null}
               <div className="music-shelf">
                 {group.rows.map((row, at) => {

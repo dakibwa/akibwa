@@ -419,6 +419,14 @@ html.ready .music-mark {
   .music-order button { padding: 0 4px; font-size: 12px; }
   .music-order-way { margin-left: 0.05em; }
 }
+/* A folded phone's cover screen: closer again, so the search mark at the
+   end stays on the screen (Dan, 25 November 2026: "fix any bugs in this
+   regard"). */
+@media (max-width: 309px) {
+  .music-bar { --mark: 40px; }
+  .music-order button { padding: 0 3px; }
+  .music-find { width: 38px; }
+}
 
 /* The shelf: squares stand on a shared line, as records do, each as large
    as its hours between the floor and the cap the room sets. A square still
@@ -492,63 +500,138 @@ html.ready .music-mark {
 .music-found::after { height: 1px; background: var(--paper-edge); }
 .music-found q { min-width: 0; overflow-wrap: anywhere; quotes: "“" "”"; }
 
-/* In a grouped order, a quiet row of its groups at the head of the shelf
-   jumps to each one. It scrolls away with the shelf; the bar stays still. */
+/* A group's heading is one line: its kraft tab and what it holds, then the
+   other groups as quiet words to go to, at the far end where there is room
+   (Dan, 25 November 2026: "is the genre bar placed somewhere better that
+   fit's with the more minimalist theme?"). There is no row of jumps apart
+   from the headings. The tab and its figures never move or leave the
+   screen. Where the other groups do not all fit beside them, the figures
+   shorten to the hours alone on every heading (`data-fit="brief"`); where
+   they still do not fit (`data-fit="scroll"`), a hairline parts the figures
+   from the words, which scroll sideways in the room that is left and fade
+   at the edge they run past (`data-more`). music-room.jsx keeps both. The
+   rule stays the shelf's full width. */
+.music-group-top {
+  position: relative;
+}
+.music-group-top::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 3px;
+  border-radius: 0 2px 2px 0;
+  background: var(--kraft);
+  pointer-events: none;
+}
+.music-group-line {
+  display: flex;
+  align-items: flex-end;
+  gap: 18px;
+}
+.music-group-line > .music-group-head {
+  flex: none;
+}
+.music-group-line > .music-group-head::after {
+  content: none;
+}
+.music-group-line .music-group-figures {
+  white-space: nowrap;
+}
+.music-group-brief,
+.music-map[data-fit] .music-group-full {
+  display: none;
+}
+.music-map[data-fit] .music-group-brief {
+  display: inline;
+}
+.music-map[data-fit="scroll"] .music-group-line:has(> .music-group-others) .music-group-figures::after {
+  content: "";
+  display: inline-block;
+  width: 1px;
+  height: 13px;
+  margin-left: 12px;
+  background: var(--paper-edge);
+  vertical-align: -2px;
+}
+.music-map[data-fit="scroll"] .music-group-line {
+  gap: 12px;
+}
+/* The other groups take the room the heading leaves and keep to its far
+   end. Four pixels each side are room for a word's focus ring, which the
+   scrolling would otherwise cut; the margin gives them back, so the last
+   word still ends on the shelf's edge. */
+.music-group-others {
+  display: flex;
+  flex: 1 1 0;
+  align-self: stretch;
+  align-items: flex-end;
+  min-width: 0;
+  margin: 0 -4px;
+  padding: 0 4px;
+  overflow: auto hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+.music-group-others::-webkit-scrollbar {
+  display: none;
+}
+/* The words alone: no pill behind them, which a word at the shelf's edge
+   pushed off the screen (Dan, 25 November 2026: "the pill can go off
+   screen"). They stand on the same line as the figures. */
 .music-index {
   display: flex;
-  flex-wrap: wrap;
-  gap: 2px 4px;
-  margin: 0 0 -10px -10px;
-  padding: 0;
+  flex: none;
+  gap: 16px;
+  margin: 0 0 0 auto;
+  padding: 0 0 9px;
   list-style: none;
 }
-.music-index button {
-  height: 30px;
-  padding: 0 10px;
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--ink-soft);
-  font: 700 13px/1 var(--sans);
-  font-variant-numeric: tabular-nums;
-  cursor: pointer;
-  transition: background-color 160ms ease, color 160ms ease;
+/* A word's own height and no more, so it shares the figures' baseline. */
+.music-index li {
+  display: flex;
 }
-.music-index button:hover { background: var(--paper-deep); color: var(--ink); }
+.music-index button {
+  position: relative;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink-soft);
+  font: 700 13px/1.2 var(--sans);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 160ms ease;
+}
+/* Room for a finger round each word, kept inside the line at its end so it
+   adds nothing to scroll to. */
+.music-index button::after {
+  content: "";
+  position: absolute;
+  inset: -9px -8px;
+}
+.music-index li:last-child button::after {
+  right: 0;
+}
+.music-index button:hover {
+  color: var(--ink);
+}
+.music-index button:focus-visible {
+  outline-offset: 2px;
+  border-radius: 3px;
+}
 @container (max-width: 559px) {
-  .music-index { margin-left: -8px; }
-  .music-index button { height: 30px; padding: 0 8px; }
+  .music-group-line {
+    gap: 14px;
+  }
+  .music-index {
+    gap: 14px;
+  }
 }
 
 /* A genre in sub-genres (Dan, 25 November 2026: "can we break these further
-   into sub genres too"). The genre keeps its kraft tab, with its sub-genres
-   a step away beside it on a wide shelf and under it on a narrow one. Each
-   sub-genre then stands under a smaller heading on a hairline, a little
-   closer to its neighbours than one genre is to the next. */
-.music-group-top {
-  position: relative;
-  display: grid;
-  gap: 6px;
-}
-.music-index.is-within {
-  margin: 0 0 0 -9px;
-}
-.music-index.is-within button {
-  height: 28px;
-  padding: 0 9px;
-  font-size: 12.5px;
-}
-@container (min-width: 1100px) {
-  .music-group-top nav {
-    position: absolute;
-    right: 0;
-    bottom: 7px;
-  }
-  .music-index.is-within {
-    justify-content: flex-end;
-    margin: 0 -9px 0 0;
-  }
-}
+   into sub genres too"). The genre keeps its kraft tab; each sub-genre
+   stands under a smaller heading on a hairline, a little closer to its
+   neighbours than one genre is to the next. */
 .music-group.is-part {
   margin-top: -8px;
 }
@@ -1041,17 +1124,22 @@ html {
 .music-track-title::-webkit-scrollbar {
   display: none;
 }
-.music-track-title[data-more] {
+.music-track-title[data-more],
+.music-group-others[data-more] {
   --fade: 30px;
   -webkit-mask-image: linear-gradient(to right, var(--from, #000), #000 var(--fade), #000 calc(100% - var(--fade)), var(--to, #000));
   mask-image: linear-gradient(to right, var(--from, #000), #000 var(--fade), #000 calc(100% - var(--fade)), var(--to, #000));
 }
 .music-track-title[data-more="end"],
-.music-track-title[data-more="both"] {
+.music-track-title[data-more="both"],
+.music-group-others[data-more="end"],
+.music-group-others[data-more="both"] {
   --to: transparent;
 }
 .music-track-title[data-more="start"],
-.music-track-title[data-more="both"] {
+.music-track-title[data-more="both"],
+.music-group-others[data-more="start"],
+.music-group-others[data-more="both"] {
   --from: transparent;
 }
 

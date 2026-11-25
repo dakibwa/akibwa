@@ -140,12 +140,18 @@ export function arrange(order, entries, { years, kinds, reverse = false } = {}) 
     });
     return [...map]
       .sort(([a], [b]) => (!a ? 1 : !b ? -1 : reverse ? a - b : b - a))
-      .map(([decade, list]) => ({
-        key: decade ? String(decade) : "undated",
-        label: decade ? `${decade}s` : "Undated",
-        figures: `${list.length} ${list.length === 1 ? "record" : "records"} · ${listened(list.reduce((sum, entry) => sum + entry.item.minutes, 0), "long")}`,
-        entries: list
-      }));
+      .map(([decade, list]) => {
+        const minutes = list.reduce((sum, entry) => sum + entry.item.minutes, 0);
+        return {
+          key: decade ? String(decade) : "undated",
+          label: decade ? `${decade}s` : "Undated",
+          figures: `${list.length} ${list.length === 1 ? "record" : "records"} · ${listened(minutes, "long")}`,
+          // Where the other groups' names do not fit beside it, a heading
+          // says its hours alone.
+          brief: listened(minutes),
+          entries: list
+        };
+      });
   }
   if (order === "year" && years) {
     // By when it was played: every record played for an hour or more in a
@@ -165,10 +171,12 @@ export function arrange(order, entries, { years, kinds, reverse = false } = {}) 
       .sort(([a], [b]) => (reverse ? a - b : b - a))
       .map(([year, list]) => {
         list.sort((a, b) => b.item.minutes - a.item.minutes || a.item.key.localeCompare(b.item.key));
+        const minutes = list.reduce((sum, entry) => sum + entry.item.minutes, 0);
         return {
           key: String(year),
           label: String(year),
-          figures: `${list.length} ${list.length === 1 ? "record" : "records"} · ${listened(list.reduce((sum, entry) => sum + entry.item.minutes, 0), "long")}`,
+          figures: `${list.length} ${list.length === 1 ? "record" : "records"} · ${listened(minutes, "long")}`,
+          brief: listened(minutes),
           entries: list,
           // Each year's largest record reaches the cap.
           reference: list[Math.min(2, list.length - 1)].item.minutes
@@ -193,7 +201,7 @@ export function arrange(order, entries, { years, kinds, reverse = false } = {}) 
       .map(([name, list]) => ({ name, list, minutes: sum(list) }))
       .sort((a, b) => b.minutes - a.minutes)
       .flatMap(({ name, list, minutes }) => {
-        const head = { label: name, figures: `${Math.round((minutes / total) * 100)}% of listening · ${listened(minutes, "long")}` };
+        const head = { label: name, figures: `${Math.round((minutes / total) * 100)}% of listening · ${listened(minutes, "long")}`, brief: listened(minutes) };
         const parts = new Map();
         for (const entry of list) {
           const part = partOf(entry);
@@ -201,10 +209,11 @@ export function arrange(order, entries, { years, kinds, reverse = false } = {}) 
           parts.get(part).push(entry);
         }
         // A genre with no sub-genres stands as one group, as it did.
-        if (parts.size < 2) return [{ key: name, label: name, figures: head.figures, entries: list }];
+        if (parts.size < 2) return [{ key: name, label: name, figures: head.figures, brief: head.brief, entries: list }];
         // Each sub-genre is a group of its own, most listened first. The
         // first carries its genre's heading (`head`); all name their genre
-        // (`within`) so the shelf can list a genre's sub-genres beside it.
+        // (`within`), so the shelf can tell a genre's heading from a
+        // sub-genre's.
         return [...parts]
           .map(([part, entries]) => ({ part: part ?? "more", entries, minutes: sum(entries) }))
           .sort((a, b) => b.minutes - a.minutes)
