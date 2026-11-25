@@ -67,19 +67,29 @@ it was a page of handwriting; do not bring that back.
 
 ## Opening and inspecting a record
 
-- Resting the pointer on a sleeve, or focusing it, shows its sheet under its own row
-  (Dan, 25 November: “rather than clicking when you hover it should show the stats below
-  it? and the name etc”). The sheet floats over the rows beneath and moves nothing. The
-  pointer passes through it to the sleeves it covers. Near the foot of the screen it
-  stands above the row instead. Its notch points at its sleeve and glides along the row.
-  The corner caption this replaced is gone.
-- A first glance waits about a tenth of a second for the pointer to settle. A quick pass
-  across the gaps keeps the previous sleeve. The shelf answers only a pointer that moves:
-  scrolling puts a floating sheet away, and a sleeve that slides under a resting pointer
-  waits for it to move.
-- Pressing a sleeve sets the same sheet into the shelf, where the rows make room and it
-  can be folded out and closed. Pressing the sleeve again, the close button or Escape
-  lets it go. A tap or the Enter key opens it the same way. Keep the scroll position.
+- Resting the pointer on a sleeve, or focusing it, opens its sheet in the shelf beside
+  its row (Dan, 25 November: “rather than clicking when you hover it should show the stats
+  below it? and the name etc”). The rows make room for it: they move down, and nothing is
+  covered (Dan, 25 November: “rather than it appearing over can it push the albums below
+  it down”). The sheet that floated over the rows beneath is gone; do not bring it back.
+  The corner caption it replaced is gone too.
+- The first sheet opens under its row, or over it when the screen has no room beneath.
+  After that the sheet keeps to the gap the pointer has just crossed: over the row when
+  the pointer came down to it, under it when the pointer came up. Moving to the next row
+  then moves nothing; the sheet turns its notch to the new sleeve. The notch glides along
+  a row.
+- The sleeve in hand stays where it is. When a sheet's move would carry it, the page
+  scrolls by as much, and the other rows and headings slide to their places over 300 ms.
+  A sheet under the pointer does not grow shorter while the pointer stays in the shelf,
+  so the rows do not bob between a long record and a short one.
+- A first glance waits about 140 ms for the pointer to settle, and a new row about as
+  long. Passing over a sleeve or a gap keeps the sheet that is open; leaving the shelf
+  closes it. The shelf answers only a pointer that moves: scrolling leaves the open sheet
+  alone, and a sleeve that slides under a resting pointer waits for it to move.
+- The open sheet can be used where it is: its long names glide and its fold opens.
+  Pressing the sleeve keeps the sheet open when the pointer moves on, and shows its
+  close button. Pressing the sleeve again, the close button or Escape lets it go. A tap
+  or the Enter key opens it the same way. Keep the scroll position.
 - Keep the sleeve fixed in place and at the same size. Blend light into its artwork,
   sweeping one band at its own angle, speed and direction, with a soft corner gloss and
   slightly deeper colours.
@@ -98,9 +108,9 @@ it was a page of handwriting; do not bring that back.
   filled to its own width, are gone; do not bring them back.
 - Every song name keeps to one line (Dan, 25 November, of names that took three: “allow
   it to scroll for these long ones”). A name longer than its line fades at the edge it
-  runs past and scrolls sideways under a finger or a trackpad. In a sheet set into the
-  shelf, resting a mouse on a song carries its name to its end at a reading pace and
-  leaving brings it back; a tap does the same. Names do not move on their own, and
+  runs past and scrolls sideways under a finger or a trackpad. Resting a mouse on a
+  song carries its name to its end at a reading pace and leaving brings it back; a tap
+  does the same. Names do not move on their own, and
   under reduced motion they move only by hand.
 - Fold a long record: one column shows ten songs above twelve, wider sheets six rows,
   with a button for the rest. Shorten song names by dropping guest credits, remaster notes

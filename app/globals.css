@@ -762,15 +762,12 @@ html {
 }
 
 /* ==================================================================== sheet
-   A record's sheet (Dan, 25 November 2026). While the pointer or the
-   keyboard is on a sleeve it floats under that sleeve's row, over the rows
-   beneath, and lets the pointer through to them. A press sets it into the
-   shelf, where the rows make room for it. One panel does both, placed by
-   music-room.jsx: `--top` is where it floats and `--notch` is its sleeve. */
-.music-map-frame {
-  position: relative;
-}
-
+   A record's sheet (Dan, 25 November 2026). It stands in the shelf beside
+   its sleeve's row, under it or, where the screen has no room beneath, over
+   it, and the rows make room. The pointer or the keyboard on a sleeve opens
+   it; a press keeps it open and shows its close button. music-room.jsx
+   slides the rows as it opens, moves and closes, and sets `--notch` to its
+   sleeve. */
 .music-tracks {
   --sheet-title: clamp(21px, 0.7cqi + 16px, 28px);
   --sheet-text: clamp(14px, 0.1cqi + 13.6px, 15.5px);
@@ -778,23 +775,16 @@ html {
   --edge: #dccdb6;
   --rule: #e8decb;
   --fill: #c9855c;
-  position: absolute;
-  z-index: 2;
-  top: var(--top, 0);
-  right: 0;
-  left: 0;
+  position: relative;
   padding: 12px 14px 15px 16px;
   border: 1px solid var(--edge);
   border-radius: 8px;
   background: var(--paper-light);
-  /* A mat of the page's own paper keeps the shelf's gap all the way round. */
-  box-shadow: 0 0 0 4px var(--paper), 0 22px 30px -14px rgb(42 36 32 / 0.55);
   color: var(--ink);
   font-family: var(--sans);
   font-size: var(--sheet-text);
   line-height: 1.3;
-  pointer-events: none;
-  transition: opacity 160ms ease, box-shadow 260ms ease;
+  transition: opacity 160ms ease;
 }
 
 @starting-style {
@@ -803,14 +793,6 @@ html {
 
 .music-tracks[data-leaving] {
   opacity: 0;
-}
-
-.music-tracks[data-pinned="true"] {
-  position: relative;
-  z-index: auto;
-  top: auto;
-  box-shadow: 0 0 0 4px rgb(243 236 223 / 0), 0 0 0 0 rgb(42 36 32 / 0);
-  pointer-events: auto;
 }
 
 .music-tracks:focus-visible {
@@ -931,7 +913,7 @@ html {
   color: var(--ink-faint);
 }
 
-/* Only a sheet set into the shelf can be closed; its room is always kept. */
+/* Only a sheet kept open by a press can be closed; its room is always kept. */
 .music-tracks-close {
   grid-area: close;
   align-self: start;
@@ -949,6 +931,9 @@ html {
   cursor: pointer;
   opacity: 0;
   transition: color 160ms ease, background-color 160ms ease, opacity 200ms ease;
+}
+.music-tracks:not([data-pinned="true"]) .music-tracks-close {
+  pointer-events: none;
 }
 .music-tracks[data-pinned="true"] .music-tracks-close {
   opacity: 1;

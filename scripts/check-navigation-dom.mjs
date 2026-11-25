@@ -370,7 +370,7 @@ const checkPublicLanding = async () => {
   check(albums.bounded && albums.inside, "the sleeves are square, between the floor and the cap, and on the shelf");
   check(albums.lead?.startsWith("Music for Psychedelic Therapy"), `the map starts with the most listened [${albums.lead}]`);
   // Dan, 25 November 2026: the sleeve under the pointer shows its name and
-  // its stats under its own row, floating there without moving the shelf.
+  // its stats under its own row, and the rows beneath move down for it.
   const pointed = await evaluate(`(() => {
     const faces = [...document.querySelectorAll(".music-page .music-face")];
     const face = faces.find((button) => button.getAttribute("aria-label").startsWith("Graceland"));
@@ -382,14 +382,14 @@ const checkPublicLanding = async () => {
       done({
         says: glance?.querySelector(".music-release")?.textContent ?? "",
         songs: glance?.querySelectorAll(".music-track-list li").length ?? 0,
-        floats: Boolean(glance) && getComputedStyle(glance).position === "absolute" && last.getBoundingClientRect().top === before,
+        pushes: Boolean(glance) && getComputedStyle(glance).position !== "absolute" && Math.abs(last.getBoundingClientRect().top - before - glance.offsetHeight - 4) <= 1,
         under: Boolean(glance) && Math.abs(glance.getBoundingClientRect().top - face.getBoundingClientRect().bottom - 4) <= 1
       });
       face.dispatchEvent(new PointerEvent("pointerout", { bubbles: true, pointerType: "mouse" }));
     }, 500));
   })()`);
   check(/^GracelandPaul Simon1986\d[\d,.]* hours[\d,]+ plays$/.test(pointed.says) && pointed.songs > 5, `pointing at a sleeve shows its name, artist, year, hours, plays and songs [${pointed.says}, ${pointed.songs} songs]`);
-  check(pointed.floats && pointed.under, `the sheet floats under its sleeve's row and moves nothing [${JSON.stringify(pointed)}]`);
+  check(pointed.pushes && pointed.under, `the sheet opens under its sleeve's row and the rows beneath make room [${JSON.stringify(pointed)}]`);
   check(await waitFor(`!document.querySelector(".music-page #record-glance")`, 2000), "leaving the sleeve puts its sheet away");
   for (const [order, heading] of [["kind", "ambient"], ["released", "2020s"]]) {
     await evaluate(`document.querySelector('.music-page .music-order button[data-order="${order}"]').click()`);

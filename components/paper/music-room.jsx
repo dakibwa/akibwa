@@ -184,7 +184,19 @@ class GlidingShelf extends PureComponent {
   };
 
   getSnapshotBeforeUpdate(previous) {
-    if (!this.opened || !previous.measured || previous.arrangement === this.props.arrangement || this.motion.matches) return null;
+    // Where the rows and headings stand before a sheet opens, moves, grows
+    // or closes. The room reads this once the shelf has updated, to hold the
+    // sleeve in hand still and slide the rest to their new places.
+    const { before, tracks, arrangement } = this.props;
+    before.current = null;
+    if (this.opened && previous.tracks !== tracks && previous.arrangement === arrangement) {
+      const places = new Map();
+      for (const element of this.list.current.querySelectorAll(".music-row[data-near], .music-group-head, .music-index")) {
+        places.set(element, element.getBoundingClientRect().top);
+      }
+      before.current = places;
+    }
+    if (!this.opened || !previous.measured || previous.arrangement === arrangement || this.motion.matches) return null;
     return visibleTiles(this.list.current, this.animations);
   }
 
@@ -234,6 +246,7 @@ class GlidingShelf extends PureComponent {
    * until it does, so reading down the shelf never throws a sheet open.
    * `resting` (shared with the room, which sets it when it puts a sheet
    * away) says the sleeve under the pointer is waiting for that move.
+   * Leaving a sleeve keeps its sheet: only leaving the shelf puts it away.
    */
   pointerX = NaN;
   pointerY = NaN;
@@ -244,11 +257,11 @@ class GlidingShelf extends PureComponent {
     const entry = this.props.tiles.records.get(face.parentElement.dataset.key);
     if (!entry) return;
     prepareSheen(face, entry.item.record ?? entry.item.key);
-    this.props.onPoint(entry.item, pointer ? face : null);
+    this.props.onPoint(entry.item, face, pointer);
   }
 
   render() {
-    const { order, arrangement, reference, measured, onOpen, onPoint, shownTile, tracks, tiles } = this.props;
+    const { order, arrangement, reference, measured, onOpen, onPoint, shownTile, above, tracks, tiles } = this.props;
     const firstRow = !measured && arrangement[0]?.rows[0];
     const first = firstRow?.entries?.[0]?.item;
     let drawn = 0;
@@ -282,7 +295,7 @@ class GlidingShelf extends PureComponent {
           const face = event.target.closest(".music-face");
           if (event.pointerType === "touch" || !face || face.contains(event.relatedTarget instanceof Node ? event.relatedTarget : null)) return;
           this.props.resting.current = false;
-          onPoint(event.relatedTarget?.closest?.(".music-shelf") ? undefined : null);
+          onPoint(undefined);
         }}
         onFocus={event => {
           const face = event.target.closest(".music-face:focus-visible");
@@ -324,12 +337,13 @@ class GlidingShelf extends PureComponent {
                   const start = drawn;
                   drawn += row.entries.length;
                   // The sheet stands in the shelf straight after its sleeve's row,
-                  // floating there under the pointer and in the page once pressed.
+                  // or straight before it when the screen has no room beneath.
                   const selected = shownTile && row.entries.some(({ item }) => item.key === shownTile);
                   return (
                     <Fragment key={at}>
+                      {selected && above ? tracks : null}
                       <ShelfRow row={row} start={start} reference={reference} tiles={tiles} />
-                      {selected ? tracks : null}
+                      {selected && !above ? tracks : null}
                     </Fragment>
                   );
                 })}
@@ -428,7 +442,7 @@ function TrackLabel({ track }) {
   const mark = note?.replace(/^[-–—]\s*/, "").replace(/^\((.*)\)$/, "$1");
   return (
     <>
-      <span className="music-track-title" title={track.title}>
+      <span className="music-track-title" title={track.title} tabIndex={-1}>
         {title}{mark && <> <span className="music-track-sub">{mark}</span></>}
       </span>
       <span className="music-track-hours"><strong>{amount}</strong> <small>{unit}</small><span className="visually-hidden"> listened, {plays(track.plays)}</span></span>
@@ -507,7 +521,7 @@ function TrackSheet({ album, columns, pinned, onClose }) {
           <span className="music-release-total"><b>{listened(album.minutes, "long")}</b><span className="music-release-plays">{plays(album.plays)}</span></span>
         </p>
       </header>
-      <button type="button" className="music-tracks-close" onClick={() => onClose()} aria-label="Close the track list">
+      <button type="button" className="music-tracks-close" onClick={() => onClose()} aria-label="Close the track list" tabIndex={pinned ? undefined : -1}>
         <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 3.5 9 9m0-9-9 9" /></svg>
       </button>
       {count > 0 && !duplicate && (
@@ -559,7 +573,7 @@ function TrackSheet({ album, columns, pinned, onClose }) {
         </div>
       )}
       {folds && (
-        <button type="button" className="music-tracks-more" aria-controls="record-songs" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>
+        <button type="button" className="music-tracks-more" aria-controls="record-songs" aria-expanded={expanded} tabIndex={pinned ? undefined : -1} onClick={() => setExpanded(!expanded)}>
           {expanded ? "Fewer songs" : `${count - full} more songs`}
         </button>
       )}
@@ -573,13 +587,14 @@ function TrackSheet({ album, columns, pinned, onClose }) {
 }
 
 /*
- * The sheet's panel, in the shelf straight after its sleeve's row. While the
- * pointer or the keyboard is on the sleeve it floats there, over the rows
- * beneath, and lets the pointer through to them. A press sets it into the
- * shelf: the rows make room, and it can be read, folded out and closed. One
- * panel does both, so pressing changes nothing the reader is looking at.
+ * The sheet's panel, in the shelf beside its sleeve's row, where the rows
+ * make room for it (Dan, 25 November 2026: "rather than it appearing over
+ * can it push the albums below it down"). The pointer or the keyboard on a
+ * sleeve opens it, and it goes again when they leave the shelf. A press
+ * keeps it open until it is closed. One panel does both, so pressing changes
+ * nothing the reader is looking at.
  */
-function AlbumTracks({ album, tile, pinned, leaving, columns, onClose }) {
+function AlbumTracks({ album, tile, pinned, above, leaving, columns, onClose }) {
   const panel = useRef(null);
   useLayoutEffect(() => {
     if (pinned) panel.current.focus({ preventScroll: true });
@@ -611,10 +626,10 @@ function AlbumTracks({ album, tile, pinned, leaving, columns, onClose }) {
       ref={panel}
       data-tile={tile}
       data-pinned={pinned}
+      data-above={above || undefined}
       data-leaving={leaving || undefined}
-      inert={!pinned}
       tabIndex={pinned ? -1 : undefined}
-      aria-labelledby={pinned ? "music-tracks-title" : undefined}
+      aria-labelledby="music-tracks-title"
     >
       <TrackSheet key={album.key} album={album} columns={columns} pinned={pinned} onClose={onClose} />
     </section>
@@ -684,10 +699,11 @@ export function MusicRoom({ active }) {
     }
   }, [active, open]);
   /*
-   * The sleeve under the pointer or the keyboard: its tile and its record.
-   * Its sheet floats under its row until it is pressed or left (Dan, 25
-   * November 2026: "rather than clicking when you hover it should show the
-   * stats below it? and the name etc").
+   * The sleeve under the pointer or the keyboard: its tile, its record and
+   * the side of its row its sheet opens on. The sheet stays until the sleeve
+   * is pressed or the shelf is left (Dan, 25 November 2026: "rather than
+   * clicking when you hover it should show the stats below it? and the name
+   * etc").
    */
   const [pointed, setPointed] = useState(null);
   const pointedNow = useRef(null);
@@ -700,46 +716,61 @@ export function MusicRoom({ active }) {
     clearTimeout(hoverTimer.current);
     clearTimeout(leaveTimer.current);
   }, [active]);
-  const onPoint = useCallback((item, face) => {
-    if (item && face && awaited.current === item.key) return;
+  // The tallest a glanced sheet has stood since the shelf was entered.
+  const floor = useRef(0);
+  /*
+   * Which side of its row a sheet opens on. The first opens under its row.
+   * After that the sheet keeps to the gap the pointer has just crossed: over
+   * the row when the pointer came down to it, under it when the pointer came
+   * up. Moving to the next row then moves nothing, the sheet only turns to
+   * point at the new sleeve, and it is never in the pointer's way. Either
+   * way it takes the other side when the screen has room for it only there.
+   */
+  const standsAbove = (face, row, last) => {
+    const box = face.getBoundingClientRect();
+    const needs = Math.max(floor.current, 200) + GAP + 12;
+    const beneath = innerHeight - box.bottom >= needs;
+    const over = box.top - (bar.current?.getBoundingClientRect().bottom ?? 0) >= needs;
+    const cameDown = Boolean(last && last.compareDocumentPosition(row) & Node.DOCUMENT_POSITION_FOLLOWING);
+    return cameDown ? over || !beneath : over && !beneath;
+  };
+  const onPoint = useCallback((item, face, byPointer) => {
+    if (item && byPointer && awaited.current === item.key) return;
     clearTimeout(hoverTimer.current);
     awaited.current = null;
     if (item === undefined || quiet.current) return;
     if (!item) {
-      // It fades where it is, then goes.
+      // It fades where it is, then goes, and the rows close up.
       clearTimeout(leaveTimer.current);
       setPointed((last) => (last && !last.leaving ? { ...last, leaving: true } : last));
       leaveTimer.current = setTimeout(() => setPointed((last) => (last?.leaving ? null : last)), 150);
       return;
     }
-    const next = { tile: item.key, record: item.record ?? item.key, byPointer: Boolean(face) };
+    const rowOf = (tile) => tiles.records.get(tile)?.tile.parentElement ?? null;
     const show = () => {
       awaited.current = null;
       clearTimeout(leaveTimer.current);
-      setPointed((last) => (last && !last.leaving && last.tile === next.tile ? last : next));
+      // A sheet on its way out is still where it was: a key that leaves one
+      // sleeve for the next finds it there.
+      const last = pointedNow.current;
+      if (last && !last.leaving && last.tile === item.key) return;
+      // Along a row the sheet keeps the side it opened on.
+      const row = face.parentElement.parentElement;
+      const from = last ? rowOf(last.tile) : null;
+      setPointed({ tile: item.key, record: item.record ?? item.key, up: from === row ? last.up : standsAbove(face, row, from) });
     };
-    if (!face) {
+    if (!byPointer) {
       show();
       return;
     }
     // A first glance waits for the pointer to settle. Along a row the sheet
-    // follows at once, and a new row waits a little, so a pointer crossing
-    // the shelf does not drag the sheet behind it.
-    const last = pointedNow.current;
-    const row = last && !last.leaving ? tiles.records.get(last.tile)?.tile.parentElement : null;
+    // follows quickly, and a new row waits a little longer, so a pointer
+    // crossing the shelf does not pull the rows about behind it.
+    const last = pointedNow.current?.leaving ? null : pointedNow.current;
+    const row = last ? rowOf(last.tile) : null;
     awaited.current = item.key;
-    hoverTimer.current = setTimeout(show, !row ? 110 : row === face.parentElement.parentElement ? 40 : 90);
+    hoverTimer.current = setTimeout(show, !row ? 140 : row === face.parentElement.parentElement ? 60 : 150);
   }, [tiles]);
-  // Scrolling puts a floating sheet away. The pointer brings one back by moving.
-  useEffect(() => {
-    if (open || !pointed?.byPointer || pointed.leaving) return undefined;
-    const away = () => {
-      resting.current = true;
-      onPoint(null);
-    };
-    addEventListener("scroll", away, { passive: true, once: true });
-    return () => removeEventListener("scroll", away);
-  }, [open, pointed, onPoint]);
   const [width, measured] = useSettledWidth(map);
   const clearSelection = () => {
     opener.current = null;
@@ -851,11 +882,13 @@ export function MusicRoom({ active }) {
     clearTimeout(hoverTimer.current);
     clearTimeout(leaveTimer.current);
     opener.current = { button, key: item.key };
-    // A year's square opens its record.
-    const next = { tile: item.key, record: item.record ?? item.key };
-    // A mouse is still on the sleeve it pressed, so pressing again lets the
-    // sheet float there once more. A finger or a key leaves nothing behind.
-    setPointed(hovering ? { ...next, byPointer: true } : null);
+    // A year's square opens its record. A sheet already open for this
+    // sleeve keeps its side of the row.
+    const glanced = pointedNow.current?.tile === item.key ? pointedNow.current : null;
+    const next = { tile: item.key, record: item.record ?? item.key, up: Boolean(glanced?.up) };
+    // A mouse is still on the sleeve it pressed, so pressing again leaves
+    // the sheet open under the pointer. A finger or a key leaves nothing.
+    setPointed(hovering ? next : null);
     setOpen((last) => last?.tile === item.key ? null : next);
   }, []);
 
@@ -874,22 +907,22 @@ export function MusicRoom({ active }) {
   const columns = Math.max(1, Math.min(5, Math.floor(width / 298)));
   const record = shown ? byKey.get(shown.record) ?? null : null;
   const shownTile = record ? shown.tile : undefined;
+  const above = Boolean(record && shown.up);
   const tracks = useMemo(() => active && record ? (
-    <AlbumTracks album={record} tile={shownTile} pinned={pinned} leaving={leaving} columns={columns} onClose={close} />
-  ) : null, [active, record, shownTile, pinned, leaving, columns, close]);
+    <AlbumTracks album={record} tile={shownTile} pinned={pinned} above={above} leaving={leaving} columns={columns} onClose={close} />
+  ) : null, [active, record, shownTile, pinned, above, leaving, columns, close]);
 
   /*
-   * Where the sheet stands. Its notch points at its sleeve. Floating, it
-   * hangs under the sleeve's row, or stands over the row when the screen has
-   * no room beneath, and keeps to that side along the row.
+   * The sheet's notch points at its sleeve. A glanced sheet never grows
+   * shorter while the pointer stays in the shelf, so the rows beneath it do
+   * not bob as the pointer passes from a long record to a short one.
    */
-  const stood = useRef(null);
   const place = useCallback(() => {
     const frame = map.current;
     const panel = frame?.querySelector(".music-tracks");
     const tile = panel && tiles.records.get(panel.dataset.tile)?.tile;
     if (!tile?.isConnected) {
-      stood.current = null;
+      floor.current = 0;
       return;
     }
     const box = frame.getBoundingClientRect();
@@ -898,31 +931,61 @@ export function MusicRoom({ active }) {
     // The notch glides along a row, but a new sheet starts with it in place.
     if (!panel.hasAttribute("data-glide")) requestAnimationFrame(() => panel.setAttribute("data-glide", ""));
     if (panel.dataset.pinned === "true") {
-      panel.removeAttribute("data-above");
-      stood.current = null;
+      panel.style.minHeight = "";
+      floor.current = 0;
       return;
     }
-    const height = panel.offsetHeight;
-    const below = innerHeight - 8 - (at.bottom + GAP);
-    const above = at.top - GAP - 4 - (bar.current?.getBoundingClientRect().bottom ?? 0);
-    const row = tile.parentElement;
-    let up = stood.current?.row === row && stood.current.up;
-    if (!up && height > below && height <= above) up = true;
-    else if (up && height > above && height <= below) up = false;
-    stood.current = { row, up };
-    panel.style.setProperty("--top", `${Math.round((up ? at.top - GAP - height : at.bottom + GAP) - box.top)}px`);
-    panel.toggleAttribute("data-above", up);
+    panel.style.minHeight = floor.current ? `${floor.current}px` : "";
+    floor.current = Math.max(floor.current, panel.offsetHeight);
   }, [tiles]);
+  /*
+   * When a sheet opens, moves, grows or closes, the rows round it move. The
+   * sleeve in hand is held where it is, the page scrolling by as much as the
+   * change would have carried it, and every other row and heading slides
+   * from where it stood (the shelf noted that in `before`) to where it now
+   * belongs.
+   */
+  const before = useRef(null);
+  const sliding = useRef(new Set());
+  const held = useRef(null);
   const arranged = useRef(arrangement);
   useLayoutEffect(() => {
     place();
-    if (arranged.current === arrangement) return undefined;
-    arranged.current = arrangement;
-    // Sleeves glide to a new width's rows; the sheet finds its own again
-    // once they have landed.
-    const settled = setTimeout(place, 340);
-    return () => clearTimeout(settled);
-  }, [place, tracks, arrangement]);
+    const places = before.current;
+    before.current = null;
+    if (arranged.current !== arrangement) {
+      arranged.current = arrangement;
+      held.current = null;
+      // Sleeves glide to a new width's rows; the sheet finds its own again
+      // once they have landed.
+      const settled = setTimeout(place, 340);
+      return () => clearTimeout(settled);
+    }
+    const tile = shownTile ? tiles.records.get(shownTile)?.tile : null;
+    const row = tile?.isConnected ? tile.parentElement : held.current;
+    held.current = tile?.isConnected ? tile.parentElement : null;
+    if (!places) return undefined;
+    for (const slide of sliding.current) slide.cancel();
+    sliding.current.clear();
+    const stood = row?.isConnected ? places.get(row) : undefined;
+    if (stood !== undefined) {
+      const carried = row.getBoundingClientRect().top - stood;
+      if (Math.abs(carried) >= 1) window.scrollBy({ top: carried, behavior: "instant" });
+    }
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
+    for (const [element, top] of places) {
+      if (!element.isConnected) continue;
+      const from = top - element.getBoundingClientRect().top;
+      if (Math.abs(from) < 1) continue;
+      const slide = element.animate(
+        [{ transform: `translateY(${from}px)` }, { transform: "none" }],
+        { duration: 300, easing: "cubic-bezier(0.16, 1, 0.3, 1)" }
+      );
+      sliding.current.add(slide);
+      slide.onfinish = slide.oncancel = () => sliding.current.delete(slide);
+    }
+    return undefined;
+  }, [place, tracks, arrangement, shownTile, tiles]);
 
   return (
     <div className="room-body music">
@@ -1047,7 +1110,7 @@ export function MusicRoom({ active }) {
             <span className="music-group-figures">{entries.length ? `${entries.length} ${entries.length === 1 ? "record" : "records"} · ${listened(entries.reduce((sum, entry) => sum + entry.item.minutes, 0), "long")}` : "Nothing on the shelf"}</span>
           </div>
         )}
-        <GlidingShelf tracks={tracks} shownTile={shownTile} pinnedTile={open?.tile} arrangement={arrangement} measured={measured} order={view} tiles={tiles} reference={reference} onOpen={onOpen} onPoint={onPoint} resting={resting} />
+        <GlidingShelf tracks={tracks} shownTile={shownTile} above={above} before={before} pinnedTile={open?.tile} arrangement={arrangement} measured={measured} order={view} tiles={tiles} reference={reference} onOpen={onOpen} onPoint={onPoint} resting={resting} />
       </div>
     </div>
   );

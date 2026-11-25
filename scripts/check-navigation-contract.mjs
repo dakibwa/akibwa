@@ -80,7 +80,7 @@ requireText(music, 'className="music-find"', "on a phone the bar must keep one r
 requireText(css, ".music-tools[data-finding=\"true\"] .music-search {", "the phone's search must slide out over the orders");
 requireText(music, "rowsFor(group.entries, width, group.reference ?? reference)", "the shelf must be laid out in rows sized by hours between a floor and a cap");
 requireText(music, 'role="group" aria-label="Order"', "the bar must sort the whole shelf by time listened, genre, release date or listen date");
-requireText(music, 'id={pinned ? "record-tracks" : "record-glance"}', "a sleeve under the pointer must show its sheet under its row, and a press must set it into the shelf (Dan, 25 November 2026)");
+requireText(music, 'id={pinned ? "record-tracks" : "record-glance"}', "a sleeve under the pointer must open its sheet beside its row, and a press must keep it open (Dan, 25 November 2026)");
 requireText(music, "startTransition(() => setOrder(name))", "an order must answer before the shelf is sorted again");
 requireText(music, "<AlbumTracks", "an album must open its track list");
 // Dan, 25 September 2026: resizing is smooth.
