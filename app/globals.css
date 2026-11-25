@@ -262,8 +262,7 @@ html.ready .music-mark {
 
 .music-tools, .music-order { display: contents; }
 
-/* The order: four plain names; the chosen one sits on a rust-tinted chip.
-   A phone has room for a short word each (ORDERS in music-shelf.mjs). */
+/* The order: four plain words; the chosen one sits on a rust-tinted chip. */
 .music-order button {
   position: relative;
   display: inline-flex;
@@ -283,7 +282,6 @@ html.ready .music-mark {
 .music-order button:hover { background: var(--paper-deep); color: var(--ink); }
 .music-order button[aria-pressed="true"] { background: var(--rust-tint); color: var(--rust-deep); }
 .music-order button:active { transform: scale(0.96); transition-duration: 90ms; }
-.music-order-short { display: none; }
 
 /* A date order's way round. Its room is always kept, so nothing shifts; it
    shows faintly as a hint and firmly when its order is chosen. */
@@ -402,11 +400,9 @@ html.ready .music-mark {
   .music-tools[data-finding="true"] :is(.music-order button, .music-find) { opacity: 0; visibility: hidden; transform: translateX(-8px); pointer-events: none; transition: opacity 130ms ease, transform 220ms var(--shelf-ease), visibility 0s linear 130ms; }
 }
 
-/* A phone: one row still, each order by its short word. */
+/* A phone: one row still, the words a little closer. */
 @media (max-width: 619px) {
   .music-bar { --mark: 52px; --chip-h: 34px; }
-  .music-order-long { display: none; }
-  .music-order-short { display: inline; }
   .music-order button { padding: 0 9px; font-size: 14px; }
   .music-order-way { width: 0.7em; }
 }
@@ -437,6 +433,15 @@ html.ready .music-mark {
 .music-map {
   display: grid;
   gap: 26px;
+}
+
+/* A new order turns the page: the shelf fades out here, and its sleeves lift
+   back in by themselves (GlidingShelf.turn in music-room.jsx), so it comes
+   back to full strength at once. */
+.music-map[data-veiled] {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease;
 }
 
 .music-group {

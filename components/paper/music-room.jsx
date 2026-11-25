@@ -154,6 +154,60 @@ class GlidingShelf extends PureComponent {
     }
   };
 
+  /*
+   * A new order turns the page (Dan, 25 November 2026: "rather than stuff
+   * flashing in and stuff when you click the release date nd listen date can
+   * we make it more beautiful"). The room has faded the shelf out and put
+   * the new order in its place, unseen. Once the first screen's covers have
+   * arrived, or after a moment if they are slow, its headings fade in and
+   * its sleeves lift in as they do when the page opens: each row from its
+   * left, one row after another down the screen.
+   */
+  turning = null;
+  turn = () => {
+    const list = this.list.current;
+    const turning = (this.turning = {});
+    this.stop();
+    const inView = (element) => {
+      const box = element.getBoundingClientRect();
+      return box.bottom > 0 && box.top < window.innerHeight;
+    };
+    const reveal = () => {
+      if (this.turning !== turning) return;
+      this.turning = null;
+      if (!this.motion.matches) {
+        for (const heading of list.querySelectorAll(".music-index, .music-group-head")) {
+          if (inView(heading)) heading.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 460, easing: "ease-out" });
+        }
+        const arriving = [...visibleTiles(list).values()];
+        const rows = [...new Set(arriving.map(({ box }) => Math.round(box.top)))].sort((a, b) => a - b);
+        for (const { tile, box } of arriving) {
+          const delay = Math.min(rows.indexOf(Math.round(box.top)) * 50, 450) + (box.left / window.innerWidth) * 110;
+          tile.firstElementChild.animate(
+            [{ opacity: 0, transform: "translateY(12px)" }, { opacity: 1, transform: "none" }],
+            { duration: 520, delay, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "backwards" }
+          );
+        }
+      }
+      this.props.onTurned();
+    };
+    // Two frames on, the rows near the screen have been given their covers.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (this.turning !== turning) return;
+      const arrivals = [];
+      for (const { tile } of visibleTiles(list).values()) {
+        const image = tile.querySelector("img");
+        if (image && !image.complete) {
+          arrivals.push(new Promise((done) => {
+            image.addEventListener("load", done, { once: true });
+            image.addEventListener("error", done, { once: true });
+          }));
+        }
+      }
+      Promise.race([Promise.all(arrivals), new Promise((done) => setTimeout(done, 360))]).then(reveal);
+    }));
+  };
+
   // After the opening sequence, each newly visible row arrives together.
   revealed = new WeakSet();
   below = new WeakSet();
@@ -207,7 +261,8 @@ class GlidingShelf extends PureComponent {
         }
       };
     }
-    if (!this.opened || !previous.measured || previous.arrangement === arrangement || this.motion.matches) return null;
+    // A new order does not glide: it turns the page (turn, below).
+    if (!this.opened || !previous.measured || previous.arrangement === arrangement || this.motion.matches || this.props.veiled) return null;
     return visibleTiles(this.list.current, this.animations);
   }
 
@@ -220,6 +275,7 @@ class GlidingShelf extends PureComponent {
     if (!changed && measured === previous.measured) return;
     this.opening();
     this.watch();
+    if (changed && this.props.veiled) this.turn();
     if (!before) return;
     this.stop();
     // All destination reads precede the first write. A cover coming from
@@ -316,6 +372,7 @@ class GlidingShelf extends PureComponent {
         onLoadCapture={imageSettled}
         onErrorCapture={imageFailed}
         data-measured={measured}
+        data-veiled={this.props.veiled || undefined}
         className={`music-map is-by-${order}`}
         role="region"
         aria-label={`The records I play most, ${{ hours: "most listened first", kind: "by genre", released: "by release date", year: "by listen date" }[order]}`}
@@ -798,13 +855,47 @@ export function MusicRoom({ active }) {
   // Choosing an order ends a search; while searching, the shelf is one
   // plain group, most listened first (Dan, 16 November 2026).
   const searching = Boolean(query.trim());
+  /*
+   * A new order turns the page. The chosen word answers at once; the shelf
+   * fades out, goes back to its top, takes the new order unseen, and lifts
+   * in when its covers are ready (GlidingShelf.turn). The same order pressed
+   * again changes nothing, and a reader who wants no motion gets the new
+   * order at once.
+   */
+  const [veiled, setVeiled] = useState(false);
+  const turnTimer = useRef(0);
+  const veilTimer = useRef(0);
+  useEffect(() => () => {
+    clearTimeout(turnTimer.current);
+    clearTimeout(veilTimer.current);
+  }, []);
+  const onTurned = useCallback(() => {
+    clearTimeout(veilTimer.current);
+    setVeiled(false);
+  }, []);
   const sort = (name) => {
     clearSelection();
     const turn = name === pressedOrder && !searching && name in reversed;
-    setQuery("");
+    const changes = searching || turn || name !== pressedOrder;
     setPressedOrder(name);
-    startTransition(() => setOrder(name));
-    if (turn) startTransition(() => setReversed((last) => ({ ...last, [name]: !last[name] })));
+    const apply = () => {
+      setQuery("");
+      startTransition(() => setOrder(name));
+      if (turn) startTransition(() => setReversed((last) => ({ ...last, [name]: !last[name] })));
+    };
+    if (!changes || matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      apply();
+      return;
+    }
+    setVeiled(true);
+    clearTimeout(turnTimer.current);
+    clearTimeout(veilTimer.current);
+    turnTimer.current = setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: "instant" });
+      apply();
+    }, 150);
+    // Should the new order somehow never arrive, the shelf is not left unseen.
+    veilTimer.current = setTimeout(() => setVeiled(false), 1500);
   };
   const view = filter ? "hours" : order;
   // Albums and singles share the one shelf (Dan, 25 November 2026: "I do
@@ -1080,14 +1171,12 @@ export function MusicRoom({ active }) {
         </a>
         <div className="music-tools" data-finding={finding || Boolean(query)}>
           <div className="music-order" role="group" aria-label="Order">
-            {ORDERS.map(([name, label, short]) => {
+            {ORDERS.map(([name, label]) => {
               const on = !searching && pressedOrder === name;
               const turns = name in reversed;
               return (
                 <button key={name} type="button" data-order={name} aria-pressed={on} onClick={() => sort(name)}>
-                  {/* A phone has room for the short word only. */}
-                  <span className="music-order-long">{label}</span>
-                  <span className="music-order-short">{short}</span>
+                  {label}
                   {turns && on ? <span className="visually-hidden">, {reversed[name] ? "oldest" : "newest"} first</span> : null}
                   {/* A date's way round: newest first, or oldest. */}
                   {turns ? <span className="music-order-way" data-on={on} data-up={reversed[name]} aria-hidden="true" /> : null}
@@ -1173,7 +1262,7 @@ export function MusicRoom({ active }) {
             <span className="music-group-figures">{entries.length ? `${entries.length} ${entries.length === 1 ? "record" : "records"} · ${listened(entries.reduce((sum, entry) => sum + entry.item.minutes, 0), "long")}` : "Nothing on the shelf"}</span>
           </div>
         )}
-        <GlidingShelf tracks={tracks} shownTile={shownTile} above={above} before={before} pinnedTile={open?.tile} arrangement={arrangement} measured={measured} order={view} tiles={tiles} reference={reference} onOpen={onOpen} onPoint={onPoint} resting={resting} />
+        <GlidingShelf tracks={tracks} shownTile={shownTile} above={above} before={before} pinnedTile={open?.tile} arrangement={arrangement} measured={measured} order={view} tiles={tiles} reference={reference} onOpen={onOpen} onPoint={onPoint} resting={resting} veiled={veiled} onTurned={onTurned} />
       </div>
     </div>
   );

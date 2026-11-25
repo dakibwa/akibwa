@@ -54,15 +54,17 @@ export function rowsFor(entries, width, reference, limits = bounds(width)) {
   return rows;
 }
 
-// The orders, as the bar names them and, on a phone, as it shortens them
-// (Dan, 25 November 2026: "the menu could be better too I think, Time
-// Listened, Genre, Released Date? Listen Date?"). The year a record was played
-// is `year` in code and genre is `kind`; its file is still music-kinds.json.
+// The orders, as the bar names them: a word each (Dan, 25 November 2026:
+// "can we use single words intead of Release Date Time lisstened etc", after
+// "Time Listened, Genre, Released Date? Listen Date?" earlier that day). Hours
+// is time listened, Released is by release date and Listened by the years a
+// record was played, which is `year` in code. Genre is `kind`; its file is
+// still music-kinds.json.
 export const ORDERS = [
-  ["hours", "Time listened", "Hours"],
-  ["kind", "Genre", "Genre"],
-  ["released", "Release date", "Released"],
-  ["year", "Listen date", "Listened"]
+  ["hours", "Hours"],
+  ["kind", "Genre"],
+  ["released", "Released"],
+  ["year", "Listened"]
 ];
 
 // The year a list of [year, minutes] pairs peaks in, with its minutes.

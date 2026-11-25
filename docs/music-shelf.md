@@ -34,21 +34,33 @@ The layout, merging and ordering code runs in the build checks against real reco
 - Keep covers square and uncropped. Each full row fills the width. Its sleeves share one size
   based on hours. Use a 4 px gap in both directions, a floor around 60 px on a laptop and
   44 px on a phone, and a cap around 200 px with four across on a phone.
-- The bar orders the shelf four ways, named as Dan asked on 25 November (“Time Listened,
-  Genre, Released Date? Listen Date?”): Time listened, Genre, Release date and Listen date.
-  A phone shows Hours, Genre, Released and Listened. The chosen order appears in muted rust.
+- The bar orders the shelf four ways, a word each on every screen: Hours, Genre,
+  Released and Listened (Dan, 25 November: “can we use single words intead of Release
+  Date Time lisstened etc”, after asking that morning for “Time Listened, Genre, Released
+  Date? Listen Date?”). The chosen order appears in muted rust.
+  - Hours is time listened, most first.
   - Genre is `kind` in code, one curated kind per artist.
-  - Release date groups records by the decade they came out, most listened first in each.
+  - Released groups records by the decade they came out, most listened first in each.
     A record with no known year waits at the end under Undated. Years come from the
     catalogue, then MusicBrainz, then the hand-checked list in the meta build script.
-  - Listen date is `year` in code. It holds each record played at least an hour in a
+  - Listened is `year` in code. It holds each record played at least an hour in a
     calendar year, sized by that year's hours.
   - Selecting either date order again reverses it, to oldest first. A to Z was dropped
     with this menu; search finds a record by name.
   [Year totals](../public/music-years.json) · [Artist genres](../public/music-kinds.json) · [Release years](../scripts/build-music-meta.mjs)
-- Glide the whole shelf into order and use only the headings it needs. Search finds albums
-  and singles together in one group, most listened first. Choosing an order clears search.
-  The signature returns to hours, clears the search and scrolls to the top.
+- A new order turns the page (Dan, 25 November: “rather than stuff flashing in and stuff
+  when you click the release date nd listen date can we make it more beautiful”). The
+  chosen word answers at once. The shelf fades out over 150 ms, goes back to its top and
+  takes the new order unseen. When the first screen's covers have arrived, or after
+  360 ms if they are slow, the headings fade in and the sleeves lift in as they do when
+  the page opens: each row from its left, one row after another down the screen. Sleeves
+  do not fly from their old places to their new ones on a new order, and nothing pops in
+  on its own; do not bring that back. Pressing the order already chosen changes nothing.
+  Reduced motion gets the new order at once.
+- A search and a change of width still glide the sleeves to their places. Use only the
+  headings an order needs. Search finds albums and singles together in one group, most
+  listened first. Choosing an order clears search. The signature returns to hours, clears
+  the search and scrolls to the top.
 - Keep one pinned row. Leave equal gaps between the signature, each sort option and
   search. A soft rust background marks the chosen sort. The signature's panel starts on
   the sleeves' left edge and search ends on their right (Dan, 25 November: “align the
