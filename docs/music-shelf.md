@@ -48,6 +48,13 @@ The layout, merging and ordering code runs in the build checks against real reco
     on a narrow one. The row of jumps at the head of the shelf stays the seven genres.
     An artist is filed by the records on this shelf, not by a whole career. A new
     artist needs a sub-genre in the kinds file, or the build check fails.
+  - A record that does not belong where its artist does is filed on its own, by its id,
+    in the kinds file's `records` (Dan, 25 November, of the artists found in the wrong
+    genre: “they are wrong for sure put split them based on your genre”). Arcade Fire's
+    albums are indie and their score for *Her* is ambient; Brian Eno's ambient records
+    stay in ambient and his four song albums of the 1970s stand with art rock. Where no
+    genre of the seven fits, use the nearest one there is: jazz and classical go to
+    classics, under jazz & classical, and the comedy acts have a sub-genre in indie.
   - Released groups records by the decade they came out, most listened first in each.
     Every record has a year (25 November: the last 23 were researched one by one with
     sources, and the hand-dated ones checked). A record that arrives without one waits

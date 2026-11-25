@@ -206,7 +206,7 @@ for (const [name, facts] of Object.entries(musicMeta.artists)) {
   if (JSON.stringify(Object.keys(facts).sort()) !== JSON.stringify(["genres", "related"]) || ![...facts.genres, ...facts.related].every((value) => typeof value === "string")) fail(`${name}'s search facts must be genres and related artists only`);
 }
 if (!Object.values(musicMeta.years).every((year) => Number.isInteger(year) && year > 1900 && year < 2100)) fail("sleeve years must be plain years");
-if (Object.keys(musicKinds).some((key) => !["artists", "kinds", "note", "schemaVersion", "subkinds", "subs"].includes(key))) fail("the music kinds file has unexpected fields");
+if (Object.keys(musicKinds).some((key) => !["artists", "kinds", "note", "records", "schemaVersion", "subkinds", "subs"].includes(key))) fail("the music kinds file has unexpected fields");
 for (const name of ranking.names) {
   if (!Number.isInteger(musicKinds.artists[name]) || !musicKinds.kinds[musicKinds.artists[name]]) fail(`${name} must have a kind of music`);
 }
@@ -226,6 +226,12 @@ if (musicKinds.subkinds) {
     for (const [sub, name] of names.entries()) {
       if (!Object.entries(musicKinds.subs).some(([artist, index]) => index === sub && musicKinds.artists[artist] === at)) fail(`no artist is filed under ${name}`);
     }
+  }
+  // A record filed apart from its artist is on the shelf and names a real
+  // genre and sub-genre.
+  const shelfIds = new Set(mergeShelf(shelved.albums, shelved.songs, shelved.sleeves, shelved.singles).map((record) => record.id));
+  for (const [id, place] of Object.entries(musicKinds.records ?? {})) {
+    if (!shelfIds.has(id) || !Array.isArray(place) || !musicKinds.subkinds[place[0]]?.[place[1]]) fail(`the record ${id} must be on the shelf and filed under a real sub-genre`);
   }
 }
 {

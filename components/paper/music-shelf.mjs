@@ -176,10 +176,17 @@ export function arrange(order, entries, { years, kinds, reverse = false } = {}) 
       });
   }
   if (order === "kind" && kinds) {
-    const kindOf = (entry) => kinds.kinds?.[kinds.artists?.[entry.item.artist]] ?? "other";
+    // A record is filed where its artist is, unless it has a place of its
+    // own (Dan, 25 November 2026: "split them based on your genre"): Arcade
+    // Fire's albums are indie, their score for Her is not.
+    const own = (entry) => kinds.records?.[entry.item.id] ?? null;
+    const kindOf = (entry) => kinds.kinds?.[own(entry)?.[0] ?? kinds.artists?.[entry.item.artist]] ?? "other";
     // A genre's sub-genres (Dan, 25 November 2026: "can we break these
     // further into sub genres too"), one for each artist as its genre is.
-    const partOf = (entry) => kinds.subkinds?.[kinds.artists?.[entry.item.artist]]?.[kinds.subs?.[entry.item.artist]] ?? null;
+    const partOf = (entry) => {
+      const place = own(entry) ?? [kinds.artists?.[entry.item.artist], kinds.subs?.[entry.item.artist]];
+      return kinds.subkinds?.[place[0]]?.[place[1]] ?? null;
+    };
     const figure = (list, minutes) => `${list.length} ${list.length === 1 ? "record" : "records"} · ${listened(minutes, "long")}`;
     const sum = (list) => list.reduce((total, entry) => total + entry.item.minutes, 0);
     return [...grouped(kindOf)]
