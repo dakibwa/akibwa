@@ -94,9 +94,14 @@ it was a page of handwriting; do not bring that back.
   must be a better clean way of showing this information”). Songs read down columns of
   one width: one on a phone, five at most. Each song stands on a ruled line with its time
   in bold Fraunces at the line's end, and the line is drawn heavier for as far as its
-  hours reach against the record's favourite. A long name takes a second line in its own
-  column only. The chips that wrapped and stretched, each filled to its own width, are
-  gone; do not bring them back.
+  hours reach against the record's favourite. The chips that wrapped and stretched, each
+  filled to its own width, are gone; do not bring them back.
+- Every song name keeps to one line (Dan, 25 November, of names that took three: “allow
+  it to scroll for these long ones”). A name longer than its line fades at the edge it
+  runs past and scrolls sideways under a finger or a trackpad. In a sheet set into the
+  shelf, resting a mouse on a song carries its name to its end at a reading pace and
+  leaving brings it back; a tap does the same. Names do not move on their own, and
+  under reduced motion they move only by hand.
 - Fold a long record: one column shows ten songs above twelve, wider sheets six rows,
   with a button for the rest. Shorten song names by dropping guest credits, remaster notes
   and composition attributions. Keep subtitles, and set a version note (demo, live, take)

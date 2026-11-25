@@ -1020,9 +1020,31 @@ html {
   from { transform: scaleX(0); }
 }
 
+/* A name keeps to one line. One longer than its line scrolls sideways and
+   fades at the edge it runs past (`data-more`, kept by music-room.jsx). */
 .music-track-title {
+  flex: 1 1 auto;
   min-width: 0;
-  overflow-wrap: anywhere;
+  overflow: auto hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  white-space: nowrap;
+}
+.music-track-title::-webkit-scrollbar {
+  display: none;
+}
+.music-track-title[data-more] {
+  --fade: 30px;
+  -webkit-mask-image: linear-gradient(to right, var(--from, #000), #000 var(--fade), #000 calc(100% - var(--fade)), var(--to, #000));
+  mask-image: linear-gradient(to right, var(--from, #000), #000 var(--fade), #000 calc(100% - var(--fade)), var(--to, #000));
+}
+.music-track-title[data-more="end"],
+.music-track-title[data-more="both"] {
+  --to: transparent;
+}
+.music-track-title[data-more="start"],
+.music-track-title[data-more="both"] {
+  --from: transparent;
 }
 
 /* A note that tells two recordings apart: live, demo, take. */

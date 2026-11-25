@@ -372,6 +372,55 @@ function prepareSheen(face, key) {
   face.style.setProperty("--gloss-x", `${12 + (hash >>> 11) % 70}%`);
 }
 
+/*
+ * A song's name keeps to one line (Dan, 25 November 2026, of names that took
+ * three: "allow it to scroll for these long ones"). A name longer than its
+ * line fades at the edge it runs past, and the line scrolls sideways: under a
+ * finger or a trackpad by itself, and by these under a mouse or a tap.
+ */
+// Which way a name has more to show: its end, its start or both.
+function markMore(name) {
+  const room = name.scrollWidth - name.clientWidth;
+  const more = room <= 1 ? "" : name.scrollLeft <= 1 ? "end" : name.scrollLeft >= room - 1 ? "start" : "both";
+  if (more) name.dataset.more = more;
+  else delete name.dataset.more;
+}
+
+// Names being carried along their lines, each with the way to stop it.
+const glides = new WeakMap();
+const stopGlide = (name) => glides.get(name)?.();
+
+// Carry a name to its end at a reading pace, or back to its start in a breath.
+function glide(name, toEnd, wait = 0) {
+  stopGlide(name);
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  let frame = 0;
+  const timer = setTimeout(() => {
+    const from = name.scrollLeft;
+    const distance = (toEnd ? name.scrollWidth - name.clientWidth : 0) - from;
+    if (Math.abs(distance) < 1) {
+      glides.delete(name);
+      return;
+    }
+    const time = toEnd ? Math.abs(distance) / 70 * 1000 : Math.min(520, 180 + Math.abs(distance));
+    const began = performance.now();
+    const step = (now) => {
+      const part = Math.min(1, (now - began) / time);
+      name.scrollLeft = from + distance * (toEnd ? part : 1 - (1 - part) ** 3);
+      if (part < 1) frame = requestAnimationFrame(step);
+      else glides.delete(name);
+    };
+    frame = requestAnimationFrame(step);
+  }, wait);
+  glides.set(name, () => {
+    clearTimeout(timer);
+    cancelAnimationFrame(frame);
+    glides.delete(name);
+  });
+}
+
+const nameIn = (event) => event.target.closest?.("li")?.querySelector(".music-track-title") ?? null;
+
 function TrackLabel({ track }) {
   const [title, note] = track.label.split(/\s+(?=\((?:demo|live|early version|take \d+|\d{4} mix)\b[^()]*\)$|[-–—] (?:demo|live|early version|take \d+|\d{4} mix)\b.*$)/i, 2);
   const [amount, unit] = listened(track.minutes).split(" ");
@@ -394,8 +443,7 @@ function TrackLabel({ track }) {
  * first, as a ledger in columns that read down. Each song stands on a ruled
  * line, and the line is drawn heavier for as far as its hours reach against
  * the record's favourite. Every column is the same width, so the lines can
- * be compared across the sheet, and each column keeps its own lines, so a
- * long name that takes two disturbs no other column.
+ * be compared across the sheet, and every name keeps to its one line.
  */
 function TrackSheet({ album, columns, pinned, onClose }) {
   const tracks = useMemo(() => {
@@ -422,6 +470,32 @@ function TrackSheet({ album, columns, pinned, onClose }) {
   const stacks = [];
   for (let at = 0; at < limit; at += each) stacks.push(tracks.slice(at, Math.min(limit, at + each)));
 
+  // Find the names longer than their lines, again whenever the lines change
+  // width, and keep each one's fade to the edge it runs past as it scrolls.
+  const list = useRef(null);
+  const pressedBy = useRef("");
+  useLayoutEffect(() => {
+    const element = list.current;
+    if (!element) return undefined;
+    const names = () => element.querySelectorAll(".music-track-title");
+    const read = () => names().forEach(markMore);
+    const scrolled = (event) => {
+      if (event.target.classList?.contains("music-track-title")) markMore(event.target);
+    };
+    read();
+    element.addEventListener("scroll", scrolled, { capture: true, passive: true });
+    const observer = new ResizeObserver(read);
+    observer.observe(element);
+    let alive = true;
+    document.fonts?.ready.then(() => alive && read());
+    return () => {
+      alive = false;
+      observer.disconnect();
+      element.removeEventListener("scroll", scrolled, { capture: true });
+      names().forEach(stopGlide);
+    };
+  }, [limit, columns]);
+
   return (
     <div className="music-sheet">
       <header className="music-release">
@@ -437,7 +511,42 @@ function TrackSheet({ album, columns, pinned, onClose }) {
         <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 3.5 9 9m0-9-9 9" /></svg>
       </button>
       {count > 0 && !duplicate && (
-        <div id="record-songs" className="music-track-list" role="group" aria-label="Songs, most listened first" style={{ "--columns": columns }}>
+        <div
+          id="record-songs"
+          ref={list}
+          className="music-track-list"
+          role="group"
+          aria-label="Songs, most listened first"
+          style={{ "--columns": columns }}
+          // A finger, a wheel or a trackpad takes a name over from its glide.
+          onPointerDown={(event) => {
+            pressedBy.current = event.pointerType;
+            const name = nameIn(event);
+            if (name) stopGlide(name);
+          }}
+          onWheel={(event) => {
+            const name = nameIn(event);
+            if (name) stopGlide(name);
+          }}
+          // A mouse cannot swipe: resting on a song carries its name along,
+          // and leaving brings it back.
+          onPointerOver={(event) => {
+            const row = event.pointerType === "mouse" ? event.target.closest("li") : null;
+            if (!row || row.contains(event.relatedTarget)) return;
+            const name = row.querySelector(".music-track-title");
+            if (name.dataset.more) glide(name, true, 260);
+          }}
+          onPointerOut={(event) => {
+            const row = event.pointerType === "mouse" ? event.target.closest("li") : null;
+            if (!row || row.contains(event.relatedTarget)) return;
+            glide(row.querySelector(".music-track-title"), false);
+          }}
+          // A tap carries it to its end, and another back.
+          onClick={(event) => {
+            const name = pressedBy.current === "mouse" ? null : nameIn(event);
+            if (name?.dataset.more) glide(name, name.scrollLeft < (name.scrollWidth - name.clientWidth) / 2);
+          }}
+        >
           {stacks.map((stack, column) => (
             <ol key={column} start={column * each + 1}>
               {stack.map((track, index) => (
