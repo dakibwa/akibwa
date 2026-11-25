@@ -1067,14 +1067,13 @@ html {
 }
 
 /* The songs: a ledger in columns of one width, read down each, most
-   listened first. A song stands over a ruled line with its time at the
-   line's end, and the line is drawn in colour for as far as its hours reach
-   against the record's favourite, whose line is coloured all the way. The
-   line is one weight from end to end and stands clear of the words: a
-   heavier stroke on a hairline, close under a name, read as the name
-   underlined (Dan, 25 November 2026: "even the underlines maybe could be
-   presented better?"). The columns are counted and filled in
-   music-room.jsx. */
+   listened first. A song stands on a ruled line with its time at the line's
+   end, and the line is drawn heavier for as far as its hours reach against
+   the record's favourite, whose line is heavy all the way. The heavy stroke
+   stays 3px on a hairline, close under the words: one thin even line set
+   further from them was tried and turned down (Dan, 25 November 2026: "I
+   actually liked the thicker and tighter"). The columns are counted and
+   filled in music-room.jsx. */
 .music-track-list {
   grid-area: list;
   display: grid;
@@ -1096,17 +1095,17 @@ html {
   justify-content: space-between;
   gap: 16px;
   min-width: 0;
-  padding: 7px 0 8px;
-  border-bottom: 2px solid var(--rule);
+  padding: 7px 0 6px;
+  border-bottom: 1px solid var(--rule);
 }
 .music-track-list li::after {
   content: "";
   position: absolute;
-  bottom: -2px;
+  bottom: -1px;
   left: 0;
   width: max(3px, calc(var(--listening-share, 1) * 100%));
-  height: 2px;
-  border-radius: 0 1px 1px 0;
+  height: 3px;
+  border-radius: 0 1.5px 1.5px 0;
   background: var(--fill);
   transform-origin: left center;
   animation: track-fill 380ms var(--shelf-ease) backwards;

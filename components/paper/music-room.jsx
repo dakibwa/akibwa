@@ -956,7 +956,7 @@ export function MusicRoom({ active }) {
     const full = across === 1 ? 10 : across * 6;
     const folds = count > full + (across === 1 ? 2 : across);
     const rows = count < 2 ? 0 : Math.ceil((folds ? full : count) / across);
-    const needs = 62 + (rows ? 8 + rows * 36 : 0) + (folds ? 44 : 0) + GAP + 12;
+    const needs = 62 + (rows ? 8 + rows * 33 : 0) + (folds ? 44 : 0) + GAP + 12;
     const box = face.getBoundingClientRect();
     const beneath = innerHeight - box.bottom >= needs;
     const over = box.top - (bar.current?.getBoundingClientRect().bottom ?? 0) >= needs;

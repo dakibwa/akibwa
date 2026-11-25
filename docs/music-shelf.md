@@ -167,12 +167,11 @@ it was a page of handwriting; do not bring that back.
   in columns no narrower than 132 px. The shelf measures the real names to decide. A
   record with one long name, or too many songs for the width, keeps the usual columns;
   it does not take two lines where it had three.
-- Each song stands over a ruled line with its time in bold at the line's end. The line
-  is drawn in colour for as far as the song's hours reach against the record's
-  favourite. It is one weight from end to end, 2 px, and stands 8 px clear of the words
-  (Dan, 25 November: “even the underlines maybe could be presented better?”). A heavier
-  stroke on a hairline, close under a name, read as the name underlined; do not bring
-  it back.
+- Each song stands on a ruled line with its time in bold at the line's end. The line is
+  drawn heavier, 3 px on a hairline, for as far as the song's hours reach against the
+  record's favourite, and sits close under the words. One thin even line, 2 px and set
+  further from the words, was tried on 25 November and turned down (Dan: “I actually
+  liked the thicker and tighter”); do not bring it back.
 - Every song name keeps to one line (Dan, 25 November, of names that took three: “allow
   it to scroll for these long ones”). A name longer than its line fades at the edge it
   runs past and scrolls sideways under a finger or a trackpad. Resting a mouse on a
