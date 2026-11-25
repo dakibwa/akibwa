@@ -83,7 +83,7 @@ const REVIEWED_YEARS = {
   "lf-b45d8e3ebc1187c7": 2003, // Speakerboxxx/The Love Below
   "lf-a7d0032ffa5d09dc": 2011, // The English Riviera
   "history-8beab64d99984cc0": 2001, // Haunt Me, Haunt Me Do It Again
-  "history-9e830d85733e4b9d": 1966, // A Quick One While He's Away
+  "history-9e830d85733e4b9d": 1979, // A Quick One While He's Away, the Rock and Roll Circus performance, first out on The Kids Are Alright
   "history-022a91697b97e650": 1984, // Vision Songs, Vol. 1
   "history-5d835f4b713424fd": 1982, // Sports Men, from Philharmony
   "history-748cc7dbd367a6d7": 2003, // Campfire Songs
@@ -93,7 +93,7 @@ const REVIEWED_YEARS = {
   "history-3ce2e814cedcf7f5": 1997, // Acetone
   "lf-095f0e9a1d8c9096": 2017, // Steve Lacy's Demo
   "history-0d2532f9f419aea6": 2008, // The Best of The Specials
-  "history-f192d06f1d075585": 1970, // I Just Can't Help Believin'
+  "history-f192d06f1d075585": 2016, // I Just Can't Help Believin', from The Wonder of You with the Royal Philharmonic Orchestra
   "history-52aff6674b51b837": 2017, // The Concert in Hyde Park
   "lf-78f63e80b2fc2365": 2003, // Magnolia Electric Co.
   "lf-c399b0cf206fd715": 2020, // Your Hero Is Not Dead
@@ -102,7 +102,34 @@ const REVIEWED_YEARS = {
   "lf-8d5423b976893dc8": 2025, // New Threats from the Soul
   "history-95187d23f9e69633": 2012, // Moonrise Kingdom
   "lf-0e3454285be7519e": 2024, // Brat and it's completely different but also still brat
-  "history-4d6849d687381239": 2023 // 7s
+  "history-4d6849d687381239": 2023, // 7s
+  // The same day, the 23 still without a year were researched one by one
+  // with sources (an Astra pass Dan asked for: "there will definitely be a
+  // date associated"), and the hand-dated list above was checked: two of
+  // its years were of the song, not of the version on the shelf.
+  "history-5b85bf0232dbbc17": 2017, // Interstellar, Main Theme (Geek Music's cover)
+  "history-d5d6a516e23598d9": 2015, // Marhaba
+  "history-bd96361cbb6d3d47": 1993, // Einstein on the Beach (the Nonesuch recording)
+  "lf-b7f7a895511b1d2b": 2012, // Evans Pyramid (1978-1994)
+  "lf-1c7b872e8927e4b6": 1975, // The Sinking of the Titanic / Jesus' Blood Never Failed Me Yet
+  "lf-87e924c5f76107ba": 2009, // The Breeze / My Baby Cries, from Loving Takes This Course
+  "history-c5b835d38ea99a0e": 2022, // Call You / Under Your Spell
+  "history-fc9a20965d72f454": 2021, // Starlight
+  "single-6cdb8657f0ceead2": 2001, // Plays John Cassavetes 2
+  "lf-80a49b0f189b31cb": 1972, // Tezeta (Nostalgia)
+  "history-6dd1c6fe02337d6c": 1994, // Une barque sur l'océan (André Laplante's Ravel)
+  "history-80ef02bcb97939ce": 2016, // Day One Two, from Tag Eins Tag Zwei
+  "history-3c5e0b9c1fbc1157": 2010, // Baby, from Light
+  "history-b9bf81293c00f57c": 2015, // Hello!, from Manglehorn
+  "lf-3f0098f60aff1b7e": 2026, // Far Away
+  "lf-c3e95a437ff977ea": 2026, // BULLY
+  "history-b0cba242bbf01908": 2015, // Embrace the Future EP
+  "history-7bc15ad3959a8b49": 2011, // 30 Greatest Classical Symphonies, Vol. 2
+  "history-de52c546b8441c60": 1982, // The Goldberg Variations (Glenn Gould, 1981 recording)
+  "history-018c873c43954f19": 2011, // (David Bowie I Love You) Since I Was Six
+  "history-2d655a5ccb044c84": 2001, // The Abtomatic Miesterzinger Mambo Chic (medium confidence)
+  "history-8393ec1a6a0f94ef": 2002, // There's a Better Place, from The Wicked Is Music (medium confidence)
+  "history-e9e25cf6087ea513": 2010 // The Next Big Thing
 };
 
 const sha = (text) => createHash("sha256").update(text).digest("hex").slice(0, 16);

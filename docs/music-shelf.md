@@ -41,8 +41,11 @@ The layout, merging and ordering code runs in the build checks against real reco
   - Hours is time listened, most first.
   - Genre is `kind` in code, one curated kind per artist.
   - Released groups records by the decade they came out, most listened first in each.
-    A record with no known year waits at the end under Undated. Years come from the
-    catalogue, then MusicBrainz, then the hand-checked list in the meta build script.
+    Every record has a year (25 November: the last 23 were researched one by one with
+    sources, and the hand-dated ones checked). A record that arrives without one waits
+    at the end under Undated until it is dated. Date the version on the shelf, not the
+    song: a live cut or a later orchestral version carries its own year. Years come
+    from the catalogue, then MusicBrainz, then the reviewed list in the meta build script.
   - Listened is `year` in code. It holds each record played at least an hour in a
     calendar year, sized by that year's hours.
   - Selecting either date order again reverses it, to oldest first. A to Z was dropped
