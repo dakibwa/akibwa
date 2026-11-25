@@ -216,8 +216,16 @@ if (musicKinds.subkinds) {
   if (musicKinds.subkinds.length !== musicKinds.kinds.length || musicKinds.subkinds.some((names) => !Array.isArray(names) || names.length < 2 || names.some((name) => typeof name !== "string" || !name))) fail("every kind of music must list its sub-genres");
   const subNames = musicKinds.subkinds.flat();
   if (new Set(subNames).size !== subNames.length) fail("a sub-genre's name must be its own");
-  for (const name of ranking.names) {
+  // An artist with a record on the shelf has one; a few artists are named
+  // only by songs that stand on someone else's record.
+  const shelved = unpackRanking(ranking);
+  for (const name of new Set(mergeShelf(shelved.albums, shelved.songs, shelved.sleeves, shelved.singles).map((record) => record.artist))) {
     if (!musicKinds.subkinds[musicKinds.artists[name]][musicKinds.subs?.[name]]) fail(`${name} must have a sub-genre within its kind of music`);
+  }
+  for (const [at, names] of musicKinds.subkinds.entries()) {
+    for (const [sub, name] of names.entries()) {
+      if (!Object.entries(musicKinds.subs).some(([artist, index]) => index === sub && musicKinds.artists[artist] === at)) fail(`no artist is filed under ${name}`);
+    }
   }
 }
 {

@@ -39,7 +39,15 @@ The layout, merging and ordering code runs in the build checks against real reco
   Date Time lisstened etc”, after asking that morning for “Time Listened, Genre, Released
   Date? Listen Date?”). The chosen order appears in muted rust.
   - Hours is time listened, most first.
-  - Genre is `kind` in code, one curated kind per artist.
+  - Genre is `kind` in code, one curated kind per artist. Each of the seven genres
+    stands in sub-genres, 39 in all, one for each artist with a record on the shelf
+    (Dan, 25 November: “can we break these further into sub genres too using astra?”).
+    A genre keeps its kraft tab and its share of listening; its sub-genres follow, most
+    listened first, each under a smaller heading on a hairline with its records and
+    hours. Their names are jumps beside the genre's name on a wide shelf and under it
+    on a narrow one. The row of jumps at the head of the shelf stays the seven genres.
+    An artist is filed by the records on this shelf, not by a whole career. A new
+    artist needs a sub-genre in the kinds file, or the build check fails.
   - Released groups records by the decade they came out, most listened first in each.
     Every record has a year (25 November: the last 23 were researched one by one with
     sources, and the hand-dated ones checked). A record that arrives without one waits
