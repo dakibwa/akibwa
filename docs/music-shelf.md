@@ -18,8 +18,10 @@ played album. [Release folds](../data/music-folds.json)
 A song accounting for over 90% of a record’s listening time becomes a single, using its
 own cover where available. Verified releases and the top 150 albums by plays keep their
 album identity, including *Discreet Music*. A piece averaging over ten minutes per play
-also keeps its album unless it has a published single cover. Open on albums. The ranking's `albums` are the top 150 by
-plays, `sleeves` are the remaining albums and `singles` supplies the singles view.
+also keeps its album unless it has a published single cover. Albums and singles stand on
+one shelf together (Dan, 25 November: “I do think singles and albums should be combined”);
+the switch between them, added on 18 November, is gone. The ranking's `albums` are the top
+150 by plays, `sleeves` are the remaining albums and `singles` are the singles.
 The layout, merging and ordering code runs in the build checks against real records.
 [Shelf implementation](../components/paper/music-shelf.mjs)
 
@@ -28,64 +30,83 @@ The layout, merging and ordering code runs in the build checks against real reco
 - Keep covers square and uncropped. Each full row fills the width. Its sleeves share one size
   based on hours. Use a 4 px gap in both directions, a floor around 60 px on a laptop and
   44 px on a phone, and a cap around 200 px with four across on a phone.
-- Hours, year, genre and A to Z work in either view. Year includes records played at least
-  an hour that calendar year and sizes them by that year's hours. Genre is `kind` in code,
-  one curated kind per artist. Selecting year or A to Z again reverses the order, to oldest
-  first or Z to A. The chosen order appears in muted rust.
-  [Year totals](../public/music-years.json) · [Artist genres](../public/music-kinds.json)
+- The bar orders the shelf four ways, named as Dan asked on 25 November (“Time Listened,
+  Genre, Released Date? Listen Date?”): Time listened, Genre, Release date and Listen date.
+  A phone shows Hours, Genre, Released and Listened. The chosen order appears in muted rust.
+  - Genre is `kind` in code, one curated kind per artist.
+  - Release date groups records by the decade they came out, most listened first in each.
+    A record with no known year waits at the end under Undated. Years come from the
+    catalogue, then MusicBrainz, then the hand-checked list in the meta build script.
+  - Listen date is `year` in code. It holds each record played at least an hour in a
+    calendar year, sized by that year's hours.
+  - Selecting either date order again reverses it, to oldest first. A to Z was dropped
+    with this menu; search finds a record by name.
+  [Year totals](../public/music-years.json) · [Artist genres](../public/music-kinds.json) · [Release years](../scripts/build-music-meta.mjs)
 - Glide the whole shelf into order and use only the headings it needs. Search finds albums
   and singles together in one group, most listened first. Choosing an order clears search.
   The signature returns to hours, clears the search and scrolls to the top.
-- Keep one pinned row. Leave equal gaps between the signature, the Albums/Singles
-  switch, each sort option and search. A soft rust background marks the chosen sort.
-  The signature's panel starts on the sleeves' left edge and search ends on their
-  right (Dan, 25 November: “align the logo”). The bar keeps two heights: 40 px for
-  the switch's capsule and search, 34 px for every chip.
-  Below 620 px, Singles toggles the view on its own. Search opens from the
-  right below 900 px. Pressing / focuses it, and Escape clears it.
-- Set group names on kraft tabs, with a row of jumps for years, genres or
-  letters. A search shows its query, number of matches and listening time.
+- Keep one pinned row. Leave equal gaps between the signature, each sort option and
+  search. A soft rust background marks the chosen sort. The signature's panel starts on
+  the sleeves' left edge and search ends on their right (Dan, 25 November: “align the
+  logo”). Search is 40 px tall and every chip 34 px. Search opens from the right below
+  900 px. Pressing / focuses it, and Escape clears it.
+- Set group names on kraft tabs, with a row of jumps for genres, decades or years.
+  A search shows its query, number of matches and listening time.
 
 ## The signature
 
 Use Dan's drawing at the top left without a wordmark. The same SVG is the favicon.
 Keep his warm colours, marker streaks, ink hatching and the thin gold border he chose on
 19 November. The dark panel is a straight-edged square. Crop to the head, halo, rays and
-handwritten page. The halo and rays rise above the panel. Its soft gold ring brightens
+the sheet he holds. The halo and rays rise above the panel. Its soft gold ring brightens
 and breathes on hover. Leave out the small dots, flat blue ground and the bands and stars
-from the reverted version. The page he holds has lines of handwriting across it.
+from the reverted version. The sheet has the globe on it, as he drew it and as the studio's
+cover shows it (Dan, 25 November: “this isn't using the globe one”). From 19 to 25 November
+it was a page of handwriting; do not bring that back.
 [Signature artwork](../public/akibwa-mark.svg)
 
 ## Opening and inspecting a record
 
-- Resting the pointer on a sleeve or focusing it shows its title, artist, year and
-  hours in a small caption at the bottom left, with the time on a gold tag. A quick pass across the gaps keeps
-  the previous selection until the pointer settles. Keep the sleeve fixed in place and at the same size. Blend light into
-  its artwork, sweeping one band at its own angle, speed and direction, with a soft corner
-  gloss and slightly deeper colours.
+- Resting the pointer on a sleeve, or focusing it, shows its sheet under its own row
+  (Dan, 25 November: “rather than clicking when you hover it should show the stats below
+  it? and the name etc”). The sheet floats over the rows beneath and moves nothing. The
+  pointer passes through it to the sleeves it covers. Near the foot of the screen it
+  stands above the row instead. Its notch points at its sleeve and glides along the row.
+  The corner caption this replaced is gone.
+- A first glance waits about a tenth of a second for the pointer to settle. A quick pass
+  across the gaps keeps the previous sleeve. The shelf answers only a pointer that moves:
+  scrolling puts a floating sheet away, and a sleeve that slides under a resting pointer
+  waits for it to move.
+- Pressing a sleeve sets the same sheet into the shelf, where the rows make room and it
+  can be folded out and closed. Pressing the sleeve again, the close button or Escape
+  lets it go. A tap or the Enter key opens it the same way. Keep the scroll position.
+- Keep the sleeve fixed in place and at the same size. Blend light into its artwork,
+  sweeping one band at its own angle, speed and direction, with a soft corner gloss and
+  slightly deeper colours.
 - Hovering or focusing a sleeve leaves it and its related covers at full brightness.
   All other covers fade darker. Include other
   releases by the artist and their connected bands or collaborators. Pick up to four
   more sleeves by different artists, starting with those in view. Match their genre
   tags and use the shelf’s broader genres and release years to guide the choice.
   Clicking or tapping keeps the same contrast while the songs are open.
-- Open the tracks directly under the selected sleeve’s row, most listened first.
-  Set the album title in soft italic Fraunces, followed by its artist and total
-  time. The songs follow the album details directly. Song labels fit their names
-  in Nunito Sans, with bold Fraunces listening times directly beside them.
-  Fill each label in proportion to the album favourite. Let the songs flow
-  left to right. Above twelve lines, show ten and a button to reveal the rest.
-  Shorten song labels by dropping guest credits, remaster notes and composition
-  attributions. Keep subtitles and version names that identify the song.
-  Omit a lone song only when the header already gives its title and time.
-  Keep the scroll position on opening. Fade the sheet in at its final height.
-  Selecting another sleeve moves the list there. The same sleeve, the close
-  button or Escape folds it away.
+- The sheet says the record's name in soft italic Fraunces, then its artist, year, hours
+  and plays. Its songs follow, most listened first, as a ledger (Dan, 25 November: “there
+  must be a better clean way of showing this information”). Songs read down columns of
+  one width: one on a phone, five at most. Each song stands on a ruled line with its time
+  in bold Fraunces at the line's end, and the line is drawn heavier for as far as its
+  hours reach against the record's favourite. A long name takes a second line in its own
+  column only. The chips that wrapped and stretched, each filled to its own width, are
+  gone; do not bring them back.
+- Fold a long record: one column shows ten songs above twelve, wider sheets six rows,
+  with a button for the rest. Shorten song names by dropping guest credits, remaster notes
+  and composition attributions. Keep subtitles, and set a version note (demo, live, take)
+  quietly after the name. Omit a lone song when the header already gives its title and time.
 - Show the shelf as soon as the HTML arrives (Dan, 25 November: “load times
   immediate”). A small script in the page sizes every sleeve with the shelf's own
   row rules, loads the first screen's covers and lifts that screen in, before the
   shelf's code has loaded. The shelf then takes over the same rows, so nothing
-  moves. Both read one file, so they cannot disagree.
+  moves. Both read one file, so they cannot disagree, and both lay out for the
+  whole pixels the shelf really has: a width of 780.6 px is 780.
   [Row rules](../components/paper/shelf-rows.mjs) · [Early script](../app/page.jsx)
 - Reveal the page once its menu and title fonts have loaded. Fade in the bar and mark, lift
   the first screen of sleeves in sequence, fade covers as they arrive, and lift later

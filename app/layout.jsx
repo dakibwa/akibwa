@@ -24,7 +24,7 @@ export const metadata = {
     // captured at 1200×630.
     images: [
       {
-        url: "/share-card-record-shelf.jpg",
+        url: "/share-card-shelf-globe.jpg",
         width: 1200,
         height: 630,
         alt: "Akibwa: album sleeves on a shelf, each as large as the hours listened"
@@ -35,17 +35,17 @@ export const metadata = {
     card: "summary_large_image",
     title: "Akibwa",
     description,
-    images: ["/share-card-record-shelf.jpg"]
+    images: ["/share-card-shelf-globe.jpg"]
   },
   // The sized .ico serves browsers without SVG icons and requests that skip
   // the page (feeds, robots.txt); iOS draws its own corners on the touch icon.
   icons: {
     icon: [
-      { url: "/favicon.ico?v=writing", sizes: "16x16 32x32 48x48", type: "image/x-icon" },
-      { url: "/favicon.svg?v=writing", type: "image/svg+xml", sizes: "any" }
+      { url: "/favicon.ico?v=globe", sizes: "16x16 32x32 48x48", type: "image/x-icon" },
+      { url: "/favicon.svg?v=globe", type: "image/svg+xml", sizes: "any" }
     ],
-    shortcut: [{ url: "/favicon.svg?v=writing", type: "image/svg+xml", sizes: "any" }],
-    apple: [{ url: "/apple-touch-icon.png?v=writing", sizes: "180x180" }]
+    shortcut: [{ url: "/favicon.svg?v=globe", type: "image/svg+xml", sizes: "any" }],
+    apple: [{ url: "/apple-touch-icon.png?v=globe", sizes: "180x180" }]
   }
 };
 

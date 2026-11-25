@@ -6,7 +6,7 @@ import { flushSync } from "react-dom";
 import catalogue from "@/.shelf-build/catalogue.json";
 import { openCatalogue } from "./music-catalogue.mjs";
 import { relatedLookup, search } from "./music-search.mjs";
-import { ORDERS, arrange, listened, rowsFor, songLabel } from "./music-shelf.mjs";
+import { GAP, ORDERS, arrange, listened, rowsFor, songLabel } from "./music-shelf.mjs";
 
 // Albums and the records behind the top songs share one shelf. Sorting,
 // searching and opening a track sheet all work in place.
@@ -25,7 +25,9 @@ function useSettledWidth(ref, initial = 1100) {
   useLayoutEffect(() => {
     const element = ref.current;
     if (!element) return undefined;
-    const read = () => Math.floor(element.clientWidth);
+    // The whole pixels it really has: a width of 780.6px is 780, where
+    // clientWidth says 781 and a row laid out for that would not fit.
+    const read = () => Math.floor(element.getBoundingClientRect().width);
     let last = read();
     if (last > 0) {
       setWidth(last);
@@ -187,11 +189,11 @@ class GlidingShelf extends PureComponent {
   }
 
   componentDidUpdate(previous, state, before) {
-    const { tiles, openTile, arrangement, measured } = this.props;
-    if (openTile !== previous.openTile) tiles.select(previous.openTile, false);
+    const { tiles, pinnedTile, arrangement, measured } = this.props;
+    if (pinnedTile !== previous.pinnedTile) tiles.select(previous.pinnedTile, false);
     const changed = arrangement !== previous.arrangement;
     if (changed) tiles.arrange(this.list.current, arrangement);
-    if (openTile !== previous.openTile || changed) tiles.select(openTile, true);
+    if (pinnedTile !== previous.pinnedTile || changed) tiles.select(pinnedTile, true);
     if (!changed && measured === previous.measured) return;
     this.opening();
     this.watch();
@@ -226,41 +228,65 @@ class GlidingShelf extends PureComponent {
     removeEventListener("paperready", this.whenReady);
   }
 
+  /*
+   * The shelf answers the pointer only when the pointer itself moves. A
+   * sleeve that scrolls or slides under a resting pointer is left alone
+   * until it does, so reading down the shelf never throws a sheet open.
+   * `resting` (shared with the room, which sets it when it puts a sheet
+   * away) says the sleeve under the pointer is waiting for that move.
+   */
+  pointerX = NaN;
+  pointerY = NaN;
+  // What last pressed the shelf: a mouse stays on the sleeve it pressed.
+  pressedBy = "";
+
+  over(face, pointer) {
+    const entry = this.props.tiles.records.get(face.parentElement.dataset.key);
+    if (!entry) return;
+    prepareSheen(face, entry.item.record ?? entry.item.key);
+    this.props.onPoint(entry.item, pointer ? face : null);
+  }
+
   render() {
-    const { order, arrangement, reference, measured, onOpen, onPoint, openTile, tracks, tiles } = this.props;
+    const { order, arrangement, reference, measured, onOpen, onPoint, shownTile, tracks, tiles } = this.props;
     const firstRow = !measured && arrangement[0]?.rows[0];
     const first = firstRow?.entries?.[0]?.item;
     let drawn = 0;
     return (
       <div
         ref={this.list}
+        onPointerDown={event => { this.pressedBy = event.pointerType; }}
         onClick={event => {
           const face = event.target.closest(".music-face");
           const entry = face && tiles.records.get(face.parentElement.dataset.key);
-          if (entry) onOpen(entry.item, face);
+          if (entry) onOpen(entry.item, face, event.detail > 0 && this.pressedBy === "mouse");
+        }}
+        onPointerMove={event => {
+          if (event.pointerType === "touch") return;
+          const still = this.pointerX === event.clientX && this.pointerY === event.clientY;
+          this.pointerX = event.clientX;
+          this.pointerY = event.clientY;
+          if (!this.props.resting.current || still) return;
+          this.props.resting.current = false;
+          const face = event.target.closest?.(".music-face");
+          if (face) this.over(face, true);
         }}
         onPointerOver={event => {
           if (event.pointerType === "touch") return;
           const face = event.target.closest(".music-face");
           if (!face || face.contains(event.relatedTarget instanceof Node ? event.relatedTarget : null)) return;
-          const entry = tiles.records.get(face.parentElement.dataset.key);
-          if (entry) {
-            prepareSheen(face, entry.item.record ?? entry.item.key);
-            onPoint(entry.item, 45);
-          }
+          this.props.resting.current = this.pointerX === event.clientX && this.pointerY === event.clientY;
+          if (!this.props.resting.current) this.over(face, true);
         }}
         onPointerOut={event => {
           const face = event.target.closest(".music-face");
           if (event.pointerType === "touch" || !face || face.contains(event.relatedTarget instanceof Node ? event.relatedTarget : null)) return;
+          this.props.resting.current = false;
           onPoint(event.relatedTarget?.closest?.(".music-shelf") ? undefined : null);
         }}
         onFocus={event => {
           const face = event.target.closest(".music-face:focus-visible");
-          const entry = face && tiles.records.get(face.parentElement.dataset.key);
-          if (entry) {
-            prepareSheen(face, entry.item.record ?? entry.item.key);
-            onPoint(entry.item);
-          }
+          if (face) this.over(face, false);
         }}
         onBlur={event => { if (event.target.closest(".music-face")) onPoint(null); }}
         onLoadCapture={imageSettled}
@@ -268,11 +294,11 @@ class GlidingShelf extends PureComponent {
         data-measured={measured}
         className={`music-map is-by-${order}`}
         role="region"
-        aria-label={`The records I play most, ${order === "hours" ? "most listened first" : order === "name" ? "a to z" : `by ${order}`}`}
+        aria-label={`The records I play most, ${{ hours: "most listened first", kind: "by genre", released: "by release date", year: "by listen date" }[order]}`}
       >
         {first?.art && <link rel="preload" {...firstCoverHint(first, firstRow.side)} />}
         {arrangement.length > 1 && arrangement[0].label && (
-          <nav aria-label={`Jump to a ${order === "kind" ? "genre" : order === "name" ? "letter" : "year"}`}>
+          <nav aria-label={`Jump to a ${order === "kind" ? "genre" : order === "released" ? "decade" : "year"}`}>
             <ul className="music-index">
               {arrangement.map((group, index) => (
                 <li key={group.key}><button type="button" onClick={() => {
@@ -297,7 +323,9 @@ class GlidingShelf extends PureComponent {
                 {group.rows.map((row, at) => {
                   const start = drawn;
                   drawn += row.entries.length;
-                  const selected = openTile && row.entries.some(({ item }) => item.key === openTile) ? openTile : null;
+                  // The sheet stands in the shelf straight after its sleeve's row,
+                  // floating there under the pointer and in the page once pressed.
+                  const selected = shownTile && row.entries.some(({ item }) => item.key === shownTile);
                   return (
                     <Fragment key={at}>
                       <ShelfRow row={row} start={start} reference={reference} tiles={tiles} />
@@ -344,57 +372,32 @@ function prepareSheen(face, key) {
   face.style.setProperty("--gloss-x", `${12 + (hash >>> 11) % 70}%`);
 }
 
-// One quiet caption at the shelf edge, shared by pointer and keyboard.
-function Now({ say, order, kinds, hidden }) {
-  const [{ item, visible }, setLabel] = useState({ item: null, visible: false });
-  useEffect(() => {
-    say.current = (next) => setLabel((last) => next
-      ? { item: next, visible: true }
-      : last.visible ? { ...last, visible: false } : last);
-    return () => { say.current = null; };
-  }, [say]);
-  let main = "";
-  let hours = "";
-  let side = "";
-  if (item) {
-    main = recordLabel(item);
-    hours = listened(item.allMinutes ?? item.minutes);
-    const facts = [item.artist];
-    if (order === "kind" && kinds) {
-      const name = kinds.kinds?.[kinds.artists?.[item.artist]];
-      if (name) facts.push(name);
-    } else if (item.year) {
-      facts.push(item.year);
-    }
-    side = facts.join(" · ");
-  }
-  // Nothing to say until something is pointed at (Dan, 16 November 2026:
-  // “super minimalist and simple”).
-  return (
-    <output className="music-now" aria-live="off" aria-hidden={!visible || hidden} data-empty={!visible || hidden}>
-      <strong>{main}</strong>
-      <b className="music-now-hours">{hours}</b>
-      <span>{side}</span>
-    </output>
-  );
-}
-
 function TrackLabel({ track }) {
   const [title, note] = track.label.split(/\s+(?=\((?:demo|live|early version|take \d+|\d{4} mix)\b[^()]*\)$|[-–—] (?:demo|live|early version|take \d+|\d{4} mix)\b.*$)/i, 2);
   const [amount, unit] = listened(track.minutes).split(" ");
+  // The note is set quietly after the name, without its dash or brackets.
+  const mark = note?.replace(/^[-–—]\s*/, "").replace(/^\((.*)\)$/, "$1");
   return (
     <>
       <span className="music-track-title" title={track.title}>
-        {title}{note && <> <span className="music-track-sub">{note}</span></>}
+        {title}{mark && <> <span className="music-track-sub">{mark}</span></>}
       </span>
       <span className="music-track-hours"><strong>{amount}</strong> <small>{unit}</small><span className="visually-hidden"> listened, {plays(track.plays)}</span></span>
     </>
   );
 }
 
-// Tracks expand in place immediately after the selected shelf row.
-function AlbumTracks({ album, onClose }) {
-  const panel = useRef(null);
+/*
+ * What a record's sheet says (Dan, 25 November 2026: "there must be a better
+ * clean way of showing this information"): its name, who made it, when, and
+ * how long and how often it has been played; then its songs, most listened
+ * first, as a ledger in columns that read down. Each song stands on a ruled
+ * line, and the line is drawn heavier for as far as its hours reach against
+ * the record's favourite. Every column is the same width, so the lines can
+ * be compared across the sheet, and each column keeps its own lines, so a
+ * long name that takes two disturbs no other column.
+ */
+function TrackSheet({ album, columns, pinned, onClose }) {
   const tracks = useMemo(() => {
     const sorted = album.tracks.map(([title, plays, minutes]) => ({ title, plays, minutes, label: songLabel(title) }))
       .sort((a, b) => b.minutes - a.minutes);
@@ -405,53 +408,76 @@ function AlbumTracks({ album, onClose }) {
     return sorted;
   }, [album.tracks]);
 
-  const list = useRef(null);
   const [expanded, setExpanded] = useState(false);
-  const [foldAt, setFoldAt] = useState(Infinity);
-  const count = tracks?.length ?? 0;
-  const mostMinutes = tracks?.[0]?.minutes || 1;
-  const limit = Math.min(count, foldAt);
+  const count = tracks.length;
+  const mostMinutes = tracks[0]?.minutes || 1;
   // A single's matching title and time are already in the header.
   const duplicate = count === 1 && tracks[0].label === recordLabel(album) && tracks[0].minutes === album.minutes;
+  // One column, as on a phone, folds above twelve songs to ten. Wider, the
+  // sheet keeps six rows, or a seventh rather than a button for a few songs.
+  const full = columns === 1 ? 10 : columns * 6;
+  const folds = count > full + (columns === 1 ? 2 : columns);
+  const limit = folds && !expanded ? full : count;
+  const each = Math.ceil(limit / columns);
+  const stacks = [];
+  for (let at = 0; at < limit; at += each) stacks.push(tracks.slice(at, Math.min(limit, at + each)));
 
+  return (
+    <div className="music-sheet">
+      <header className="music-release">
+        <h2 id="music-tracks-title">{recordLabel(album)}</h2>
+        <p className="music-release-info">
+          <span className="music-release-by">{album.artist}</span>
+          {album.year ? <span>{album.year}</span> : null}
+          {/* How long and how often keep together when the line wraps. */}
+          <span className="music-release-total"><b>{listened(album.minutes, "long")}</b><span className="music-release-plays">{plays(album.plays)}</span></span>
+        </p>
+      </header>
+      <button type="button" className="music-tracks-close" onClick={() => onClose()} aria-label="Close the track list">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 3.5 9 9m0-9-9 9" /></svg>
+      </button>
+      {count > 0 && !duplicate && (
+        <div id="record-songs" className="music-track-list" role="group" aria-label="Songs, most listened first" style={{ "--columns": columns }}>
+          {stacks.map((stack, column) => (
+            <ol key={column} start={column * each + 1}>
+              {stack.map((track, index) => (
+                <li key={index} style={{ "--listening-share": track.minutes / mostMinutes }}>
+                  <TrackLabel track={track} />
+                </li>
+              ))}
+            </ol>
+          ))}
+        </div>
+      )}
+      {folds && (
+        <button type="button" className="music-tracks-more" aria-controls="record-songs" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>
+          {expanded ? "Fewer songs" : `${count - full} more songs`}
+        </button>
+      )}
+      {count === 0 && (
+        <div className="music-tracks-note" role="status">
+          No individual song times are available for this record.
+        </div>
+      )}
+    </div>
+  );
+}
+
+/*
+ * The sheet's panel, in the shelf straight after its sleeve's row. While the
+ * pointer or the keyboard is on the sleeve it floats there, over the rows
+ * beneath, and lets the pointer through to them. A press sets it into the
+ * shelf: the rows make room, and it can be read, folded out and closed. One
+ * panel does both, so pressing changes nothing the reader is looking at.
+ */
+function AlbumTracks({ album, tile, pinned, leaving, columns, onClose }) {
+  const panel = useRef(null);
   useLayoutEffect(() => {
-    const element = list.current;
-    if (!element || count <= 12) {
-      setFoldAt(Infinity);
-      return;
-    }
-    let alive = true;
-    let width = 0;
-    const measure = () => {
-      if (!alive) return;
-      element.dataset.measuring = "";
-      const rows = [];
-      let previousTop;
-      for (const [index, song] of Array.from(element.children).entries()) {
-        const top = song.offsetTop;
-        if (top !== previousTop) rows.push(index);
-        previousTop = top;
-        if (rows.length > 12) break;
-      }
-      delete element.dataset.measuring;
-      setFoldAt(rows.length > 12 ? rows[10] : Infinity);
-      width = element.clientWidth;
-    };
-    measure();
-    if (document.fonts.status === "loading") document.fonts.ready.then(measure);
-    const observer = new ResizeObserver(() => {
-      if (element.clientWidth !== width) measure();
-    });
-    observer.observe(element);
-    return () => { alive = false; observer.disconnect(); };
-  }, [tracks]);
-
-
-  useLayoutEffect(() => {
-    panel.current.focus({ preventScroll: true });
-  }, [album.key]);
+    if (pinned) panel.current.focus({ preventScroll: true });
+  }, [pinned, album.key]);
 
   useEffect(() => {
+    if (!pinned) return undefined;
     const escape = (event) => {
       if (event.key === "Escape" && !event.defaultPrevented) {
         event.preventDefault();
@@ -467,39 +493,21 @@ function AlbumTracks({ album, onClose }) {
       document.removeEventListener("keydown", escape);
       document.removeEventListener("click", outside);
     };
-  }, [onClose]);
+  }, [pinned, onClose]);
 
   return (
-    <section id="record-tracks" className="music-tracks" ref={panel} tabIndex={-1} aria-labelledby="music-tracks-title">
-      <header className="music-release">
-        <h2 id="music-tracks-title">{recordLabel(album)}</h2>
-        <p className="music-release-info">
-          <span className="music-release-by">{album.artist}</span>
-          <span className="music-release-total"><b>{listened(album.minutes, "long")}</b> listened</span>
-        </p>
-      </header>
-      <button type="button" className="music-tracks-close" onClick={() => onClose()} aria-label="Close the track list">
-        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 3.5 9 9m0-9-9 9" /></svg>
-      </button>
-      {count > 0 && !duplicate && (
-        <ol id="record-songs" ref={list} className="music-track-list" aria-label="Songs, most listened first">
-          {tracks.map((track, index) => (
-            <li key={index} hidden={!expanded && index >= limit} style={{ "--listening-share": track.minutes / mostMinutes }}>
-              <TrackLabel track={track} />
-            </li>
-          ))}
-        </ol>
-      )}
-      {limit < count && (
-        <button type="button" className="music-tracks-more" aria-controls="record-songs" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>
-          {expanded ? "Fewer songs" : `${count - limit} more songs`}
-        </button>
-      )}
-      {count === 0 && (
-        <div className="music-tracks-note" role="status">
-          No individual song times are available for this record.
-        </div>
-      )}
+    <section
+      id={pinned ? "record-tracks" : "record-glance"}
+      className="music-tracks"
+      ref={panel}
+      data-tile={tile}
+      data-pinned={pinned}
+      data-leaving={leaving || undefined}
+      inert={!pinned}
+      tabIndex={pinned ? -1 : undefined}
+      aria-labelledby={pinned ? "music-tracks-title" : undefined}
+    >
+      <TrackSheet key={album.key} album={album} columns={columns} pinned={pinned} onClose={onClose} />
     </section>
   );
 }
@@ -507,13 +515,13 @@ function AlbumTracks({ album, onClose }) {
 export function MusicRoom({ active }) {
   const [index] = useState(() => openCatalogue(catalogue));
   const { entries: records, kinds, years } = index;
+  const byKey = useMemo(() => new Map(records.map((entry) => [entry.item.key, entry.item])), [records]);
+  const [tiles] = useState(() => new ShelfTiles());
   // The orders answer at once; the shelf follows as a transition.
   const [pressedOrder, setPressedOrder] = useState("hours");
   const [order, setOrder] = useState("hours");
-  // The year and a to z orders turn round when pressed again.
-  const [reversed, setReversed] = useState({ year: false, name: false });
-  // The shelf holds the albums, or the singles.
-  const [singlesOn, setSinglesOn] = useState(false);
+  // The two orders by date turn round when pressed again.
+  const [reversed, setReversed] = useState({ released: false, year: false });
   const [query, setQuery] = useState("");
   const filter = useDeferredValue(query.trim());
   // On a phone the search waits behind its mark and slides out over the
@@ -540,10 +548,15 @@ export function MusicRoom({ active }) {
     const target = findButton.current?.offsetWidth ? findButton.current : finder.current;
     target?.focus({ preventScroll: true });
   };
-  // The record a sheet shows, by its key.
+  // The sheet a press has set into the shelf: its sleeve's tile and its record.
   const [open, setOpen] = useState(null);
   const opener = useRef(null);
   const map = useRef(null);
+  const bar = useRef(null);
+  // Focus the page puts back on a sleeve is not the reader pointing at it.
+  const quiet = useRef(false);
+  // A sheet put away under a resting pointer waits for the pointer to move.
+  const resting = useRef(false);
   useEffect(() => {
     if (!active) {
       setOpen(null);
@@ -554,30 +567,79 @@ export function MusicRoom({ active }) {
       if (origin) {
         const button = origin.button.isConnected ? origin.button
           : map.current?.querySelector(`[data-key="${CSS.escape(origin.key)}"] .music-face`);
+        quiet.current = true;
         button?.focus({ preventScroll: true });
+        quiet.current = false;
       }
       opener.current = null;
     }
   }, [active, open]);
-  const say = useRef(null);
+  /*
+   * The sleeve under the pointer or the keyboard: its tile and its record.
+   * Its sheet floats under its row until it is pressed or left (Dan, 25
+   * November 2026: "rather than clicking when you hover it should show the
+   * stats below it? and the name etc").
+   */
   const [pointed, setPointed] = useState(null);
+  const pointedNow = useRef(null);
+  pointedNow.current = pointed;
   const hoverTimer = useRef(0);
-  useEffect(() => () => clearTimeout(hoverTimer.current), [active]);
-  const onPoint = useCallback((item, delay = 0) => {
+  const leaveTimer = useRef(0);
+  // The sleeve the pointer has reached and is being given a moment on.
+  const awaited = useRef(null);
+  useEffect(() => () => {
     clearTimeout(hoverTimer.current);
-    if (item === undefined) return;
-    const point = () => {
-      say.current?.(item);
-      setPointed(item?.record ?? item?.key ?? null);
+    clearTimeout(leaveTimer.current);
+  }, [active]);
+  const onPoint = useCallback((item, face) => {
+    if (item && face && awaited.current === item.key) return;
+    clearTimeout(hoverTimer.current);
+    awaited.current = null;
+    if (item === undefined || quiet.current) return;
+    if (!item) {
+      // It fades where it is, then goes.
+      clearTimeout(leaveTimer.current);
+      setPointed((last) => (last && !last.leaving ? { ...last, leaving: true } : last));
+      leaveTimer.current = setTimeout(() => setPointed((last) => (last?.leaving ? null : last)), 150);
+      return;
+    }
+    const next = { tile: item.key, record: item.record ?? item.key, byPointer: Boolean(face) };
+    const show = () => {
+      awaited.current = null;
+      clearTimeout(leaveTimer.current);
+      setPointed((last) => (last && !last.leaving && last.tile === next.tile ? last : next));
     };
-    if (delay) hoverTimer.current = setTimeout(point, delay);
-    else point();
-  }, []);
+    if (!face) {
+      show();
+      return;
+    }
+    // A first glance waits for the pointer to settle. Along a row the sheet
+    // follows at once, and a new row waits a little, so a pointer crossing
+    // the shelf does not drag the sheet behind it.
+    const last = pointedNow.current;
+    const row = last && !last.leaving ? tiles.records.get(last.tile)?.tile.parentElement : null;
+    awaited.current = item.key;
+    hoverTimer.current = setTimeout(show, !row ? 110 : row === face.parentElement.parentElement ? 40 : 90);
+  }, [tiles]);
+  // Scrolling puts a floating sheet away. The pointer brings one back by moving.
+  useEffect(() => {
+    if (open || !pointed?.byPointer || pointed.leaving) return undefined;
+    const away = () => {
+      resting.current = true;
+      onPoint(null);
+    };
+    addEventListener("scroll", away, { passive: true, once: true });
+    return () => removeEventListener("scroll", away);
+  }, [open, pointed, onPoint]);
   const [width, measured] = useSettledWidth(map);
   const clearSelection = () => {
     opener.current = null;
+    resting.current = true;
+    awaited.current = null;
+    clearTimeout(hoverTimer.current);
+    clearTimeout(leaveTimer.current);
     setOpen(null);
-    onPoint(null);
+    setPointed(null);
   };
   // Choosing an order ends a search; while searching, the shelf is one
   // plain group, most listened first (Dan, 16 November 2026).
@@ -590,15 +652,15 @@ export function MusicRoom({ active }) {
     startTransition(() => setOrder(name));
     if (turn) startTransition(() => setReversed((last) => ({ ...last, [name]: !last[name] })));
   };
-  const shown = filter ? "hours" : order;
-  // The albums, or the singles (Dan, 18 November 2026: "can we add a singles
-  // menu button too"), or what the search finds among both.
+  const view = filter ? "hours" : order;
+  // Albums and singles share the one shelf (Dan, 25 November 2026: "I do
+  // think singles and albums should be combined"), or what the search finds.
   const entries = useMemo(() => {
     const found = search(index, filter);
-    if (!found) return index.entries.filter((entry) => (entry.item.kind === "single") === singlesOn);
+    if (!found) return index.entries;
     const kept = new Set(found.map((record) => record.key));
     return index.entries.filter((entry) => kept.has(entry.item.key));
-  }, [index, filter, singlesOn]);
+  }, [index, filter]);
 
   // Sizes come from the whole shelf, so a search or an order never rescales
   // them; each row's size comes from its records' hours (rowsFor in
@@ -617,8 +679,7 @@ export function MusicRoom({ active }) {
       return cached.get(key);
     };
   }, [entries, width, reference, years, kinds]);
-  const arrangement = layouts(shown, reversed[shown] ?? false);
-  const [tiles] = useState(() => new ShelfTiles());
+  const arrangement = layouts(view, reversed[view] ?? false);
 
   // Reuse the rows around the viewport as the pointer moves. Newly visible
   // rows pick up the current selection before their artwork scrolls into view.
@@ -656,8 +717,13 @@ export function MusicRoom({ active }) {
     };
   }, [arrangement, tiles]);
 
+  // The sheet shown: the one pressed into the shelf, or else the one under
+  // the pointer. The sleeves round it keep their light for either.
+  const shown = open ?? pointed;
+  const pinned = Boolean(open);
+  const leaving = !open && Boolean(pointed?.leaving);
   const related = useMemo(() => relatedLookup(entries, kinds), [entries, kinds]);
-  const highlight = open?.record ?? pointed;
+  const highlight = open ? open.record : pointed && !pointed.leaving ? pointed.record : null;
   useLayoutEffect(() => {
     const visible = new Set();
     if (highlight && active) {
@@ -671,37 +737,88 @@ export function MusicRoom({ active }) {
     for (const row of nearRows.current) markRelatedRow(row, matches);
   }, [active, highlight, related, arrangement, tiles]);
 
-  const onOpen = useCallback((item, button) => {
+  const onOpen = useCallback((item, button, hovering) => {
+    awaited.current = null;
     clearTimeout(hoverTimer.current);
-    say.current?.(null);
+    clearTimeout(leaveTimer.current);
     opener.current = { button, key: item.key };
     // A year's square opens its record.
-    const key = item.record ?? item.key;
-    setPointed(key);
-    setOpen((last) => last?.tile === item.key ? null : { tile: item.key, record: key });
+    const next = { tile: item.key, record: item.record ?? item.key };
+    // A mouse is still on the sleeve it pressed, so pressing again lets the
+    // sheet float there once more. A finger or a key leaves nothing behind.
+    setPointed(hovering ? { ...next, byPointer: true } : null);
+    setOpen((last) => last?.tile === item.key ? null : next);
   }, []);
-  const record = open ? records.find((entry) => entry.item.key === open.record)?.item ?? null : null;
 
   const close = useCallback((restoreFocus = true) => {
+    awaited.current = null;
     clearTimeout(hoverTimer.current);
+    clearTimeout(leaveTimer.current);
     if (!restoreFocus) opener.current = null;
-    say.current?.(null);
-    setPointed(restoreFocus ? open?.record : null);
+    resting.current = true;
+    setPointed(null);
     setOpen(null);
-  }, [open]);
+  }, []);
 
+  // The sheet's songs stand in columns wide enough for most names: one on a
+  // phone, five at most (298 is a column of 270px and its 28px gap).
+  const columns = Math.max(1, Math.min(5, Math.floor(width / 298)));
+  const record = shown ? byKey.get(shown.record) ?? null : null;
+  const shownTile = record ? shown.tile : undefined;
   const tracks = useMemo(() => active && record ? (
-    <AlbumTracks
-      key={record.key}
-      album={record}
-      onClose={close}
-    />
-  ) : null, [active, record, close]);
+    <AlbumTracks album={record} tile={shownTile} pinned={pinned} leaving={leaving} columns={columns} onClose={close} />
+  ) : null, [active, record, shownTile, pinned, leaving, columns, close]);
+
+  /*
+   * Where the sheet stands. Its notch points at its sleeve. Floating, it
+   * hangs under the sleeve's row, or stands over the row when the screen has
+   * no room beneath, and keeps to that side along the row.
+   */
+  const stood = useRef(null);
+  const place = useCallback(() => {
+    const frame = map.current;
+    const panel = frame?.querySelector(".music-tracks");
+    const tile = panel && tiles.records.get(panel.dataset.tile)?.tile;
+    if (!tile?.isConnected) {
+      stood.current = null;
+      return;
+    }
+    const box = frame.getBoundingClientRect();
+    const at = tile.getBoundingClientRect();
+    panel.style.setProperty("--notch", `${Math.round(Math.max(20, Math.min(box.width - 20, at.left + at.width / 2 - box.left)))}px`);
+    // The notch glides along a row, but a new sheet starts with it in place.
+    if (!panel.hasAttribute("data-glide")) requestAnimationFrame(() => panel.setAttribute("data-glide", ""));
+    if (panel.dataset.pinned === "true") {
+      panel.removeAttribute("data-above");
+      stood.current = null;
+      return;
+    }
+    const height = panel.offsetHeight;
+    const below = innerHeight - 8 - (at.bottom + GAP);
+    const above = at.top - GAP - 4 - (bar.current?.getBoundingClientRect().bottom ?? 0);
+    const row = tile.parentElement;
+    let up = stood.current?.row === row && stood.current.up;
+    if (!up && height > below && height <= above) up = true;
+    else if (up && height > above && height <= below) up = false;
+    stood.current = { row, up };
+    panel.style.setProperty("--top", `${Math.round((up ? at.top - GAP - height : at.bottom + GAP) - box.top)}px`);
+    panel.toggleAttribute("data-above", up);
+  }, [tiles]);
+  const arranged = useRef(arrangement);
+  useLayoutEffect(() => {
+    place();
+    if (arranged.current === arrangement) return undefined;
+    arranged.current = arrangement;
+    // Sleeves glide to a new width's rows; the sheet finds its own again
+    // once they have landed.
+    const settled = setTimeout(place, 340);
+    return () => clearTimeout(settled);
+  }, [place, tracks, arrangement]);
 
   return (
     <div className="room-body music">
       <noscript><p className="music-tracks-note">Enable JavaScript to search music and open track lists.</p></noscript>
-      <div className="music-bar">
+      <div className="music-bar" ref={bar}>
         {/* The signature returns to the shelf as it opens (Dan, 16 November
             2026): no search, most listened first, at the top. */}
         <a
@@ -712,57 +829,33 @@ export function MusicRoom({ active }) {
             if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
             event.preventDefault();
             sort("hours");
-            setSinglesOn(false);
             setFinding(false);
             window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
           }}
         >
           {/* The logo is Dan's drawing of himself (Dan, 18 November 2026: "the
               little character should be the logo"), redrawn in his own strokes,
-              colours and hatched ground, cropped to his head, halo and record so
+              colours and hatched ground, cropped to his head, halo and sheet so
               it reads small, inside a thin gold border, the dark panel a perfect
-              square with the halo and rays above it, the sheet in his hand a
-              page of handwriting (Dan, 19 November 2026), with no wordmark
-              beside it. */}
-          <img className="music-mark" src="/akibwa-mark.svg?v=writing" alt="" width="42" height="52" draggable="false" />
+              square with the halo and rays above it. The sheet in his hand has
+              the globe on it, as he drew it: from 19 to 25 November it was a
+              page of handwriting (Dan, 25 November 2026: "this isn't using the
+              globe one"). No wordmark beside it. */}
+          <img className="music-mark" src="/akibwa-mark.svg?v=globe" alt="" width="42" height="52" draggable="false" />
         </a>
-        <Now say={say} hidden={Boolean(open)} order={shown} kinds={kinds} />
         <div className="music-tools" data-finding={finding || Boolean(query)}>
-          <div className="music-crate" role="group" aria-label="Albums or singles">
-            <button type="button" className="music-albums" aria-pressed={!searching && !singlesOn} onClick={() => {
-              clearSelection();
-              setQuery("");
-              startTransition(() => setSinglesOn(false));
-            }}>Albums</button>
-            <button
-              type="button"
-              className="music-singles"
-              aria-label="Singles"
-              aria-pressed={!searching && singlesOn}
-              onClick={() => {
-                clearSelection();
-                setQuery("");
-                startTransition(() => setSinglesOn((on) => !on));
-              }}
-            >
-              Singles
-            </button>
-          </div>
           <div className="music-order" role="group" aria-label="Order">
-            {ORDERS.map(([name, label]) => {
+            {ORDERS.map(([name, label, short]) => {
               const on = !searching && pressedOrder === name;
-              const word = name === "name" && reversed.name ? "Z–A" : label;
+              const turns = name in reversed;
               return (
-                <button
-                  key={name}
-                  type="button"
-                  aria-pressed={on}
-                  aria-label={name === "year" && on ? `year, ${reversed.year ? "oldest" : "newest"} first` : word}
-                  onClick={() => sort(name)}
-                >
-                  {word}
-                  {/* The year's way round: newest first, or oldest. */}
-                  {name === "year" ? <span className="music-order-way" data-on={on} data-up={reversed.year} aria-hidden="true" /> : null}
+                <button key={name} type="button" data-order={name} aria-pressed={on} onClick={() => sort(name)}>
+                  {/* A phone has room for the short word only. */}
+                  <span className="music-order-long">{label}</span>
+                  <span className="music-order-short">{short}</span>
+                  {turns && on ? <span className="visually-hidden">, {reversed[name] ? "oldest" : "newest"} first</span> : null}
+                  {/* A date's way round: newest first, or oldest. */}
+                  {turns ? <span className="music-order-way" data-on={on} data-up={reversed[name]} aria-hidden="true" /> : null}
                 </button>
               );
             })}
@@ -845,10 +938,8 @@ export function MusicRoom({ active }) {
             <span className="music-group-figures">{entries.length ? `${entries.length} ${entries.length === 1 ? "record" : "records"} · ${listened(entries.reduce((sum, entry) => sum + entry.item.minutes, 0), "long")}` : "Nothing on the shelf"}</span>
           </div>
         )}
-        <GlidingShelf tracks={tracks} openTile={open?.tile} arrangement={arrangement} measured={measured} order={shown} tiles={tiles} reference={reference} onOpen={onOpen} onPoint={onPoint} />
+        <GlidingShelf tracks={tracks} shownTile={shownTile} pinnedTile={open?.tile} arrangement={arrangement} measured={measured} order={view} tiles={tiles} reference={reference} onOpen={onOpen} onPoint={onPoint} resting={resting} />
       </div>
-
-
     </div>
   );
 }

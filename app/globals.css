@@ -302,38 +302,8 @@ html.ready .music-mark {
 
 .music-tools, .music-order { display: contents; }
 
-/* What is on the shelf: albums or singles, a two-way switch in one capsule.
-   The chosen side is a paper chip raised off the capsule. The capsule is as
-   tall as the search at the other end of the bar, and its chips as tall as
-   the order's, so the bar keeps two heights and no more. */
-.music-crate {
-  display: inline-flex;
-  flex: none;
-  padding: 3px;
-  border-radius: 999px;
-  background: var(--paper-deep);
-}
-.music-crate button {
-  position: relative;
-  height: var(--chip-h);
-  padding: 0 15px;
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--ink-soft);
-  font: 700 var(--ui-size)/1 var(--sans);
-  cursor: pointer;
-  transition: background-color 180ms ease, color 180ms ease, box-shadow 180ms ease;
-}
-.music-crate button::after { content: ""; position: absolute; inset: -5px 0; }
-.music-crate button:hover { color: var(--ink); }
-.music-crate button[aria-pressed="true"] {
-  background: var(--paper-light);
-  color: var(--ink);
-  box-shadow: 0 1px 2px rgb(42 36 32 / 0.18), 0 0 0 0.5px rgb(42 36 32 / 0.08);
-}
-
-/* The order: four plain words; the chosen one sits on a rust-tinted chip. */
+/* The order: four plain names; the chosen one sits on a rust-tinted chip.
+   A phone has room for a short word each (ORDERS in music-shelf.mjs). */
 .music-order button {
   position: relative;
   display: inline-flex;
@@ -352,10 +322,11 @@ html.ready .music-mark {
 .music-order button::after { content: ""; position: absolute; inset: -5px 0; }
 .music-order button:hover { background: var(--paper-deep); color: var(--ink); }
 .music-order button[aria-pressed="true"] { background: var(--rust-tint); color: var(--rust-deep); }
-.music-order button:active, .music-crate button:active { transform: scale(0.96); transition-duration: 90ms; }
+.music-order button:active { transform: scale(0.96); transition-duration: 90ms; }
+.music-order-short { display: none; }
 
-/* The year's way round. Its room is always kept, so nothing shifts; it shows
-   faintly as a hint and firmly when year is chosen. */
+/* A date order's way round. Its room is always kept, so nothing shifts; it
+   shows faintly as a hint and firmly when its order is chosen. */
 .music-order-way::before { content: "↓"; }
 .music-order-way {
   display: inline-block;
@@ -467,75 +438,31 @@ html.ready .music-mark {
   .music-search input { font-size: 16px; }
   .music-search kbd { display: none; }
   .music-tools[data-finding="true"] .music-search { opacity: 1; visibility: visible; transform: translate(0, -50%); pointer-events: auto; transition-delay: 0s; }
-  :is(.music-crate, .music-order button, .music-find) { transition: opacity 130ms ease, transform 220ms var(--shelf-ease), visibility 0s; }
-  .music-tools[data-finding="true"] :is(.music-crate, .music-order button, .music-find) { opacity: 0; visibility: hidden; transform: translateX(-8px); pointer-events: none; transition: opacity 130ms ease, transform 220ms var(--shelf-ease), visibility 0s linear 130ms; }
+  :is(.music-order button, .music-find) { transition: opacity 130ms ease, transform 220ms var(--shelf-ease), visibility 0s; }
+  .music-tools[data-finding="true"] :is(.music-order button, .music-find) { opacity: 0; visibility: hidden; transform: translateX(-8px); pointer-events: none; transition: opacity 130ms ease, transform 220ms var(--shelf-ease), visibility 0s linear 130ms; }
 }
 
-/* A phone: one row still. The switch shows only its singles side, as an
-   outlined chip that fills when on; the orders tighten. */
+/* A phone: one row still, each order by its short word. */
 @media (max-width: 619px) {
   .music-bar { --mark: 52px; --chip-h: 34px; }
-  .music-crate { padding: 0; background: none; }
-  .music-albums { display: none; }
-  .music-crate .music-singles {
-    height: var(--chip-h);
-    padding: 0 11px;
-    box-shadow: inset 0 0 0 1.5px var(--paper-edge);
-    font-size: 14px;
-  }
-  .music-crate .music-singles[aria-pressed="true"] { background: var(--ink); color: var(--paper-light); box-shadow: none; }
-  .music-order button { padding: 0 8px; font-size: 14px; }
+  .music-order-long { display: none; }
+  .music-order-short { display: inline; }
+  .music-order button { padding: 0 9px; font-size: 14px; }
   .music-order-way { width: 0.7em; }
 }
 @media (max-width: 400px) {
-  .music-order button { padding: 0 6px; font-size: 13px; }
-  .music-crate .music-singles { padding: 0 9px; font-size: 13px; }
+  .music-order button { padding: 0 7px; }
 }
 @media (max-width: 374px) {
   .music-bar { --mark: 48px; }
+  .music-order button { padding: 0 5px; font-size: 13px; }
+  /* The narrowest phones keep the way round for the chosen order only. */
+  .music-order-way:not([data-on="true"]) { display: none; }
 }
-@media (max-width: 359px) {
+@media (max-width: 339px) {
   .music-order button { padding: 0 4px; font-size: 12px; }
-  .music-crate .music-singles { padding: 0 7px; font-size: 12px; }
+  .music-order-way { margin-left: 0.05em; }
 }
-
-/* ================================================================== caption
-   The record under the pointer or keyboard focus, as a sticker at the foot of
-   the screen: its title in Fraunces, who and when, and the hours on a small
-   gold price-sticker. */
-.music-now {
-  position: fixed;
-  left: max(14px, env(safe-area-inset-left));
-  bottom: max(14px, env(safe-area-inset-bottom));
-  z-index: 4;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-areas: "title hours" "meta hours";
-  align-items: center;
-  column-gap: 16px;
-  max-width: min(400px, calc(100vw - 28px));
-  padding: 9px 10px 10px 15px;
-  border-radius: 12px;
-  background: var(--paper-light);
-  box-shadow: 0 1px 2px rgb(42 36 32 / 0.14), 0 14px 30px -14px rgb(42 36 32 / 0.55);
-  white-space: nowrap;
-  pointer-events: none;
-  transition: opacity 160ms ease, transform 240ms var(--shelf-ease);
-}
-.music-now[data-empty="true"] { opacity: 0; transform: translateY(6px); }
-.music-now strong { grid-area: title; overflow: hidden; font: 600 18px/1.25 var(--serif); text-overflow: ellipsis; }
-.music-now span { grid-area: meta; overflow: hidden; color: var(--ink-soft); font: 600 13px/1.35 var(--sans); text-overflow: ellipsis; }
-.music-now b {
-  grid-area: hours;
-  grid-row: 1 / span 2;
-  padding: 7px 11px;
-  border-radius: 999px;
-  background: var(--gold-tint);
-  color: var(--ink);
-  font: 800 14px/1 var(--sans);
-  font-variant-numeric: tabular-nums;
-}
-
 
 /* The shelf: squares stand on a shared line, as records do, each as large
    as its hours between the floor and the cap the room sets. A square still
@@ -622,11 +549,9 @@ html.ready .music-mark {
   transition: background-color 160ms ease, color 160ms ease;
 }
 .music-index button:hover { background: var(--paper-deep); color: var(--ink); }
-.music-index.is-letters button { min-width: 30px; padding: 0 8px; }
 @container (max-width: 559px) {
   .music-index { margin-left: -8px; }
   .music-index button { height: 30px; padding: 0 8px; }
-  .music-index.is-letters button { min-width: 28px; padding: 0 4px; }
 }
 
 .music-none { margin: 4px 0 0; color: var(--ink-soft); font: 600 15px/1.4 var(--sans); }
@@ -831,40 +756,61 @@ html {
   scrollbar-gutter: stable;
 }
 
-/* Track labels wrap within the shelf beneath the selected sleeve. */
+/* The shelf's grids keep to the frame's width. */
 .music-map, .music-group, .music-shelf {
   grid-template-columns: minmax(0, 1fr);
 }
 
-/* Inline album details. */
+/* ==================================================================== sheet
+   A record's sheet (Dan, 25 November 2026). While the pointer or the
+   keyboard is on a sleeve it floats under that sleeve's row, over the rows
+   beneath, and lets the pointer through to them. A press sets it into the
+   shelf, where the rows make room for it. One panel does both, placed by
+   music-room.jsx: `--top` is where it floats and `--notch` is its sleeve. */
+.music-map-frame {
+  position: relative;
+}
+
 .music-tracks {
-  --sheet-title: clamp(21px, 0.7cqi + 16px, 30px);
+  --sheet-title: clamp(21px, 0.7cqi + 16px, 28px);
   --sheet-text: clamp(14px, 0.1cqi + 13.6px, 15.5px);
   --sheet-small: clamp(12.5px, 0.08cqi + 11.8px, 13.5px);
-  --base: var(--paper);
-  --fill: #dfbb9e;
   --edge: #dccdb6;
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-areas:
-    "release close"
-    "list list"
-    "more more";
-  column-gap: 10px;
-  padding: 11px 12px 12px 14px;
+  --rule: #e8decb;
+  --fill: #c9855c;
+  position: absolute;
+  z-index: 2;
+  top: var(--top, 0);
+  right: 0;
+  left: 0;
+  padding: 12px 14px 15px 16px;
   border: 1px solid var(--edge);
   border-radius: 8px;
   background: var(--paper-light);
+  /* A mat of the page's own paper keeps the shelf's gap all the way round. */
+  box-shadow: 0 0 0 4px var(--paper), 0 22px 30px -14px rgb(42 36 32 / 0.55);
   color: var(--ink);
   font-family: var(--sans);
   font-size: var(--sheet-text);
   line-height: 1.3;
-  transition: opacity 200ms ease;
+  pointer-events: none;
+  transition: opacity 160ms ease, box-shadow 260ms ease;
 }
 
 @starting-style {
   .music-tracks { opacity: 0; }
+}
+
+.music-tracks[data-leaving] {
+  opacity: 0;
+}
+
+.music-tracks[data-pinned="true"] {
+  position: relative;
+  z-index: auto;
+  top: auto;
+  box-shadow: 0 0 0 4px rgb(243 236 223 / 0), 0 0 0 0 rgb(42 36 32 / 0);
+  pointer-events: auto;
 }
 
 .music-tracks:focus-visible {
@@ -872,32 +818,59 @@ html {
   outline-offset: 2px;
 }
 
-/* The notch rises to the open sleeve through the 4px gap. */
-.music-tile:has(> .music-face[aria-expanded="true"])::before,
-.music-tile:has(> .music-face[aria-expanded="true"])::after {
+/* The notch points at the sheet's sleeve through the 4px gap, and glides
+   along the row with the pointer. */
+.music-tracks::before,
+.music-tracks::after {
   content: "";
   position: absolute;
-  z-index: 2;
-  bottom: -5px;
-  left: 50%;
+  left: var(--notch, 50%);
   clip-path: polygon(50% 0, 100% 100%, 0 100%);
   pointer-events: none;
 }
-.music-tile:has(> .music-face[aria-expanded="true"])::before {
+.music-tracks[data-glide]::before,
+.music-tracks[data-glide]::after {
+  transition: left 240ms var(--shelf-ease);
+}
+.music-tracks::before {
+  top: -8px;
   width: 14px;
   height: 7px;
   margin-left: -7px;
-  background: #dccdb6;
+  background: var(--edge);
 }
-.music-tile:has(> .music-face[aria-expanded="true"])::after {
-  width: 11.2px;
-  height: 5.6px;
-  margin-left: -5.6px;
+.music-tracks::after {
+  top: -6.4px;
+  width: 12px;
+  height: 6.6px;
+  margin-left: -6px;
   background: var(--paper-light);
 }
+.music-tracks[data-above]::before,
+.music-tracks[data-above]::after {
+  top: auto;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+.music-tracks[data-above]::before { bottom: -8px; }
+.music-tracks[data-above]::after { bottom: -6.4px; }
 
-/* Header: one line on a laptop. Name, who · when · how long; where to
-   hear it stays at the top right while the name and byline wrap. */
+/* What it says changes with the sleeve; the panel stays where it is. */
+.music-sheet {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "release close"
+    "list list"
+    "more more";
+  column-gap: 10px;
+  animation: sheet-turns 200ms ease both;
+}
+@keyframes sheet-turns {
+  from { opacity: 0; }
+}
+
+/* Header: one line on a laptop. Its name, then who · when · how long · how
+   often; the name and the facts wrap on a phone. */
 .music-release {
   grid-area: release;
   align-self: baseline;
@@ -908,7 +881,7 @@ html {
   min-width: 0;
 }
 
-#music-tracks-title {
+.music-release h2 {
   margin: 0;
   font: italic 600 var(--sheet-title)/1.1 var(--serif);
   letter-spacing: -0.01em;
@@ -916,7 +889,7 @@ html {
   text-wrap: balance;
 }
 
-/* A wrapped byline drops its leading separator outside the clip. */
+/* A wrapped fact drops its leading separator outside the clip. */
 .music-release-info {
   display: flex;
   flex-wrap: wrap;
@@ -926,6 +899,7 @@ html {
   overflow-x: clip;
   color: var(--ink-soft);
   font-weight: 500;
+  font-variant-numeric: tabular-nums;
   line-height: 1.45;
 }
 .music-release-info > span {
@@ -951,7 +925,13 @@ html {
   color: var(--ink);
   font: 700 1.06em/1 var(--serif);
 }
+.music-release-plays::before {
+  content: "·";
+  margin: 0 0.38em 0 0.5em;
+  color: var(--ink-faint);
+}
 
+/* Only a sheet set into the shelf can be closed; its room is always kept. */
 .music-tracks-close {
   grid-area: close;
   align-self: start;
@@ -967,7 +947,11 @@ html {
   background: none;
   color: var(--ink-soft);
   cursor: pointer;
-  transition: color 160ms ease, background-color 160ms ease;
+  opacity: 0;
+  transition: color 160ms ease, background-color 160ms ease, opacity 200ms ease;
+}
+.music-tracks[data-pinned="true"] .music-tracks-close {
+  opacity: 1;
 }
 .music-tracks-close::after {
   content: "";
@@ -983,7 +967,7 @@ html {
   stroke-linecap: round;
 }
 .music-tracks-close:hover {
-  background: var(--base);
+  background: var(--paper);
   color: var(--ink);
 }
 .music-tracks-close:focus-visible {
@@ -991,49 +975,54 @@ html {
   outline-offset: 0;
 }
 
-/* Songs read left to right as content-sized chips, most listened first.
-   Each full line is justified; the last keeps its natural widths. A name
-   wider than the line wraps inside its own chip, which then has the line
-   to itself, so it never stretches its neighbours. */
+/* The songs: a ledger in columns of one width, read down each, most
+   listened first. A song stands on a ruled line with its time at the line's
+   end, and the line is drawn heavier for as far as its hours reach against
+   the record's favourite, whose line is heavy all the way. The columns are
+   counted and filled in music-room.jsx. */
 .music-track-list {
   grid-area: list;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin: 10px 0 0;
-  padding: 0;
-  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(var(--columns, 1), minmax(0, 1fr));
+  align-items: start;
+  column-gap: 28px;
+  margin: 6px 0 0;
   font-weight: 500;
 }
-.music-track-list::after {
-  content: "";
-  flex: 1000 1 0px;
+.music-track-list > ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
-.music-track-list > li {
+.music-track-list li {
   position: relative;
-  isolation: isolate;
-  flex: 1 1 auto;
-  max-width: 100%;
-  padding: 4px 10px 5px;
-  border-radius: 6px;
-  background: var(--base);
-  overflow: hidden;
-  overflow-wrap: break-word;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  min-width: 0;
+  padding: 7px 0 6px;
+  border-bottom: 1px solid var(--rule);
 }
-/* The listening bar fills the chip's full height, in proportion to the
-   record's most-played song, never thinner than a sliver. */
-.music-track-list > li::before {
+.music-track-list li::after {
   content: "";
   position: absolute;
-  z-index: -1;
-  inset: 0 auto 0 0;
-  width: max(4px, calc(var(--listening-share, 1) * 100%));
+  bottom: -1px;
+  left: 0;
+  width: max(3px, calc(var(--listening-share, 1) * 100%));
+  height: 3px;
+  border-radius: 0 1.5px 1.5px 0;
   background: var(--fill);
   transform-origin: left center;
-  animation: track-fill 560ms var(--shelf-ease) backwards;
+  animation: track-fill 460ms var(--shelf-ease) backwards;
 }
 @keyframes track-fill {
   from { transform: scaleX(0); }
+}
+
+.music-track-title {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 /* A note that tells two recordings apart: live, demo, take. */
@@ -1045,8 +1034,9 @@ html {
 
 /* The time, bold in the record's voice; its unit quiet in the reader's. */
 .music-track-hours {
-  margin-left: 0.55em;
+  flex: none;
   color: var(--ink);
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 .music-track-hours strong {
@@ -1059,14 +1049,11 @@ html {
   font: 650 0.76em/1 var(--sans);
 }
 
-/* Measure the complete list when the available width or fonts change. */
-.music-track-list[data-measuring] > li[hidden] { display: list-item; }
-
 .music-tracks-more {
   grid-area: more;
   justify-self: start;
   min-height: 32px;
-  margin-top: 4px;
+  margin-top: 10px;
   padding: 0 10px;
   border: 1px dashed var(--edge);
   border-radius: 6px;
@@ -1082,33 +1069,24 @@ html {
   color: var(--ink-soft);
 }
 
-/* Narrow shelves reserve the header for album details and the close button. */
+/* A phone's sheet: a little less room round one column. */
 @container (max-width: 559px) {
   .music-tracks {
-    padding: 9px 10px 10px 11px;
+    padding: 10px 11px 12px 12px;
     border-radius: 6px;
   }
   .music-release {
     column-gap: 10px;
   }
-  .music-track-list {
-    margin-top: 8px;
-  }
-  .music-track-list > li {
-    padding: 4px 8px 5px;
-  }
-  .music-track-hours {
-    margin-left: 0.45em;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .music-track-list > li::before { animation: none; }
+  .music-track-list li::after { animation: none; }
 }
 
 @media (forced-colors: active) {
-  .music-track-list > li { border: 1px solid CanvasText; }
-  .music-track-list > li::before { background: Highlight; forced-color-adjust: none; opacity: 0.35; }
+  .music-track-list li { border-bottom-color: CanvasText; }
+  .music-track-list li::after { background: Highlight; forced-color-adjust: none; }
 }
 
 /* The full sleeve grid also works without the interactive controls. */
@@ -1146,11 +1124,15 @@ html:not(.js) .music-bar {
 }
 
 /* Sized by the page's own script as the HTML arrives (app/page.jsx): the
-   same rows the shelf will take over, so nothing moves when it does. A hair
-   under each size keeps a full row from wrapping on a rounded pixel. */
+   same rows the shelf will take over, so nothing moves when it does. The
+   rows wrap here, so the shelf is given two spare pixels at its end: a full
+   row must never lose its last sleeve to a rounded fraction of one. */
+html.laid .music-map[data-measured="false"] .music-shelf {
+  margin-right: -2px;
+}
 html.laid .music-map[data-measured="false"] .music-tile {
   flex: none;
-  width: calc(var(--early) * 1px - 0.02px);
+  width: calc(var(--early) * 1px);
   max-width: none;
   height: calc(var(--early) * 1px);
   aspect-ratio: auto;

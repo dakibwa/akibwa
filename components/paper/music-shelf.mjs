@@ -1,4 +1,3 @@
-import { fold } from "./music-ranking.mjs";
 import { GAP, bounds, packRows } from "./shelf-rows.mjs";
 
 export { GAP, bounds };
@@ -55,12 +54,15 @@ export function rowsFor(entries, width, reference, limits = bounds(width)) {
   return rows;
 }
 
+// The orders, as the bar names them and, on a phone, as it shortens them
+// (Dan, 25 November 2026: "the menu could be better too I think, Time
+// Listened, Genre, Released Date? Listen Date?"). The year a record was played
+// is `year` in code and genre is `kind`; its file is still music-kinds.json.
 export const ORDERS = [
-  ["hours", "Hours"],
-  ["year", "Year"],
-  // Named genre (Dan, 18 November 2026); its file is still music-kinds.json.
-  ["kind", "Genre"],
-  ["name", "A–Z"]
+  ["hours", "Time listened", "Hours"],
+  ["kind", "Genre", "Genre"],
+  ["released", "Release date", "Released"],
+  ["year", "Listen date", "Listened"]
 ];
 
 // The year a list of [year, minutes] pairs peaks in, with its minutes.
@@ -110,17 +112,10 @@ export function yearPairs(record, years) {
   return [...by];
 }
 
-const sortTitle = (title) => fold(title).trim().replace(/^the\s+/, "");
-
-const letterOf = (text) => {
-  const first = sortTitle(text).charAt(0).toUpperCase();
-  return /[A-Z]/.test(first) ? first : "#";
-};
-
 /*
  * The shelf in an order: groups, each with the heading that order needs (none
- * for hours), the most listened first inside each, except a to z. Entries
- * arrive most listened first, as `{ item, ... }`.
+ * for hours), the most listened first inside each. Entries arrive most
+ * listened first, as `{ item, ... }`.
  */
 export function arrange(order, entries, { years, kinds, reverse = false } = {}) {
   const total = entries.reduce((sum, entry) => sum + entry.item.minutes, 0) || 1;
@@ -133,25 +128,29 @@ export function arrange(order, entries, { years, kinds, reverse = false } = {}) 
     }
     return map;
   };
-  if (order === "name") {
-    // A to z, or z to a when the order is pressed again (Dan, 18 November 2026).
-    const way = reverse ? -1 : 1;
-    const sorted = [...entries].sort((a, b) => way * sortTitle(a.item.title).localeCompare(sortTitle(b.item.title), "en"));
-    const map = new Map();
-    for (const entry of sorted) {
-      const letter = letterOf(entry.item.title);
-      if (!map.has(letter)) map.set(letter, []);
-      map.get(letter).push(entry);
-    }
+  if (order === "released") {
+    // By the decade a record came out, newest first or, pressed again,
+    // oldest, the most listened first inside each. A record whose year is
+    // not known waits at the end.
+    const map = grouped((entry) => {
+      const year = Number(entry.item.year) || entry.year || 0;
+      return year ? Math.floor(year / 10) * 10 : 0;
+    });
     return [...map]
-      .sort(([a], [b]) => (a === "#" ? -1 : b === "#" ? 1 : way * a.localeCompare(b)))
-      .map(([letter, list]) => ({ key: letter, label: letter, figures: `${list.length} ${list.length === 1 ? "record" : "records"}`, entries: list }));
+      .sort(([a], [b]) => (!a ? 1 : !b ? -1 : reverse ? a - b : b - a))
+      .map(([decade, list]) => ({
+        key: decade ? String(decade) : "undated",
+        label: decade ? `${decade}s` : "Undated",
+        figures: `${list.length} ${list.length === 1 ? "record" : "records"} · ${listened(list.reduce((sum, entry) => sum + entry.item.minutes, 0), "long")}`,
+        entries: list
+      }));
   }
   if (order === "year" && years) {
-    // Every record played for an hour or more in a year, as large as its
-    // hours that year, newest year first or, pressed again, oldest (Dan, 18
-    // November 2026: "does this mean I ultimately only listened to this many
-    // albums this year?"). A record appears in each year it was played.
+    // By when it was played: every record played for an hour or more in a
+    // year, as large as its hours that year, newest year first or, pressed
+    // again, oldest (Dan, 18 November 2026: "does this mean I ultimately only
+    // listened to this many albums this year?"). A record appears in each
+    // year it was played.
     const map = new Map();
     for (const entry of entries) {
       for (const [year, minutes] of yearPairs(entry.item, years) ?? []) {

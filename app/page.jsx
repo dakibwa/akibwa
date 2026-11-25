@@ -24,7 +24,7 @@ ${rowsSource}
   var page = document.documentElement;
   var frame = document.querySelector(".music-map-frame");
   var map = frame && frame.querySelector('.music-map[data-measured="false"]');
-  var width = frame ? Math.floor(frame.clientWidth) : 0;
+  var width = frame ? Math.floor(frame.getBoundingClientRect().width) : 0;
   if (!map || !(width > 0) || !Element.prototype.animate) return;
   var tiles = map.querySelectorAll(".music-tile");
   var shares = [];
@@ -70,7 +70,7 @@ ${rowsSource}
 export const metadata = {
   title: { absolute: "Akibwa" },
   alternates: { canonical: "/" },
-  description: "The music Akibwa plays most: 150 albums and 1,000 songs, each as large as the hours listened.",
+  description: "The music Akibwa plays most: 1,000 records, each as large as the hours listened.",
   robots: {
     index: true,
     follow: true,

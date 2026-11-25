@@ -74,12 +74,13 @@ for (const room of ["trek", "career", "websites"]) forbidText(index + music, `id
 
 // Dan, 16 November 2026: one shelf, each row of squares as large as its
 // albums' hours between a floor and a cap, everything to know in the bar.
-requireText(music, 'className="music-singles"', "the bar must switch the shelf to the singles (Dan, 18 November 2026)");
+requireText(music, "if (!found) return index.entries;", "albums and singles must share the one shelf (Dan, 25 November 2026)");
+forbidText(music, "music-singles", "the bar must not switch between albums and singles (Dan, 25 November 2026)");
 requireText(music, 'className="music-find"', "on a phone the bar must keep one row, the search waiting behind its mark (Dan, 16 November 2026)");
 requireText(css, ".music-tools[data-finding=\"true\"] .music-search {", "the phone's search must slide out over the orders");
 requireText(music, "rowsFor(group.entries, width, group.reference ?? reference)", "the shelf must be laid out in rows sized by hours between a floor and a cap");
-requireText(music, 'role="group" aria-label="Order"', "the bar must sort the whole shelf by hours, year, kind or name");
-requireText(music, '<output className="music-now"', "the bar must say what the shelf holds and what is under the pointer");
+requireText(music, 'role="group" aria-label="Order"', "the bar must sort the whole shelf by time listened, genre, release date or listen date");
+requireText(music, 'id={pinned ? "record-tracks" : "record-glance"}', "a sleeve under the pointer must show its sheet under its row, and a press must set it into the shelf (Dan, 25 November 2026)");
 requireText(music, "startTransition(() => setOrder(name))", "an order must answer before the shelf is sorted again");
 requireText(music, "<AlbumTracks", "an album must open its track list");
 // Dan, 25 September 2026: resizing is smooth.
@@ -137,7 +138,7 @@ requireText(music, ".animate(", "the shelf's sleeves must glide to a new order")
   }
   const entries = records.map((item) => ({ item }));
   const years = JSON.parse(read("public/music-years.json"));
-  for (const order of ["hours", "kind", "name"]) {
+  for (const order of ["hours", "kind", "released"]) {
     const groups = arrange(order, entries, { years, kinds: musicKinds });
     const placed = groups.flatMap((group) => group.entries.map((entry) => entry.item.key));
     if (placed.length !== records.length || new Set(placed).size !== records.length) fail(`the ${order} order must place every record once`);
@@ -145,7 +146,7 @@ requireText(music, ".animate(", "the shelf's sleeves must glide to a new order")
   }
   // Dan, 18 November 2026: a year holds every record played for an hour or
   // more that year, as large as that year's hours, newest year first; pressed
-  // again, the year and a to z orders turn round.
+  // again, the two orders by date turn round.
   const byYear = arrange("year", entries, { years });
   if (byYear.length < 5 || byYear.some((group, at) => at && Number(group.key) > Number(byYear[at - 1].key))) fail("the year order must run newest year first");
   for (const group of byYear) {
@@ -155,9 +156,14 @@ requireText(music, ".animate(", "the shelf's sleeves must glide to a new order")
   const busiest = Math.max(...byYear.map((group) => group.entries.length));
   if (busiest < 100) fail("a year must hold every record played that year, not only those played most then");
   if (arrange("year", entries, { years, reverse: true })[0].key !== byYear.at(-1).key) fail("the year order must turn round to oldest first");
-  const atoz = arrange("name", entries, {});
-  const ztoa = arrange("name", entries, { reverse: true });
-  if (ztoa[ztoa.length - 1].key === atoz[atoz.length - 1].key) fail("a to z must turn round to z to a");
+  // Dan, 25 November 2026: by release date, a decade at a time, newest first,
+  // the records with no known year last either way round.
+  const byRelease = arrange("released", entries, {});
+  const decades = byRelease.filter((group) => group.key !== "undated").map((group) => Number(group.key));
+  if (decades.length < 5 || decades.some((decade, at) => at && decade > decades[at - 1])) fail("the release date order must run newest decade first");
+  if (byRelease.some((group) => group.key !== "undated" && group.entries.some((entry) => Math.floor(Number(entry.item.year) / 10) * 10 !== Number(group.key)))) fail("a decade must hold the records released in it");
+  const oldestFirst = arrange("released", entries, { reverse: true });
+  if (oldestFirst[0].key !== String(decades.at(-1)) || (byRelease.some((group) => group.key === "undated") && (byRelease.at(-1).key !== "undated" || oldestFirst.at(-1).key !== "undated"))) fail("the release date order must turn round to oldest first and keep undated records last");
 }
 
 // The address stays private.

@@ -27,8 +27,8 @@ here is public. Git records the implementation and the live site shows what ship
 
 ## The music shelf
 
-The shelf holds the top 1,000 records by listening hours. It opens on albums, with a singles
-switch, search across both and a track sheet for each record. For changes to ranking, covers,
+The shelf holds the top 1,000 records by listening hours, albums and singles together, with
+four orders, search and a sheet for each record that shows under the pointer. For changes to ranking, covers,
 the signature, layout, keyboard, motion or the track sheet, read [the shelf guide](docs/music-shelf.md).
 The [listening history guide](docs/listening-history.md) covers how to regenerate public data
 from the private source.

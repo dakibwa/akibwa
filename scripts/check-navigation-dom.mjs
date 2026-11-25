@@ -270,11 +270,10 @@ const waitFor = async (expression, timeout = 6000) => {
 const checkPublicLanding = async () => {
   // One record for every top album and every other sleeve or song (mergeShelf).
   const published = unpackRanking(JSON.parse(readFileSync(new URL("../public/music-ranking.json", import.meta.url), "utf8")));
-  // The shelf opens on the albums; the singles are a button away (Dan, 18
-  // November 2026).
+  // Albums and singles share the one shelf (Dan, 25 November 2026).
   const shelf = mergeShelf(published.albums, published.songs, published.sleeves, published.singles);
-  const RECORDS = shelf.filter((record) => record.kind !== "single").length;
-  const SINGLES = shelf.length - RECORDS;
+  const RECORDS = shelf.length;
+  const SINGLES = shelf.filter((record) => record.kind === "single").length;
   if (shelfOnly) {
     section("the exported homepage");
     await cdp.send("Emulation.setScriptExecutionDisabled", { value: true });
@@ -366,22 +365,38 @@ const checkPublicLanding = async () => {
     };
   })()`);
   check(albums.count === RECORDS, `the shelf holds every record, albums and songs merged [${albums.count}]`);
-  await evaluate(`document.querySelector(".music-page .music-singles").click()`);
-  check(await waitFor(`document.querySelectorAll(".music-page .music-tile").length === ${SINGLES}`, 4000), "the singles button shows the singles");
-  await evaluate(`document.querySelector(".music-page .music-singles").click()`);
-  check(await waitFor(`document.querySelectorAll(".music-page .music-tile").length === ${RECORDS}`, 4000), "pressing singles again puts the albums back");
+  check(SINGLES > 0 && await evaluate(`document.querySelectorAll('.music-page .music-tile[data-key^="single-"]').length === ${SINGLES} && !document.querySelector(".music-singles")`), `the singles stand on the shelf among the albums, with no switch [${SINGLES}]`);
   check(albums.first > albums.last * 6, `sleeves are sized by hours listened [${Math.round(albums.first)}px² to ${Math.round(albums.last)}px²]`);
   check(albums.bounded && albums.inside, "the sleeves are square, between the floor and the cap, and on the shelf");
   check(albums.lead?.startsWith("Music for Psychedelic Therapy"), `the map starts with the most listened [${albums.lead}]`);
-  // Dan, 16 November 2026: everything to know is in the bar above the shelf.
-  const pointed = await evaluate(`(() => { const face = [...document.querySelectorAll(".music-page .music-face")].find((button) => button.getAttribute("aria-label").startsWith("Graceland")); face.dispatchEvent(new PointerEvent("pointerover", { bubbles: true, pointerType: "mouse" })); return new Promise((done) => setTimeout(() => done(document.querySelector(".music-page .music-now")?.textContent ?? ""), 200)); })()`);
-  check(/^Graceland\d[\d,.]* hPaul Simon/.test(pointed), `pointing at a sleeve names it, its hours and its artist [${pointed}]`);
-  for (const [order, heading] of [["genre", "ambient"], ["a–z", "A"]]) {
-    await evaluate(`[...document.querySelectorAll(".music-page .music-order button")].find((button) => button.textContent.toLowerCase() === ${JSON.stringify(order)}).click()`);
+  // Dan, 25 November 2026: the sleeve under the pointer shows its name and
+  // its stats under its own row, floating there without moving the shelf.
+  const pointed = await evaluate(`(() => {
+    const faces = [...document.querySelectorAll(".music-page .music-face")];
+    const face = faces.find((button) => button.getAttribute("aria-label").startsWith("Graceland"));
+    const last = faces.at(-1);
+    const before = last.getBoundingClientRect().top;
+    face.dispatchEvent(new PointerEvent("pointerover", { bubbles: true, pointerType: "mouse" }));
+    return new Promise((done) => setTimeout(() => {
+      const glance = document.querySelector(".music-page #record-glance");
+      done({
+        says: glance?.querySelector(".music-release")?.textContent ?? "",
+        songs: glance?.querySelectorAll(".music-track-list li").length ?? 0,
+        floats: Boolean(glance) && getComputedStyle(glance).position === "absolute" && last.getBoundingClientRect().top === before,
+        under: Boolean(glance) && Math.abs(glance.getBoundingClientRect().top - face.getBoundingClientRect().bottom - 4) <= 1
+      });
+      face.dispatchEvent(new PointerEvent("pointerout", { bubbles: true, pointerType: "mouse" }));
+    }, 500));
+  })()`);
+  check(/^GracelandPaul Simon1986\d[\d,.]* hours[\d,]+ plays$/.test(pointed.says) && pointed.songs > 5, `pointing at a sleeve shows its name, artist, year, hours, plays and songs [${pointed.says}, ${pointed.songs} songs]`);
+  check(pointed.floats && pointed.under, `the sheet floats under its sleeve's row and moves nothing [${JSON.stringify(pointed)}]`);
+  check(await waitFor(`!document.querySelector(".music-page #record-glance")`, 2000), "leaving the sleeve puts its sheet away");
+  for (const [order, heading] of [["kind", "ambient"], ["released", "2020s"]]) {
+    await evaluate(`document.querySelector('.music-page .music-order button[data-order="${order}"]').click()`);
     check(await waitFor(`(() => { const heads = [...document.querySelectorAll(".music-page .music-group-head")].map((head) => head.firstElementChild.textContent); return heads.includes(${JSON.stringify(heading)}) && document.querySelectorAll(".music-page .music-tile").length === ${RECORDS}; })()`, 4000), `the ${order} order sorts every record under its headings`);
   }
   // Dan, 18 November 2026: a year holds every record played in it, once each.
-  await evaluate(`[...document.querySelectorAll(".music-page .music-order button")].find((button) => button.textContent.toLowerCase() === "year").click()`);
+  await evaluate(`document.querySelector('.music-page .music-order button[data-order="year"]').click()`);
   check(await waitFor(`(() => {
     const groups = [...document.querySelectorAll(".music-page .music-group")];
     if (!groups.some((group) => group.querySelector(".music-group-head span")?.textContent === "2026")) return false;
@@ -390,7 +405,7 @@ const checkPublicLanding = async () => {
       return keys.length && new Set(keys).size === keys.length;
     }) && document.querySelectorAll(".music-page .music-tile").length > ${RECORDS};
   })()`, 4000), "the year order holds every record played in each year");
-  await evaluate(`[...document.querySelectorAll(".music-page .music-order button")].find((button) => button.textContent.toLowerCase() === "hours").click()`);
+  await evaluate(`document.querySelector('.music-page .music-order button[data-order="hours"]').click()`);
   check(await waitFor(`!document.querySelector(".music-page .music-group-head") && document.querySelector(".music-page .music-face")?.getAttribute("aria-label").startsWith("Music for Psychedelic Therapy")`, 4000), "the hours order puts the shelf back, most listened first");
   check(albums.large, "sleeves drawn large offer the high-resolution rung");
   check(albums.words === "" && !albums.head, `the shelf explains nothing it need not [${albums.words}]`);
@@ -425,7 +440,7 @@ const checkPublicLanding = async () => {
     check(fit.ok, `the music map fits ${width}px [${fit.right}px ${fit.wide.join(", ")}]`);
     // Dan, 18 November 2026: the bar is one even row at every width.
     const row = await evaluate(`(() => {
-      const items = [document.querySelector(".music-page .music-sign"), ...document.querySelectorAll(".music-crate button, .music-order button, .music-find")].filter(element => element.offsetWidth).map((element) => element.getBoundingClientRect());
+      const items = [document.querySelector(".music-page .music-sign"), ...document.querySelectorAll(".music-order button, .music-find")].filter(element => element.offsetWidth).map((element) => element.getBoundingClientRect());
       // One line: every item shares a centre, the words stay one line tall.
       return { centres: new Set(items.map((box) => Math.round(box.top + box.height / 2))).size, tall: Math.max(...items.slice(1).map((box) => box.height)), overlap: items.some((box, at) => at && box.left < items[at - 1].right - 0.5) };
     })()`);
@@ -480,7 +495,7 @@ const checkPublicLanding = async () => {
   await cdp.send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
   await goto("/");
   await sleep(800);
-  await evaluate(`[...document.querySelectorAll(".music-page .music-order button")].find((button) => button.textContent.toLowerCase() === "genre").click()`);
+  await evaluate(`document.querySelector('.music-page .music-order button[data-order="kind"]').click()`);
   await sleep(300);
   check(await evaluate(`document.querySelectorAll(".music-page .music-group-head").length > 0 && !document.getAnimations().some((animation) => animation.playState === "running" && animation.effect?.target?.classList?.contains("music-tile"))`), "under reduced motion an order sorts the shelf without gliding");
   await cdp.send("Emulation.setEmulatedMedia", { features: [] });
