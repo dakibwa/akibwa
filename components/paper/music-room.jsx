@@ -139,7 +139,9 @@ class GlidingShelf extends PureComponent {
     const list = this.list.current;
     if (this.opened || !list || !this.props.measured || !this.ready) return;
     this.opened = true;
-    if (this.motion.matches) return;
+    // The page's own script has already lifted the first screen in, before
+    // this code arrived (app/page.jsx).
+    if (this.motion.matches || window.__shelfOpening) return;
     const visible = visibleTiles(list);
     let index = 0;
     for (const { tile } of visible.values()) {

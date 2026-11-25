@@ -221,7 +221,7 @@ main {
 
 html.js:not(.ready) .music-bar,
 html.js:not(.ready) .music-map,
-html.js .music-map[data-measured="false"] {
+html.js:not(.laid) .music-map[data-measured="false"] {
   opacity: 0;
 }
 
@@ -269,14 +269,14 @@ html.ready .music-mark {
   @keyframes bar-fade { to { opacity: 1; } }
 }
 
-/* The signature: unchanged, Dan's drawing alone, a little in from the edge. */
+/* The signature: unchanged, Dan's drawing alone, its panel's left edge on
+   the sleeves' left edge (Dan, 25 November 2026: "align the logo"). */
 .music-sign {
   position: relative;
   display: inline-flex;
   flex: none;
   align-items: center;
   min-height: 44px;
-  margin-left: clamp(4px, 1vw, 12px);
   border-radius: 4px;
 }
 .music-mark { height: var(--mark); width: auto; margin-top: calc(var(--mark) * -0.1912); -webkit-user-drag: none; }
@@ -303,7 +303,9 @@ html.ready .music-mark {
 .music-tools, .music-order { display: contents; }
 
 /* What is on the shelf: albums or singles, a two-way switch in one capsule.
-   The chosen side is a paper chip raised off the capsule. */
+   The chosen side is a paper chip raised off the capsule. The capsule is as
+   tall as the search at the other end of the bar, and its chips as tall as
+   the order's, so the bar keeps two heights and no more. */
 .music-crate {
   display: inline-flex;
   flex: none;
@@ -313,8 +315,8 @@ html.ready .music-mark {
 }
 .music-crate button {
   position: relative;
-  height: calc(var(--chip-h) - 6px);
-  padding: 0 14px;
+  height: var(--chip-h);
+  padding: 0 15px;
   border: 0;
   border-radius: 999px;
   background: transparent;
@@ -323,7 +325,7 @@ html.ready .music-mark {
   cursor: pointer;
   transition: background-color 180ms ease, color 180ms ease, box-shadow 180ms ease;
 }
-.music-crate button::after { content: ""; position: absolute; inset: -8px 0; }
+.music-crate button::after { content: ""; position: absolute; inset: -5px 0; }
 .music-crate button:hover { color: var(--ink); }
 .music-crate button[aria-pressed="true"] {
   background: var(--paper-light);
@@ -473,11 +475,10 @@ html.ready .music-mark {
    outlined chip that fills when on; the orders tighten. */
 @media (max-width: 619px) {
   .music-bar { --mark: 52px; --chip-h: 34px; }
-  .music-sign { margin-left: 4px; }
   .music-crate { padding: 0; background: none; }
   .music-albums { display: none; }
   .music-crate .music-singles {
-    height: 30px;
+    height: var(--chip-h);
     padding: 0 11px;
     box-shadow: inset 0 0 0 1.5px var(--paper-edge);
     font-size: 14px;
@@ -1142,6 +1143,17 @@ html:not(.js) .music-bar {
   max-width: var(--cap);
   height: auto;
   aspect-ratio: 1;
+}
+
+/* Sized by the page's own script as the HTML arrives (app/page.jsx): the
+   same rows the shelf will take over, so nothing moves when it does. A hair
+   under each size keeps a full row from wrapping on a rounded pixel. */
+html.laid .music-map[data-measured="false"] .music-tile {
+  flex: none;
+  width: calc(var(--early) * 1px - 0.02px);
+  max-width: none;
+  height: calc(var(--early) * 1px);
+  aspect-ratio: auto;
 }
 
 /* A pencil-underlined text link: the way home from a missing page. */

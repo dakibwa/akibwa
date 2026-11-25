@@ -38,6 +38,9 @@ The layout, merging and ordering code runs in the build checks against real reco
   The signature returns to hours, clears the search and scrolls to the top.
 - Keep one pinned row. Leave equal gaps between the signature, the Albums/Singles
   switch, each sort option and search. A soft rust background marks the chosen sort.
+  The signature's panel starts on the sleeves' left edge and search ends on their
+  right (Dan, 25 November: “align the logo”). The bar keeps two heights: 40 px for
+  the switch's capsule and search, 34 px for every chip.
   Below 620 px, Singles toggles the view on its own. Search opens from the
   right below 900 px. Pressing / focuses it, and Escape clears it.
 - Set group names on kraft tabs, with a row of jumps for years, genres or
@@ -78,6 +81,12 @@ from the reverted version. The page he holds has lines of handwriting across it.
   Keep the scroll position on opening. Fade the sheet in at its final height.
   Selecting another sleeve moves the list there. The same sleeve, the close
   button or Escape folds it away.
+- Show the shelf as soon as the HTML arrives (Dan, 25 November: “load times
+  immediate”). A small script in the page sizes every sleeve with the shelf's own
+  row rules, loads the first screen's covers and lifts that screen in, before the
+  shelf's code has loaded. The shelf then takes over the same rows, so nothing
+  moves. Both read one file, so they cannot disagree.
+  [Row rules](../components/paper/shelf-rows.mjs) · [Early script](../app/page.jsx)
 - Reveal the page once its menu and title fonts have loaded. Fade in the bar and mark, lift
   the first screen of sleeves in sequence, fade covers as they arrive, and lift later
   rows together as they scroll into view. Reserve each row’s height so the browser can

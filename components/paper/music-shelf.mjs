@@ -1,4 +1,7 @@
 import { fold } from "./music-ranking.mjs";
+import { GAP, bounds, packRows } from "./shelf-rows.mjs";
+
+export { GAP, bounds };
 
 /*
  * The music shelf's sizes and orders (Dan, 16 November 2026), kept apart from
@@ -23,9 +26,6 @@ export function songLabel(title) {
   return short || title;
 }
 
-// The one gap between squares, across and down.
-export const GAP = 4;
-
 export const listened = (minutes, units = "short") => {
   let value = Math.max(1, minutes);
   if (minutes >= 600) value = Math.round(minutes / 60);
@@ -36,55 +36,21 @@ export const listened = (minutes, units = "short") => {
   return `${amount} ${unit}${value === 1 ? "" : "s"}`;
 };
 
-/*
- * How large a square may be at this width: a floor that keeps it big enough
- * to see (about 60 px on a laptop, 44 px on a phone) and a cap that stops it
- * dominating (about 200 px on a laptop; on a phone, four to a row). Dan, 16
- * November 2026: tighter, “so you can fit more”, and more than three on a
- * phone's top row.
- */
-export function bounds(width) {
-  if (width < 600) return { floor: 44, cap: Math.floor((width - 3 * GAP) / 4) };
-  return { floor: Math.max(56, Math.round(width * 0.045)), cap: Math.round(width * 0.15) };
-}
-
 // A square's side grows with the square root of its hours, so its area
 // follows them. The third most listened reaches the cap, so the two ambient
 // records (or the two most played songs) share it rather than set the scale.
 export const sideFor = (minutes, reference, { floor, cap }) => Math.round(Math.max(floor, Math.min(cap, cap * Math.sqrt(minutes / reference))));
 
 
-/*
- * The shelf in rows (Dan, 16 November 2026: “the spacing is weird”). Every
- * square in a row shares one size, so the gaps are the same across and down,
- * and each full row fills the width exactly. A row's size comes from the
- * hours of the albums in it: as many are taken as make the row's size
- * closest to their own average size, between the floor and the cap. The
- * last row keeps its size and stands at the left. A sheet's tracks pass
- * their own floor and cap.
- */
+// The shelf in rows: packRows (shelf-rows.mjs) sizes them, from each record's
+// share of the reference record's hours. A sheet's tracks pass their own
+// floor and cap.
 export function rowsFor(entries, width, reference, limits = bounds(width)) {
-  const fit = (count) => (width - (count - 1) * GAP) / count;
-  const most = Math.max(1, Math.floor((width + GAP) / (limits.floor + GAP)));
-  const least = Math.min(most, Math.max(1, Math.ceil((width + GAP) / (limits.cap + GAP))));
   const rows = [];
   let at = 0;
-  while (at < entries.length) {
-    let best = least;
-    let bestMiss = Infinity;
-    let sum = 0;
-    for (let count = 1; count <= most; count += 1) {
-      const entry = entries[at + count - 1];
-      sum += entry ? sideFor(entry.item.minutes, reference, limits) : limits.floor;
-      if (count < least) continue;
-      const miss = Math.abs(fit(count) - sum / count);
-      if (miss < bestMiss) {
-        best = count;
-        bestMiss = miss;
-      }
-    }
-    rows.push({ side: Math.floor(fit(best) * 100) / 100, entries: entries.slice(at, at + best) });
-    at += best;
+  for (const [count, side] of packRows(entries.map(entry => Math.sqrt(entry.item.minutes / reference)), width, limits)) {
+    rows.push({ side, entries: entries.slice(at, at + count) });
+    at += count;
   }
   return rows;
 }
