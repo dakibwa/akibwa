@@ -589,11 +589,90 @@ function glide(name, toEnd, wait = 0) {
 
 const nameIn = (event) => event.target.closest?.("li")?.querySelector(".music-track-title") ?? null;
 
-function TrackLabel({ track }) {
+// A record's songs, most listened first, each under the name it goes by.
+const songs = new WeakMap();
+function songsOf(album) {
+  let sorted = songs.get(album);
+  if (!sorted) {
+    sorted = album.tracks.map(([title, plays, minutes]) => ({ title, plays, minutes, label: songLabel(title) }))
+      .sort((a, b) => b.minutes - a.minutes);
+    const counts = new Map();
+    for (const { label } of sorted) counts.set(label, (counts.get(label) ?? 0) + 1);
+    // Keep the original credit when two recordings would share a label.
+    for (const track of sorted) if (counts.get(track.label) > 1) track.label = track.title;
+    songs.set(album, sorted);
+  }
+  return sorted;
+}
+
+// What a song's line says: its name, the note that tells two recordings
+// apart (set quietly after the name, without its dash or brackets), and its
+// time as an amount and a unit.
+function lineOf(track) {
   const [title, note] = track.label.split(/\s+(?=\((?:demo|live|early version|take \d+|\d{4} mix)\b[^()]*\)$|[-–—] (?:demo|live|early version|take \d+|\d{4} mix)\b.*$)/i, 2);
   const [amount, unit] = listened(track.minutes).split(" ");
-  // The note is set quietly after the name, without its dash or brackets.
-  const mark = note?.replace(/^[-–—]\s*/, "").replace(/^\((.*)\)$/, "$1");
+  return { title, mark: note?.replace(/^[-–—]\s*/, "").replace(/^\((.*)\)$/, "$1"), amount, unit };
+}
+
+/*
+ * How many columns a record's songs stand in. Most records take the shelf's
+ * own count, wide enough for most names: one on a phone, five at most (298
+ * is a column of 270px and its 28px gap). A record whose songs all fit on
+ * one line, each name in full with room to spare, stands on that one line,
+ * however many columns it takes (Dan, 25 November 2026, of seven short names
+ * on two lines: "can't this fit on one line comfortably?").
+ */
+// The narrowest a column on such a line may be, and the room a name keeps
+// from its time beyond the line's own gap.
+const LINE_COLUMN = 132;
+const LINE_SLACK = 8;
+const oneLines = new WeakMap();
+function columnsFor(album, width, frame) {
+  const usual = Math.max(1, Math.min(5, Math.floor(width / 298)));
+  const count = album?.tracks.length ?? 0;
+  // One line already, or more songs than any line this wide could hold.
+  if (count <= usual || count > Math.floor(width / LINE_COLUMN) || !frame?.isConnected) return usual;
+  let line = oneLines.get(album);
+  if (line?.width !== width) {
+    const { room, gap, widest } = songWidths(album, frame);
+    const column = Math.max(LINE_COLUMN, widest + LINE_SLACK);
+    line = { width, fits: count * column + (count - 1) * gap <= room };
+    oneLines.set(album, line);
+  }
+  return line.fits ? count : usual;
+}
+
+// The room a sheet's songs have, the gap between its columns and the longest
+// line among its songs, name to time. They are read from a copy of the songs
+// set in the frame for a moment, unseen, each on a line of its own length
+// (`.music-tracks-probe`), so the sheet's own styles give the answer. Its
+// lines are built as TrackLabel builds them; keep the two alike.
+function songWidths(album, frame) {
+  const make = (tag, name, ...inside) => {
+    const element = document.createElement(tag);
+    if (name) element.className = name;
+    element.append(...inside);
+    return element;
+  };
+  const column = make("ol", "", ...songsOf(album).map((track) => {
+    const { title, mark, amount, unit } = lineOf(track);
+    return make("li", "",
+      make("span", "music-track-title", title, ...(mark ? [" ", make("span", "music-track-sub", mark)] : [])),
+      make("span", "music-track-hours", make("strong", "", amount), " ", make("small", "", unit)));
+  }));
+  const list = make("div", "music-track-list", column);
+  const probe = make("div", "music-tracks music-tracks-probe", list);
+  frame.append(probe);
+  const room = list.clientWidth;
+  const gap = parseFloat(getComputedStyle(list).columnGap) || 0;
+  let widest = 0;
+  for (const line of column.children) widest = Math.max(widest, line.getBoundingClientRect().width);
+  probe.remove();
+  return { room, gap, widest };
+}
+
+function TrackLabel({ track }) {
+  const { title, mark, amount, unit } = lineOf(track);
   return (
     <>
       <span className="music-track-title" title={track.title} tabIndex={-1}>
@@ -614,16 +693,7 @@ function TrackLabel({ track }) {
  * be compared across the sheet, and every name keeps to its one line.
  */
 function TrackSheet({ album, columns, pinned, onClose }) {
-  const tracks = useMemo(() => {
-    const sorted = album.tracks.map(([title, plays, minutes]) => ({ title, plays, minutes, label: songLabel(title) }))
-      .sort((a, b) => b.minutes - a.minutes);
-    const counts = new Map();
-    for (const { label } of sorted) counts.set(label, (counts.get(label) ?? 0) + 1);
-    // Keep the original credit when two recordings would share a label.
-    for (const track of sorted) if (counts.get(track.label) > 1) track.label = track.title;
-    return sorted;
-  }, [album.tracks]);
-
+  const tracks = songsOf(album);
   const [expanded, setExpanded] = useState(false);
   const count = tracks.length;
   const mostMinutes = tracks[0]?.minutes || 1;
@@ -869,7 +939,7 @@ export function MusicRoom({ active }) {
     clearTimeout(hoverTimer.current);
     clearTimeout(leaveTimer.current);
   }, [active]);
-  const columnsNow = useRef(1);
+  const widthNow = useRef(0);
   /*
    * Which side of its row a sheet opens on. The first opens under its row.
    * After that the sheet keeps to the gap the pointer has just crossed: over
@@ -882,11 +952,11 @@ export function MusicRoom({ active }) {
     // Near enough how tall its sheet will stand: its header, its rows of
     // songs and the fold's button.
     const count = record?.tracks.length ?? 0;
-    const across = columnsNow.current;
+    const across = columnsFor(record, widthNow.current, map.current);
     const full = across === 1 ? 10 : across * 6;
     const folds = count > full + (across === 1 ? 2 : across);
     const rows = count < 2 ? 0 : Math.ceil((folds ? full : count) / across);
-    const needs = 62 + (rows ? 8 + rows * 33 : 0) + (folds ? 44 : 0) + GAP + 12;
+    const needs = 62 + (rows ? 8 + rows * 36 : 0) + (folds ? 44 : 0) + GAP + 12;
     const box = face.getBoundingClientRect();
     const beneath = innerHeight - box.bottom >= needs;
     const over = box.top - (bar.current?.getBoundingClientRect().bottom ?? 0) >= needs;
@@ -1099,11 +1169,11 @@ export function MusicRoom({ active }) {
     setOpen(null);
   }, []);
 
-  // The sheet's songs stand in columns wide enough for most names: one on a
-  // phone, five at most (298 is a column of 270px and its 28px gap).
-  const columns = Math.max(1, Math.min(5, Math.floor(width / 298)));
-  columnsNow.current = columns;
+  widthNow.current = width;
   const record = shown ? byKey.get(shown.record) ?? null : null;
+  // The sheet's songs stand in the shelf's columns, or on one line where
+  // they all fit on it (columnsFor).
+  const columns = columnsFor(record, width, map.current);
   const shownTile = record ? shown.tile : undefined;
   const above = Boolean(record && shown.up);
   const tracks = useMemo(() => active && record ? (

@@ -159,10 +159,20 @@ it was a page of handwriting; do not bring that back.
   Clicking or tapping keeps the same contrast while the songs are open.
 - The sheet says the record's name in bold, then its artist, year, hours and plays. Its songs follow, most listened first, as a ledger (Dan, 25 November: “there
   must be a better clean way of showing this information”). Songs read down columns of
-  one width: one on a phone, five at most. Each song stands on a ruled line with its time
-  in bold at the line's end, and the line is drawn heavier for as far as its
-  hours reach against the record's favourite. The chips that wrapped and stretched, each
+  one width: one on a phone, five at most. The chips that wrapped and stretched, each
   filled to its own width, are gone; do not bring them back.
+- A record whose songs all fit on one line stands on one line, however many columns that
+  takes (Dan, 25 November, of seven short names on two lines: “can't this fit on one line
+  comfortably?”). Comfortably means every name in full, at least 24 px clear of its time,
+  in columns no narrower than 132 px. The shelf measures the real names to decide. A
+  record with one long name, or too many songs for the width, keeps the usual columns;
+  it does not take two lines where it had three.
+- Each song stands over a ruled line with its time in bold at the line's end. The line
+  is drawn in colour for as far as the song's hours reach against the record's
+  favourite. It is one weight from end to end, 2 px, and stands 8 px clear of the words
+  (Dan, 25 November: “even the underlines maybe could be presented better?”). A heavier
+  stroke on a hairline, close under a name, read as the name underlined; do not bring
+  it back.
 - Every song name keeps to one line (Dan, 25 November, of names that took three: “allow
   it to scroll for these long ones”). A name longer than its line fades at the edge it
   runs past and scrolls sideways under a finger or a trackpad. Resting a mouse on a
