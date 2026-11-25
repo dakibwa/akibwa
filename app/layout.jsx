@@ -61,7 +61,7 @@ export const viewport = {
 const boot = `(function(){
   var page = document.documentElement;
   page.classList.add("js");
-  // The page shows itself once its typefaces have arrived, so the bar
+  // The page shows itself once its typeface has arrived, so the bar
   // never flashes in a stand-in face (Dan, 18 November 2026: "super smooth").
   function ready() {
     if (page.classList.contains("ready")) return;
@@ -70,7 +70,7 @@ const boot = `(function(){
   }
   if (document.fonts && document.fonts.load) {
     Promise.race([
-      Promise.all([document.fonts.load('700 16px "Akibwa Sans"'), document.fonts.load('600 16px "Fraunces"')]),
+      document.fonts.load('700 16px "Akibwa Sans"'),
       new Promise(function (done) { setTimeout(done, 900); })
     ]).then(ready, ready);
   } else ready();
@@ -83,9 +83,8 @@ const boot = `(function(){
 })()`;
 
 export default function RootLayout({ children }) {
-  // The menu and title fonts arrive with the page.
+  // The page's one font arrives with it.
   preload("/fonts/nunito-sans-latin.woff2", { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
-  preload("/fonts/fraunces-soft.woff2", { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
   return (
     <html lang="en-GB" suppressHydrationWarning>
       <body>

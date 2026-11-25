@@ -1,9 +1,13 @@
 # The music shelf
 
 Dan asked for the listening hours on 24 September 2026 and made the shelf the whole
-site on 16 November. His direction was “super minimalist and simple”. Use Nunito Sans for controls and facts, soft Fraunces for titles and headings,
-and warm paper under the covers. The sleeves
-supply the colour. Keep the page free of explanatory text.
+site on 16 November. His direction was “super minimalist and simple”. Use one family
+for the whole page, the menu's Nunito Sans (Dan, 25 November: “the fonts all seems random
+too can we be consistent across the entire page if we use the ones at the top lets
+continue to do that”). Weight and size set a title apart from a fact: 800 for names,
+totals and times, 500 to 700 for the rest. Fraunces, which set titles and times until
+then, is gone with its files; do not bring a second face back. Keep warm paper under
+the covers. The sleeves supply the colour. Keep the page free of explanatory text.
 
 ## Which records appear
 
@@ -79,11 +83,18 @@ it was a page of handwriting; do not bring that back.
   then moves nothing; the sheet turns its notch to the new sleeve. The notch glides along
   a row.
 - The sleeve in hand stays where it is. When a sheet's move would carry it, the page
-  scrolls by as much, and the other rows and headings slide to their places over 300 ms.
-  A sheet under the pointer does not grow shorter while the pointer stays in the shelf,
-  so the rows do not bob between a long record and a short one.
-- A first glance waits about 140 ms for the pointer to settle, and a new row about as
-  long. Passing over a sleeve or a gap keeps the sheet that is open; leaving the shelf
+  scrolls by as much instead.
+- A sheet is exactly as tall as what it says. One that kept the height of a taller
+  record, with blank paper under a short one, was a fault (Dan, 25 November: “this feels
+  a bug”); do not hold a sheet's height.
+- A sheet opens, changes and closes in one smooth move (Dan, 25 November: “can it feel
+  much smoother too”, “it's a little janky now”). All at one pace, over about a third
+  of a second: the rows and headings slide to their places; the sheet is uncovered edge
+  by edge as the rows beside it draw back; and the sheet as it was fades out over the
+  new one, or closes between its rows as they come together. Nothing blinks: a sheet
+  never fades in from nothing, and what it says does not fade in either.
+- A first glance waits about a tenth of a second for the pointer to settle, and a new
+  row about as long. Passing over a sleeve or a gap keeps the sheet that is open; leaving the shelf
   closes it. The shelf answers only a pointer that moves: scrolling leaves the open sheet
   alone, and a sleeve that slides under a resting pointer waits for it to move.
 - The open sheet can be used where it is: its long names glide and its fold opens.
@@ -99,11 +110,10 @@ it was a page of handwriting; do not bring that back.
   more sleeves by different artists, starting with those in view. Match their genre
   tags and use the shelf’s broader genres and release years to guide the choice.
   Clicking or tapping keeps the same contrast while the songs are open.
-- The sheet says the record's name in soft italic Fraunces, then its artist, year, hours
-  and plays. Its songs follow, most listened first, as a ledger (Dan, 25 November: “there
+- The sheet says the record's name in bold, then its artist, year, hours and plays. Its songs follow, most listened first, as a ledger (Dan, 25 November: “there
   must be a better clean way of showing this information”). Songs read down columns of
   one width: one on a phone, five at most. Each song stands on a ruled line with its time
-  in bold Fraunces at the line's end, and the line is drawn heavier for as far as its
+  in bold at the line's end, and the line is drawn heavier for as far as its
   hours reach against the record's favourite. The chips that wrapped and stretched, each
   filled to its own width, are gone; do not bring them back.
 - Every song name keeps to one line (Dan, 25 November, of names that took three: “allow
@@ -123,7 +133,7 @@ it was a page of handwriting; do not bring that back.
   moves. Both read one file, so they cannot disagree, and both lay out for the
   whole pixels the shelf really has: a width of 780.6 px is 780.
   [Row rules](../components/paper/shelf-rows.mjs) · [Early script](../app/page.jsx)
-- Reveal the page once its menu and title fonts have loaded. Fade in the bar and mark, lift
+- Reveal the page once its font has loaded. Fade in the bar and mark, lift
   the first screen of sleeves in sequence, fade covers as they arrive, and lift later
   rows together as they scroll into view. Reserve each row’s height so the browser can
   skip offscreen artwork. Use transform and opacity with `cubic-bezier(0.16, 1, 0.3, 1)`.

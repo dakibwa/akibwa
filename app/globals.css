@@ -8,22 +8,6 @@
    ========================================================================= */
 
 @font-face {
-  font-family: "Fraunces";
-  src: url("/fonts/fraunces-soft.woff2") format("woff2");
-  font-weight: 300 800;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Fraunces";
-  src: url("/fonts/fraunces-soft-italic.woff2") format("woff2");
-  font-weight: 300 800;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
   font-family: "Akibwa Sans";
   src: url("/fonts/nunito-sans-latin.woff2") format("woff2");
   font-weight: 200 1000;
@@ -37,32 +21,6 @@
   font-weight: 200 1000;
   font-display: swap;
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-
-/* Alegreya, as the Akibwa signature sets it, for the music room (SIL Open
-   Font License, public/fonts/alegreya-LICENSE.txt). */
-@font-face {
-  font-family: "Alegreya SC";
-  src: url("/fonts/alegreya-sc-500-latin.woff2") format("woff2");
-  font-weight: 500;
-  font-style: normal;
-  font-display: block;
-}
-
-@font-face {
-  font-family: "Alegreya";
-  src: url("/fonts/alegreya-400-latin.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Alegreya";
-  src: url("/fonts/alegreya-italic-latin.woff2") format("woff2");
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
 }
 
 :root {
@@ -90,7 +48,9 @@
   --studio: #f5623a;
   --career: #3f7634;
 
-  --serif: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  /* One family for the whole page, the menu's own (Dan, 25 November 2026:
+     "the fonts all seems random ... if we use the ones at the top lets
+     continue to do that"). Weight and size do the work a second face did. */
   --sans: "Akibwa Sans", "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --gutter: clamp(16px, 4vw, 52px);
   --shelf-ease: cubic-bezier(0.16, 1, 0.3, 1);
@@ -468,6 +428,7 @@ html.ready .music-mark {
    as its hours between the floor and the cap the room sets. A square still
    gliding to its place never widens the page. */
 .music-map-frame {
+  position: relative;
   container-type: inline-size;
   overflow-x: clip;
   overflow-clip-margin: 6px;
@@ -507,7 +468,7 @@ html.ready .music-mark {
   border-radius: 10px 10px 0 0;
   background: var(--kraft);
   color: var(--ink);
-  font: 600 clamp(19px, 0.6vw + 14px, 24px)/1.1 var(--serif);
+  font: 800 clamp(18px, 0.5vw + 14px, 22px)/1.15 var(--sans);
 }
 /* Genres stay lowercase in the data ("hip-hop & soul"); only the first
    letter is set as a capital. */
@@ -747,7 +708,7 @@ html.ready .music-mark {
 .music-type strong:not([hidden]) {
   display: -webkit-box;
   overflow: hidden;
-  font: 550 14px/1.2 var(--serif);
+  font: 700 13px/1.2 var(--sans);
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
 }
@@ -769,7 +730,7 @@ html {
    slides the rows as it opens, moves and closes, and sets `--notch` to its
    sleeve. */
 .music-tracks {
-  --sheet-title: clamp(21px, 0.7cqi + 16px, 28px);
+  --sheet-title: clamp(20px, 0.5cqi + 16px, 25px);
   --sheet-text: clamp(14px, 0.1cqi + 13.6px, 15.5px);
   --sheet-small: clamp(12.5px, 0.08cqi + 11.8px, 13.5px);
   --edge: #dccdb6;
@@ -784,15 +745,24 @@ html {
   font-family: var(--sans);
   font-size: var(--sheet-text);
   line-height: 1.3;
-  transition: opacity 160ms ease;
 }
 
-@starting-style {
-  .music-tracks { opacity: 0; }
+/* The sheet as it was a moment ago: a copy music-room.jsx lays over the
+   shelf where it stood, to fade out over the sheet as it now is or to close
+   between its rows. Nothing in it moves on its own. */
+.music-tracks-ghost {
+  position: absolute;
+  z-index: 3;
+  margin: 0;
+  pointer-events: none;
 }
-
-.music-tracks[data-leaving] {
-  opacity: 0;
+.music-tracks-ghost *,
+.music-tracks-ghost *::before,
+.music-tracks-ghost *::after,
+.music-tracks-ghost::before,
+.music-tracks-ghost::after {
+  animation: none !important;
+  transition: none !important;
 }
 
 .music-tracks:focus-visible {
@@ -836,7 +806,8 @@ html {
 .music-tracks[data-above]::before { bottom: -8px; }
 .music-tracks[data-above]::after { bottom: -6.4px; }
 
-/* What it says changes with the sleeve; the panel stays where it is. */
+/* What it says changes with the sleeve; the panel stays where it is, and
+   the sheet as it was fades out over it. */
 .music-sheet {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -845,10 +816,6 @@ html {
     "list list"
     "more more";
   column-gap: 10px;
-  animation: sheet-turns 200ms ease both;
-}
-@keyframes sheet-turns {
-  from { opacity: 0; }
 }
 
 /* Header: one line on a laptop. Its name, then who · when · how long · how
@@ -865,8 +832,8 @@ html {
 
 .music-release h2 {
   margin: 0;
-  font: italic 600 var(--sheet-title)/1.1 var(--serif);
-  letter-spacing: -0.01em;
+  font: 800 var(--sheet-title)/1.15 var(--sans);
+  letter-spacing: -0.015em;
   overflow-wrap: anywhere;
   text-wrap: balance;
 }
@@ -905,7 +872,7 @@ html {
 }
 .music-release-total b {
   color: var(--ink);
-  font: 700 1.06em/1 var(--serif);
+  font-weight: 800;
 }
 .music-release-plays::before {
   content: "·";
@@ -999,7 +966,7 @@ html {
   border-radius: 0 1.5px 1.5px 0;
   background: var(--fill);
   transform-origin: left center;
-  animation: track-fill 460ms var(--shelf-ease) backwards;
+  animation: track-fill 380ms var(--shelf-ease) backwards;
 }
 @keyframes track-fill {
   from { transform: scaleX(0); }
@@ -1039,7 +1006,7 @@ html {
   font-weight: 450;
 }
 
-/* The time, bold in the record's voice; its unit quiet in the reader's. */
+/* The time in bold; its unit quiet beside it. */
 .music-track-hours {
   flex: none;
   color: var(--ink);
@@ -1047,8 +1014,7 @@ html {
   white-space: nowrap;
 }
 .music-track-hours strong {
-  font: 700 1em/1 var(--serif);
-  letter-spacing: 0.005em;
+  font-weight: 800;
 }
 .music-track-hours small {
   margin-left: 0.2em;
@@ -1153,9 +1119,9 @@ html.laid .music-map[data-measured="false"] .music-tile {
   gap: 8px;
   min-height: 44px;
   color: var(--ink);
-  font-family: var(--serif);
-  font-size: 20px;
-  font-weight: 560;
+  font-family: var(--sans);
+  font-size: 19px;
+  font-weight: 700;
   text-decoration: none;
 }
 
@@ -1210,9 +1176,9 @@ html.laid .music-map[data-measured="false"] .music-tile {
 
 .not-found h1 {
   margin: 0 0 8px;
-  font-family: var(--serif);
-  font-size: clamp(40px, 6vw, 64px);
-  font-weight: 600;
+  font-family: var(--sans);
+  font-size: clamp(38px, 5.6vw, 60px);
+  font-weight: 800;
   letter-spacing: -0.03em;
 }
 
