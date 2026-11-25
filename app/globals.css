@@ -520,6 +520,57 @@ html.ready .music-mark {
   .music-index button { height: 30px; padding: 0 8px; }
 }
 
+/* A genre in sub-genres (Dan, 25 November 2026: "can we break these further
+   into sub genres too"). The genre keeps its kraft tab, with its sub-genres
+   a step away beside it on a wide shelf and under it on a narrow one. Each
+   sub-genre then stands under a smaller heading on a hairline, a little
+   closer to its neighbours than one genre is to the next. */
+.music-group-top {
+  position: relative;
+  display: grid;
+  gap: 6px;
+}
+.music-index.is-within {
+  margin: 0 0 0 -9px;
+}
+.music-index.is-within button {
+  height: 28px;
+  padding: 0 9px;
+  font-size: 12.5px;
+}
+@container (min-width: 1100px) {
+  .music-group-top nav {
+    position: absolute;
+    right: 0;
+    bottom: 7px;
+  }
+  .music-index.is-within {
+    justify-content: flex-end;
+    margin: 0 -9px 0 0;
+  }
+}
+.music-group.is-part {
+  margin-top: -8px;
+}
+.music-group-head.is-part {
+  align-items: baseline;
+  gap: 4px 12px;
+}
+.music-group-head.is-part::after {
+  height: 1px;
+  border-radius: 0;
+  background: var(--paper-edge);
+}
+.music-group-head.is-part .music-group-label {
+  padding: 0 0 7px;
+  border-radius: 0;
+  background: none;
+  font: 800 15.5px/1.2 var(--sans);
+}
+.music-group-head.is-part .music-group-figures {
+  padding-bottom: 7px;
+}
+
 .music-none { margin: 4px 0 0; color: var(--ink-soft); font: 600 15px/1.4 var(--sans); }
 
 /* Rows of one size each, with one 4px gap across and down (GAP in

@@ -2,11 +2,13 @@ import { fold } from "./music-search.mjs";
 
 // Artist facts are shared by every release with that credit. Track titles
 // remain in their packed rows until the sheet or a text search needs them.
-export function openCatalogue({ artists, credited, genres, rows }) {
+export function openCatalogue({ artists, credited, genres, subgenres, rows }) {
   const years = { albums: Object.create(null) };
-  const kinds = { kinds: genres, artists: Object.create(null) };
-  for (const [name, , , , kind] of artists) {
+  // Each artist's genre, and its sub-genre within that genre.
+  const kinds = { kinds: genres, subkinds: subgenres ?? null, artists: Object.create(null), subs: Object.create(null) };
+  for (const [name, , , , kind, sub] of artists) {
     if (kind !== null) kinds.artists[name] = kind;
+    if (sub !== null && sub !== undefined) kinds.subs[name] = sub;
   }
   const entries = rows.map(([key, title, artistId, year, plays, minutes, cover, version, tracks, otherTitles, history]) => {
     const [name, artist, circle, tags] = artists[artistId];

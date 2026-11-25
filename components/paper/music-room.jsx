@@ -208,6 +208,31 @@ class GlidingShelf extends PureComponent {
     }));
   };
 
+  /*
+   * A jump to a group far down the shelf turns the page too (Dan, 25
+   * November 2026, of the jump to Undated: "it lagged when i CLICK Undated
+   * and it went to the bottom fix this"). Scrolling there smoothly dragged
+   * every row between through the screen, loading and drawing hundreds of
+   * covers on the way. Now the shelf fades out, is put at the group at once,
+   * and lifts in there. A group within a screen and a half still scrolls.
+   */
+  jumping = 0;
+  jump = (group) => {
+    if (!group) return;
+    group.focus({ preventScroll: true });
+    const near = Math.abs(group.getBoundingClientRect().top) < window.innerHeight * 1.5;
+    if (this.motion.matches || near) {
+      group.scrollIntoView({ block: "start", behavior: this.motion.matches ? "instant" : "smooth" });
+      return;
+    }
+    this.props.onVeil();
+    clearTimeout(this.jumping);
+    this.jumping = setTimeout(() => {
+      group.scrollIntoView({ block: "start", behavior: "instant" });
+      this.turn();
+    }, 150);
+  };
+
   // After the opening sequence, each newly visible row arrives together.
   revealed = new WeakSet();
   below = new WeakSet();
@@ -304,6 +329,7 @@ class GlidingShelf extends PureComponent {
     this.motion.removeEventListener("change", this.stop);
     this.stop();
     this.seer?.disconnect();
+    clearTimeout(this.jumping);
     removeEventListener("paperready", this.whenReady);
   }
 
@@ -335,7 +361,12 @@ class GlidingShelf extends PureComponent {
     return (
       <div
         ref={this.list}
-        onPointerDown={event => { this.pressedBy = event.pointerType; }}
+        onPointerDown={event => {
+          this.pressedBy = event.pointerType;
+          // A press says where the pointer is as well as a move does.
+          this.pointerX = event.clientX;
+          this.pointerY = event.clientY;
+        }}
         onClick={event => {
           const face = event.target.closest(".music-face");
           const entry = face && tiles.records.get(face.parentElement.dataset.key);
@@ -381,20 +412,38 @@ class GlidingShelf extends PureComponent {
         {arrangement.length > 1 && arrangement[0].label && (
           <nav aria-label={`Jump to a ${order === "kind" ? "genre" : order === "released" ? "decade" : "year"}`}>
             <ul className="music-index">
-              {arrangement.map((group, index) => (
-                <li key={group.key}><button type="button" onClick={() => {
-                  const heading = document.getElementById(`shelf-group-${index}`);
-                  heading?.focus({ preventScroll: true });
-                  heading?.scrollIntoView({ block: "start", behavior: this.motion.matches ? "instant" : "smooth" });
-                }}>{group.label}</button></li>
-              ))}
+              {arrangement.map((group, index) => (group.within && !group.head ? null : (
+                <li key={group.key}><button type="button" onClick={() => this.jump(document.getElementById(`shelf-group-${index}`))}>{group.head?.label ?? group.label}</button></li>
+              )))}
             </ul>
           </nav>
         )}
         {arrangement.map((group, groupIndex) => {
           return (
-            <section key={group.key} className="music-group" id={`shelf-group-${groupIndex}`} tabIndex={-1} aria-label={group.label || undefined}>
-              {group.label ? (
+            <section key={group.key} className={`music-group${group.within ? group.head ? " is-first-part" : " is-part" : ""}`} id={`shelf-group-${groupIndex}`} tabIndex={-1} aria-label={group.label || undefined}>
+              {/* A genre's heading stands over the first of its sub-genres,
+                  with the others a step away beside it. */}
+              {group.head ? (
+                <div className="music-group-top">
+                  <h2 className="music-group-head">
+                    <span className="music-group-label">{group.head.label}</span>
+                    <span className="music-group-figures">{group.head.figures}</span>
+                  </h2>
+                  <nav aria-label={`Jump to a kind of ${group.head.label}`}>
+                    <ul className="music-index is-within">
+                      {arrangement.map((part, index) => (part.within === group.within ? (
+                        <li key={part.key}><button type="button" onClick={() => this.jump(document.getElementById(`shelf-group-${index}`))}>{part.label}</button></li>
+                      ) : null))}
+                    </ul>
+                  </nav>
+                </div>
+              ) : null}
+              {group.label ? group.within ? (
+                <h3 className="music-group-head is-part">
+                  <span className="music-group-label">{group.label}</span>
+                  <span className="music-group-figures">{group.figures}</span>
+                </h3>
+              ) : (
                 <h2 className="music-group-head">
                   <span className="music-group-label">{group.label}</span>
                   <span className="music-group-figures">{group.figures}</span>
@@ -873,6 +922,13 @@ export function MusicRoom({ active }) {
     clearTimeout(veilTimer.current);
     setVeiled(false);
   }, []);
+  // The shelf fades out for a jump, which lifts it in again where it lands.
+  const onVeil = useCallback(() => {
+    setVeiled(true);
+    clearTimeout(veilTimer.current);
+    // Should the lift somehow never come, the shelf is not left unseen.
+    veilTimer.current = setTimeout(() => setVeiled(false), 1500);
+  }, []);
   const sort = (name) => {
     clearSelection();
     const turn = name === pressedOrder && !searching && name in reversed;
@@ -1262,7 +1318,7 @@ export function MusicRoom({ active }) {
             <span className="music-group-figures">{entries.length ? `${entries.length} ${entries.length === 1 ? "record" : "records"} · ${listened(entries.reduce((sum, entry) => sum + entry.item.minutes, 0), "long")}` : "Nothing on the shelf"}</span>
           </div>
         )}
-        <GlidingShelf tracks={tracks} shownTile={shownTile} above={above} before={before} pinnedTile={open?.tile} arrangement={arrangement} measured={measured} order={view} tiles={tiles} reference={reference} onOpen={onOpen} onPoint={onPoint} resting={resting} veiled={veiled} onTurned={onTurned} />
+        <GlidingShelf tracks={tracks} shownTile={shownTile} above={above} before={before} pinnedTile={open?.tile} arrangement={arrangement} measured={measured} order={view} tiles={tiles} reference={reference} onOpen={onOpen} onPoint={onPoint} resting={resting} veiled={veiled} onTurned={onTurned} onVeil={onVeil} />
       </div>
     </div>
   );

@@ -68,6 +68,11 @@ The layout, merging and ordering code runs in the build checks against real reco
   900 px. Pressing / focuses it, and Escape clears it.
 - Set group names on kraft tabs, with a row of jumps for genres, decades or years.
   A search shows its query, number of matches and listening time.
+- A jump to a group within a screen and a half scrolls there. A jump further turns the
+  page as a new order does: the shelf fades out, is put at the group at once and lifts
+  in there. Scrolling smoothly to a far group dragged every row between through the
+  screen and loaded its covers on the way (Dan, 25 November, of the jump to Undated: “it
+  lagged when i CLICK Undated and it went to the bottom fix this”); do not bring it back.
 
 ## The signature
 

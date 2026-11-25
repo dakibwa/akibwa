@@ -206,9 +206,19 @@ for (const [name, facts] of Object.entries(musicMeta.artists)) {
   if (JSON.stringify(Object.keys(facts).sort()) !== JSON.stringify(["genres", "related"]) || ![...facts.genres, ...facts.related].every((value) => typeof value === "string")) fail(`${name}'s search facts must be genres and related artists only`);
 }
 if (!Object.values(musicMeta.years).every((year) => Number.isInteger(year) && year > 1900 && year < 2100)) fail("sleeve years must be plain years");
-if (JSON.stringify(Object.keys(musicKinds).sort()) !== JSON.stringify(["artists", "kinds", "note", "schemaVersion"])) fail("the music kinds file has unexpected fields");
+if (Object.keys(musicKinds).some((key) => !["artists", "kinds", "note", "schemaVersion", "subkinds", "subs"].includes(key))) fail("the music kinds file has unexpected fields");
 for (const name of ranking.names) {
   if (!Number.isInteger(musicKinds.artists[name]) || !musicKinds.kinds[musicKinds.artists[name]]) fail(`${name} must have a kind of music`);
+}
+// Dan, 25 November 2026: each genre in sub-genres, one for each artist, and
+// every sub-genre's name its own.
+if (musicKinds.subkinds) {
+  if (musicKinds.subkinds.length !== musicKinds.kinds.length || musicKinds.subkinds.some((names) => !Array.isArray(names) || names.length < 2 || names.some((name) => typeof name !== "string" || !name))) fail("every kind of music must list its sub-genres");
+  const subNames = musicKinds.subkinds.flat();
+  if (new Set(subNames).size !== subNames.length) fail("a sub-genre's name must be its own");
+  for (const name of ranking.names) {
+    if (!musicKinds.subkinds[musicKinds.artists[name]][musicKinds.subs?.[name]]) fail(`${name} must have a sub-genre within its kind of music`);
+  }
 }
 {
   const albums = unpackRanking(ranking).albums;

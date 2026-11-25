@@ -177,11 +177,34 @@ export function arrange(order, entries, { years, kinds, reverse = false } = {}) 
   }
   if (order === "kind" && kinds) {
     const kindOf = (entry) => kinds.kinds?.[kinds.artists?.[entry.item.artist]] ?? "other";
-    const map = grouped(kindOf);
-    return [...map]
-      .map(([name, list]) => ({ name, list, minutes: list.reduce((sum, entry) => sum + entry.item.minutes, 0) }))
+    // A genre's sub-genres (Dan, 25 November 2026: "can we break these
+    // further into sub genres too"), one for each artist as its genre is.
+    const partOf = (entry) => kinds.subkinds?.[kinds.artists?.[entry.item.artist]]?.[kinds.subs?.[entry.item.artist]] ?? null;
+    const figure = (list, minutes) => `${list.length} ${list.length === 1 ? "record" : "records"} · ${listened(minutes, "long")}`;
+    const sum = (list) => list.reduce((total, entry) => total + entry.item.minutes, 0);
+    return [...grouped(kindOf)]
+      .map(([name, list]) => ({ name, list, minutes: sum(list) }))
       .sort((a, b) => b.minutes - a.minutes)
-      .map(({ name, list, minutes }) => ({ key: name, label: name, figures: `${Math.round((minutes / total) * 100)}% of listening · ${listened(minutes, "long")}`, entries: list }));
+      .flatMap(({ name, list, minutes }) => {
+        const head = { label: name, figures: `${Math.round((minutes / total) * 100)}% of listening · ${listened(minutes, "long")}` };
+        const parts = new Map();
+        for (const entry of list) {
+          const part = partOf(entry);
+          if (!parts.has(part)) parts.set(part, []);
+          parts.get(part).push(entry);
+        }
+        // A genre with no sub-genres stands as one group, as it did.
+        if (parts.size < 2) return [{ key: name, label: name, figures: head.figures, entries: list }];
+        // Each sub-genre is a group of its own, most listened first. The
+        // first carries its genre's heading (`head`); all name their genre
+        // (`within`) so the shelf can list a genre's sub-genres beside it.
+        return [...parts]
+          .map(([part, entries]) => ({ part: part ?? "more", entries, minutes: sum(entries) }))
+          .sort((a, b) => b.minutes - a.minutes)
+          .map(({ part, entries, minutes }, at) => ({
+            key: `${name}/${part}`, label: part, figures: figure(entries, minutes), entries, within: name, head: at === 0 ? head : null
+          }));
+      });
   }
   return [{ key: "all", label: null, figures: null, entries }];
 }
