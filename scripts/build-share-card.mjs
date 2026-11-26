@@ -1,5 +1,5 @@
 /*
- * Draw the link-preview card, public/share-card-sleeves.jpg.
+ * Draw the link-preview card, public/share-card-mosaic.jpg.
  *
  *   node scripts/build-share-card.mjs
  *
@@ -16,19 +16,23 @@
  * to the actual album arts and lots of them", "so it's obvious what the site
  * is"); do not bring it back.
  *
- * - Which records: the most played, as many as the wall has places, with no
- *   picking among them.
+ * - Which records: the most played, as many as the wall has places, less
+ *   any sleeve as pale along a side as the paper it would hang on. A white
+ *   sleeve makes a hole in the wall: the most played record of all is one,
+ *   and hung largest it was "the big white one there feels weird" ("can we
+ *   choose one with darker borders"); hung small with the other pale ones
+ *   at the wall's edge it was no better ("I still think the white bit at
+ *   the edge looks weird"). So they are left off the card. The shelf itself
+ *   shows them all.
  * - How large: the wall is a grid of small squares (UNIT) and a sleeve takes
  *   a square of them, as PLACES lays out. The larger places go to the most
- *   played, but never to a sleeve as pale at its edges as the paper it hangs
- *   on, which makes a hole in the wall ("the big white one there feels
- *   weird", "can we choose one with darker borders", of the most played
- *   record of all, a white sleeve, hung largest). Those hang small.
+ *   played.
  * - Where: not in the order of listening. Sleeves of a size change places
  *   until each sits beside sleeves of its own colours, so the wall reads as
  *   a mosaic ("do it in a way that the colours of adjacanet thing compliment
  *   eachother so it feels like a mosaic of sorts", "rather than just by
- *   order of listening"). The mark counts as a neighbour too.
+ *   order of listening"). The mark counts as a neighbour too, and so does
+ *   the paper: the lightest sleeves keep off the wall's outer edge.
  * - The mark's own square takes ten across. Its halo and rays stand in the
  *   two rows above it, with paper beside them: sleeves hung there were taken
  *   down ("lets remove them ones I think above his head").
@@ -45,7 +49,7 @@ import { mergeShelf } from "../components/paper/music-shelf.mjs";
 
 const root = new URL("../", import.meta.url).pathname;
 const flag = (name) => process.argv.find((given) => given.startsWith(`--${name}=`))?.slice(name.length + 3);
-const out = flag("out") ?? path.join(root, "public/share-card-sleeves.jpg");
+const out = flag("out") ?? path.join(root, "public/share-card-mosaic.jpg");
 
 const W = 1200;
 const H = 630;
@@ -57,7 +61,9 @@ const TOP = 24;
 const ROUND = 4;                // a sleeve's corners, as on the shelf
 const PAPER = "#f3ecdf";        // the page's paper (app/globals.css)
 const INK = "#21190f";          // the mark's ink
-const PALE = 200;               // an edge this light, of 255, is as pale as the paper
+const PALE = 200;               // an edge this light all round, of 255, is as pale as the paper
+const PALE_SIDE = 220;          // and so is one side this light
+const CLEAR = 45;               // how far from the paper's colour a side at the wall's edge should stand
 
 // The mark's square: column, row and units across. Its halo and rays stand in the rows above.
 const MARK = { column: 0, row: 2, across: 10 };
@@ -91,7 +97,7 @@ const apart = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
 
 /*
  * How a picture looks to its neighbours: its colour as a whole and along
- * each of its sides, and how light it is round its edge (0 to 255).
+ * each of its sides, and whether it is as pale at its edge as the paper.
  */
 async function lookOf(picture, { left = 0, top = 0, width, height } = {}) {
   const across = 48;
@@ -101,8 +107,8 @@ async function lookOf(picture, { left = 0, top = 0, width, height } = {}) {
   const { data } = await image.resize(across, across, { fit: "fill" }).flatten({ background: PAPER }).raw().toBuffer({ resolveWithObject: true });
   const sums = { whole: [0, 0, 0, 0], top: [0, 0, 0, 0], bottom: [0, 0, 0, 0], left: [0, 0, 0, 0], right: [0, 0, 0, 0] };
   const add = (name, colour) => { const sum = sums[name]; sum[0] += colour[0]; sum[1] += colour[1]; sum[2] += colour[2]; sum[3] += 1; };
-  let light = 0;
-  let ring = 0;
+  const rim = 4;
+  const light = { top: [0, 0], bottom: [0, 0], left: [0, 0], right: [0, 0] };
   for (let y = 0; y < across; y += 1) {
     for (let x = 0; x < across; x += 1) {
       const from = (y * across + x) * 3;
@@ -112,18 +118,22 @@ async function lookOf(picture, { left = 0, top = 0, width, height } = {}) {
       if (y >= across - strip) add("bottom", colour);
       if (x < strip) add("left", colour);
       if (x >= across - strip) add("right", colour);
-      if (Math.min(x, y, across - 1 - x, across - 1 - y) < 4) {
-        light += 0.2126 * data[from] + 0.7152 * data[from + 1] + 0.0722 * data[from + 2];
-        ring += 1;
+      const bright = 0.2126 * data[from] + 0.7152 * data[from + 1] + 0.0722 * data[from + 2];
+      for (const [name, near] of [["top", y < rim], ["bottom", y >= across - rim], ["left", x < rim], ["right", x >= across - rim]]) {
+        if (near) { light[name][0] += bright; light[name][1] += 1; }
       }
     }
   }
   const mean = ([l, a, b, count]) => [l / count, a / count, b / count];
-  return { whole: mean(sums.whole), top: mean(sums.top), bottom: mean(sums.bottom), left: mean(sums.left), right: mean(sums.right), edge: light / ring };
+  const rims = Object.values(light).map(([sum, count]) => sum / count);
+  return {
+    whole: mean(sums.whole), top: mean(sums.top), bottom: mean(sums.bottom), left: mean(sums.left), right: mean(sums.right),
+    pale: rims.reduce((sum, value) => sum + value, 0) / 4 >= PALE || Math.max(...rims) >= PALE_SIDE
+  };
 }
 
 // A sleeve with the shelf's round corners and a hair of ink round it, so a
-// pale sleeve keeps its edge on the paper.
+// light sleeve keeps its edge on the paper.
 async function sleeve(record, across) {
   const size = side(across);
   const corners = Buffer.from(`<svg width="${size}" height="${size}"><rect width="${size}" height="${size}" rx="${ROUND * K}"/></svg>`);
@@ -169,22 +179,18 @@ const shelf = unpackRanking(JSON.parse(await readFile(path.join(root, "public/mu
 const ranked = mergeShelf(shelf.albums, shelf.songs, shelf.sleeves, shelf.singles);
 const places = PLACES.slice().sort((a, b) => b.across - a.across || a.row - b.row || a.column - b.column);
 
-// The most played records that have a picture large enough, one for each place.
-const records = [];
-for (const record of ranked) {
-  if (records.length === places.length) break;
-  if (await access(pictureOf(record)).then(() => true, () => false)) records.push(record);
-}
+// The most played records that have a picture large enough and are not pale
+// at the edge, one for each place: the most played of them in the largest.
 const looks = new Map();
-for (const record of records) looks.set(record, await lookOf(pictureOf(record)));
-
-// A large place takes the most played record still to hang whose edge is not
-// pale; a small one takes the most played still to hang, whatever its edge.
-const waiting = records.slice();
-const hung = places.map((place) => {
-  const index = place.across > 2 ? Math.max(0, waiting.findIndex((record) => looks.get(record).edge < PALE)) : 0;
-  return waiting.splice(index, 1)[0];
-});
+const hung = [];
+for (const record of ranked) {
+  if (hung.length === places.length) break;
+  if (!(await access(pictureOf(record)).then(() => true, () => false))) continue;
+  const look = await lookOf(pictureOf(record));
+  if (look.pale) continue;
+  looks.set(record, look);
+  hung.push(record);
+}
 
 // The mark as a neighbour: its square's colours, as a sleeve's are read.
 const standing = await mark(side(MARK.across));
@@ -200,11 +206,24 @@ for (let a = 0; a < places.length; a += 1) {
   const { length, sides } = touching(places[a], MARK);
   if (length > 0) pairs.push({ a, b: -1, length, sides });
 }
+// And every side that meets no neighbour but the paper, at the wall's edge.
+const paper = lab(...[1, 3, 5].map((from) => Number.parseInt(PAPER.slice(from, from + 2), 16)));
+const open = [];
+for (let a = 0; a < places.length; a += 1) {
+  for (const name of ["top", "bottom", "left", "right"]) {
+    const met = pairs.reduce((sum, pair) => sum + (pair.a === a && pair.sides[0] === name ? pair.length : 0) + (pair.b === a && pair.sides[1] === name ? pair.length : 0), 0);
+    if (places[a].across - met > 0) open.push({ a, name, length: places[a].across - met });
+  }
+}
 const lookAt = (index) => (index < 0 ? markLook : looks.get(hung[index]));
-// How ill two neighbours sit: mostly the colours where they meet, partly their colours as wholes.
+// How ill two neighbours sit: mostly the colours where they meet, partly
+// their colours as wholes. A side at the wall's edge sits ill when it is
+// near the paper's colour, since the wall's edge then frays.
 const clash = ({ a, b, length, sides }) => length * (0.6 * apart(lookAt(a)[sides[0]], lookAt(b)[sides[1]]) + 0.4 * apart(lookAt(a).whole, lookAt(b).whole));
-const clashAround = (index) => pairs.reduce((sum, pair) => (pair.a === index || pair.b === index ? sum + clash(pair) : sum), 0);
-const clashOfAll = () => pairs.reduce((sum, pair) => sum + clash(pair), 0);
+const fray = ({ a, name, length }) => length * Math.max(0, CLEAR - apart(lookAt(a)[name], paper));
+const clashAround = (index) => pairs.reduce((sum, pair) => (pair.a === index || pair.b === index ? sum + clash(pair) : sum), 0)
+  + open.reduce((sum, side) => (side.a === index ? sum + fray(side) : sum), 0);
+const clashOfAll = () => pairs.reduce((sum, pair) => sum + clash(pair), 0) + open.reduce((sum, side) => sum + fray(side), 0);
 
 // Sleeves of a size change places, two at a time, keeping a change that lets
 // the wall sit better and, early on, some that do not (simulated annealing).

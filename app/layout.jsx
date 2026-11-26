@@ -26,7 +26,7 @@ export const metadata = {
     // the old card.
     images: [
       {
-        url: "/share-card-sleeves.jpg",
+        url: "/share-card-mosaic.jpg",
         width: 1200,
         height: 630,
         type: "image/jpeg",
@@ -38,7 +38,7 @@ export const metadata = {
     card: "summary_large_image",
     title,
     description,
-    images: ["/share-card-sleeves.jpg"]
+    images: ["/share-card-mosaic.jpg"]
   },
   // The sized .ico serves browsers without SVG icons and requests that skip
   // the page (feeds, robots.txt); iOS draws its own corners on the touch icon.
