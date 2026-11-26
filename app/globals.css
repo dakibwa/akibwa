@@ -1171,7 +1171,7 @@ html {
 
 /* The songs as they would like to stand, each on a line as long as its name
    and time. music-room.jsx sets this copy in the frame for a moment, unseen,
-   to learn whether a record's songs all fit on one line. */
+   to choose how many columns fit this record. */
 .music-tracks-probe {
   position: absolute;
   inset: 0 0 auto;

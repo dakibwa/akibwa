@@ -308,6 +308,18 @@ const checkPublicLanding = async () => {
       await cdp.send("Input.dispatchMouseEvent", { type, ...other, button: "left", clickCount: 1 });
     }
     check(await waitFor(`document.querySelector("#record-tracks h2")?.textContent === "Music for Psychedelic Therapy"`), "one click on the shelf switches the open track sheet");
+    check(await evaluate(`(() => {
+      const list = document.querySelector("#record-tracks .music-track-list");
+      if (!list?.lastElementChild) return false;
+      const counts = [...list.children].map(column => column.children.length);
+      const right = list.lastElementChild.getBoundingClientRect().right;
+      return counts.length > 1 && Math.abs(right - list.getBoundingClientRect().right) <= 1
+        && Math.max(...counts) - Math.min(...counts) <= 1;
+    })()`), "the album's songs fill the sheet width in balanced columns");
+    await setDesktop(390, 844);
+    check(await waitFor(`document.querySelectorAll("#record-tracks .music-track-list ol").length === 1
+      && document.querySelectorAll("#record-tracks .music-track-list li").length === ${shelf[0].tracks.length}`),
+      "narrowing the open album reflows all its songs into one column");
     return;
   }
   // Dan, 16 November 2026: akibwa.com is one page, the music shelf.

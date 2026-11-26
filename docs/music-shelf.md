@@ -159,14 +159,16 @@ it was a page of handwriting; do not bring that back.
   Clicking or tapping keeps the same contrast while the songs are open.
 - The sheet says the record's name in bold, then its artist, year, hours and plays. Its songs follow, most listened first, as a ledger (Dan, 25 November: “there
   must be a better clean way of showing this information”). Songs read down columns of
-  one width: one on a phone, five at most. The chips that wrapped and stretched, each
+  equal width across the full sheet. Divide the songs evenly, with the longer columns
+  first. The chips that wrapped and stretched, each
   filled to its own width, are gone; do not bring them back.
 - A record whose songs all fit on one line stands on one line, however many columns that
   takes (Dan, 25 November, of seven short names on two lines: “can't this fit on one line
   comfortably?”). Comfortably means every name in full, at least 24 px clear of its time,
-  in columns no narrower than 132 px. The shelf measures the real names to decide. A
-  record with one long name, or too many songs for the width, keeps the usual columns;
-  it does not take two lines where it had three.
+  in columns no narrower than 132 px. For longer lists the shelf measures each name and
+  time against the available width. It weighs each row saved against each title that
+  would lose its clearance. A tie goes to wider columns. The layout adjusts when the
+  sheet changes width.
 - Each song stands on a ruled line with its time in bold at the line's end. The line is
   drawn heavier, 3 px on a hairline, for as far as the song's hours reach against the
   record's favourite, and sits close under the words. One thin even line, 2 px and set

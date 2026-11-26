@@ -614,36 +614,38 @@ function lineOf(track) {
   return { title, mark: note?.replace(/^[-–—]\s*/, "").replace(/^\((.*)\)$/, "$1"), amount, unit };
 }
 
-/*
- * How many columns a record's songs stand in. Most records take the shelf's
- * own count, wide enough for most names: one on a phone, five at most (298
- * is a column of 270px and its 28px gap). A record whose songs all fit on
- * one line, each name in full with room to spare, stands on that one line,
- * however many columns it takes (Dan, 25 November 2026, of seven short names
- * on two lines: "can't this fit on one line comfortably?").
- */
-// The narrowest a column on such a line may be, and the room a name keeps
-// from its time beyond the line's own gap.
+// Leave each name a little room beyond the gap before its listening time.
 const LINE_COLUMN = 132;
 const LINE_SLACK = 8;
-const oneLines = new WeakMap();
+const sheetLayouts = new WeakMap();
 function columnsFor(album, width, frame) {
-  const usual = Math.max(1, Math.min(5, Math.floor(width / 298)));
   const count = album?.tracks.length ?? 0;
-  // One line already, or more songs than any line this wide could hold.
-  if (count <= usual || count > Math.floor(width / LINE_COLUMN) || !frame?.isConnected) return usual;
-  let line = oneLines.get(album);
-  if (line?.width !== width) {
-    const { room, gap, widest } = songWidths(album, frame);
-    const column = Math.max(LINE_COLUMN, widest + LINE_SLACK);
-    line = { width, fits: count * column + (count - 1) * gap <= room };
-    oneLines.set(album, line);
+  if (count < 2 || !frame?.isConnected) return 1;
+  const cached = sheetLayouts.get(album);
+  if (cached?.width === width) return cached.columns;
+
+  const { room, gap, widths } = songWidths(album, frame);
+  const limit = Math.min(count, Math.floor((room + gap) / (LINE_COLUMN + gap)));
+  let best = 1;
+  let lowestCost = Infinity;
+  for (let columns = 1; columns <= limit; columns++) {
+    const columnWidth = (room - (columns - 1) * gap) / columns;
+    const tight = widths.filter(line => line + LINE_SLACK > columnWidth).length;
+    // A one-row record should show every title comfortably.
+    if (columns === count && tight) break;
+    // Saving a row is worth one tight title. On a tie keep the wider columns.
+    const cost = Math.ceil(count / columns) + tight;
+    if (cost < lowestCost) {
+      lowestCost = cost;
+      best = columns;
+    }
   }
-  return line.fits ? count : usual;
+  sheetLayouts.set(album, { width, columns: best });
+  return best;
 }
 
-// The room a sheet's songs have, the gap between its columns and the longest
-// line among its songs, name to time. They are read from a copy of the songs
+// The room a sheet's songs have, the gap between its columns and the width
+// of each song, name to time. They are read from a copy of the songs
 // set in the frame for a moment, unseen, each on a line of its own length
 // (`.music-tracks-probe`), so the sheet's own styles give the answer. Its
 // lines are built as TrackLabel builds them; keep the two alike.
@@ -665,10 +667,9 @@ function songWidths(album, frame) {
   frame.append(probe);
   const room = list.clientWidth;
   const gap = parseFloat(getComputedStyle(list).columnGap) || 0;
-  let widest = 0;
-  for (const line of column.children) widest = Math.max(widest, line.getBoundingClientRect().width);
+  const widths = Array.from(column.children, line => line.getBoundingClientRect().width);
   probe.remove();
-  return { room, gap, widest };
+  return { room, gap, widths };
 }
 
 function TrackLabel({ track }) {
@@ -704,9 +705,13 @@ function TrackSheet({ album, columns, pinned, onClose }) {
   const full = columns === 1 ? 10 : columns * 6;
   const folds = count > full + (columns === 1 ? 2 : columns);
   const limit = folds && !expanded ? full : count;
-  const each = Math.ceil(limit / columns);
   const stacks = [];
-  for (let at = 0; at < limit; at += each) stacks.push(tracks.slice(at, Math.min(limit, at + each)));
+  // Share the visible songs across the remaining columns, longest columns first.
+  for (let start = 0; start < limit;) {
+    const size = Math.ceil((limit - start) / (columns - stacks.length));
+    stacks.push({ start: start + 1, tracks: tracks.slice(start, start + size) });
+    start += size;
+  }
 
   // Find the names longer than their lines, again whenever the lines change
   // width, and keep each one's fade to the edge it runs past as it scrolls.
@@ -755,7 +760,7 @@ function TrackSheet({ album, columns, pinned, onClose }) {
           className="music-track-list"
           role="group"
           aria-label="Songs, most listened first"
-          style={{ "--columns": columns }}
+          style={{ "--columns": stacks.length }}
           // A finger, a wheel or a trackpad takes a name over from its glide.
           onPointerDown={(event) => {
             pressedBy.current = event.pointerType;
@@ -785,9 +790,9 @@ function TrackSheet({ album, columns, pinned, onClose }) {
             if (name?.dataset.more) glide(name, name.scrollLeft < (name.scrollWidth - name.clientWidth) / 2);
           }}
         >
-          {stacks.map((stack, column) => (
-            <ol key={column} start={column * each + 1}>
-              {stack.map((track, index) => (
+          {stacks.map((stack) => (
+            <ol key={stack.start} start={stack.start}>
+              {stack.tracks.map((track, index) => (
                 <li key={index} style={{ "--listening-share": track.minutes / mostMinutes }}>
                   <TrackLabel track={track} />
                 </li>
@@ -1171,8 +1176,6 @@ export function MusicRoom({ active }) {
 
   widthNow.current = width;
   const record = shown ? byKey.get(shown.record) ?? null : null;
-  // The sheet's songs stand in the shelf's columns, or on one line where
-  // they all fit on it (columnsFor).
   const columns = columnsFor(record, width, map.current);
   const shownTile = record ? shown.tile : undefined;
   const above = Boolean(record && shown.up);
