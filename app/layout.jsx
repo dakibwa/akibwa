@@ -3,7 +3,10 @@ import "./globals.css";
 import { ServiceWorkerRegistration } from "@/components/service-worker-registration";
 import { SiteShell } from "@/components/site-shell";
 
-const description = "The music Akibwa plays most: 1,000 records, each as large as the hours listened.";
+// Dan's own line (26 November 2026, of the link preview: "make it super simple
+// here"; then "Daniel Atkinson's most played 1000 records by hours
+// listened."). It is the one place the page gives his name.
+const description = "Daniel Atkinson’s most played 1,000 records by hours listened.";
 
 export const metadata = {
   metadataBase: new URL("https://akibwa.com"),
@@ -19,15 +22,17 @@ export const metadata = {
     url: "https://akibwa.com",
     siteName: "Akibwa",
     type: "website",
-    // A new filename, not a replaced image, so link previews stop serving
-    // their cached copy of the old card. It is the shelf's first screen,
-    // captured at 1200×630.
+    // The mark at the top left of a wall of the most played records, each
+    // drawn in its colours (scripts/build-share-card.py). A new filename, not
+    // a replaced image, so link previews stop serving their cached copy of
+    // the old card.
     images: [
       {
-        url: "/share-card-shelf-globe.jpg",
+        url: "/share-card-wall.png",
         width: 1200,
         height: 630,
-        alt: "Akibwa: album sleeves on a shelf, each as large as the hours listened"
+        type: "image/png",
+        alt: "The Akibwa mark, a haloed figure holding a globe, beside a wall of record sleeves printed in its colours"
       }
     ]
   },
@@ -35,7 +40,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "Akibwa",
     description,
-    images: ["/share-card-shelf-globe.jpg"]
+    images: ["/share-card-wall.png"]
   },
   // The sized .ico serves browsers without SVG icons and requests that skip
   // the page (feeds, robots.txt); iOS draws its own corners on the touch icon.

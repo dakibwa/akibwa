@@ -71,7 +71,7 @@ ${rowsSource}
 export const metadata = {
   title: { absolute: "Akibwa" },
   alternates: { canonical: "/" },
-  description: "The music Akibwa plays most: 1,000 records, each as large as the hours listened.",
+  description: "Daniel Atkinson’s most played 1,000 records by hours listened.",
   robots: {
     index: true,
     follow: true,
