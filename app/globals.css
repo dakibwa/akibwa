@@ -630,10 +630,12 @@ html.signed .music-sign:focus-visible .music-mark-held {
 }
 .music-group-figures b { color: var(--ink); font-weight: 800; }
 
-/* A search shown as its own small crate: the words, then what was found. */
+/* A search's heading is set as every other heading is: its words in the
+   kraft tab, on the kraft rule, then what was found (Dan, 26 November 2026:
+   "have the same colour as the headers of the other now it's sepearte",
+   "ensure everything is unified in that regard across the site"). Until
+   then it had a paler tab on a hairline, a small crate of its own. */
 .music-found { flex-wrap: wrap; margin-bottom: 10px; }
-.music-found .music-group-label { background: var(--paper-light); }
-.music-found::after { height: 1px; background: var(--paper-edge); }
 .music-found q { min-width: 0; overflow-wrap: anywhere; quotes: "“" "”"; }
 /* It sits outside the shelf's veil, so it turns with the shelf on its own:
    out while a search waits for the typing to rest, and in as the shelf's

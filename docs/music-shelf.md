@@ -143,7 +143,10 @@ The layout, merging and ordering code runs in the build checks against real reco
   every order.
 - A search shows its query, its number of matches, their share of the shelf's listening
   and their hours, as a heading does. While it is on, the “All time” heading gives way
-  to it.
+  to it. It is set exactly as the other headings are, in the kraft tab on the kraft
+  rule (Dan, 26 November: “have the same colour as the headers of the other now it's
+  sepearte”, “ensure everything is unified in that regard across the site”); until then
+  its tab was paler and its rule a hairline.
 - A jump to another year listened in, within a screen and a half, scrolls there. A jump
   further turns the page as a
   new order does: the shelf fades out, is put at the group at once and lifts in there.
