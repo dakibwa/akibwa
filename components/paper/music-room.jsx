@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, PureComponent, createRef, startTransition, useCallback, useDeferredValue, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Fragment, PureComponent, createRef, startTransition, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ShelfTiles, firstCoverHint, initialRow, plays, recordLabel } from "./music-tiles.mjs";
 import { flushSync } from "react-dom";
 import catalogue from "@/.shelf-build/catalogue.json";
@@ -1082,8 +1082,12 @@ export function MusicRoom({ active }) {
   const chosenNow = useRef(null);
   const cuttingNow = useRef(null);
   const cutTimer = useRef(0);
+  // The words in the box, and the search the shelf is showing (seek, below).
   const [query, setQuery] = useState("");
-  const filter = useDeferredValue(query.trim());
+  const [filter, setFilter] = useState("");
+  const filterNow = useRef("");
+  const seekTimer = useRef(0);
+  const seeking = useRef(false);
   // On a phone the search waits behind its mark and slides out over the
   // orders (Dan, 16 November 2026), so everything fits in one row.
   const [finding, setFinding] = useState(false);
@@ -1105,6 +1109,7 @@ export function MusicRoom({ active }) {
       setQuery("");
       setFinding(false);
     });
+    seek("", 150);
     const target = findButton.current?.offsetWidth ? findButton.current : finder.current;
     target?.focus({ preventScroll: true });
   };
@@ -1241,12 +1246,16 @@ export function MusicRoom({ active }) {
     clearTimeout(turnTimer.current);
     clearTimeout(veilTimer.current);
     clearTimeout(cutTimer.current);
+    clearTimeout(seekTimer.current);
   }, []);
   const onTurned = useCallback(() => {
-    clearTimeout(veilTimer.current);
-    setVeiled(false);
     cuttingNow.current = null;
     setCutting(null);
+    // A newer search still waiting for the typing to rest keeps the shelf unseen.
+    if (seekTimer.current) return;
+    clearTimeout(veilTimer.current);
+    seeking.current = false;
+    setVeiled(false);
   }, []);
   // The shelf fades out for a jump, which lifts it in again where it lands.
   const onVeil = useCallback(() => {
@@ -1258,10 +1267,16 @@ export function MusicRoom({ active }) {
   const sort = (name) => {
     clearSelection();
     const turn = name === pressedOrder && !searching && name in reversed;
-    const changes = searching || turn || name !== pressedOrder;
+    // A search the shelf still shows, as just after Escape, is a change too.
+    const changes = searching || Boolean(filterNow.current) || turn || name !== pressedOrder;
     setPressedOrder(name);
     const apply = () => {
+      // The order's own turn carries the end of any search.
       setQuery("");
+      clearTimeout(seekTimer.current);
+      seekTimer.current = 0;
+      filterNow.current = "";
+      setFilter("");
       // Another order puts every genre back whole.
       if (name !== pressedOrder) {
         clearTimeout(cutTimer.current);
@@ -1287,6 +1302,49 @@ export function MusicRoom({ active }) {
     }, 150);
     // Should the new order somehow never arrive, the shelf is not left unseen.
     veilTimer.current = setTimeout(() => setVeiled(false), 1500);
+  };
+  /*
+   * A search turns the page as an order does (Dan, 26 November 2026: "the
+   * animatinon isn't consistent across the search either"). At the first
+   * letter the shelf fades out; once the typing rests it goes back to its
+   * top, takes what was found unseen and lifts in (GlidingShelf.turn).
+   * Sleeves gliding to their places as each letter landed was the way
+   * before; do not bring it back. Letters typed and taken away again before
+   * the rest change nothing, and a reader who wants no motion gets each
+   * search at once.
+   */
+  const seek = (text, wait = 260) => {
+    const next = text.trim();
+    clearTimeout(seekTimer.current);
+    seekTimer.current = 0;
+    if (next === filterNow.current) {
+      if (seeking.current) {
+        seeking.current = false;
+        clearTimeout(veilTimer.current);
+        setVeiled(false);
+      }
+      return;
+    }
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      filterNow.current = next;
+      setFilter(next);
+      if (window.scrollY) window.scrollTo({ top: 0, behavior: "instant" });
+      return;
+    }
+    setVeiled(true);
+    seeking.current = true;
+    clearTimeout(veilTimer.current);
+    seekTimer.current = setTimeout(() => {
+      seekTimer.current = 0;
+      window.scrollTo({ top: 0, behavior: "instant" });
+      filterNow.current = next;
+      startTransition(() => setFilter(next));
+    }, wait);
+    // Should what was found somehow never arrive, the shelf is not left unseen.
+    veilTimer.current = setTimeout(() => {
+      seeking.current = false;
+      setVeiled(false);
+    }, wait + 1500);
   };
   const view = filter ? "hours" : order;
   // Albums and singles share the one shelf (Dan, 25 November 2026: "I do
@@ -1650,7 +1708,7 @@ export function MusicRoom({ active }) {
               onChange={(event) => {
                 clearSelection();
                 setQuery(event.target.value);
-                if (window.scrollY) window.scrollTo({ top: 0, behavior: "instant" });
+                seek(event.target.value);
               }}
               onKeyDown={(event) => {
                 // Escape clears the search.
@@ -1679,8 +1737,10 @@ export function MusicRoom({ active }) {
 
       {/* Measured here, around the shelf. */}
       <div className="music-map-frame" ref={map} onPointerLeave={() => onPoint(null)}>
-        {filter && filter === query.trim() && (
-          <div className="music-found" role="status">
+        {/* Outside the shelf, so it fades with it here: out while a search
+            waits, and in afresh with each one. */}
+        {filter && (
+          <div key={filter} className="music-found" role="status" data-veiled={veiled || filter !== query.trim() || undefined}>
             <q className="music-group-label">{filter}</q>
             <span className="music-group-figures">{entries.length ? figures(entries.length, minutesOf(entries), minutesOf(index.entries)) : "Nothing on the shelf"}</span>
           </div>

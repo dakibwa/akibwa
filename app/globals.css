@@ -635,6 +635,15 @@ html.signed .music-sign:focus-visible .music-mark-held {
 .music-found .music-group-label { background: var(--paper-light); }
 .music-found::after { height: 1px; background: var(--paper-edge); }
 .music-found q { min-width: 0; overflow-wrap: anywhere; quotes: "“" "”"; }
+/* It sits outside the shelf's veil, so it turns with the shelf on its own:
+   out while a search waits for the typing to rest, and in as the shelf's
+   headings fade in (GlidingShelf.turn). */
+.music-found:not([data-veiled]) { animation: found-arrives 460ms ease-out; }
+.music-found[data-veiled] {
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+@keyframes found-arrives { from { opacity: 0; } }
 
 /* A group's heading is one line: its kraft tab and what it holds, then the
    other groups as quiet words to go to, at the far end where there is room
@@ -1316,6 +1325,7 @@ html {
 
 @media (prefers-reduced-motion: reduce) {
   .music-track-list li::after { animation: none; }
+  .music-found:not([data-veiled]), .music-found[data-veiled] { animation: none; transition: none; }
 }
 
 @media (forced-colors: active) {

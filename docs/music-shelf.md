@@ -109,8 +109,16 @@ The layout, merging and ordering code runs in the build checks against real reco
   do not fly from their old places to their new ones on a new order, and nothing pops in
   on its own; do not bring that back. Pressing the order already chosen changes nothing.
   Reduced motion gets the new order at once.
-- A search and a change of width still glide the sleeves to their places; a heading on
-  the screen moves with the sleeves under it, and one from another screen fades in.
+- A search turns the page as an order does (Dan, 26 November: “the animatinon isn't
+  consistent across the search either”). At the first letter the shelf and the search's
+  own heading fade out over 150 ms. Once the typing has rested for 260 ms the shelf goes
+  back to its top, takes what was found unseen and lifts in, the search's heading fading
+  in with the shelf's. Letters typed and taken away before then change nothing. Escape
+  and the clear button turn back to the whole shelf after 150 ms. Sleeves that glided to
+  their places as each letter landed were replaced by this the same day; do not bring
+  them back. Reduced motion gets each search at once.
+- A change of width still glides the sleeves to their places; a heading on the screen
+  moves with the sleeves under it, and one from another screen fades in.
   Use only the headings an order needs. Search finds albums and
   singles together in one group, most listened first. Choosing an order clears search.
   The signature returns to hours, clears the search and scrolls to the top.
