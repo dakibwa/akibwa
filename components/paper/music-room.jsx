@@ -1741,7 +1741,7 @@ export function MusicRoom({ active }) {
             waits, and in afresh with each one. */}
         {filter && (
           <div key={filter} className="music-found" role="status" data-veiled={veiled || filter !== query.trim() || undefined}>
-            <q className="music-group-label">{filter}</q>
+            <span className="music-group-label">{filter}</span>
             <span className="music-group-figures">{entries.length ? figures(entries.length, minutesOf(entries), minutesOf(index.entries)) : "Nothing on the shelf"}</span>
           </div>
         )}

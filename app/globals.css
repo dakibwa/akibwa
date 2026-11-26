@@ -634,9 +634,12 @@ html.signed .music-sign:focus-visible .music-mark-held {
    kraft tab, on the kraft rule, then what was found (Dan, 26 November 2026:
    "have the same colour as the headers of the other now it's sepearte",
    "ensure everything is unified in that regard across the site"). Until
-   then it had a paler tab on a hairline, a small crate of its own. */
+   then it had a paler tab on a hairline, a small crate of its own. Its words
+   stand as they were typed, with no quotation marks ("I don't even think we
+   need the apostrpahes"). */
 .music-found { flex-wrap: wrap; margin-bottom: 10px; }
-.music-found q { min-width: 0; overflow-wrap: anywhere; quotes: "“" "”"; }
+.music-found .music-group-label { min-width: 0; overflow-wrap: anywhere; }
+.music-found .music-group-label::first-letter { text-transform: none; }
 /* It sits outside the shelf's veil, so it turns with the shelf on its own:
    out while a search waits for the typing to rest, and in as the shelf's
    headings fade in (GlidingShelf.turn). */

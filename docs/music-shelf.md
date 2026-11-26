@@ -146,7 +146,9 @@ The layout, merging and ordering code runs in the build checks against real reco
   to it. It is set exactly as the other headings are, in the kraft tab on the kraft
   rule (Dan, 26 November: “have the same colour as the headers of the other now it's
   sepearte”, “ensure everything is unified in that regard across the site”); until then
-  its tab was paler and its rule a hairline.
+  its tab was paler and its rule a hairline. The words stand in the tab as they were
+  typed, with no quotation marks (Dan, 26 November: “I don't even think we need the
+  apostrpahes”).
 - A jump to another year listened in, within a screen and a half, scrolls there. A jump
   further turns the page as a
   new order does: the shelf fades out, is put at the group at once and lifts in there.
