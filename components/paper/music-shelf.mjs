@@ -120,7 +120,15 @@ export function yearPairs(record, years) {
  * listened first, as `{ item, ... }`. `cuts` names the sub-genre a genre has
  * been cut to, or the year a decade has, by the group's name.
  */
-export function arrange(order, entries, { years, kinds, reverse = false, cuts = null } = {}) {
+// What a heading says of the records under it: how many, their share of all
+// the shelf's listening where they are a part of it, and their hours.
+export function figures(count, minutes, total = 0) {
+  const share = total ? (minutes / total) * 100 : 100;
+  const part = share < 100 ? ` · ${share >= 1 ? Math.round(share) : "<1"}% of listening` : "";
+  return `${count.toLocaleString("en-GB")} ${count === 1 ? "record" : "records"}${part} · ${listened(minutes, "long")}`;
+}
+
+export function arrange(order, entries, { years, kinds, reverse = false, cuts = null, whole = false } = {}) {
   const total = entries.reduce((sum, entry) => sum + entry.item.minutes, 0) || 1;
   const grouped = (keyOf) => {
     const map = new Map();
@@ -135,10 +143,7 @@ export function arrange(order, entries, { years, kinds, reverse = false, cuts = 
   // cut from one, in the same words: its records, its share of all the
   // shelf's listening and its hours (Dan, 26 November 2026: "you can also
   // have records here and also do % of listening for sub genres too").
-  const figure = (list, minutes) => {
-    const share = (minutes / total) * 100;
-    return `${list.length} ${list.length === 1 ? "record" : "records"} · ${share >= 1 ? Math.round(share) : "<1"}% of listening · ${listened(minutes, "long")}`;
-  };
+  const figure = (list, minutes) => figures(list.length, minutes, total);
   const sum = (list) => list.reduce((minutes, entry) => minutes + entry.item.minutes, 0);
   if (order === "released") {
     // By the decade a record came out, newest first or, pressed again,
@@ -193,7 +198,7 @@ export function arrange(order, entries, { years, kinds, reverse = false, cuts = 
         return {
           key: String(year),
           label: String(year),
-          figures: `${list.length} ${list.length === 1 ? "record" : "records"} · ${listened(minutes, "long")}`,
+          figures: figures(list.length, minutes),
           brief: listened(minutes),
           entries: list,
           // Each year's largest record reaches the cap.
@@ -243,6 +248,15 @@ export function arrange(order, entries, { years, kinds, reverse = false, cuts = 
           cut: cut?.label ?? null
         };
       });
+  }
+  // By hours the shelf is one group. Standing whole, it is headed as the
+  // others are, with what the whole shelf holds (Dan, 26 November 2026:
+  // "should we have a top stat bar for the entire maze to begin with as the
+  // hours page currently has nothing right?"): every record, and the hours
+  // of them all. What a search finds has a heading of its own, in
+  // music-room.jsx.
+  if (whole && entries.length) {
+    return [{ key: "all", label: "All time", figures: figures(entries.length, total), brief: listened(total), entries }];
   }
   return [{ key: "all", label: null, figures: null, entries }];
 }

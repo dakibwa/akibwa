@@ -42,7 +42,10 @@ The layout, merging and ordering code runs in the build checks against real reco
   just use bold for the highlight in a more minimalist fashion than this”). A chosen
   sub-genre or year on a heading is marked the same way. A word keeps the room its bold
   self needs, so nothing beside it moves when it is chosen.
-  - Hours is time listened, most first.
+  - Hours is time listened, most first: the whole shelf as one group, headed as the
+    others are with what it holds, “All time · 1,000 records · 10,878 hours” (Dan, 26
+    November: “should we have a top stat bar for the entire maze to begin with as the
+    hours page currently has nothing right?”). The heading has no words at its far end.
   - Genre is `kind` in code, one curated kind per artist. Each of the seven genres
     has sub-genres, 40 in all, one for each artist with a record on the shelf
     (Dan, 25 November: “can we break these further into sub genres too using astra?”).
@@ -130,7 +133,9 @@ The layout, merging and ordering code runs in the build checks against real reco
 - Nothing runs past the screen's edge at any width from 280 px up (“fix any bugs in
   this regard”). Check a change to the bar or a heading at 280, 320, 390 and 720 px in
   every order.
-- A search shows its query, number of matches and listening time.
+- A search shows its query, its number of matches, their share of the shelf's listening
+  and their hours, as a heading does. While it is on, the “All time” heading gives way
+  to it.
 - A jump to another year listened in, within a screen and a half, scrolls there. A jump
   further turns the page as a
   new order does: the shelf fades out, is put at the group at once and lifts in there.

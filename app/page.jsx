@@ -30,7 +30,8 @@ ${rowsSource}
   var shares = [];
   for (var i = 0; i < tiles.length; i += 1) shares.push(parseFloat(tiles[i].style.getPropertyValue("--share")) || 0);
   var rows = packRows(shares, width);
-  var top = frame.getBoundingClientRect().top;
+  // The rows start under the shelf's heading.
+  var top = (map.querySelector(".music-shelf") || frame).getBoundingClientRect().top;
   var first = [];
   var at = 0;
   for (var r = 0; r < rows.length; r += 1) {

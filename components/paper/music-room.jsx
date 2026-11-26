@@ -8,7 +8,7 @@ import signature from "@/.shelf-build/signature.json";
 import { openCatalogue } from "./music-catalogue.mjs";
 import { countColumns, setColumns, shareSongs } from "./music-columns.mjs";
 import { relatedLookup, search } from "./music-search.mjs";
-import { GAP, ORDERS, arrange, listened, rowsFor, songLabel } from "./music-shelf.mjs";
+import { GAP, ORDERS, arrange, figures, listened, rowsFor, songLabel } from "./music-shelf.mjs";
 
 // Albums and the records behind the top songs share one shelf. Sorting,
 // searching and opening a track sheet all work in place.
@@ -691,6 +691,8 @@ const lineIn = (event) => event.target.closest?.("li, .music-release .music-roll
 const nameOn = (line) => (line?.matches(".music-roll") ? line : line?.querySelector(".music-roll")) ?? null;
 
 // A record's songs, most listened first, each under the name it goes by.
+const minutesOf = (entries) => entries.reduce((sum, entry) => sum + entry.item.minutes, 0);
+
 const songs = new WeakMap();
 function songsOf(album) {
   let sorted = songs.get(album);
@@ -1305,14 +1307,14 @@ export function MusicRoom({ active }) {
     return (order, reverse) => {
       const key = `${order}:${reverse}`;
       if (!cached.has(key)) {
-        const groups = arrange(order, entries, { years, kinds, reverse, cuts });
+        const groups = arrange(order, entries, { years, kinds, reverse, cuts, whole: !filter });
         cached.set(key, groups.map(group => ({
           ...group, rows: rowsFor(group.entries, width, group.reference ?? reference)
         })));
       }
       return cached.get(key);
     };
-  }, [entries, width, reference, years, kinds, cuts]);
+  }, [entries, width, reference, years, kinds, cuts, filter]);
   const arrangement = layouts(view, reversed[view] ?? false);
   /*
    * A genre's heading names its sub-genres, and pressing one cuts the genre
@@ -1680,7 +1682,7 @@ export function MusicRoom({ active }) {
         {filter && filter === query.trim() && (
           <div className="music-found" role="status">
             <q className="music-group-label">{filter}</q>
-            <span className="music-group-figures">{entries.length ? `${entries.length} ${entries.length === 1 ? "record" : "records"} · ${listened(entries.reduce((sum, entry) => sum + entry.item.minutes, 0), "long")}` : "Nothing on the shelf"}</span>
+            <span className="music-group-figures">{entries.length ? figures(entries.length, minutesOf(entries), minutesOf(index.entries)) : "Nothing on the shelf"}</span>
           </div>
         )}
         <GlidingShelf tracks={tracks} shownTile={shownTile} above={above} before={before} pinnedTile={open?.tile} arrangement={arrangement} measured={measured} order={view} tiles={tiles} reference={reference} onOpen={onOpen} onPoint={onPoint} onCut={onCut} chosen={chosen} cutting={cutting} resting={resting} veiled={veiled} onTurned={onTurned} onVeil={onVeil} />

@@ -437,7 +437,14 @@ const checkPublicLanding = async () => {
     }) && document.querySelectorAll(".music-page .music-tile").length > ${RECORDS};
   })()`, 4000), "the year order holds every record played in each year");
   await evaluate(`document.querySelector('.music-page .music-order button[data-order="hours"]').click()`);
-  check(await waitFor(`!document.querySelector(".music-page .music-group-head") && document.querySelector(".music-page .music-face")?.getAttribute("aria-label").startsWith("Music for Psychedelic Therapy")`, 4000), "the hours order puts the shelf back, most listened first");
+  // Dan, 26 November 2026: the hours order is headed with what the whole
+  // shelf holds, as a genre is with what it holds.
+  check(await waitFor(`(() => {
+    const heads = [...document.querySelectorAll(".music-page .music-group-head")];
+    return heads.length === 1 && heads[0].firstElementChild.textContent === "All time"
+      && heads[0].querySelector(".music-group-full").textContent.startsWith("${RECORDS.toLocaleString("en-GB")} records · ")
+      && document.querySelector(".music-page .music-face")?.getAttribute("aria-label").startsWith("Music for Psychedelic Therapy");
+  })()`, 4000), "the hours order puts the shelf back, most listened first, under what the whole shelf holds");
   check(albums.large, "sleeves drawn large offer the high-resolution rung");
   check(albums.words === "" && !albums.head, `the shelf explains nothing it need not [${albums.words}]`);
   // The search knows who plays with whom, and eras.
