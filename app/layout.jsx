@@ -20,17 +20,17 @@ export const metadata = {
     url: "https://akibwa.com",
     siteName: "Akibwa",
     type: "website",
-    // The mark at the top left of a wall of the most played records, each
-    // drawn in its colours (scripts/build-share-card.py). A new filename, not
-    // a replaced image, so link previews stop serving their cached copy of
+    // The mark at the top left of a wall of the most played records, in
+    // their own sleeves (scripts/build-share-card.mjs). A new filename, not a
+    // replaced image, so link previews stop serving their cached copy of
     // the old card.
     images: [
       {
-        url: "/share-card-wall.png",
+        url: "/share-card-sleeves.jpg",
         width: 1200,
         height: 630,
-        type: "image/png",
-        alt: "The Akibwa mark, a haloed figure holding a globe, beside a wall of record sleeves printed in its colours"
+        type: "image/jpeg",
+        alt: "The Akibwa mark, a haloed figure holding a globe, beside a wall of record sleeves"
       }
     ]
   },
@@ -38,7 +38,7 @@ export const metadata = {
     card: "summary_large_image",
     title,
     description,
-    images: ["/share-card-wall.png"]
+    images: ["/share-card-sleeves.jpg"]
   },
   // The sized .ico serves browsers without SVG icons and requests that skip
   // the page (feeds, robots.txt); iOS draws its own corners on the touch icon.
