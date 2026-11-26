@@ -117,9 +117,10 @@ export function yearPairs(record, years) {
 /*
  * The shelf in an order: groups, each with the heading that order needs (none
  * for hours), the most listened first inside each. Entries arrive most
- * listened first, as `{ item, ... }`.
+ * listened first, as `{ item, ... }`. `cuts` names the sub-genre a genre has
+ * been cut to, by genre.
  */
-export function arrange(order, entries, { years, kinds, reverse = false } = {}) {
+export function arrange(order, entries, { years, kinds, reverse = false, cuts = null } = {}) {
   const total = entries.reduce((sum, entry) => sum + entry.item.minutes, 0) || 1;
   const grouped = (keyOf) => {
     const map = new Map();
@@ -197,29 +198,35 @@ export function arrange(order, entries, { years, kinds, reverse = false } = {}) 
     };
     const figure = (list, minutes) => `${list.length} ${list.length === 1 ? "record" : "records"} · ${listened(minutes, "long")}`;
     const sum = (list) => list.reduce((total, entry) => total + entry.item.minutes, 0);
+    // A genre is one group under one heading, and its sub-genres are the
+    // words on that heading (Dan, 26 November 2026, of sub-genres named on
+    // the heading and again over their own records beneath it: "can that not
+    // all just be the same interface"). It stands whole, most listened
+    // first, until one of them is chosen (`cuts`, by genre); then it holds
+    // that sub-genre's records and says how many there are.
     return [...grouped(kindOf)]
       .map(([name, list]) => ({ name, list, minutes: sum(list) }))
       .sort((a, b) => b.minutes - a.minutes)
-      .flatMap(({ name, list, minutes }) => {
-        const head = { label: name, figures: `${Math.round((minutes / total) * 100)}% of listening · ${listened(minutes, "long")}`, brief: listened(minutes) };
+      .map(({ name, list, minutes }) => {
         const parts = new Map();
         for (const entry of list) {
           const part = partOf(entry);
+          if (!part) continue;
           if (!parts.has(part)) parts.set(part, []);
           parts.get(part).push(entry);
         }
-        // A genre with no sub-genres stands as one group, as it did.
-        if (parts.size < 2) return [{ key: name, label: name, figures: head.figures, brief: head.brief, entries: list }];
-        // Each sub-genre is a group of its own, most listened first. The
-        // first carries its genre's heading (`head`); all name their genre
-        // (`within`), so the shelf can tell a genre's heading from a
-        // sub-genre's.
-        return [...parts]
-          .map(([part, entries]) => ({ part: part ?? "more", entries, minutes: sum(entries) }))
-          .sort((a, b) => b.minutes - a.minutes)
-          .map(({ part, entries, minutes }, at) => ({
-            key: `${name}/${part}`, label: part, figures: figure(entries, minutes), entries, within: name, head: at === 0 ? head : null
-          }));
+        // Its sub-genres, most listened first.
+        const named = [...parts].map(([label, entries]) => ({ label, entries, minutes: sum(entries) })).sort((a, b) => b.minutes - a.minutes);
+        const cut = named.find((part) => part.label === cuts?.[name]) ?? null;
+        return {
+          key: name,
+          label: name,
+          figures: cut ? figure(cut.entries, cut.minutes) : `${Math.round((minutes / total) * 100)}% of listening · ${listened(minutes, "long")}`,
+          brief: listened(cut ? cut.minutes : minutes),
+          entries: cut ? cut.entries : list,
+          parts: named.map((part) => part.label),
+          cut: cut?.label ?? null
+        };
       });
   }
   return [{ key: "all", label: null, figures: null, entries }];

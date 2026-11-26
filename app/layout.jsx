@@ -61,6 +61,12 @@ export const viewport = {
 const boot = `(function(){
   var page = document.documentElement;
   page.classList.add("js");
+  // The signature shows itself once its picture has arrived, so it comes in
+  // whole and its light never stands alone (app/globals.css).
+  document.addEventListener("load", function (event) {
+    var loaded = event.target;
+    if (loaded && loaded.classList && loaded.classList.contains("music-mark")) page.classList.add("signed");
+  }, true);
   // The page shows itself once its typeface has arrived, so the bar
   // never flashes in a stand-in face (Dan, 18 November 2026: "super smooth").
   function ready() {

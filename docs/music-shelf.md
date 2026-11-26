@@ -40,12 +40,21 @@ The layout, merging and ordering code runs in the build checks against real reco
   Date? Listen Date?”). The chosen order appears in muted rust.
   - Hours is time listened, most first.
   - Genre is `kind` in code, one curated kind per artist. Each of the seven genres
-    stands in sub-genres, 39 in all, one for each artist with a record on the shelf
+    has sub-genres, 40 in all, one for each artist with a record on the shelf
     (Dan, 25 November: “can we break these further into sub genres too using astra?”).
-    A genre keeps its kraft tab and its share of listening; its sub-genres follow, most
-    listened first, each under a smaller heading on a hairline with its records and
-    hours. A sub-genre has no jump of its own: the words on a genre's heading go to
-    the other six genres.
+    A genre is one group under one heading: its kraft tab, its share of listening, and
+    its sub-genres as the words at the heading's far end, most listened first. It stands
+    whole, most listened first. Pressing a sub-genre cuts the genre to that sub-genre's
+    records, and the heading then says how many there are and their hours; pressing it
+    again brings the whole genre back. The chosen word takes the bar's rust, and the
+    heading's rule turns rust beneath it. Another order puts every genre back whole.
+    A sub-genre is named on its genre's heading and nowhere else. Until 26 November
+    each stood over its own records under a smaller heading, and the genre's words went
+    to the other six genres. Dan asked for the words to be the sub-genres (“can these
+    not contain subgenres rather than the other genres?”), and naming them there as well
+    as over their records was turned down (“having like drones and loops in the top
+    right as well as the bottom left feels weird. Like can that not all just be the
+    same interface”). Do not bring the second row of headings back.
     An artist is filed by the records on this shelf, not by a whole career. A new
     artist needs a sub-genre in the kinds file, or the build check fails.
   - A record that does not belong where its artist does is filed on its own, by its id,
@@ -75,46 +84,73 @@ The layout, merging and ordering code runs in the build checks against real reco
   do not fly from their old places to their new ones on a new order, and nothing pops in
   on its own; do not bring that back. Pressing the order already chosen changes nothing.
   Reduced motion gets the new order at once.
-- A search and a change of width still glide the sleeves to their places. Use only the
-  headings an order needs. Search finds albums and singles together in one group, most
-  listened first. Choosing an order clears search. The signature returns to hours, clears
-  the search and scrolls to the top.
+- A search, a change of width and a genre cut to a sub-genre still glide the sleeves to
+  their places; a heading on the screen moves with the sleeves under it, and one from
+  another screen fades in. Use only the headings an order needs. Search finds albums and
+  singles together in one group, most listened first. Choosing an order clears search.
+  The signature returns to hours, clears the search and scrolls to the top.
 - Keep one pinned row. Leave equal gaps between the signature, each sort option and
   search. A soft rust background marks the chosen sort. The signature's panel starts on
   the sleeves' left edge and search ends on their right (Dan, 25 November: “align the
   logo”). Search is 40 px tall and every chip 34 px. Search opens from the right below
   900 px. Pressing / focuses it, and Escape clears it. The row closes up in steps as
   the screen narrows, the last below 310 px for a folded phone's cover screen.
-- A group's heading is one line: its name on a kraft tab, its figures, then the other
-  genres, decades or years as quiet words to go to, at the far end (Dan, 25 November:
-  “is the genre bar placed somewhere better that fit's with the more minimalist
-  theme?”). There is no row of jumps apart from the headings, and no pill behind a
-  word: at the head of a phone's shelf the pill was cut off by the screen's edge (“the
-  pill can go off screen”). The tab and its figures never move. Where the words do not
-  all fit on some heading, every heading shortens its figures to the hours alone. Where
-  they still do not fit, a hairline parts the figures from the words, and the words
-  scroll sideways in the room that is left, fading at the edge they run past.
+- A group's heading is one line: its name on a kraft tab, its figures, then quiet words
+  at the far end (Dan, 25 November: “is the genre bar placed somewhere better that fit's
+  with the more minimalist theme?”). A decade's or a year's words are the other decades
+  or years, to go to; a genre's are its sub-genres, to cut it by. There is no row of
+  jumps apart from the headings, and no pill behind a word: at the head of a phone's
+  shelf the pill was cut off by the screen's edge (“the pill can go off screen”). The
+  tab and its figures never move. Where the words do not all fit on some heading, every
+  heading shortens its figures to the hours alone. Where they still do not fit, a
+  hairline parts the figures from the words, and the words scroll sideways in the room
+  that is left, fading at the edge they run past.
 - Nothing runs past the screen's edge at any width from 280 px up (“fix any bugs in
   this regard”). Check a change to the bar or a heading at 280, 320, 390 and 720 px in
   every order.
-- A search shows its query, number of matches and listening time.
-- A jump to a group within a screen and a half scrolls there. A jump further turns the
-  page as a new order does: the shelf fades out, is put at the group at once and lifts
-  in there. Scrolling smoothly to a far group dragged every row between through the
-  screen and loaded its covers on the way (Dan, 25 November, of the jump to Undated: “it
-  lagged when i CLICK Undated and it went to the bottom fix this”); do not bring it back.
+- A search shows its query, number of matches and listening time. - A jump to a decade
+  or a year within a screen and a half scrolls there. A jump further turns the page as a
+  new order does: the shelf fades out, is put at the group at once and lifts in there.
+  Scrolling smoothly to a far group dragged every row between through the screen and
+  loaded its covers on the way (Dan, 25 November, of the jump to Undated: “it lagged
+  when i CLICK Undated and it went to the bottom fix this”); do not bring it back.
 
 ## The signature
 
 Use Dan's drawing at the top left without a wordmark. The same SVG is the favicon.
 Keep his warm colours, marker streaks, ink hatching and the thin gold border he chose on
 19 November. The dark panel is a straight-edged square. Crop to the head, halo, rays and
-the sheet he holds. The halo and rays rise above the panel. Its soft gold ring brightens
-and breathes on hover. Leave out the small dots, flat blue ground and the bands and stars
-from the reverted version. The sheet has the globe on it, as he drew it and as the studio's
-cover shows it (Dan, 25 November: “this isn't using the globe one”). From 19 to 25 November
-it was a page of handwriting; do not bring that back.
-[Signature artwork](../public/akibwa-mark.svg)
+the sheet he holds. The halo and rays rise above the panel. Leave out the small dots,
+flat blue ground and the bands and stars from the reverted version. The sheet has the
+globe on it, as he drew it and as the studio's cover shows it (Dan, 25 November: “this
+isn't using the globe one”). From 19 to 25 November it was a page of handwriting; do not
+bring that back. [Signature artwork](../public/akibwa-mark.svg)
+
+It moves as the same drawing does on the studio's cover at ohlifestudios.com (Dan,
+26 November: “match the beauty of the animation on ohlifestudios”):
+- It waits for its picture, then dissolves in whole over a second, a slow start and a
+  long settle. Only its opacity changes; a logo that turned and tilted as it arrived
+  was turned down (Dan, 18 November: “the animation is super ugly”).
+- A warm light swells in the halo's gold and settles again every six seconds, fullest a
+  little before the middle. A soft radiance spills past the rim and fades before his
+  shoulders. The five rays reach out and draw back with it, the middle one first.
+- The strengths are the studio's, set for this size and for paper: the radiance is a
+  deeper gold, because the cover's pale one does not show on paper, and the rays reach
+  half as far again, because here they are half as long. Keep the glow quiet (Dan,
+  25 November, of the cover: “the glow be more subtle”).
+- Under the pointer or the keyboard the light and the radiance come up and stay, and
+  the rays reach a little further (Dan, 19 November: “can the emblem have a hover too
+  like the halo glows”). The breath goes on over it.
+- With reduced motion the drawing stands still as Dan drew it, and still glows under
+  the pointer.
+
+The picture itself never moves. The page draws only the light and the rays over it,
+from shapes read out of the drawing when the shelf is built, so a redrawn mark needs
+nothing copied by hand; while they move, the page hides the picture's own rays. Do not
+animate the picture's file instead: drawing the whole picture again every frame took
+21 ms of the page's main thread every second in Chrome, for as long as the page was
+open, against half a millisecond this way (measured 26 November 2026).
+[Light's shapes](../lib/signature-light.mjs) · [Light's motion](../app/globals.css)
 
 ## Opening and inspecting a record
 
@@ -157,18 +193,41 @@ it was a page of handwriting; do not bring that back.
   more sleeves by different artists, starting with those in view. Match their genre
   tags and use the shelf’s broader genres and release years to guide the choice.
   Clicking or tapping keeps the same contrast while the songs are open.
-- The sheet says the record's name in bold, then its artist, year, hours and plays. Its songs follow, most listened first, as a ledger (Dan, 25 November: “there
-  must be a better clean way of showing this information”). Songs read down columns of
-  equal width across the full sheet. Divide the songs evenly, with the longer columns
-  first. The chips that wrapped and stretched, each
-  filled to its own width, are gone; do not bring them back.
+- The sheet's heading runs its whole width (Dan, 26 November, of the name with every
+  fact set close after it: “it's kind of bunked up”, “not so dominant to the left”). The
+  record's name in bold, then its artist and year, stand at one end. How often and how
+  long it has been played stand at the other, over the songs' own times and set as they
+  are, a size larger: each number bold, its unit quiet beside it, a point between the
+  two. Both figures weigh the same. The plays quiet beside a large number of hours was
+  not plain enough (“it doesn't feel obvious enough to me the plays and time”), and both
+  numbers as large as the name were too loud (“way more garish”); do not bring either
+  back. On a laptop that is one line. A sheet narrower than 900 px gives the name a line
+  of its own, with who and the figures on the next, still end to end.
+- Nothing in the heading wraps, so it is the same shape for every record (Dan, 26
+  November: “can we have stuff faded and rolling / animated if it doesnt fit across etc
+  so everything is consistent”). A record's name or an artist too long for its room
+  fades at the edge it runs past and rolls under the pointer or a tap, as a song's name
+  does. The artist gives way before the name, and the figures never.
+- Under the pointer the figures stand on the songs' right edge. Pressing the sleeve
+  keeps the sheet open, and the figures draw aside for its close button.
+- Its songs follow, most listened first, as a ledger (Dan, 25 November: “there must be
+  a better clean way of showing this information”). Songs read down columns of equal
+  width across the full sheet. Divide the songs evenly, with the longer columns first.
+  The chips that wrapped and stretched, each filled to its own width, are gone; do not
+  bring them back.
+- The songs always fill the sheet's width; the shelf chooses how many columns (Dan,
+  26 November: “can it not dynamically fill the bar so it utilises space the best”). It
+  measures each name and time against the room. Every name stands in full where it
+  can: one name in eight may run past its line and fade, never more. Of the ways that
+  leaves, it takes the fewest rows; then, for a folded record, the most songs shown;
+  then the widest columns. A column is never narrower than 132 px, and a name counts as
+  full only with 8 px to spare. A name too long for the whole sheet fades wherever it
+  stands, so it has no say. On a phone that keeps most records to one column; two
+  columns there cut a third of a record's names short. The layout adjusts when the
+  sheet changes width.
 - A record whose songs all fit on one line stands on one line, however many columns that
   takes (Dan, 25 November, of seven short names on two lines: “can't this fit on one line
-  comfortably?”). Comfortably means every name in full, at least 24 px clear of its time,
-  in columns no narrower than 132 px. For longer lists the shelf measures each name and
-  time against the available width. It weighs each row saved against each title that
-  would lose its clearance. A tie goes to wider columns. The layout adjusts when the
-  sheet changes width.
+  comfortably?”). On one line every name stands in full.
 - Each song stands on a ruled line with its time in bold at the line's end. The line is
   drawn heavier, 3 px on a hairline, for as far as the song's hours reach against the
   record's favourite, and sits close under the words. One thin even line, 2 px and set

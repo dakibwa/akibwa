@@ -189,10 +189,17 @@ html.js .music-bar {
   transition: opacity 360ms ease;
 }
 
-/* The logo simply fades in with the bar (Dan, 18 November 2026: "the
+/* The signature waits for its picture (the page's first script says when
+   it has come, `signed`), then dissolves in whole at the studio's pace: a
+   slow start and a long, quiet settle. Only its opacity changes (Dan, 18
+   November 2026, of a logo that turned and tilted as it arrived: "the
    animation is super ugly"). */
-html.ready .music-mark {
-  animation: mark-arrives 420ms ease both;
+html.js:not(.signed) .music-mark-box {
+  opacity: 0;
+}
+
+html.ready.signed .music-mark-box {
+  animation: mark-arrives 1s cubic-bezier(0.3, 0, 0.2, 1) 50ms both;
 }
 
 @keyframes mark-arrives {
@@ -229,8 +236,8 @@ html.ready .music-mark {
   @keyframes bar-fade { to { opacity: 1; } }
 }
 
-/* The signature: unchanged, Dan's drawing alone, its panel's left edge on
-   the sleeves' left edge (Dan, 25 November 2026: "align the logo"). */
+/* The signature: Dan's drawing alone, its panel's left edge on the sleeves'
+   left edge (Dan, 25 November 2026: "align the logo"). */
 .music-sign {
   position: relative;
   display: inline-flex;
@@ -239,26 +246,129 @@ html.ready .music-mark {
   min-height: 44px;
   border-radius: 4px;
 }
-.music-mark { height: var(--mark); width: auto; margin-top: calc(var(--mark) * -0.1912); -webkit-user-drag: none; }
-.music-sign::after {
-  --glow: calc(var(--mark) * 0.2088 * 1.45);
-  content: "";
-  position: absolute;
-  left: calc(var(--mark) * 0.2274 - var(--glow));
-  top: calc(50% - var(--mark) * 0.8088 / 2 + var(--mark) * 0.1153 - var(--glow));
-  width: calc(var(--glow) * 2);
-  height: calc(var(--glow) * 2);
-  border-radius: 50%;
-  background: radial-gradient(closest-side, rgb(255 199 104 / 0) 52%, rgb(255 199 104 / 0.5) 70%, rgb(255 199 104 / 0.18) 86%, rgb(255 199 104 / 0) 100%);
-  -webkit-mask-image: linear-gradient(to bottom, #000 42%, transparent 56%);
-  mask-image: linear-gradient(to bottom, #000 42%, transparent 56%);
-  opacity: 0;
-  transform: scale(0.9);
-  transition: opacity 420ms var(--shelf-ease), transform 620ms var(--shelf-ease);
-  pointer-events: none;
+.music-mark-box {
+  position: relative;
+  display: block;
+  flex: none;
+  margin-top: calc(var(--mark) * -0.1912);
 }
-.music-sign:hover::after, .music-sign:focus-visible::after { opacity: 1; transform: scale(1); animation: halo-breathes 2.6s ease-in-out 620ms infinite alternate; }
-@keyframes halo-breathes { to { opacity: 0.6; transform: scale(1.04); } }
+.music-mark {
+  display: block;
+  width: auto;
+  height: var(--mark);
+  -webkit-user-drag: none;
+}
+
+/* Its light (Dan, 26 November 2026: "match the beauty of the animation on
+   ohlifestudios"), as the studio's cover of the same drawing has it: a warm
+   light swells in the halo's gold and settles again every six seconds, a
+   soft radiance spills past its rim, and the five rays reach out and draw
+   back with it, the middle one first. The picture itself keeps still. The
+   light and the rays are drawn over it by the page (SignatureLight in
+   music-room.jsx, from lib/signature-light.mjs), so nothing but they is
+   drawn again as they move: moving the whole picture took forty times the
+   page's main-thread time, for as long as the page was open
+   (docs/music-shelf.md).
+
+   The strengths are the studio's, set for this size and for paper: the
+   radiance is a deeper gold, which shows on paper where the cover's pale
+   one does not, and the rays reach half as far again as on the cover,
+   where they are twice as long. `--rest` and `--peak` are a ray's length
+   drawn back and reaching, as a share of the length Dan drew, each a little
+   uneven as a hand would draw it; `--lag` is how far it follows the middle
+   ray. */
+.music-mark-light {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  will-change: transform;                /* its own layer, so its moving never redraws the picture under it */
+}
+.music-mark-rays {
+  display: none;
+  fill: #21190f;
+}
+.music-mark-rays > :nth-child(1) { --rest: 0.837; --peak: 1.246; --lag: 0s; }
+.music-mark-rays > :nth-child(2) { --rest: 0.825; --peak: 1.302; --lag: 0.31s; }
+.music-mark-rays > :nth-child(3) { --rest: 0.874; --peak: 1.264; --lag: 0.22s; }
+.music-mark-rays > :nth-child(4) { --rest: 0.87; --peak: 1.257; --lag: 0.37s; }
+.music-mark-rays > :nth-child(5) { --rest: 0.859; --peak: 1.305; --lag: 0.58s; }
+.music-mark-shine,
+.music-mark-radiance,
+.music-mark-held {
+  opacity: 0;
+}
+
+/* It moves once the signature has arrived, and only for a reader who has
+   not asked for stillness: until then, and for them, the picture stands
+   whole as Dan drew it. Moving, the page draws the rays, so it shows the
+   picture without its own: only its panel, and its halo inside a round
+   edge that stops short of them. */
+@media (prefers-reduced-motion: no-preference) {
+  html.ready.signed .music-mark {
+    -webkit-mask-image: radial-gradient(ellipse var(--rays-x) var(--rays-y) at var(--halo-x) var(--halo-y), #000 99.5%, transparent 100%), linear-gradient(#000, #000);
+    -webkit-mask-size: 100% 100%, 100% var(--panel);
+    -webkit-mask-position: 0 0, 0 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-image: radial-gradient(ellipse var(--rays-x) var(--rays-y) at var(--halo-x) var(--halo-y), #000 99.5%, transparent 100%), linear-gradient(#000, #000);
+    mask-size: 100% 100%, 100% var(--panel);
+    mask-position: 0 0, 0 100%;
+    mask-repeat: no-repeat;
+  }
+  html.ready.signed .music-mark-rays {
+    display: inline;
+  }
+  html.ready.signed .music-mark-ray {
+    animation: ray-reaches 6s cubic-bezier(0.45, 0, 0.55, 1) calc(var(--lag) - 6s) infinite;
+  }
+  html.ready.signed .music-mark-shine {
+    --rest: 0.06;
+    --peak: 0.4;
+    animation: light-swells 6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  }
+  html.ready.signed .music-mark-radiance {
+    --rest: 0;
+    --peak: 0.6;
+    animation: light-swells 6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  }
+}
+/* The light is fullest a little before the middle of a breath: it swells
+   faster than it settles. */
+@keyframes ray-reaches {
+  0%, 100% { transform: scaleY(var(--rest)); }
+  42% { transform: scaleY(var(--peak)); }
+}
+@keyframes light-swells {
+  0%, 100% { opacity: var(--rest); }
+  42% { opacity: var(--peak); }
+}
+
+/* Under the pointer or the keyboard the halo glows (Dan, 19 November 2026:
+   "can the emblem have a hover too like the halo glows"): its light and
+   its radiance come up and stay while it is pointed at, and the rays reach
+   a little further. The breath goes on over it. */
+.music-mark-held {
+  transition: opacity 420ms var(--shelf-ease);
+}
+.music-mark-reach {
+  transition: transform 620ms var(--shelf-ease);
+}
+html.signed .music-sign:focus-visible .music-mark-held {
+  opacity: 1;
+}
+.music-sign:focus-visible .music-mark-reach {
+  transform: scaleY(1.1);
+}
+@media (hover: hover) {
+  html.signed .music-sign:hover .music-mark-held {
+    opacity: 1;
+  }
+  .music-sign:hover .music-mark-reach {
+    transform: scaleY(1.1);
+  }
+}
 
 .music-tools, .music-order { display: contents; }
 
@@ -561,6 +671,8 @@ html.ready .music-mark {
    scrolling would otherwise cut; the margin gives them back, so the last
    word still ends on the shelf's edge. */
 .music-group-others {
+  position: relative;
+  z-index: 1;                            /* over the heading's rule, for the chosen word's mark on it */
   display: flex;
   flex: 1 1 0;
   align-self: stretch;
@@ -628,30 +740,30 @@ html.ready .music-mark {
   }
 }
 
-/* A genre in sub-genres (Dan, 25 November 2026: "can we break these further
-   into sub genres too"). The genre keeps its kraft tab; each sub-genre
-   stands under a smaller heading on a hairline, a little closer to its
-   neighbours than one genre is to the next. */
-.music-group.is-part {
-  margin-top: -8px;
+/* A genre's sub-genres are the words on its heading (Dan, 25 November 2026:
+   "can we break these further into sub genres too"; 26 November, of naming
+   them there and again over their records: "can that not all just be the
+   same interface"). Pressing one cuts the genre to it. The chosen word
+   takes the bar's rust, and the heading's rule turns rust beneath it for as
+   long as the word is, as a song's line is drawn heavier for its hours. */
+.music-index button[aria-pressed="true"] {
+  color: var(--rust-deep);
 }
-.music-group-head.is-part {
-  align-items: baseline;
-  gap: 4px 12px;
+.music-index button[aria-pressed]::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: auto 0 -9px;
+  height: 3px;
+  border-radius: 1.5px;
+  background: var(--rust-deep);
+  opacity: 0;
+  transform: scaleX(0.4);
+  transition: opacity 180ms ease, transform 320ms var(--shelf-ease);
 }
-.music-group-head.is-part::after {
-  height: 1px;
-  border-radius: 0;
-  background: var(--paper-edge);
-}
-.music-group-head.is-part .music-group-label {
-  padding: 0 0 7px;
-  border-radius: 0;
-  background: none;
-  font: 800 15.5px/1.2 var(--sans);
-}
-.music-group-head.is-part .music-group-figures {
-  padding-bottom: 7px;
+.music-index button[aria-pressed="true"]::before {
+  opacity: 1;
+  transform: none;
 }
 
 .music-none { margin: 4px 0 0; color: var(--ink-soft); font: 600 15px/1.4 var(--sans); }
@@ -949,86 +1061,122 @@ html {
    the sheet as it was fades out over it. */
 .music-sheet {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) 0px;
   grid-template-areas:
     "release close"
     "list list"
     "more more";
-  column-gap: 10px;
+  transition: grid-template-columns 240ms var(--shelf-ease);
+}
+/* A sheet kept open by a press makes room at the heading's end for its
+   close button: the figures there draw aside for it, and until then stand
+   on the songs' right edge. */
+.music-tracks[data-pinned="true"] .music-sheet {
+  grid-template-columns: minmax(0, 1fr) 26px;
 }
 
-/* Header: one line on a laptop. Its name, then who · when · how long · how
-   often; the name and the facts wrap on a phone. */
+/* Its heading runs the sheet's whole width (Dan, 26 November 2026, of the
+   name with every fact set close after it: "it's kind of bunked up", "not
+   so dominant to the left"). What the record is and who made it stand at
+   one end. How often and how long it has been played stand at the other,
+   over the songs' own times.
+
+   It is one line, and the same shape for every record: nothing in it wraps.
+   A name too long for its room fades at the edge it runs past and rolls
+   under the pointer, as a song's does (`.music-roll`), who made it giving
+   way before the record's name, and the figures never. A narrow sheet's
+   heading is two lines for every record: the name, then who and the
+   figures, still end to end. */
 .music-release {
   grid-area: release;
   align-self: baseline;
   display: flex;
-  flex-wrap: wrap;
   align-items: baseline;
   gap: 2px 14px;
   min-width: 0;
 }
 
 .music-release h2 {
+  flex: 0 1 auto;
   margin: 0;
   font: 800 var(--sheet-title)/1.15 var(--sans);
   letter-spacing: -0.015em;
-  overflow-wrap: anywhere;
-  text-wrap: balance;
 }
 
-/* A wrapped fact drops its leading separator outside the clip. */
-.music-release-info {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  column-gap: 1.05em;
-  margin: 0;
-  overflow-x: clip;
+.music-release p {
+  margin-block: 0;
+  line-height: 1.45;
+}
+
+/* Who made it, and when: in whatever room the name and the figures leave. */
+.music-release-by {
+  flex: 1 1 0;
+  min-width: 3em;
   color: var(--ink-soft);
   font-weight: 500;
   font-variant-numeric: tabular-nums;
-  line-height: 1.45;
 }
-.music-release-info > span {
-  position: relative;
-  white-space: nowrap;
-}
-.music-release-info > .music-release-by {
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
-.music-release-info > span + span::before {
-  content: "·";
-  position: absolute;
-  right: 100%;
-  margin-right: 0.38em;
-  color: var(--ink-faint);
-}
-.music-release-by {
+.music-release-by b {
   color: var(--ink);
   font-weight: 700;
 }
-.music-release-total b {
-  color: var(--ink);
-  font-weight: 800;
-}
-.music-release-plays::before {
+.music-release-year::before {
   content: "·";
-  margin: 0 0.38em 0 0.5em;
+  margin: 0 0.45em;
   color: var(--ink-faint);
 }
 
-/* Only a sheet kept open by a press can be closed; its room is always kept. */
+/* How often, then how long: what the sheet is about, at its far end, set as
+   the songs' own times are and a size above them: each number bold, its
+   unit quiet beside it, a point between the two as between who and when.
+   Both figures weigh the same. One quiet and one loud was not plain enough
+   (Dan, 26 November 2026: "it doesn't feel obvious enough to me the plays
+   and time"), and both as large as the name shouted over it ("way more
+   garish"). */
+.music-release-total {
+  display: flex;
+  flex: none;
+  align-items: baseline;
+  margin-left: auto;
+  color: var(--ink-soft);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.music-release-total span + span::before {
+  content: "·";
+  margin: 0 0.5em;
+  color: var(--ink-faint);
+}
+.music-release-total b {
+  margin-right: 0.12em;
+  color: var(--ink);
+  font-size: 1.14em;
+  font-weight: 800;
+}
+
+@container (max-width: 899px) {
+  .music-release {
+    grid-column: 1 / -1;
+    flex-wrap: wrap;
+  }
+  .music-release h2 {
+    flex-basis: calc(100% - 30px);
+    margin-right: 30px;                  /* the close button stands at its end */
+  }
+}
+
+/* Only a sheet kept open by a press can be closed. */
 .music-tracks-close {
   grid-area: close;
   align-self: start;
+  justify-self: end;
   position: relative;
   display: grid;
   place-items: center;
-  width: 32px;
-  height: 32px;
-  margin: -5px -3px 0 0;
+  width: 28px;
+  height: 28px;
+  margin: -1px -8px 0 0;                 /* its cross ends on the songs' right edge */
   padding: 0;
   border: 0;
   border-radius: 999px;
@@ -1044,10 +1192,11 @@ html {
 .music-tracks[data-pinned="true"] .music-tracks-close {
   opacity: 1;
 }
+/* A finger's room round it, 44px each way, kept inside the sheet's edge. */
 .music-tracks-close::after {
   content: "";
   position: absolute;
-  inset: -6px;
+  inset: -8px -3px -8px -13px;
 }
 .music-tracks-close svg {
   width: 12px;
@@ -1114,33 +1263,42 @@ html {
   from { transform: scaleX(0); }
 }
 
-/* A name keeps to one line. One longer than its line scrolls sideways and
-   fades at the edge it runs past (`data-more`, kept by music-room.jsx). */
-.music-track-title {
-  flex: 1 1 auto;
+/* A name keeps to one line: a song's, the record's own and who made it
+   (Dan, 26 November 2026: "can we have stuff faded and rolling / animated
+   if it doesnt fit across etc so everything is consistent"). One longer
+   than its line scrolls sideways and fades at the edge it runs past
+   (`data-more`, kept by music-room.jsx, which also rolls it under the
+   pointer). The room above and below is for the letters' tails, which the
+   scrolling would otherwise cut. */
+.music-roll {
   min-width: 0;
+  margin-block: -0.2em;
+  padding-block: 0.2em;
   overflow: auto hidden;
   overscroll-behavior-x: contain;
   scrollbar-width: none;
   white-space: nowrap;
 }
-.music-track-title::-webkit-scrollbar {
+.music-roll::-webkit-scrollbar {
   display: none;
 }
-.music-track-title[data-more],
+.music-track-title {
+  flex: 1 1 auto;
+}
+.music-roll[data-more],
 .music-group-others[data-more] {
   --fade: 30px;
   -webkit-mask-image: linear-gradient(to right, var(--from, #000), #000 var(--fade), #000 calc(100% - var(--fade)), var(--to, #000));
   mask-image: linear-gradient(to right, var(--from, #000), #000 var(--fade), #000 calc(100% - var(--fade)), var(--to, #000));
 }
-.music-track-title[data-more="end"],
-.music-track-title[data-more="both"],
+.music-roll[data-more="end"],
+.music-roll[data-more="both"],
 .music-group-others[data-more="end"],
 .music-group-others[data-more="both"] {
   --to: transparent;
 }
-.music-track-title[data-more="start"],
-.music-track-title[data-more="both"],
+.music-roll[data-more="start"],
+.music-roll[data-more="both"],
 .music-group-others[data-more="start"],
 .music-group-others[data-more="both"] {
   --from: transparent;

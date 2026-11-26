@@ -320,6 +320,25 @@ const checkPublicLanding = async () => {
     check(await waitFor(`document.querySelectorAll("#record-tracks .music-track-list ol").length === 1
       && document.querySelectorAll("#record-tracks .music-track-list li").length === ${shelf[0].tracks.length}`),
       "narrowing the open album reflows all its songs into one column");
+    // Dan, 26 November 2026: a genre's sub-genres are the words on its
+    // heading and nowhere else, and each cuts the genre to its records.
+    await setDesktop();
+    await evaluate(`document.querySelector('.music-order button[data-order="kind"]').click()`);
+    const genre = `document.querySelector(".music-group")`;
+    check(await waitFor(`(() => {
+      const word = ${genre}?.querySelector(".music-index button[aria-pressed]");
+      if (!word || document.querySelectorAll(".music-tile").length !== ${RECORDS} || document.querySelector(".music-group h3")) return false;
+      word.click();
+      return true;
+    })()`) && await waitFor(`(() => {
+      const count = ${genre}.querySelectorAll(".music-tile").length;
+      return Boolean(${genre}.querySelector('.music-index button[aria-pressed="true"]')) && count > 0 && count < ${RECORDS}
+        && document.querySelectorAll(".music-tile").length < ${RECORDS}
+        && ${genre}.querySelector(".music-group-full").textContent.startsWith(count + " record");
+    })()`), "pressing a sub-genre on a genre's heading cuts the genre to its records");
+    await evaluate(`${genre}.querySelector('.music-index button[aria-pressed="true"]').click()`);
+    check(await waitFor(`!document.querySelector('.music-index button[aria-pressed="true"]') && document.querySelectorAll(".music-tile").length === ${RECORDS}`),
+      "pressing it again brings the whole genre back");
     return;
   }
   // Dan, 16 November 2026: akibwa.com is one page, the music shelf.
@@ -400,7 +419,7 @@ const checkPublicLanding = async () => {
       face.dispatchEvent(new PointerEvent("pointerout", { bubbles: true, pointerType: "mouse" }));
     }, 500));
   })()`);
-  check(/^GracelandPaul Simon1986\d[\d,.]* hours[\d,]+ plays$/.test(pointed.says) && pointed.songs > 5, `pointing at a sleeve shows its name, artist, year, hours, plays and songs [${pointed.says}, ${pointed.songs} songs]`);
+  check(/^GracelandPaul Simon1986[\d,]+ plays\d[\d,.]* hours$/.test(pointed.says) && pointed.songs > 5, `pointing at a sleeve shows its name, artist, year, plays, hours and songs [${pointed.says}, ${pointed.songs} songs]`);
   check(pointed.pushes && pointed.under, `the sheet opens under its sleeve's row and the rows beneath make room [${JSON.stringify(pointed)}]`);
   check(await waitFor(`!document.querySelector(".music-page #record-glance")`, 2000), "leaving the sleeve puts its sheet away");
   for (const [order, heading] of [["kind", "ambient"], ["released", "2020s"]]) {

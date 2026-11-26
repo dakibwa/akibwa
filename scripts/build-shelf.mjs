@@ -3,6 +3,7 @@
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { compileCatalogue } from "../lib/paper-home.mjs";
+import { signatureLight } from "../lib/signature-light.mjs";
 import { sleeveVersionLookup } from "../lib/sleeve-assets.mjs";
 
 const output = ".shelf-build";
@@ -14,3 +15,5 @@ const read = file => JSON.parse(readFileSync(join("public", file), "utf8"));
 const catalogue = compileCatalogue(read("music-ranking.json"), read("music-meta.json"),
   read("music-years.json"), read("music-kinds.json"), sleeveVersionLookup(dev ? undefined : art));
 writeFileSync(join(output, "catalogue.json"), JSON.stringify(catalogue));
+// The halo's outline and the five rays of the signature, for the page to move.
+writeFileSync(join(output, "signature.json"), JSON.stringify(signatureLight(readFileSync(join("public", "akibwa-mark.svg"), "utf8"))));

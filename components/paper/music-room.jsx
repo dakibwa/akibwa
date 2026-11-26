@@ -4,6 +4,7 @@ import { Fragment, PureComponent, createRef, startTransition, useCallback, useDe
 import { ShelfTiles, firstCoverHint, initialRow, plays, recordLabel } from "./music-tiles.mjs";
 import { flushSync } from "react-dom";
 import catalogue from "@/.shelf-build/catalogue.json";
+import signature from "@/.shelf-build/signature.json";
 import { openCatalogue } from "./music-catalogue.mjs";
 import { relatedLookup, search } from "./music-search.mjs";
 import { GAP, ORDERS, arrange, listened, rowsFor, songLabel } from "./music-shelf.mjs";
@@ -110,11 +111,15 @@ function markRelatedRow(row, matches) {
 
 class GlidingShelf extends PureComponent {
   list = createRef();
+  // Sleeves gliding to new places, and the headings moving with them.
   animations = new Set();
+  carried = new Set();
 
   stop = () => {
     for (const animation of this.animations) animation.cancel();
     this.animations.clear();
+    for (const animation of this.carried) animation.cancel();
+    this.carried.clear();
   };
 
   componentDidMount() {
@@ -143,12 +148,27 @@ class GlidingShelf extends PureComponent {
     const lists = lines.map(line => line.querySelector(".music-group-others"));
     const over = () => lines.some((line, at) => line.firstElementChild.offsetWidth > line.clientWidth
       || (lists[at] && lists[at].scrollWidth > lists[at].clientWidth + 1));
+    // Measuring lets the words run free for a moment, which would send
+    // scrolled ones back to their start: they are put back where they were.
+    const scrolled = lists.map(others => others?.scrollLeft ?? 0);
     list.removeAttribute("data-fit");
     if (over()) {
       list.setAttribute("data-fit", "brief");
       if (over()) list.setAttribute("data-fit", "scroll");
     }
-    for (const others of lists) if (others) markMore(others);
+    lists.forEach((others, at) => {
+      if (!others) return;
+      if (scrolled[at]) others.scrollLeft = scrolled[at];
+      // A chosen sub-genre stays in sight, clear of the fade at either edge.
+      const chosen = others.querySelector('[aria-pressed="true"]');
+      if (chosen && others.scrollWidth > others.clientWidth + 1) {
+        const word = chosen.getBoundingClientRect();
+        const room = others.getBoundingClientRect();
+        if (word.left < room.left + 28) others.scrollLeft -= room.left + 28 - word.left;
+        else if (word.right > room.right - 28) others.scrollLeft += word.right - room.right + 28;
+      }
+      markMore(others);
+    });
   };
   lineScrolled = (event) => {
     if (event.target.classList?.contains("music-group-others")) markMore(event.target);
@@ -203,7 +223,7 @@ class GlidingShelf extends PureComponent {
       if (this.turning !== turning) return;
       this.turning = null;
       if (!this.motion.matches) {
-        for (const heading of list.querySelectorAll(".music-group-top, .music-group-head.is-part")) {
+        for (const heading of list.querySelectorAll(".music-group-top")) {
           if (inView(heading)) heading.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 460, easing: "ease-out" });
         }
         const arriving = [...visibleTiles(list).values()];
@@ -299,7 +319,7 @@ class GlidingShelf extends PureComponent {
     if (this.opened && previous.tracks !== tracks && previous.arrangement === arrangement) {
       const list = this.list.current;
       const places = new Map();
-      for (const element of list.querySelectorAll(".music-row[data-near], .music-group-top, .music-group-head.is-part")) {
+      for (const element of list.querySelectorAll(".music-row[data-near], .music-group-top")) {
         places.set(element, element.getBoundingClientRect().top);
       }
       const panel = list.querySelector(".music-tracks");
@@ -314,7 +334,14 @@ class GlidingShelf extends PureComponent {
       };
     }
     // A new order does not glide: it turns the page (turn, below).
+    this.headings = null;
     if (!this.opened || !previous.measured || previous.arrangement === arrangement || this.motion.matches || this.props.veiled) return null;
+    // Where the headings on the screen stand, to carry them with their sleeves.
+    this.headings = new Map();
+    for (const heading of this.list.current.querySelectorAll(".music-group-top")) {
+      const box = heading.getBoundingClientRect();
+      if (box.bottom > 0 && box.top < window.innerHeight) this.headings.set(heading, box.top);
+    }
     return visibleTiles(this.list.current, this.animations);
   }
 
@@ -334,6 +361,21 @@ class GlidingShelf extends PureComponent {
     // All destination reads precede the first write. A cover coming from
     // another screen arrives locally instead of flying across the viewport.
     const after = visibleTiles(this.list.current);
+    // A heading moves with the sleeves under it, as when a genre above it is
+    // cut to a sub-genre or made whole again; one from another screen fades in.
+    const headings = [];
+    for (const heading of this.list.current.querySelectorAll(".music-group-top")) {
+      const box = heading.getBoundingClientRect();
+      if (box.bottom <= 0 || box.top >= window.innerHeight) continue;
+      const stood = this.headings?.get(heading);
+      if (stood === undefined) headings.push([heading, [{ opacity: 0 }, { opacity: 1 }], { duration: 240, easing: "ease-out" }]);
+      else if (Math.abs(stood - box.top) >= 1) headings.push([heading, [{ transform: `translateY(${stood - box.top}px)` }, { transform: "none" }], { duration: 300, easing: "cubic-bezier(0.16, 1, 0.3, 1)" }]);
+    }
+    for (const [heading, frames, options] of headings) {
+      const animation = heading.animate(frames, options);
+      this.carried.add(animation);
+      animation.onfinish = () => this.carried.delete(animation);
+    }
     for (const [key, { tile, box }] of after) {
       const from = before.get(key);
       let transform = "translateY(6px) scale(0.985)";
@@ -383,12 +425,11 @@ class GlidingShelf extends PureComponent {
   }
 
   render() {
-    const { order, arrangement, reference, measured, onOpen, onPoint, shownTile, above, tracks, tiles } = this.props;
+    const { order, arrangement, reference, measured, onOpen, onPoint, onCut, shownTile, above, tracks, tiles } = this.props;
     const firstRow = !measured && arrangement[0]?.rows[0];
     const first = firstRow?.entries?.[0]?.item;
-    // The groups a heading can go to: every genre, decade or year, each by
-    // the first of its sections.
-    const stops = arrangement.map((group, index) => [group, index]).filter(([group]) => group.label && (!group.within || group.head));
+    // The groups a heading can go to: every decade or year.
+    const stops = arrangement.map((group, index) => [group, index]).filter(([group]) => group.label);
     let drawn = 0;
     return (
       <div
@@ -442,49 +483,56 @@ class GlidingShelf extends PureComponent {
       >
         {first?.art && <link rel="preload" {...firstCoverHint(first, firstRow.side)} />}
         {arrangement.map((group, groupIndex) => {
-          // A group's heading: its genre's when it is the first of a
-          // genre's sub-genres, its own otherwise, and none for a later
-          // sub-genre, which stands under its smaller heading alone.
-          const top = group.head ?? (group.within || !group.label ? null : group);
+          // The words on a heading. A genre's are its sub-genres, and each
+          // cuts the genre to its own records; a decade's or a year's are
+          // the other decades or years, to go to.
+          const cuts = group.parts ?? null;
+          const others = cuts || !group.label ? [] : stops.filter(([other]) => other !== group);
           // The first heading's words are the page's one landmark for going
           // about the shelf; under the other headings the same words are a
           // plain group, so a screen reader's list of landmarks stays short.
-          const Others = stops[0]?.[0] === group ? "nav" : "div";
+          const Others = !cuts && stops[0]?.[0] === group ? "nav" : "div";
           return (
-            <section key={group.key} className={`music-group${group.within && !group.head ? " is-part" : ""}`} id={`shelf-group-${groupIndex}`} tabIndex={-1} aria-label={group.label || undefined}>
-              {/* One line does the heading's work and the jumps' (Dan, 25
-                  November 2026: "is the genre bar placed somewhere better
-                  that fit's with the more minimalist theme?"): the group's
-                  tab and what it holds, then the other groups as quiet
-                  words to go to. With more of them than there is room
-                  for, they scroll sideways and the tab stays where it is. */}
-              {top ? (
+            <section key={group.key} className="music-group" id={`shelf-group-${groupIndex}`} tabIndex={-1} aria-label={group.label || undefined}>
+              {/* One line does all of a heading's work (Dan, 25 November
+                  2026: "is the genre bar placed somewhere better that fit's
+                  with the more minimalist theme?"): the group's tab and what
+                  it holds, then its words. With more of them than there is
+                  room for, they scroll sideways and the tab stays where it
+                  is. A genre's sub-genres are named here and nowhere else
+                  (Dan, 26 November 2026: "having like drones and loops in
+                  the top right as well as the bottom left feels weird").
+                  Pressing one shows that sub-genre alone under the heading;
+                  pressing it again brings the whole genre back. */}
+              {group.label ? (
                 <div className="music-group-top">
                   <div className="music-group-line">
                     <h2 className="music-group-head">
-                      <span className="music-group-label">{top.label}</span>
+                      <span className="music-group-label">{group.label}</span>
                       <span className="music-group-figures">
-                        <span className="music-group-full">{top.figures}</span>
-                        <span className="music-group-brief">{top.brief}</span>
+                        <span className="music-group-full">{group.figures}</span>
+                        <span className="music-group-brief">{group.brief}</span>
                       </span>
                     </h2>
-                    {stops.length > 1 ? (
-                      <Others className="music-group-others" role={Others === "div" ? "group" : undefined} aria-label={`Go to another ${order === "kind" ? "genre" : order === "released" ? "decade" : "year"}`}>
+                    {cuts?.length ? (
+                      <div className="music-group-others" role="group" aria-label={`Show one kind of ${group.label}`}>
                         <ul className="music-index">
-                          {stops.map(([other, index]) => (other === group ? null : (
-                            <li key={other.key}><button type="button" onClick={() => this.jump(document.getElementById(`shelf-group-${index}`))}>{other.head?.label ?? other.label}</button></li>
-                          )))}
+                          {cuts.map(part => (
+                            <li key={part}><button type="button" aria-pressed={group.cut === part} onClick={() => onCut(group.label, part)}>{part}</button></li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : others.length ? (
+                      <Others className="music-group-others" role={Others === "div" ? "group" : undefined} aria-label={`Go to another ${order === "released" ? "decade" : "year"}`}>
+                        <ul className="music-index">
+                          {others.map(([other, index]) => (
+                            <li key={other.key}><button type="button" onClick={() => this.jump(document.getElementById(`shelf-group-${index}`))}>{other.label}</button></li>
+                          ))}
                         </ul>
                       </Others>
                     ) : null}
                   </div>
                 </div>
-              ) : null}
-              {group.within && group.label ? (
-                <h3 className="music-group-head is-part">
-                  <span className="music-group-label">{group.label}</span>
-                  <span className="music-group-figures">{group.figures}</span>
-                </h3>
               ) : null}
               <div className="music-shelf">
                 {group.rows.map((row, at) => {
@@ -544,7 +592,11 @@ function prepareSheen(face, key) {
  * A song's name keeps to one line (Dan, 25 November 2026, of names that took
  * three: "allow it to scroll for these long ones"). A name longer than its
  * line fades at the edge it runs past, and the line scrolls sideways: under a
- * finger or a trackpad by itself, and by these under a mouse or a tap.
+ * finger or a trackpad by itself, and by these under a mouse or a tap. A
+ * record's own name and who made it do the same (`.music-roll`; Dan, 26
+ * November 2026: "can we have stuff faded and rolling / animated if it
+ * doesnt fit across etc so everything is consistent"), so a sheet's heading
+ * is the same shape whatever it has to say.
  */
 // Which way a name has more to show: its end, its start or both.
 function markMore(name) {
@@ -587,7 +639,10 @@ function glide(name, toEnd, wait = 0) {
   });
 }
 
-const nameIn = (event) => event.target.closest?.("li")?.querySelector(".music-track-title") ?? null;
+// The line a pointer is on, a song's or one of the heading's, and the name
+// on it that may be longer than its room.
+const lineIn = (event) => event.target.closest?.("li, .music-release .music-roll") ?? null;
+const nameOn = (line) => (line?.matches(".music-roll") ? line : line?.querySelector(".music-roll")) ?? null;
 
 // A record's songs, most listened first, each under the name it goes by.
 const songs = new WeakMap();
@@ -614,7 +669,29 @@ function lineOf(track) {
   return { title, mark: note?.replace(/^[-–—]\s*/, "").replace(/^\((.*)\)$/, "$1"), amount, unit };
 }
 
-// Leave each name a little room beyond the gap before its listening time.
+// How a record's songs fold: one column, as on a phone, shows ten songs
+// above twelve; wider, the sheet keeps six rows, or a seventh rather than a
+// button for a few songs. `rows` counts the button's as one.
+function foldFor(count, columns) {
+  const full = columns === 1 ? 10 : columns * 6;
+  const folds = count > full + (columns === 1 ? 2 : columns);
+  return { full, folds, rows: folds ? full / columns + 1 : Math.ceil(count / columns) };
+}
+
+/*
+ * How many columns a record's songs stand in (Dan, 26 November 2026: "can it
+ * not dynamically fill the bar so it utilises space the best"). The songs
+ * always run the sheet's full width; the question is how many across.
+ * - Every name stands in full where it can. One name in eight may run past
+ *   its line and fade, never more: on a phone that keeps most records to one
+ *   column, where two would cut a third of their names short.
+ * - Of the ways that leaves, the one with the fewest rows; then, for a folded
+ *   record, the one that shows the most songs; then the widest columns.
+ * - A record on one row has every name in full.
+ * A name too long for the whole sheet fades wherever it stands, so it has no
+ * say. A column is never narrower than LINE_COLUMN, and a name counts as
+ * full only with LINE_SLACK to spare.
+ */
 const LINE_COLUMN = 132;
 const LINE_SLACK = 8;
 const sheetLayouts = new WeakMap();
@@ -625,23 +702,21 @@ function columnsFor(album, width, frame) {
   if (cached?.width === width) return cached.columns;
 
   const { room, gap, widths } = songWidths(album, frame);
-  const limit = Math.min(count, Math.floor((room + gap) / (LINE_COLUMN + gap)));
-  let best = 1;
-  let lowestCost = Infinity;
-  for (let columns = 1; columns <= limit; columns++) {
+  const most = Math.min(count, Math.floor((room + gap) / (LINE_COLUMN + gap)));
+  const lines = widths.filter(line => line + LINE_SLACK <= room);
+  const spare = Math.max(1, Math.floor(count / 8));
+  let best = { columns: 1, rows: Infinity, shown: 0 };
+  for (let columns = 1; columns <= most; columns++) {
     const columnWidth = (room - (columns - 1) * gap) / columns;
-    const tight = widths.filter(line => line + LINE_SLACK > columnWidth).length;
-    // A one-row record should show every title comfortably.
-    if (columns === count && tight) break;
-    // Saving a row is worth one tight title. On a tie keep the wider columns.
-    const cost = Math.ceil(count / columns) + tight;
-    if (cost < lowestCost) {
-      lowestCost = cost;
-      best = columns;
-    }
+    const cut = lines.filter(line => line + LINE_SLACK > columnWidth).length;
+    // Narrower columns only cut more names short.
+    if (columns > 1 && (cut > spare || (columns === count && cut))) break;
+    const { full, folds, rows } = foldFor(count, columns);
+    const shown = folds ? full : count;
+    if (rows < best.rows || (rows === best.rows && shown > best.shown)) best = { columns, rows, shown };
   }
-  sheetLayouts.set(album, { width, columns: best });
-  return best;
+  sheetLayouts.set(album, { width, columns: best.columns });
+  return best.columns;
 }
 
 // The room a sheet's songs have, the gap between its columns and the width
@@ -659,7 +734,7 @@ function songWidths(album, frame) {
   const column = make("ol", "", ...songsOf(album).map((track) => {
     const { title, mark, amount, unit } = lineOf(track);
     return make("li", "",
-      make("span", "music-track-title", title, ...(mark ? [" ", make("span", "music-track-sub", mark)] : [])),
+      make("span", "music-track-title music-roll", title, ...(mark ? [" ", make("span", "music-track-sub", mark)] : [])),
       make("span", "music-track-hours", make("strong", "", amount), " ", make("small", "", unit)));
   }));
   const list = make("div", "music-track-list", column);
@@ -676,7 +751,7 @@ function TrackLabel({ track }) {
   const { title, mark, amount, unit } = lineOf(track);
   return (
     <>
-      <span className="music-track-title" title={track.title} tabIndex={-1}>
+      <span className="music-track-title music-roll" title={track.title} tabIndex={-1}>
         {title}{mark && <> <span className="music-track-sub">{mark}</span></>}
       </span>
       <span className="music-track-hours"><strong>{amount}</strong> <small>{unit}</small><span className="visually-hidden"> listened, {plays(track.plays)}</span></span>
@@ -697,13 +772,12 @@ function TrackSheet({ album, columns, pinned, onClose }) {
   const tracks = songsOf(album);
   const [expanded, setExpanded] = useState(false);
   const count = tracks.length;
+  const [hours, hoursUnit] = listened(album.minutes, "long").split(" ");
+  const [played, playedUnit] = plays(album.plays).split(" ");
   const mostMinutes = tracks[0]?.minutes || 1;
   // A single's matching title and time are already in the header.
   const duplicate = count === 1 && tracks[0].label === recordLabel(album) && tracks[0].minutes === album.minutes;
-  // One column, as on a phone, folds above twelve songs to ten. Wider, the
-  // sheet keeps six rows, or a seventh rather than a button for a few songs.
-  const full = columns === 1 ? 10 : columns * 6;
-  const folds = count > full + (columns === 1 ? 2 : columns);
+  const { full, folds } = foldFor(count, columns);
   const limit = folds && !expanded ? full : count;
   const stacks = [];
   // Share the visible songs across the remaining columns, longest columns first.
@@ -715,15 +789,15 @@ function TrackSheet({ album, columns, pinned, onClose }) {
 
   // Find the names longer than their lines, again whenever the lines change
   // width, and keep each one's fade to the edge it runs past as it scrolls.
-  const list = useRef(null);
+  const sheet = useRef(null);
   const pressedBy = useRef("");
   useLayoutEffect(() => {
-    const element = list.current;
+    const element = sheet.current;
     if (!element) return undefined;
-    const names = () => element.querySelectorAll(".music-track-title");
+    const names = () => element.querySelectorAll(".music-roll");
     const read = () => names().forEach(markMore);
     const scrolled = (event) => {
-      if (event.target.classList?.contains("music-track-title")) markMore(event.target);
+      if (event.target.classList?.contains("music-roll")) markMore(event.target);
     };
     read();
     element.addEventListener("scroll", scrolled, { capture: true, passive: true });
@@ -740,14 +814,53 @@ function TrackSheet({ album, columns, pinned, onClose }) {
   }, [limit, columns]);
 
   return (
-    <div className="music-sheet">
+    <div
+      className="music-sheet"
+      ref={sheet}
+      // A finger, a wheel or a trackpad takes a name over from its glide.
+      onPointerDown={(event) => {
+        pressedBy.current = event.pointerType;
+        const name = nameOn(lineIn(event));
+        if (name) stopGlide(name);
+      }}
+      onWheel={(event) => {
+        const name = nameOn(lineIn(event));
+        if (name) stopGlide(name);
+      }}
+      // A mouse cannot swipe: resting on a line carries its name along, and
+      // leaving brings it back.
+      onPointerOver={(event) => {
+        const line = event.pointerType === "mouse" ? lineIn(event) : null;
+        if (!line || line.contains(event.relatedTarget)) return;
+        const name = nameOn(line);
+        if (name?.dataset.more) glide(name, true, 260);
+      }}
+      onPointerOut={(event) => {
+        const line = event.pointerType === "mouse" ? lineIn(event) : null;
+        if (!line || line.contains(event.relatedTarget)) return;
+        const name = nameOn(line);
+        if (name) glide(name, false);
+      }}
+      // A tap carries it to its end, and another back.
+      onClick={(event) => {
+        const name = pressedBy.current === "mouse" ? null : nameOn(lineIn(event));
+        if (name?.dataset.more) glide(name, name.scrollLeft < (name.scrollWidth - name.clientWidth) / 2);
+      }}
+    >
+      {/* The heading runs the sheet's whole width (Dan, 26 November 2026, of
+          every fact set close after the name: "it's kind of bunked up", "not
+          so dominant to the left"): what the record is and who made it at
+          one end; how often and how long it has been played at the other,
+          over the songs' own times and set as they are. */}
       <header className="music-release">
-        <h2 id="music-tracks-title">{recordLabel(album)}</h2>
-        <p className="music-release-info">
-          <span className="music-release-by">{album.artist}</span>
-          {album.year ? <span>{album.year}</span> : null}
-          {/* How long and how often keep together when the line wraps. */}
-          <span className="music-release-total"><b>{listened(album.minutes, "long")}</b><span className="music-release-plays">{plays(album.plays)}</span></span>
+        <h2 id="music-tracks-title" className="music-roll">{recordLabel(album)}</h2>
+        <p className="music-release-by music-roll">
+          <b>{album.artist}</b>
+          {album.year ? <span className="music-release-year">{album.year}</span> : null}
+        </p>
+        <p className="music-release-total">
+          <span><b>{played}</b> {playedUnit}</span>
+          <span><b>{hours}</b> {hoursUnit}</span>
         </p>
       </header>
       <button type="button" className="music-tracks-close" onClick={() => onClose()} aria-label="Close the track list" tabIndex={pinned ? undefined : -1}>
@@ -756,39 +869,10 @@ function TrackSheet({ album, columns, pinned, onClose }) {
       {count > 0 && !duplicate && (
         <div
           id="record-songs"
-          ref={list}
           className="music-track-list"
           role="group"
           aria-label="Songs, most listened first"
           style={{ "--columns": stacks.length }}
-          // A finger, a wheel or a trackpad takes a name over from its glide.
-          onPointerDown={(event) => {
-            pressedBy.current = event.pointerType;
-            const name = nameIn(event);
-            if (name) stopGlide(name);
-          }}
-          onWheel={(event) => {
-            const name = nameIn(event);
-            if (name) stopGlide(name);
-          }}
-          // A mouse cannot swipe: resting on a song carries its name along,
-          // and leaving brings it back.
-          onPointerOver={(event) => {
-            const row = event.pointerType === "mouse" ? event.target.closest("li") : null;
-            if (!row || row.contains(event.relatedTarget)) return;
-            const name = row.querySelector(".music-track-title");
-            if (name.dataset.more) glide(name, true, 260);
-          }}
-          onPointerOut={(event) => {
-            const row = event.pointerType === "mouse" ? event.target.closest("li") : null;
-            if (!row || row.contains(event.relatedTarget)) return;
-            glide(row.querySelector(".music-track-title"), false);
-          }}
-          // A tap carries it to its end, and another back.
-          onClick={(event) => {
-            const name = pressedBy.current === "mouse" ? null : nameIn(event);
-            if (name?.dataset.more) glide(name, name.scrollLeft < (name.scrollWidth - name.clientWidth) / 2);
-          }}
         >
           {stacks.map((stack) => (
             <ol key={stack.start} start={stack.start}>
@@ -864,6 +948,83 @@ function AlbumTracks({ album, tile, pinned, above, columns, onClose }) {
   );
 }
 
+/*
+ * The signature's light (Dan, 26 November 2026: "match the beauty of the
+ * animation on ohlifestudios"): what moves on the studio's cover of the same
+ * drawing, laid over the still picture. A warm light fills the halo's gold,
+ * a radiance spills past its rim and fades before his shoulders, and each of
+ * the five rays lengthens along its own line from the end nearer the halo.
+ * The shapes are read from the drawing when the shelf is built
+ * (lib/signature-light.mjs); app/globals.css says how they move, and holds
+ * them still until the picture has arrived.
+ */
+const { size: SIGNATURE, halo: HALO, rays: RAYS } = signature;
+const SPILL = Math.round(HALO.r * 1.36 * 100) / 100;      // how far the radiance reaches
+const share = (part, whole) => `${Math.round((part / whole) * 10000) / 100}%`;
+// The picture as shown while the page draws its rays: its panel, and its
+// halo inside a round edge that stops short of them.
+const SIGNATURE_SHOWN = {
+  "--halo-x": share(HALO.x, SIGNATURE[0]),
+  "--halo-y": share(HALO.y, SIGNATURE[1]),
+  "--rays-x": share(signature.from, SIGNATURE[0]),
+  "--rays-y": share(signature.from, SIGNATURE[1]),
+  "--panel": share(SIGNATURE[1] - signature.panel, SIGNATURE[1])
+};
+const HALO_LIGHT = "#fff4d6";   // the light's near-white heart
+const HALO_GOLD = "#ffd98c";    // and its gold
+const HALO_GLOW = "#ffc464";    // the radiance past the rim: a deeper gold, which shows on paper
+
+function SignatureLight() {
+  const fade = [Math.floor(HALO.x - SPILL), Math.floor(HALO.y - SPILL), Math.ceil(2 * SPILL) + 1];
+  const radiance = <circle cx={HALO.x} cy={HALO.y} r={SPILL} fill="url(#mark-radiance)" />;
+  return (
+    <svg className="music-mark-light" viewBox={`0 0 ${SIGNATURE[0]} ${SIGNATURE[1]}`} aria-hidden="true" focusable="false">
+      <defs>
+        <path id="mark-halo" d={HALO.d} />
+        <radialGradient id="mark-shine" gradientUnits="userSpaceOnUse" cx={HALO.x} cy={HALO.y} r={HALO.r}>
+          <stop offset="0.5" stopColor={HALO_LIGHT} stopOpacity="0.95" />
+          <stop offset="0.82" stopColor={HALO_GOLD} stopOpacity="0.6" />
+          <stop offset="1" stopColor={HALO_GOLD} stopOpacity="0.2" />
+        </radialGradient>
+        <radialGradient id="mark-radiance" gradientUnits="userSpaceOnUse" cx={HALO.x} cy={HALO.y} r={SPILL}>
+          <stop offset="0.7" stopColor={HALO_GLOW} stopOpacity="0" />
+          <stop offset="0.755" stopColor={HALO_GLOW} stopOpacity="0.6" />
+          <stop offset="0.87" stopColor={HALO_GLOW} stopOpacity="0.28" />
+          <stop offset="1" stopColor={HALO_GLOW} stopOpacity="0" />
+        </radialGradient>
+        <linearGradient id="mark-above" gradientUnits="userSpaceOnUse" x1="0" y1={Math.round(HALO.y - HALO.r * 0.35)} x2="0" y2={Math.round(HALO.y + HALO.r * 0.05)}>
+          <stop offset="0" stopColor="#fff" />
+          <stop offset="1" stopColor="#000" />
+        </linearGradient>
+        <mask id="mark-shoulders" maskUnits="userSpaceOnUse" x={fade[0]} y={fade[1]} width={fade[2]} height={fade[2]}>
+          <rect x={fade[0]} y={fade[1]} width={fade[2]} height={fade[2]} fill="url(#mark-above)" />
+        </mask>
+      </defs>
+      {/* Each ray stands on its own line out from the halo's middle, so it
+          lengthens along it: turned to stand upright, lengthened, and turned
+          back. `reach` is the pointer's doing, `ray` the breath's. */}
+      <g className="music-mark-rays">
+        {RAYS.map((ray) => (
+          <g key={ray.turn} transform={`translate(${ray.x} ${ray.y}) rotate(${ray.turn})`}>
+            <g className="music-mark-reach">
+              <g className="music-mark-ray">
+                <path transform={`rotate(${-ray.turn}) translate(${-ray.x} ${-ray.y})`} d={ray.d} />
+              </g>
+            </g>
+          </g>
+        ))}
+      </g>
+      <use className="music-mark-shine" href="#mark-halo" fill="url(#mark-shine)" />
+      <g mask="url(#mark-shoulders)"><g className="music-mark-radiance">{radiance}</g></g>
+      {/* The same light again, steady, for as long as the signature is pointed at. */}
+      <g className="music-mark-held">
+        <use href="#mark-halo" fill="url(#mark-shine)" opacity="0.35" />
+        <g mask="url(#mark-shoulders)" opacity="0.85">{radiance}</g>
+      </g>
+    </svg>
+  );
+}
+
 export function MusicRoom({ active }) {
   const [index] = useState(() => openCatalogue(catalogue));
   const { entries: records, kinds, years } = index;
@@ -874,6 +1035,8 @@ export function MusicRoom({ active }) {
   const [order, setOrder] = useState("hours");
   // The two orders by date turn round when pressed again.
   const [reversed, setReversed] = useState({ released: false, year: false });
+  // The sub-genre each genre has been cut to, by genre: none, to begin with.
+  const [cuts, setCuts] = useState(null);
   const [query, setQuery] = useState("");
   const filter = useDeferredValue(query.trim());
   // On a phone the search waits behind its mark and slides out over the
@@ -958,10 +1121,10 @@ export function MusicRoom({ active }) {
     // songs and the fold's button.
     const count = record?.tracks.length ?? 0;
     const across = columnsFor(record, widthNow.current, map.current);
-    const full = across === 1 ? 10 : across * 6;
-    const folds = count > full + (across === 1 ? 2 : across);
+    const { full, folds } = foldFor(count, across);
     const rows = count < 2 ? 0 : Math.ceil((folds ? full : count) / across);
-    const needs = 62 + (rows ? 8 + rows * 33 : 0) + (folds ? 44 : 0) + GAP + 12;
+    // A narrow sheet's heading takes two lines.
+    const needs = (widthNow.current < 900 ? 86 : 62) + (rows ? 8 + rows * 33 : 0) + (folds ? 44 : 0) + GAP + 12;
     const box = face.getBoundingClientRect();
     const beneath = innerHeight - box.bottom >= needs;
     const over = box.top - (bar.current?.getBoundingClientRect().bottom ?? 0) >= needs;
@@ -1004,6 +1167,8 @@ export function MusicRoom({ active }) {
     hoverTimer.current = setTimeout(show, !row ? 110 : row === face.parentElement.parentElement ? 50 : 120);
   }, [tiles, byKey]);
   const [width, measured] = useSettledWidth(map);
+  // Putting any open sheet away, as it now stands, for a handler made once.
+  const settle = useRef(null);
   const clearSelection = () => {
     opener.current = null;
     resting.current = true;
@@ -1013,6 +1178,7 @@ export function MusicRoom({ active }) {
     setOpen(null);
     setPointed(null);
   };
+  settle.current = clearSelection;
   // Choosing an order ends a search; while searching, the shelf is one
   // plain group, most listened first (Dan, 16 November 2026).
   const searching = Boolean(query.trim());
@@ -1048,6 +1214,8 @@ export function MusicRoom({ active }) {
     setPressedOrder(name);
     const apply = () => {
       setQuery("");
+      // Another order puts every genre back whole.
+      if (name !== pressedOrder) setCuts(null);
       startTransition(() => setOrder(name));
       if (turn) startTransition(() => setReversed((last) => ({ ...last, [name]: !last[name] })));
     };
@@ -1084,15 +1252,24 @@ export function MusicRoom({ active }) {
     return (order, reverse) => {
       const key = `${order}:${reverse}`;
       if (!cached.has(key)) {
-        const groups = arrange(order, entries, { years, kinds, reverse });
+        const groups = arrange(order, entries, { years, kinds, reverse, cuts });
         cached.set(key, groups.map(group => ({
           ...group, rows: rowsFor(group.entries, width, group.reference ?? reference)
         })));
       }
       return cached.get(key);
     };
-  }, [entries, width, reference, years, kinds]);
+  }, [entries, width, reference, years, kinds, cuts]);
   const arrangement = layouts(view, reversed[view] ?? false);
+  /*
+   * A genre's heading names its sub-genres, and pressing one cuts the genre
+   * to it: the sleeves that stay glide up together, the rest go, and the
+   * genres beneath close up. Pressing it again brings the whole genre back.
+   */
+  const onCut = useCallback((genre, part) => {
+    settle.current();
+    setCuts((last) => ({ ...last, [genre]: last?.[genre] === part ? null : part }));
+  }, []);
 
   // Reuse the rows around the viewport as the pointer moves. Newly visible
   // rows pick up the current selection before their artwork scrolls into view.
@@ -1332,8 +1509,12 @@ export function MusicRoom({ active }) {
               square with the halo and rays above it. The sheet in his hand has
               the globe on it, as he drew it: from 19 to 25 November it was a
               page of handwriting (Dan, 25 November 2026: "this isn't using the
-              globe one"). No wordmark beside it. */}
-          <img className="music-mark" src="/akibwa-mark.svg?v=globe" alt="" width="42" height="52" draggable="false" />
+              globe one"). No wordmark beside it. His halo glows and the rays
+              over it reach out, as they do on the studio's cover of him. */}
+          <span className="music-mark-box">
+            <img className="music-mark" src="/akibwa-mark.svg?v=globe" alt="" width="42" height="52" draggable="false" style={SIGNATURE_SHOWN} />
+            <SignatureLight />
+          </span>
         </a>
         <div className="music-tools" data-finding={finding || Boolean(query)}>
           <div className="music-order" role="group" aria-label="Order">
@@ -1428,7 +1609,7 @@ export function MusicRoom({ active }) {
             <span className="music-group-figures">{entries.length ? `${entries.length} ${entries.length === 1 ? "record" : "records"} · ${listened(entries.reduce((sum, entry) => sum + entry.item.minutes, 0), "long")}` : "Nothing on the shelf"}</span>
           </div>
         )}
-        <GlidingShelf tracks={tracks} shownTile={shownTile} above={above} before={before} pinnedTile={open?.tile} arrangement={arrangement} measured={measured} order={view} tiles={tiles} reference={reference} onOpen={onOpen} onPoint={onPoint} resting={resting} veiled={veiled} onTurned={onTurned} onVeil={onVeil} />
+        <GlidingShelf tracks={tracks} shownTile={shownTile} above={above} before={before} pinnedTile={open?.tile} arrangement={arrangement} measured={measured} order={view} tiles={tiles} reference={reference} onOpen={onOpen} onPoint={onPoint} onCut={onCut} resting={resting} veiled={veiled} onTurned={onTurned} onVeil={onVeil} />
       </div>
     </div>
   );
