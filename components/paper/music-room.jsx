@@ -474,7 +474,6 @@ class GlidingShelf extends PureComponent {
   over(face, pointer) {
     const entry = this.props.tiles.records.get(face.parentElement.dataset.key);
     if (!entry) return;
-    prepareSheen(face, entry.item.record ?? entry.item.key);
     this.props.onPoint(entry.item, face, pointer);
   }
 
@@ -632,26 +631,6 @@ class ShelfRow extends PureComponent {
   render() {
     return <ol className="music-row" style={{ "--side": this.props.row.side }} dangerouslySetInnerHTML={this.html} />;
   }
-}
-
-// Each sleeve catches the light its own way: an angle, a speed and a side
-// the gloss comes from, fixed by its record so it is the same every visit.
-function prepareSheen(face, key) {
-  if (face.hasAttribute("data-gloss")) return;
-  face.dataset.gloss = "";
-  const gloss = document.createElement("span");
-  gloss.className = "music-gloss";
-  gloss.setAttribute("aria-hidden", "true");
-  face.append(gloss);
-  let hash = 2166136261;
-  for (let at = 0; at < key.length; at += 1) hash = Math.imul(hash ^ key.charCodeAt(at), 16777619);
-  hash >>>= 0;
-  const fromLeft = hash & 1;
-  face.style.setProperty("--sheen-angle", `${96 + (hash >>> 1) % 44}deg`);
-  face.style.setProperty("--sheen-time", `${(0.85 + ((hash >>> 7) % 7) * 0.1).toFixed(2)}s`);
-  face.style.setProperty("--sheen-from", fromLeft ? "-80%" : "18.46154%");
-  face.style.setProperty("--sheen-to", fromLeft ? "18.46154%" : "-80%");
-  face.style.setProperty("--gloss-x", `${12 + (hash >>> 11) % 70}%`);
 }
 
 /*

@@ -30,6 +30,8 @@
   --paper-edge: #d6c7ae;
   --gold-tint: #f2dfb8;
   --kraft: #e6d2ad;
+  /* A sleeve's colours brought up under the pointer. */
+  --pop: saturate(1.38) contrast(1.1) brightness(1.04);
   --ui-size: clamp(14px, 0.2vw + 12.6px, 16px);
   --chip-h: 34px;
   --paper-band: rgb(205 181 136 / 0.075);
@@ -854,14 +856,25 @@ html.signed .music-sign:focus-visible .music-mark-held {
   z-index: 1;
 }
 
-/* Under the pointer a sleeve keeps its size and its own artwork turns
-   glossy (Dan, 18 November 2026: "like it's glossy", "unique to each one"):
-   the light is blended into the art, so each cover's bright parts gleam and
-   its dark parts stay dark, a band of it runs once across at that sleeve's
-   own angle, speed and direction (set per record in music-room.jsx), and a
-   soft gloss stays on its upper corner while the colours deepen a touch. */
-.music-face[data-gloss] {
-  isolation: isolate;
+/* Under the pointer a sleeve keeps its size and its own colours come up
+   (Dan, 26 November 2026: "can we have it make the colours of the album
+   really pop"): fuller and a little brighter, with more contrast, while the
+   sleeves that do not go with it fall into shade. The sleeve whose sheet is
+   kept open stays that way, as does one the keyboard is on. From 18 to 26
+   November a band of light swept across the sleeve and a gloss sat on its
+   corner; that was turned down ("the glisten it feels a little out of place
+   now"). Do not bring it back. */
+.music-face img {
+  transition: opacity 420ms ease, filter 260ms ease;
+}
+.music-face:focus-visible img,
+.music-face[aria-expanded="true"] img {
+  filter: var(--pop);
+}
+@media (hover: hover) and (pointer: fine) {
+  .music-face:hover img {
+    filter: var(--pop);
+  }
 }
 
 /* Fade the other sleeves into shade while a record is being inspected. */
@@ -890,46 +903,6 @@ html.signed .music-sign:focus-visible .music-mark-held {
   }
 }
 
-.music-gloss {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(120% 90% at var(--gloss-x) 6%, rgb(255 255 255 / 0.42), transparent 58%);
-  mix-blend-mode: overlay;
-  opacity: 0;
-  transition: opacity 240ms ease;
-  pointer-events: none;
-}
-
-/* The same oversized band travels across the cover on its own layer.
-   Its corner reflection stays in place as the band moves. */
-.music-gloss::after {
-  content: "";
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 260%;
-  background: linear-gradient(var(--sheen-angle), transparent 34%, rgb(255 255 255 / 0.75) 46%, rgb(255 255 255 / 0.2) 52%, transparent 62%);
-  transform: translateX(var(--sheen-from));
-  transition: transform 0s 240ms;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .music-face:hover .music-gloss {
-    opacity: 1;
-    transition-duration: 160ms;
-  }
-  .music-face:hover .music-gloss::after {
-    transform: translateX(var(--sheen-to));
-    transition: transform var(--sheen-time) cubic-bezier(0.22, 0.61, 0.36, 1);
-  }
-  @starting-style {
-    .music-face:hover .music-gloss { opacity: 0; }
-    .music-face:hover .music-gloss::after { transform: translateX(var(--sheen-from)); }
-  }
-  .music-face:hover img { filter: saturate(1.12) contrast(1.05); }
-}
-
-.music-face:focus-visible .music-gloss { opacity: 1; }
-
 /* Scrolling introduces a row with one animation for all its covers. */
 .music-row[data-arriving] {
   animation: row-arrives 320ms var(--shelf-ease);
@@ -955,10 +928,6 @@ html.signed .music-sign:focus-visible .music-mark-held {
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-.music-face img {
-  transition: opacity 420ms ease, filter 400ms ease;
 }
 
 .music-face img[data-loading] {

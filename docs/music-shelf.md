@@ -209,9 +209,12 @@ open, against half a millisecond this way (measured 26 November 2026).
   opens it the same way. Keep the scroll position. The sheet has no close button of
   its own (Dan, 26 November: “get rid of the X the X is just clicking anywhere else”);
   do not bring one back.
-- Keep the sleeve fixed in place and at the same size. Blend light into its artwork,
-  sweeping one band at its own angle, speed and direction, with a soft corner gloss and
-  slightly deeper colours.
+- Keep the sleeve fixed in place and at the same size. Under the pointer its own
+  colours come up: fuller and a little brighter, with more contrast (Dan, 26 November:
+  “can we have it make the colours of the album really pop”). The sleeve whose sheet is
+  kept open stays that way. The band of light that swept across a sleeve, with a gloss
+  on its corner, from 18 to 26 November, was turned down (“the glisten it feels a
+  little out of place now”); do not bring it back.
 - Hovering or focusing a sleeve leaves it and its related covers at full brightness.
   All other covers fade darker. Include other
   releases by the artist and their connected bands or collaborators. Two joint credits
