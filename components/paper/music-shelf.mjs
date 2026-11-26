@@ -118,7 +118,7 @@ export function yearPairs(record, years) {
  * The shelf in an order: groups, each with the heading that order needs (none
  * for hours), the most listened first inside each. Entries arrive most
  * listened first, as `{ item, ... }`. `cuts` names the sub-genre a genre has
- * been cut to, by genre.
+ * been cut to, or the year a decade has, by the group's name.
  */
 export function arrange(order, entries, { years, kinds, reverse = false, cuts = null } = {}) {
   const total = entries.reduce((sum, entry) => sum + entry.item.minutes, 0) || 1;
@@ -131,26 +131,43 @@ export function arrange(order, entries, { years, kinds, reverse = false, cuts = 
     }
     return map;
   };
+  // What a heading says of a genre or a decade, and of a sub-genre or a year
+  // cut from one, in the same words: its records, its share of all the
+  // shelf's listening and its hours (Dan, 26 November 2026: "you can also
+  // have records here and also do % of listening for sub genres too").
+  const figure = (list, minutes) => {
+    const share = (minutes / total) * 100;
+    return `${list.length} ${list.length === 1 ? "record" : "records"} · ${share >= 1 ? Math.round(share) : "<1"}% of listening · ${listened(minutes, "long")}`;
+  };
+  const sum = (list) => list.reduce((minutes, entry) => minutes + entry.item.minutes, 0);
   if (order === "released") {
     // By the decade a record came out, newest first or, pressed again,
     // oldest, the most listened first inside each. A record whose year is
     // not known waits at the end.
-    const map = grouped((entry) => {
-      const year = Number(entry.item.year) || entry.year || 0;
-      return year ? Math.floor(year / 10) * 10 : 0;
-    });
+    const yearOf = (entry) => Number(entry.item.year) || entry.year || 0;
+    const map = grouped((entry) => Math.floor(yearOf(entry) / 10) * 10);
     return [...map]
       .sort(([a], [b]) => (!a ? 1 : !b ? -1 : reverse ? a - b : b - a))
       .map(([decade, list]) => {
-        const minutes = list.reduce((sum, entry) => sum + entry.item.minutes, 0);
+        const label = decade ? `${decade}s` : "Undated";
+        // A decade's years are the words on its heading, as a genre's
+        // sub-genres are (Dan, 26 November 2026: "shouldn't this have the
+        // years too?"), running the way the decades do. One of them chosen
+        // (`cuts`, by decade) cuts the decade to that year's records.
+        const years = decade ? [...new Set(list.map(yearOf))].sort((a, b) => (reverse ? a - b : b - a)).map(String) : [];
+        const cut = years.includes(cuts?.[label]) ? cuts[label] : null;
+        const shown = cut ? list.filter((entry) => String(yearOf(entry)) === cut) : list;
+        const minutes = sum(shown);
         return {
           key: decade ? String(decade) : "undated",
-          label: decade ? `${decade}s` : "Undated",
-          figures: `${list.length} ${list.length === 1 ? "record" : "records"} · ${listened(minutes, "long")}`,
-          // Where the other groups' names do not fit beside it, a heading
-          // says its hours alone.
+          label,
+          figures: figure(shown, minutes),
+          // Where its words do not fit beside it, a heading says its hours
+          // alone.
           brief: listened(minutes),
-          entries: list
+          entries: shown,
+          parts: years,
+          cut
         };
       });
   }
@@ -196,15 +213,6 @@ export function arrange(order, entries, { years, kinds, reverse = false, cuts = 
       const place = own(entry) ?? [kinds.artists?.[entry.item.artist], kinds.subs?.[entry.item.artist]];
       return kinds.subkinds?.[place[0]]?.[place[1]] ?? null;
     };
-    // What a heading says of a genre or of a sub-genre, in the same words:
-    // its records, its share of all the shelf's listening and its hours
-    // (Dan, 26 November 2026: "you can also have records here and also do %
-    // of listening for sub genres too").
-    const figure = (list, minutes) => {
-      const share = (minutes / total) * 100;
-      return `${list.length} ${list.length === 1 ? "record" : "records"} · ${share >= 1 ? Math.round(share) : "<1"}% of listening · ${listened(minutes, "long")}`;
-    };
-    const sum = (list) => list.reduce((total, entry) => total + entry.item.minutes, 0);
     // A genre is one group under one heading, and its sub-genres are the
     // words on that heading (Dan, 26 November 2026, of sub-genres named on
     // the heading and again over their own records beneath it: "can that not

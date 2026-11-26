@@ -28,8 +28,6 @@
   --paper-light: #faf6ee;
   --paper-deep: #e8dcc6;
   --paper-edge: #d6c7ae;
-  --rust-deep: #934527;
-  --rust-tint: #f3dccf;
   --gold-tint: #f2dfb8;
   --kraft: #e6d2ad;
   --ui-size: clamp(14px, 0.2vw + 12.6px, 16px);
@@ -372,7 +370,10 @@ html.signed .music-sign:focus-visible .music-mark-held {
 
 .music-tools, .music-order { display: contents; }
 
-/* The order: four plain words; the chosen one sits on a rust-tinted chip. */
+/* The order: four plain words, the chosen one set bold in ink and nothing
+   more (Dan, 26 November 2026, of the rust-tinted chip it stood on: "could
+   we just use bold for the highlight in a more minimalist fashion than
+   this"). A chosen sub-genre or year on a heading is marked the same way. */
 .music-order button {
   position: relative;
   display: inline-flex;
@@ -383,15 +384,30 @@ html.signed .music-sign:focus-visible .music-mark-held {
   border-radius: 999px;
   background: transparent;
   color: var(--ink-soft);
-  font: 700 var(--ui-size)/1 var(--sans);
+  font: 600 var(--ui-size)/1 var(--sans);
   white-space: nowrap;
   cursor: pointer;
-  transition: background-color 180ms ease, color 180ms ease;
+  transition: color 180ms ease, font-weight 180ms ease;
 }
 .music-order button::after { content: ""; position: absolute; inset: -5px 0; }
-.music-order button:hover { background: var(--paper-deep); color: var(--ink); }
-.music-order button[aria-pressed="true"] { background: var(--rust-tint); color: var(--rust-deep); }
+.music-order button:hover { color: var(--ink); }
+.music-order button[aria-pressed="true"] { color: var(--ink); font-weight: 800; }
 .music-order button:active { transform: scale(0.96); transition-duration: 90ms; }
+
+/* A word that turns bold when chosen keeps the room its bold self needs, so
+   the words beside it never move. */
+.music-word {
+  display: inline-grid;
+  justify-items: center;
+}
+.music-word::after {
+  content: attr(data-word);
+  grid-area: 1 / 1;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  font-weight: 800;
+}
 
 /* A date order's way round. Its room is always kept, so nothing shifts; it
    shows faintly as a hint and firmly when its order is chosen. */
@@ -603,7 +619,7 @@ html.signed .music-sign:focus-visible .music-mark-held {
 }
 /* Genres stay lowercase in the data ("hip-hop & soul"); only the first
    letter is set as a capital. */
-.music-group-label::first-letter, .music-index button::first-letter { text-transform: uppercase; }
+.music-group-label::first-letter { text-transform: uppercase; }
 .music-group-figures {
   padding-bottom: 9px;
   color: var(--ink-soft);
@@ -716,11 +732,11 @@ html.signed .music-sign:focus-visible .music-mark-held {
   border: 0;
   background: none;
   color: var(--ink-soft);
-  font: 700 13px/1.2 var(--sans);
+  font: 600 13px/1.2 var(--sans);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   cursor: pointer;
-  transition: color 160ms ease;
+  transition: color 160ms ease, font-weight 160ms ease;
 }
 /* Room for a finger round each word, kept inside the line at its end so it
    adds nothing to scroll to. */
@@ -748,18 +764,20 @@ html.signed .music-sign:focus-visible .music-mark-held {
   }
 }
 
-/* A genre's sub-genres are the words on its heading (Dan, 25 November 2026:
-   "can we break these further into sub genres too"; 26 November, of naming
-   them there and again over their records: "can that not all just be the
-   same interface"). Pressing one cuts the genre to it. The chosen word
-   takes the bar's rust, and the heading's rule turns rust beneath it for as
-   long as the word is, as a song's line is drawn heavier for its hours.
-   That mark is one piece: it slides along the rule from one word to the
-   next ("can these not slide along rather than appear"), is drawn out from
-   a word's start when a genre is first cut, and is drawn back when it is
-   made whole. music-room.jsx places it (GlidingShelf.placeMarks). */
+/* A genre's sub-genres and a decade's years are the words on its heading
+   (Dan, 25 November 2026: "can we break these further into sub genres
+   too"; 26 November, of naming them there and again over their records:
+   "can that not all just be the same interface", and of the decades:
+   "shouldn't this have the years too?"). Pressing one cuts the group to it.
+   The chosen word is set bold in ink, as the bar's chosen order is, and the
+   heading's rule is drawn dark beneath it for as long as the word is. That
+   mark is one piece: it slides along the rule from one word to the next
+   ("can these not slide along rather than appear"), is drawn out from a
+   word's start when a group is first cut, and is drawn back when it is made
+   whole. music-room.jsx places it (GlidingShelf.placeMarks). */
 .music-index button[aria-pressed="true"] {
-  color: var(--rust-deep);
+  color: var(--ink);
+  font-weight: 800;
 }
 .music-index {
   position: relative;
@@ -772,7 +790,7 @@ html.signed .music-sign:focus-visible .music-mark-held {
   width: 0;
   height: 3px;
   border-radius: 1.5px;
-  background: var(--rust-deep);
+  background: var(--ink);
   pointer-events: none;
   transition: transform 380ms var(--shelf-ease), width 380ms var(--shelf-ease);
 }

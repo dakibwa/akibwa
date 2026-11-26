@@ -482,7 +482,7 @@ class GlidingShelf extends PureComponent {
     const { order, arrangement, reference, measured, onOpen, onPoint, onCut, chosen, cutting, shownTile, above, tracks, tiles } = this.props;
     const firstRow = !measured && arrangement[0]?.rows[0];
     const first = firstRow?.entries?.[0]?.item;
-    // The groups a heading can go to: every decade or year.
+    // The groups a heading can go to: every year listened in.
     const stops = arrangement.map((group, index) => [group, index]).filter(([group]) => group.label);
     let drawn = 0;
     return (
@@ -537,9 +537,9 @@ class GlidingShelf extends PureComponent {
       >
         {first?.art && <link rel="preload" {...firstCoverHint(first, firstRow.side)} />}
         {arrangement.map((group, groupIndex) => {
-          // The words on a heading. A genre's are its sub-genres, and each
-          // cuts the genre to its own records; a decade's or a year's are
-          // the other decades or years, to go to.
+          // The words on a heading. A genre's are its sub-genres and a
+          // decade's are its years, and each cuts the group to its own
+          // records; a year listened in has the other years, to go to.
           const cuts = group.parts ?? null;
           const others = cuts || !group.label ? [] : stops.filter(([other]) => other !== group);
           // The first heading's words are the page's one landmark for going
@@ -569,22 +569,22 @@ class GlidingShelf extends PureComponent {
                       </span>
                     </h2>
                     {cuts?.length ? (
-                      <div className="music-group-others" role="group" aria-label={`Show one kind of ${group.label}`}>
+                      <div className="music-group-others" role="group" aria-label={order === "kind" ? `Show one kind of ${group.label}` : `Show one year of the ${group.label}`}>
                         <ul className="music-index">
                           {/* The chosen word's mark, which slides along the
                               rule; it is set among the words so it keeps its
                               place with them, and is not one of them. */}
                           <li className="music-index-mark" role="presentation" aria-hidden="true" />
                           {cuts.map(part => (
-                            <li key={part}><button type="button" aria-pressed={(chosen?.[group.label] ?? null) === part} onClick={() => onCut(group.label, part, groupIndex)}>{part}</button></li>
+                            <li key={part}><button type="button" aria-pressed={(chosen?.[group.label] ?? null) === part} onClick={() => onCut(group.label, part, groupIndex)}><Word>{part}</Word></button></li>
                           ))}
                         </ul>
                       </div>
                     ) : others.length ? (
-                      <Others className="music-group-others" role={Others === "div" ? "group" : undefined} aria-label={`Go to another ${order === "released" ? "decade" : "year"}`}>
+                      <Others className="music-group-others" role={Others === "div" ? "group" : undefined} aria-label="Go to another year">
                         <ul className="music-index">
                           {others.map(([other, index]) => (
-                            <li key={other.key}><button type="button" onClick={() => this.jump(document.getElementById(`shelf-group-${index}`))}>{other.label}</button></li>
+                            <li key={other.key}><button type="button" onClick={() => this.jump(document.getElementById(`shelf-group-${index}`))}><Word>{other.label}</Word></button></li>
                           ))}
                         </ul>
                       </Others>
@@ -614,6 +614,14 @@ class GlidingShelf extends PureComponent {
       </div>
     );
   }
+}
+
+// A heading's word, its first letter a capital (genres stay lowercase in the
+// data). It keeps the room its bold self needs (`.music-word`), so choosing
+// it moves nothing beside it.
+function Word({ children }) {
+  const word = children.charAt(0).toUpperCase() + children.slice(1);
+  return <span className="music-word" data-word={word}>{word}</span>;
 }
 
 // The initial HTML also works with JavaScript disabled. Keep this prop stable:
@@ -1618,7 +1626,7 @@ export function MusicRoom({ active }) {
               const turns = name in reversed;
               return (
                 <button key={name} type="button" data-order={name} aria-pressed={on} onClick={() => sort(name)}>
-                  {label}
+                  <span className="music-word" data-word={label}>{label}</span>
                   {turns && on ? <span className="visually-hidden">, {reversed[name] ? "oldest" : "newest"} first</span> : null}
                   {/* A date's way round: newest first, or oldest. */}
                   {turns ? <span className="music-order-way" data-on={on} data-up={reversed[name]} aria-hidden="true" /> : null}

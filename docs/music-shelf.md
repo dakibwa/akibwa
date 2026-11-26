@@ -37,7 +37,11 @@ The layout, merging and ordering code runs in the build checks against real reco
 - The bar orders the shelf four ways, a word each on every screen: Hours, Genre,
   Released and Listened (Dan, 25 November: “can we use single words intead of Release
   Date Time lisstened etc”, after asking that morning for “Time Listened, Genre, Released
-  Date? Listen Date?”). The chosen order appears in muted rust.
+  Date? Listen Date?”). The chosen order is set bold in ink, and nothing more: no
+  pill and no colour (Dan, 26 November, of the rust-tinted chip it stood on: “could we
+  just use bold for the highlight in a more minimalist fashion than this”). A chosen
+  sub-genre or year on a heading is marked the same way. A word keeps the room its bold
+  self needs, so nothing beside it moves when it is chosen.
   - Hours is time listened, most first.
   - Genre is `kind` in code, one curated kind per artist. Each of the seven genres
     has sub-genres, 40 in all, one for each artist with a record on the shelf
@@ -47,18 +51,18 @@ The layout, merging and ordering code runs in the build checks against real reco
     whole, most listened first. Pressing a sub-genre cuts the genre to that sub-genre's
     records; pressing it again brings the whole genre back. Another order puts every
     genre back whole.
-    The figures say the same three things of a genre and of a sub-genre: its records,
-    its share of the shelf's listening and its hours (Dan, 26 November: “you can also
-    have records here and also do % of listening for sub genres too”). A share under one
-    in a hundred reads “<1%”.
+    The figures say the same three things of a genre and of a sub-genre, and of a
+    decade and a year in it: its records, its share of the shelf's listening and its
+    hours (Dan, 26 November: “you can also have records here and also do % of listening
+    for sub genres too”). A share under one in a hundred reads “<1%”.
     A cut turns as a new order does (Dan, 26 November: “do the same fade on the sub
     genre buttons as when swappnig menu buttons so it's all consistent”). The word
     answers at once. That genre's shelf and everything beneath it fade out over 150 ms,
     take their new places unseen and lift in; the heading that was pressed stays as it
     is. Sleeves that glided from their old places to their new ones on a cut were
     replaced by this the same day; do not bring them back.
-    The chosen word takes the bar's rust, and the heading's rule turns rust beneath it.
-    That mark is one piece. It slides along the rule from one word to the next (Dan,
+    The chosen word is set bold, as the bar's chosen order is, and the heading's rule
+    is drawn dark beneath it. That mark is one piece. It slides along the rule from one word to the next (Dan,
     26 November: “can these not slide along rather than appear”), is drawn out from a
     word's start when a genre is first cut, and is drawn back when it is made whole.
     Where the words scroll, the chosen one is kept in sight.
@@ -79,6 +83,10 @@ The layout, merging and ordering code runs in the build checks against real reco
     genre of the seven fits, use the nearest one there is: jazz and classical go to
     classics, under jazz & classical, and the comedy acts have a sub-genre in indie.
   - Released groups records by the decade they came out, most listened first in each.
+    A decade's years are the words on its heading, as a genre's sub-genres are, running
+    the way the decades do (Dan, 26 November: “shouldn't this have the years too?”).
+    Pressing a year cuts the decade to that year's records, and it turns, is marked and
+    is counted as a cut genre is. Until then the words went to the other decades.
     Every record has a year (25 November: the last 23 were researched one by one with
     sources, and the hand-dated ones checked). A record that arrives without one waits
     at the end under Undated until it is dated. Date the version on the shelf, not the
@@ -104,15 +112,15 @@ The layout, merging and ordering code runs in the build checks against real reco
   singles together in one group, most listened first. Choosing an order clears search.
   The signature returns to hours, clears the search and scrolls to the top.
 - Keep one pinned row. Leave equal gaps between the signature, each sort option and
-  search. A soft rust background marks the chosen sort. The signature's panel starts on
+  search. The signature's panel starts on
   the sleeves' left edge and search ends on their right (Dan, 25 November: “align the
   logo”). Search is 40 px tall and every chip 34 px. Search opens from the right below
   900 px. Pressing / focuses it, and Escape clears it. The row closes up in steps as
   the screen narrows, the last below 310 px for a folded phone's cover screen.
 - A group's heading is one line: its name on a kraft tab, its figures, then quiet words
   at the far end (Dan, 25 November: “is the genre bar placed somewhere better that fit's
-  with the more minimalist theme?”). A decade's or a year's words are the other decades
-  or years, to go to; a genre's are its sub-genres, to cut it by. There is no row of
+  with the more minimalist theme?”). A genre's words are its sub-genres and a decade's
+  are its years, to cut it by; a year listened in has the other years, to go to. There is no row of
   jumps apart from the headings, and no pill behind a word: at the head of a phone's
   shelf the pill was cut off by the screen's edge (“the pill can go off screen”). The
   tab and its figures never move. Where the words do not all fit on some heading, every
@@ -122,8 +130,9 @@ The layout, merging and ordering code runs in the build checks against real reco
 - Nothing runs past the screen's edge at any width from 280 px up (“fix any bugs in
   this regard”). Check a change to the bar or a heading at 280, 320, 390 and 720 px in
   every order.
-- A search shows its query, number of matches and listening time. - A jump to a decade
-  or a year within a screen and a half scrolls there. A jump further turns the page as a
+- A search shows its query, number of matches and listening time.
+- A jump to another year listened in, within a screen and a half, scrolls there. A jump
+  further turns the page as a
   new order does: the shelf fades out, is put at the group at once and lifts in there.
   Scrolling smoothly to a far group dragged every row between through the screen and
   loaded its covers on the way (Dan, 25 November, of the jump to Undated: “it lagged
