@@ -87,12 +87,24 @@ export const metadata = {
   },
 };
 
+// What a search engine calls the site: its short name, over the page's own
+// title, as a link preview has them (Dan, 26 November 2026: "and also unify
+// how it appears on google search too").
+const site = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Akibwa",
+  alternateName: "Akibwa’s Listening History",
+  url: "https://akibwa.com/"
+};
+
 // Akibwa is one page: the music shelf (Dan, 16 November 2026). Everything
 // here runs once, during the static export.
 export default function IndexPage() {
   return (
     <div className="music-page">
-      <h1 className="visually-hidden">Akibwa: the music I play most</h1>
+      <h1 className="visually-hidden">Akibwa’s Listening History</h1>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(site) }} />
       <MusicRoom active />
       <script dangerouslySetInnerHTML={{ __html: early }} />
     </div>
