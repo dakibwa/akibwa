@@ -15,8 +15,8 @@ here is public. Git records the implementation and the live site shows what ship
   Public listening history may be grouped by whole calendar year. Never publish the owner's full
   name, residential history, move dates, personal email in static HTML, daily GPS traces, health
   or family details, or identifying information about anyone else. The page's title and
-  description are Dan's own words and give his first name alone (26 November 2026: “Akibwa's
-  Listening History”, “then put Dan's”, “rather than my full name”).
+  description give his first name alone. He chose “Dan’s Listening History”
+  as the page title on 26 November 2026. The site name is Akibwa.
 - Dan retired the front page, rooms, mascot, name change, contact and studio links, night
   paper, career roles, taste curation and podcasts on 16 November 2026. The Trek, its route,
   photographs and journal and the remaining page aliases were retired by 17 November.

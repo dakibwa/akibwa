@@ -16,6 +16,6 @@ The shelf at `/` is the only public page and the only entry in the sitemap. On 1
 - `npm run publish:ready`: run the full publication gate.
 - `node scripts/build-music-ranking.mjs --history-root PRIVATE_HISTORY_DIRECTORY`: refresh the public song and artist ranking from the private history's prepared top 1,000.
 - `node scripts/build-share-card.mjs`: draw the link-preview card, `public/share-card-mosaic.jpg`: the mark at the top left of a wall of the most played records, in their own sleeves, set so that neighbours share colours. The script says how records are sized and placed, and why. When the card changes, write it under a new filename there and in `app/layout.jsx`, so link previews drop their cached copy.
-- The page's name and its one line are set in `app/layout.jsx` and `app/page.jsx`. The hidden h1 and the WebSite data in `app/page.jsx` say the same, so a search result and a link preview read alike: “Akibwa” as the site, “Akibwa’s Listening History” as the page (Dan, 26 November 2026: “and also unify how it appears on google search too”).
+- `lib/site-metadata.mjs` supplies the title and description for search and shared links. The heading and WebSite data in `app/page.jsx` use the same title, “Dan’s Listening History”. The site name is Akibwa.
 
 Public surface metadata lives in `data/public-surfaces.json`. API-backed refreshes belong in Cloudflare Workers rather than local schedulers or data-mutating GitHub Actions. See [Publication Workflow](docs/publication-workflow.md).

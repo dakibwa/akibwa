@@ -2,21 +2,16 @@ import { preload } from "react-dom";
 import "./globals.css";
 import { ServiceWorkerRegistration } from "@/components/service-worker-registration";
 import { SiteShell } from "@/components/site-shell";
-
-// Dan's own words for the page's name and its one line (26 November 2026:
-// "can it be Akibwa's Listening History too?", "then put Dan's", "rather
-// than my full name"). His first name, and no more of him.
-const title = "Akibwa’s Listening History";
-const description = "Dan’s most played 1,000 records by hours listened.";
+import { pageTitle, pageDescription } from "@/lib/site-metadata.mjs";
 
 export const metadata = {
   metadataBase: new URL("https://akibwa.com"),
   applicationName: "Akibwa",
-  title: { default: title, template: "Akibwa | %s" },
-  description,
+  title: { default: pageTitle, template: "Akibwa | %s" },
+  description: pageDescription,
   openGraph: {
-    title,
-    description,
+    title: pageTitle,
+    description: pageDescription,
     url: "https://akibwa.com",
     siteName: "Akibwa",
     type: "website",
@@ -36,8 +31,8 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title,
-    description,
+    title: pageTitle,
+    description: pageDescription,
     images: ["/share-card-mosaic.jpg"]
   },
   // The sized .ico serves browsers without SVG icons and requests that skip

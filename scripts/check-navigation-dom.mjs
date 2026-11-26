@@ -351,7 +351,7 @@ const checkPublicLanding = async () => {
   const accessibleAlbums = ax.nodes.filter(node => node.role?.value === "button" && node.name?.value?.includes(" listened,"));
   check(accessibleAlbums.length === RECORDS, `every album is available to a screen reader before scrolling [${accessibleAlbums.length} of ${RECORDS}]`);
   const mainHeading = ax.nodes.find((node) => node.role?.value === "heading" && node.properties?.some((property) => property.name === "level" && property.value.value === 1));
-  check(mainHeading?.name?.value === "Akibwa’s Listening History", `the h1 names the page for readers [${mainHeading?.name?.value}]`);
+  check(mainHeading?.name?.value === "Dan’s Listening History", `the h1 names the page for readers [${mainHeading?.name?.value}]`);
   check(state.tiles === RECORDS, `the page is the shelf of every record [${state.tiles} of ${RECORDS}]`);
   check(state.retired === 0, "the front page, its rooms and its bar are gone");
   check(state.links === 0 && state.directEmailLinks.length === 0, `the shelf links nowhere but home until a sheet opens [${state.links}]`);

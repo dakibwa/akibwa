@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { MusicRoom } from "@/components/paper/music-room";
+import { pageTitle, pageDescription } from "@/lib/site-metadata.mjs";
 
 /*
  * The shelf shows itself as soon as the HTML arrives (Dan, 25 November 2026:
@@ -69,9 +70,9 @@ ${rowsSource}
 })()`;
 
 export const metadata = {
-  title: { absolute: "Akibwa’s Listening History" },
+  title: { absolute: pageTitle },
   alternates: { canonical: "/" },
-  description: "Dan’s most played 1,000 records by hours listened.",
+  description: pageDescription,
   robots: {
     index: true,
     follow: true,
@@ -94,7 +95,7 @@ const site = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "Akibwa",
-  alternateName: "Akibwa’s Listening History",
+  alternateName: pageTitle,
   url: "https://akibwa.com/"
 };
 
@@ -103,7 +104,7 @@ const site = {
 export default function IndexPage() {
   return (
     <div className="music-page">
-      <h1 className="visually-hidden">Akibwa’s Listening History</h1>
+      <h1 className="visually-hidden">{pageTitle}</h1>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(site) }} />
       <MusicRoom active />
       <script dangerouslySetInnerHTML={{ __html: early }} />
