@@ -69,9 +69,9 @@ ${rowsSource}
 })()`;
 
 export const metadata = {
-  title: { absolute: "Akibwa" },
+  title: { absolute: "Akibwa’s Listening History" },
   alternates: { canonical: "/" },
-  description: "Daniel Atkinson’s most played 1,000 records by hours listened.",
+  description: "Dan’s most played 1,000 records by hours listened.",
   robots: {
     index: true,
     follow: true,

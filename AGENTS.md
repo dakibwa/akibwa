@@ -12,12 +12,11 @@ here is public. Git records the implementation and the live site shows what ship
   YouTube contributes views only. [Counting, matching and refresh](docs/listening-history.md)
 - Keep raw exports, events, track URIs, timestamps, private source paths, account identifiers,
   booking references, account numbers, credentials, tokens and `.env` files out of the repo.
-  Public listening history may be grouped by whole calendar year. Dan's name stands in
-  one place, the page's description, in his own words (26 November 2026: “Daniel
-  Atkinson's most played 1000 records by hours listened.”); until then it was not
-  published at all. Put it nowhere else. Never publish his residential history, move
-  dates, personal email in static HTML, daily GPS traces, health or family details, or
-  identifying information about anyone else.
+  Public listening history may be grouped by whole calendar year. Never publish the owner's full
+  name, residential history, move dates, personal email in static HTML, daily GPS traces, health
+  or family details, or identifying information about anyone else. The page's title and
+  description are Dan's own words and give his first name alone (26 November 2026: “Akibwa's
+  Listening History”, “then put Dan's”, “rather than my full name”).
 - Dan retired the front page, rooms, mascot, name change, contact and studio links, night
   paper, career roles, taste curation and podcasts on 16 November 2026. The Trek, its route,
   photographs and journal and the remaining page aliases were retired by 17 November.

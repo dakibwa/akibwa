@@ -3,21 +3,19 @@ import "./globals.css";
 import { ServiceWorkerRegistration } from "@/components/service-worker-registration";
 import { SiteShell } from "@/components/site-shell";
 
-// Dan's own line (26 November 2026, of the link preview: "make it super simple
-// here"; then "Daniel Atkinson's most played 1000 records by hours
-// listened."). It is the one place the page gives his name.
-const description = "Daniel Atkinson’s most played 1,000 records by hours listened.";
+// Dan's own words for the page's name and its one line (26 November 2026:
+// "can it be Akibwa's Listening History too?", "then put Dan's", "rather
+// than my full name"). His first name, and no more of him.
+const title = "Akibwa’s Listening History";
+const description = "Dan’s most played 1,000 records by hours listened.";
 
 export const metadata = {
   metadataBase: new URL("https://akibwa.com"),
   applicationName: "Akibwa",
-  title: {
-    default: "Akibwa",
-    template: "Akibwa | %s"
-  },
+  title: { default: title, template: "Akibwa | %s" },
   description,
   openGraph: {
-    title: "Akibwa",
+    title,
     description,
     url: "https://akibwa.com",
     siteName: "Akibwa",
@@ -38,7 +36,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Akibwa",
+    title,
     description,
     images: ["/share-card-wall.png"]
   },
