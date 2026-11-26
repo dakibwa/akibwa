@@ -12,7 +12,7 @@ export function openCatalogue({ artists, credited, genres, subgenres, refiled, r
     if (sub !== null && sub !== undefined) kinds.subs[name] = sub;
   }
   const entries = rows.map(([key, title, artistId, year, plays, minutes, cover, version, tracks, otherTitles, history]) => {
-    const [name, artist, circle, tags] = artists[artistId];
+    const [name, artist, circle, tags, , , kin] = artists[artistId];
     const separator = key.indexOf("-");
     const id = key.slice(separator + 1);
     const item = {
@@ -22,7 +22,7 @@ export function openCatalogue({ artists, credited, genres, subgenres, refiled, r
     years.albums[id] = history;
     let searchable;
     return {
-      item, artist, circle, genres: tags, year,
+      item, artist, circle, kin: kin ?? [], genres: tags, year,
       get text() {
         return searchable ??= fold([title, name, ...tracks.map(track => track[0]), ...otherTitles].join(" "));
       }

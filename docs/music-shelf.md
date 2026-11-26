@@ -229,11 +229,22 @@ open, against half a millisecond this way (measured 26 November 2026).
   on its corner, from 18 to 26 November, was turned down (“the glisten it feels a
   little out of place now”); do not bring it back.
 - Hovering or focusing a sleeve leaves it and its related covers at full brightness.
-  All other covers fade darker. Include other
-  releases by the artist and their connected bands or collaborators. Two joint credits
-  that share a name are connected: Carnage, by Nick Cave & Warren Ellis, lights Nick
-  Cave & The Bad Seeds (Dan, 26 November: “hovering over carnage doesnt show the other
-  nick cave records highlighted”). Pick up to four
+  All other covers fade darker. Every record by the artist's kin is lit (Dan, 26
+  November: “hovering over carnage doesnt show the other nick cave records
+  highlighted”, “you should be holistic in how you find all the suitable links”).
+  Kin are worked out artist by artist from MusicBrainz, not from names
+  (`lib/music-kin.mjs`, which holds the rules and why; `scripts/build-music-meta.mjs`
+  gathers the facts into `data/music-links.json`):
+  - the same artist under two credits: Carnage, by Nick Cave & Warren Ellis, lights
+    Nick Cave & The Bad Seeds; Eno • Hyde lights Brian Eno;
+  - one in the other: Thom Yorke and Radiohead, The Smile and Radiohead;
+  - bands that share a member who stayed: Joy Division and New Order;
+  - members of one band: Frank Ocean and Tyler, The Creator, of Odd Future.
+  A year's drumming does not join two bands, and a charity single's forty names are
+  not a band: Black Sabbath does not light The Clash, nor Lou Reed Peter Gabriel. Two
+  links MusicBrainz cannot give are said by hand there: Damon Albarn with Gorillaz and
+  Nico with The Velvet Underground. A credit MusicBrainz does not know still lights
+  another that shares one of its names. Then pick up to four
   more sleeves by different artists, starting with those in view. Match their genre
   tags and use the shelf’s broader genres and release years to guide the choice.
   Clicking or tapping keeps the same contrast while the songs are open.

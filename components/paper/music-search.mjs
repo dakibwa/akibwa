@@ -113,6 +113,10 @@ export function indexItems(items, { meta, yearOf, extraText = () => "" }) {
       item,
       artist: own,
       circle: [...circle],
+      // The other artists here whose records go with this one's, as
+      // lib/music-kin.mjs worked them out: bandmates, bands that share a
+      // member, the same artist under another credit.
+      kin: (artists[item.artist]?.kin ?? []).map((name) => fold(name) || name),
       genres: [...genres],
       year: yearOf(item),
       text: fold(`${item.title} ${item.artist} ${extraText(item)}`)
@@ -124,12 +128,16 @@ export function indexItems(items, { meta, yearOf, extraText = () => "" }) {
   return { entries, credited: [...new Set(names.flatMap((name) => [fold(name), ...credits(name).map(fold)]))] };
 }
 
-// Keep every direct artist connection. For discovery, pick up to four
-// other artists, starting with musically similar sleeves in view. Two joint
-// credits that share a name are connected too: Carnage, by Nick Cave & Warren
-// Ellis, belongs with Nick Cave & The Bad Seeds (Dan, 26 November 2026:
-// "hovering over carnage doesnt show the other nick cave records
-// highlighted"). `namesOn` gives the names on an entry's credit.
+// Keep every artist connection (Dan, 26 November 2026: "hovering over
+// carnage doesnt show the other nick cave records highlighted", "you should
+// be holistic in how you find all the suitable links"): an artist's kin, as
+// lib/music-kin.mjs worked them out from MusicBrainz, artist by artist; and,
+// for a credit MusicBrainz does not know, another credit that shares one of
+// its names (`namesOn` gives the names on an entry's credit). An artist's
+// circle is for the search and no longer lights a record: it goes by name,
+// and a band's drummer called Nico is not the Nico on the shelf. For
+// discovery, pick up to four other artists, starting with musically similar
+// sleeves in view.
 function rankRelated(entries, source, kinds, namesOn) {
   const direct = [];
   const kind = kinds?.artists?.[source.item.artist];
@@ -137,7 +145,7 @@ function rankRelated(entries, source, kinds, namesOn) {
   const own = namesOn(source);
   for (const entry of entries) {
     if (entry === source) continue;
-    if (source.circle.includes(entry.artist) || entry.circle.includes(source.artist) || namesOn(entry).some((name) => own.includes(name))) {
+    if (source.kin.includes(entry.artist) || entry.kin.includes(source.artist) || namesOn(entry).some((name) => own.includes(name))) {
       direct.push(entry.item.key);
       continue;
     }

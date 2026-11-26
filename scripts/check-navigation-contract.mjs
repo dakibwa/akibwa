@@ -200,10 +200,15 @@ for (const [pattern, what] of [[/spotify:/i, "track URIs"], [/\d{4}-\d{2}-\d{2}T
 }
 
 // The search's knowledge is public MusicBrainz data only: genres and related
-// artists by name, and each sleeve's release year (Dan, 25 September 2026).
+// artists by name, and each sleeve's release year (Dan, 25 September 2026);
+// and, from 26 November 2026, the other artists on the shelf each stands
+// with (`kin`, from lib/music-kin.mjs), every one of them an artist here.
 if (JSON.stringify(Object.keys(musicMeta).sort()) !== JSON.stringify(["artists", "note", "schemaVersion", "years"])) fail("the music search file has unexpected fields");
 for (const [name, facts] of Object.entries(musicMeta.artists)) {
-  if (JSON.stringify(Object.keys(facts).sort()) !== JSON.stringify(["genres", "related"]) || ![...facts.genres, ...facts.related].every((value) => typeof value === "string")) fail(`${name}'s search facts must be genres and related artists only`);
+  if (JSON.stringify(Object.keys(facts).sort()) !== JSON.stringify(["genres", "kin", "related"]) || ![...facts.genres, ...facts.related, ...facts.kin].every((value) => typeof value === "string")) fail(`${name}'s search facts must be genres, related artists and kin only`);
+  for (const other of facts.kin) {
+    if (other === name || !musicMeta.artists[other]?.kin.includes(name)) fail(`${name} and ${other} must stand with each other, and both be on the shelf`);
+  }
 }
 if (!Object.values(musicMeta.years).every((year) => Number.isInteger(year) && year > 1900 && year < 2100)) fail("sleeve years must be plain years");
 if (Object.keys(musicKinds).some((key) => !["artists", "kinds", "note", "records", "schemaVersion", "subkinds", "subs"].includes(key))) fail("the music kinds file has unexpected fields");

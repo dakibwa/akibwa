@@ -132,9 +132,13 @@ From Up There) do not join its track list. The Music room sizes sleeves by
 these minutes; how it draws them is in the
 navigation contract (`scripts/check-navigation-contract.mjs`). The builder takes
 the top 150 albums; `scripts/build-music-meta.mjs` records by hand the
-release years MusicBrainz cannot match. The search's genres, related artists and sleeve years
-are public MusicBrainz data (`scripts/build-music-meta.mjs`), never
-listening history. Covers reuse the committed album sleeves
+release years MusicBrainz cannot match. The search's genres, related artists and sleeve years,
+and the artists whose records light together (`kin`), are public MusicBrainz data
+(`scripts/build-music-meta.mjs`), never listening history. That script finds who each
+credited name is by one of their own records here, keeps what MusicBrainz said of them
+in `data/music-links.json` so it need only ask about new artists, and has
+`lib/music-kin.mjs` work out who stands with whom. Run it after the shelf gains artists;
+`--again=Name|Other` asks about those names afresh. Covers reuse the committed album sleeves
 where artist and album match, or failing that an album of the same title on
 which the song's artist is credited (Panda Bear's songs on Panda Bear & Sonic
 Boom's Reset) or a various-artists record. Since 18 November 2026 the shelf is Dan's top 1,000 records by Spotify

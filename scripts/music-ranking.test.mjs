@@ -61,6 +61,7 @@ test("the browser catalogue preserves every record, track, year and artist conne
     assert.deepEqual(browser.years.albums[item.id], yearPairs(source, years).filter(([, minutes]) => minutes >= 60));
     assert.equal(browser.kinds.artists[item.artist], kinds.artists[item.artist]);
     assert.deepEqual(entry.circle, original.entries[i].circle);
+    assert.deepEqual(entry.kin, original.entries[i].kin);
     assert.deepEqual(entry.genres, original.entries[i].genres);
     assert.equal(entry.year, original.entries[i].year);
     assert.equal(entry.artist, original.entries[i].artist);

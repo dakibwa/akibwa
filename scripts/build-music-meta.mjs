@@ -1,23 +1,39 @@
 /*
- * What the Music room's search knows beyond titles: each artist's genres and
- * the artists they belong to or work as (Paul Simon → Simon & Garfunkel,
- * Panda Bear → Animal Collective), and the year each sleeve was released, so
- * a search can ask for a genre or an era (Dan, 25 September 2026).
+ * What the Music room knows beyond titles: each artist's genres, the artists
+ * they belong to or work as (Paul Simon → Simon & Garfunkel, Panda Bear →
+ * Animal Collective), the other artists on the shelf their records belong
+ * with, and the year each sleeve was released, so a search can ask for a
+ * genre or an era (Dan, 25 September 2026) and a record lights the records
+ * that go with it.
  *
- * From MusicBrainz, whose core data is CC0: an artist search and a lookup
- * with genres and artist relationships for every artist in
- * public/music-ranking.json, and a release-group search for every sleeve the
- * catalogue gives no year. Requests are spaced to MusicBrainz's one a second
- * and cached in .album-art-cache/, which is not committed.
+ * From MusicBrainz, whose core data is CC0. For every artist in
+ * public/music-ranking.json:
+ * - who they are: the artists MusicBrainz credits on one of their own records
+ *   here, each by its id. A name alone finds the wrong act too often (there
+ *   are many called Girls, Low or Love), and a joint credit such as "Nick
+ *   Cave & Warren Ellis" is no artist of its own: its record names both.
+ * - every band, member, alias and collaboration of each, with none left out.
+ *   The first eight used to be kept, which lost Ringo from The Beatles and
+ *   Jason Pierce from Spiritualized.
+ * and a release-group search for every sleeve the catalogue gives no year.
+ * Requests are spaced to MusicBrainz's one a second and cached in
+ * .album-art-cache/, which is not committed.
  *
- *   node scripts/build-music-meta.mjs
+ *   node scripts/build-music-meta.mjs                    new artists, and any not found before
+ *   node scripts/build-music-meta.mjs --all              every artist again
+ *   node scripts/build-music-meta.mjs "--again=A|B"      those artists again
  *
- * Writes public/music-meta.json: { artists: { name: { genres, related } },
- * years: { sleeve id: year } }.
+ * Writes data/music-links.json, what MusicBrainz said, kept so the next run
+ * asks only about new artists; and public/music-meta.json: { artists: {
+ * name: { genres, related, kin } }, years: { sleeve id: year } }, where `kin`
+ * is worked out by lib/music-kin.mjs.
  */
 import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import path from "node:path";
+import { unpackRanking } from "../components/paper/music-ranking.mjs";
+import { mergeShelf } from "../components/paper/music-shelf.mjs";
+import { kinOf } from "../lib/music-kin.mjs";
 
 const root = new URL("../", import.meta.url).pathname;
 const cacheDir = path.join(root, ".album-art-cache");
@@ -145,48 +161,122 @@ const fold = (text) =>
     .replace(/[^a-z0-9]+/g, " ")
     .trim();
 
+/*
+ * One question of MusicBrainz, answered from .album-art-cache/ if it has been
+ * asked before. MusicBrainz is often busy and says so (503): that is waited
+ * out and asked again, and a question it never answers stops the run, which
+ * can be started again and carries on from the cache. A failure is never
+ * written down as "nothing found": that left Kanye West and George Harrison
+ * with no one beside them.
+ */
 let last = 0;
 async function ask(url) {
   const cached = path.join(cacheDir, `mb-${sha(url)}.json`);
   if (await exists(cached)) return JSON.parse(await readFile(cached, "utf8"));
-  for (let attempt = 0; attempt < 4; attempt += 1) {
+  for (let attempt = 0; attempt < 12; attempt += 1) {
     const wait = last + SPACING - Date.now();
     if (wait > 0) await pause(wait);
     last = Date.now();
-    const response = await fetch(url, { headers: { "User-Agent": AGENT, Accept: "application/json" } });
-    if (response.status === 503 || response.status === 429) {
-      await pause(3000 * (attempt + 1));
+    let response;
+    try {
+      response = await fetch(url, { headers: { "User-Agent": AGENT, Accept: "application/json" }, signal: AbortSignal.timeout(30000) });
+    } catch {
+      await pause(4000);
       continue;
     }
-    if (!response.ok) return null;
-    const body = await response.json();
+    if (response.status === 503 || response.status === 429 || response.status >= 500) {
+      await pause(Math.min(1500 * (attempt + 1), 12000));
+      continue;
+    }
+    // A question MusicBrainz will not take (a title it cannot parse) finds nothing.
+    const body = response.ok ? await response.json() : {};
     await writeFile(cached, JSON.stringify(body));
     return body;
   }
-  return null;
+  throw new Error(`MusicBrainz gave no answer after twelve tries. Run this again: what it has answered is kept.\n  ${url}`);
 }
 
-const RELATED = new Set(["member of band", "is person", "collaboration", "founder", "subgroup"]);
+// How one artist stands to another, as far as the shelf cares: in a band, a
+// band's part, the same person under another name, or a named collaboration.
+const LINKS = new Set(["member of band", "is person", "collaboration", "founder", "subgroup"]);
+const quoted = (text) => text.replace(/["\\]/g, " ").trim();
+// A title as its record is known, without an edition's note.
+const plain = (title) => title.replace(/\s*[([][^)\]]*(remaster|deluxe|edition|version|anniversary|expanded|soundtrack|bonus|mono|stereo|re-?record)[^)\]]*[)\]]/gi, "").replace(/\s+-\s+.*(remaster|deluxe|edition|version|anniversary).*$/i, "").trim();
+const within = (whole, part) => Boolean(part) && ` ${whole} `.includes(` ${part} `);
+// A name as it can be compared: folded to plain letters or, for a name in
+// another script, as it stands.
+const called = (text) => fold(text) || String(text).normalize("NFKC").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+// The names in a joint credit: "Lou Reed & John Cale", "Eno • Hyde".
+const partsOf = (credit) => credit.split(/\s*(?:&|•|\/|,|\+|\band\b|\bwith\b)\s*/i).map((part) => part.trim()).filter(Boolean);
 
-async function artistFacts(name) {
-  const found = await ask(`https://musicbrainz.org/ws/2/artist/?query=${encodeURIComponent(`artist:"${name.replace(/"/g, "")}"`)}&fmt=json&limit=5`);
-  const candidates = found?.artists ?? [];
-  const pick = candidates.find((artist) => fold(artist.name) === fold(name) && artist.score >= 90) ?? candidates.find((artist) => artist.score >= 98);
-  if (!pick) return null;
-  const facts = await ask(`https://musicbrainz.org/ws/2/artist/${pick.id}?inc=genres+artist-rels&fmt=json`);
-  if (!facts) return null;
-  const genres = (facts.genres ?? [])
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 5)
-    .map((genre) => genre.name);
-  const related = [
-    ...new Set(
-      (facts.relations ?? [])
-        .filter((relation) => relation["target-type"] === "artist" && RELATED.has(relation.type) && relation.artist?.name)
-        .map((relation) => relation.artist.name)
-    )
-  ].slice(0, 8);
-  return { genres, related };
+/*
+ * Who made a record, as MusicBrainz credits it: each artist by id, and how
+ * sure that is. The record is looked for as an album or single, then as a
+ * recording, under the shelf's credit or any one name in it, since
+ * MusicBrainz joins a joint credit in its own way ("Lou Reed / John Cale").
+ * - 3: an artist of the credit's very name.
+ * - 2: an artist credited on the record under that name (Ye, as Kanye West),
+ *   or the artists named within a joint credit (Eno and Hyde, on "Eno •
+ *   Hyde"). A guest is not taken for the record's maker: caroline's song
+ *   with Caroline Polachek is caroline's.
+ * - 1: the record's one artist, whose name holds the credit (Charlie Megira
+ *   und the Hefker Girl, for Charlie Megira).
+ */
+async function creditedOn(artist, title) {
+  const name = called(artist);
+  const parts = partsOf(artist);
+  const by = [...new Set([artist, ...(parts.length > 1 ? parts : [])])].map((part) => `artist:"${quoted(part)}"`).join(" OR ");
+  let best = null;
+  const keep = (sure, credits) => {
+    if (credits.length && sure > (best?.sure ?? 0)) best = { sure, made: credits.map((credit) => ({ id: credit.artist.id, name: credit.artist.name })) };
+  };
+  for (const [entity, field, list] of [["release-group", "releasegroup", "release-groups"], ["recording", "recording", "recordings"]]) {
+    const query = `${field}:"${quoted(plain(title))}" AND (${by})`;
+    const found = await ask(`https://musicbrainz.org/ws/2/${entity}/?query=${encodeURIComponent(query)}&fmt=json&limit=12`);
+    for (const hit of found?.[list] ?? []) {
+      if (hit.score < 80 || called(plain(hit.title)) !== called(plain(title))) continue;
+      const credits = (hit["artist-credit"] ?? []).filter((credit) => credit.artist?.id);
+      keep(3, credits.filter((credit) => called(credit.artist.name) === name));
+      keep(2, credits.filter((credit) => [credit.name, credit.artist.name].some((known) => { const own = called(known ?? ""); return own && (own === name || within(name, own)); })));
+      if (credits.length === 1) keep(1, credits.filter((credit) => within(called(credit.artist.name), name)));
+    }
+    if (best?.sure === 3) break;
+  }
+  return best;
+}
+
+// Failing a record, the one artist of exactly that name, or known by it:
+// MusicBrainz files 青葉市子 under her own script and Ichiko Aoba as another
+// name for her. Two artists of the name are no answer.
+async function namedExactly(name) {
+  const found = await ask(`https://musicbrainz.org/ws/2/artist/?query=${encodeURIComponent(`artist:"${quoted(name)}" OR alias:"${quoted(name)}"`)}&fmt=json&limit=8`);
+  const known = (artist) => [artist.name, ...(artist.aliases ?? []).map((alias) => alias.name)].some((other) => called(other) === called(name));
+  const candidates = (found?.artists ?? []).filter((artist) => artist.score >= 85 && known(artist));
+  return candidates.length === 1 || (candidates.length > 1 && candidates[0].score - candidates[1].score >= 10) ? [{ id: candidates[0].id, name: candidates[0].name }] : null;
+}
+
+/*
+ * One artist's facts: its kind, its genres, and every artist it stands in
+ * one of LINKS to. `groups` are what it belongs to (a band it is in, a
+ * collaboration it is part of, the band it is a part of); `members` are what
+ * belongs to it; `same` are its other names.
+ */
+async function artistFacts(id) {
+  const facts = await ask(`https://musicbrainz.org/ws/2/artist/${id}?inc=genres+artist-rels&fmt=json`);
+  if (!facts?.name) return null;
+  const out = { name: facts.name, type: facts.type ?? null, genres: [], groups: {}, members: {}, same: {} };
+  out.genres = (facts.genres ?? []).sort((a, b) => b.count - a.count).slice(0, 5).map((genre) => genre.name);
+  for (const relation of facts.relations ?? []) {
+    const other = relation.artist;
+    if (relation["target-type"] !== "artist" || !LINKS.has(relation.type) || !other?.id || !other.name) continue;
+    const forward = relation.direction !== "backward";
+    const side = relation.type === "is person" ? out.same : forward === (relation.type !== "subgroup") ? out.groups : out.members;
+    // A year it began and a year it ended, where MusicBrainz knows them: a
+    // charity single's one-day band is not a band someone was in.
+    const span = [relation.begin, relation.end].map((date) => Number.parseInt(date ?? "", 10) || null);
+    side[other.id] = { name: other.name, type: other.type ?? null, ...(span[0] || span[1] ? { span } : {}), ...(relation.attributes?.length ? { as: relation.attributes } : {}) };
+  }
+  return out;
 }
 
 async function releaseYear(artist, album) {
@@ -206,10 +296,57 @@ async function main() {
     ? JSON.parse(await readFile(path.join(root, "public/music-meta.json"), "utf8"))
     : { artists: {}, years: {} };
 
-  const artists = {};
+  // Who each credited name is, by one of their own records here: the most
+  // listened first, up to four of them, then by the name alone.
+  const all = process.argv.includes("--all");
+  const linksFile = path.join(root, "data/music-links.json");
+  const links = !all && (await exists(linksFile)) ? JSON.parse(await readFile(linksFile, "utf8")) : { credits: {}, artists: {} };
+  const shelf = unpackRanking(ranking);
+  const records = mergeShelf(shelf.albums, shelf.songs, shelf.sleeves, shelf.singles);
+  const works = new Map();
+  for (const item of [...records, ...shelf.songs]) {
+    if (!works.has(item.artist)) works.set(item.artist, []);
+    if (!works.get(item.artist).includes(item.title)) works.get(item.artist).push(item.title);
+  }
+  // A name MusicBrainz did not know last time is asked about again, and so
+  // is any named with --again=One name|Another.
+  const again = new Set((process.argv.find((flag) => flag.startsWith("--again="))?.slice(8) ?? "").split("|").filter(Boolean));
   for (const [index, name] of ranking.names.entries()) {
-    artists[name] = previous.artists[name] ?? (await artistFacts(name)) ?? { genres: [], related: [] };
+    if (!links.credits[name]?.length || again.has(name)) {
+      let best = null;
+      for (const title of (works.get(name) ?? []).slice(0, 4)) {
+        const found = await creditedOn(name, title);
+        if (found && found.sure > (best?.sure ?? 0)) best = found;
+        // A joint credit is no artist of its own, so its parts will do.
+        if (best?.sure === 3 || (best?.sure === 2 && partsOf(name).length > 1)) break;
+      }
+      const made = best?.made ?? (await namedExactly(name));
+      links.credits[name] = (made ?? []).map((artist) => artist.id);
+    }
+    for (const id of links.credits[name]) links.artists[id] ??= await artistFacts(id);
     if ((index + 1) % 25 === 0) process.stderr.write(`  artists ${index + 1}/${ranking.names.length}\n`);
+  }
+  // A band two artists here are both in, though it has no record here
+  // itself: asked about too, so a charity single's band of forty can be told
+  // from a band (lib/music-kin.mjs).
+  const here = new Set(Object.values(links.credits).flat());
+  const shared = new Map();
+  for (const id of here) for (const group of Object.keys(links.artists[id]?.groups ?? {})) shared.set(group, (shared.get(group) ?? 0) + 1);
+  const outside = [...shared].filter(([group, count]) => count > 1 && !here.has(group)).map(([group]) => group);
+  for (const [index, id] of outside.entries()) {
+    links.artists[id] ??= await artistFacts(id);
+    if ((index + 1) % 25 === 0) process.stderr.write(`  shared bands ${index + 1}/${outside.length}\n`);
+  }
+  // Only what the shelf still stands on is kept.
+  for (const id of Object.keys(links.artists)) if (!links.artists[id] || !(here.has(id) || outside.includes(id))) delete links.artists[id];
+  await writeFile(linksFile, `${JSON.stringify({ schemaVersion: 1, note: "Who each credited name on the shelf is and whom they stand with, from MusicBrainz (CC0), kept by scripts/build-music-meta.mjs so it need only ask about new artists.", ...links })}\n`);
+
+  const kin = kinOf(ranking.names, links);
+  const artists = {};
+  for (const name of ranking.names) {
+    const known = links.credits[name].map((id) => links.artists[id]).filter(Boolean);
+    const genres = previous.artists[name]?.genres?.length ? previous.artists[name].genres : [...new Set(known.flatMap((artist) => artist.genres))].slice(0, 5);
+    artists[name] = { genres, related: kin.related[name] ?? [], kin: kin.kin[name] ?? [] };
   }
 
   // Every record's id and cover (18 November 2026: other albums and singles too).
@@ -237,7 +374,9 @@ async function main() {
   };
   await writeFile(path.join(root, "public/music-meta.json"), `${JSON.stringify(packet)}\n`);
   const known = Object.values(artists).filter((artist) => artist.genres.length || artist.related.length).length;
-  console.log(`music-meta: ${known}/${ranking.names.length} artists with genres or relations, ${Object.keys(years).length}/${ids.length} sleeves with a year`);
+  const unknown = ranking.names.filter((name) => !links.credits[name].length);
+  console.log(`music-meta: ${known}/${ranking.names.length} artists with genres or relations, ${Object.values(artists).filter((artist) => artist.kin.length).length} with other artists here to stand with, ${Object.keys(years).length}/${ids.length} sleeves with a year`);
+  if (unknown.length) console.log(`  not found on MusicBrainz (${unknown.length}): ${unknown.join(" | ")}`);
 }
 
 await main();
