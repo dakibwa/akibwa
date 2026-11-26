@@ -1163,7 +1163,9 @@ html {
    stays 3px on a hairline, close under the words: one thin even line set
    further from them was tried and turned down (Dan, 25 November 2026: "I
    actually liked the thicker and tighter"). The columns are counted and
-   filled in music-room.jsx. */
+   filled in music-room.jsx, which makes them even unless a name needs more
+   of the sheet; then it gives each its least width here, and the one
+   length every line is drawn against (`--measure`). */
 .music-track-list {
   grid-area: list;
   display: grid;
@@ -1193,7 +1195,7 @@ html {
   position: absolute;
   bottom: -1px;
   left: 0;
-  width: max(3px, calc(var(--listening-share, 1) * 100%));
+  width: max(3px, calc(var(--listening-share, 1) * var(--measure, 100%)));
   height: 3px;
   border-radius: 0 1.5px 1.5px 0;
   background: var(--fill);

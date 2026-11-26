@@ -240,10 +240,9 @@ open, against half a millisecond this way (measured 26 November 2026).
   fades at the edge it runs past and rolls under the pointer or a tap, as a song's name
   does. The artist gives way before the name, and the figures never.
 - Its songs follow, most listened first, as a ledger (Dan, 25 November: “there must be
-  a better clean way of showing this information”). Songs read down columns of equal
-  width across the full sheet. Divide the songs evenly, with the longer columns first.
-  The chips that wrapped and stretched, each filled to its own width, are gone; do not
-  bring them back.
+  a better clean way of showing this information”). Songs read down columns across the
+  full sheet. Divide the songs evenly, with the longer columns first. The chips that
+  wrapped and stretched, each filled to its own width, are gone; do not bring them back.
 - The songs always fill the sheet's width; the shelf chooses how many columns (Dan,
   26 November: “can it not dynamically fill the bar so it utilises space the best”). It
   measures each name and time against the room. A name that does not fit its column
@@ -251,23 +250,33 @@ open, against half a millisecond this way (measured 26 November 2026).
   it doesn't fit”), so a long name does not keep a record to one column. One column
   for Weezer beside two for Spiritualized, because Weezer's names are longer, was
   turned down (“the two is preferable no?”); so was keeping all but one name in eight
-  whole, the rule that made it.
+  whole, the rule that made it. The rules are in `components/paper/music-columns.mjs`.
+  - The columns are the same width unless a name needs more. Then that name's column
+    takes what it needs and the others share the rest evenly, so one long name does not
+    cost every record a row (Dan, 26 November, of a record held to four columns by one
+    name, with room to spare in the other three: “are you telling me we can't squash that
+    into another column? it feels like we can”, “without sacrificing anything?”, “this
+    should be applied to all”). The widest column is at most one and a half times the
+    narrowest, so the sheet still reads as even columns.
   - Each way of setting the songs costs its rows and its faded names, a row for a
-    name. The cheapest is taken, and of two as cheap the wider columns. So three even
-    columns with every name whole beat five with one faded, and two columns beat one
-    long one.
-  - A column 200 px wide or more may fade up to a third of its names. A narrower one,
-    as two on a phone are, must hold every name, so a phone has two columns only for a
-    record of short names.
-  - A column is never narrower than 132 px, and in a wide column a name counts as whole
-    only with 8 px to spare. A name too long for the whole sheet fades wherever it
-    stands, so it has no say. The layout adjusts when the sheet changes width.
+    name, the longest names fading first. The cheapest is taken, and of two as cheap
+    the wider columns. So three columns with every name whole beat five with one faded,
+    and two columns beat one long one.
+  - Columns that come to 200 px or more each may fade up to a third of the names.
+    Narrower ones, as two on a phone are, must hold every name, so a phone has two
+    columns only for a record whose names fit them.
+  - A column is never narrower than 132 px, and where the columns are wide a name counts
+    as whole only with 8 px to spare. A name too long for the whole sheet fades wherever
+    it stands, so it has no say. The layout adjusts when the sheet changes width.
 - A record whose songs all fit on one line stands on one line, however many columns that
   takes (Dan, 25 November, of seven short names on two lines: “can't this fit on one line
   comfortably?”). On one line every name stands in full.
 - Each song stands on a ruled line with its time in bold at the line's end. The line is
   drawn heavier, 3 px on a hairline, for as far as the song's hours reach against the
-  record's favourite, and sits close under the words. One thin even line, 2 px and set
+  record's favourite, and sits close under the words. Every line is drawn against one
+  length, so the lines can be compared across the sheet even where its columns differ:
+  the longest at which each still fits its own column, which leaves the favourite's line
+  heavy all the way wherever its column allows. One thin even line, 2 px and set
   further from the words, was tried on 25 November and turned down (Dan: “I actually
   liked the thicker and tighter”); do not bring it back.
 - Every song name keeps to one line (Dan, 25 November, of names that took three: “allow

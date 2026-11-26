@@ -6,6 +6,7 @@ import { flushSync } from "react-dom";
 import catalogue from "@/.shelf-build/catalogue.json";
 import signature from "@/.shelf-build/signature.json";
 import { openCatalogue } from "./music-catalogue.mjs";
+import { countColumns, setColumns, shareSongs } from "./music-columns.mjs";
 import { relatedLookup, search } from "./music-search.mjs";
 import { GAP, ORDERS, arrange, listened, rowsFor, songLabel } from "./music-shelf.mjs";
 
@@ -725,30 +726,9 @@ function foldFor(count, columns, width) {
   return { full, folds: width >= PHONE && Math.ceil(count / columns) > (columns === 1 ? 12 : 9) };
 }
 
-/*
- * How many columns a record's songs stand in (Dan, 26 November 2026: "can it
- * not dynamically fill the bar so it utilises space the best"). The songs
- * always run the sheet's full width; the question is how many across.
- * - A name that does not fit its column fades and rolls, as long names do
- *   everywhere ("we have it going across like this if it doesn't fit"), so a
- *   long name does not keep a record to one column. One column for Weezer
- *   beside two for Spiritualized, because Weezer's names are longer, was
- *   turned down ("the two is preferable no?").
- * - Each way of setting them costs its rows and its faded names, a row for
- *   a name; the cheapest is taken, and of two as cheap the wider columns.
- *   So three even columns with every name whole beat five with one faded,
- *   and two columns beat one long one.
- * - A column as wide as LINE_MEASURE or more may fade up to a third of its
- *   names. A narrower one, as two on a phone are, must hold every name: a
- *   phone has two columns only for a record of short names.
- * - A record on one row has every name in full.
- * A name too long for the whole sheet fades wherever it stands, so it has no
- * say. A column is never narrower than LINE_COLUMN, and in a wide column a
- * name counts as whole only with LINE_SLACK to spare.
- */
-const LINE_COLUMN = 132;
-const LINE_MEASURE = 200;
-const LINE_SLACK = 8;
+// How many columns a record's songs stand in at this width: the rules are in
+// music-columns.mjs, and the songs' own widths are read from the frame. What
+// was read is kept with the answer, for the sheet to set its columns by.
 const sheetLayouts = new WeakMap();
 function columnsFor(album, width, frame) {
   const count = album?.tracks.length ?? 0;
@@ -757,24 +737,9 @@ function columnsFor(album, width, frame) {
   if (cached?.width === width) return cached.columns;
 
   const { room, gap, widths } = songWidths(album, frame);
-  const most = Math.min(count, Math.floor((room + gap) / (LINE_COLUMN + gap)));
-  const lines = widths.filter(line => line + LINE_SLACK <= room);
-  let best = 1;
-  let lowest = Infinity;
-  for (let columns = 1; columns <= most; columns++) {
-    const columnWidth = (room - (columns - 1) * gap) / columns;
-    const wide = columnWidth >= LINE_MEASURE;
-    const faded = lines.filter(line => line + (wide ? LINE_SLACK : 0) > columnWidth).length;
-    // Narrower columns only fade more names.
-    if (columns > 1 && (faded > (wide ? Math.floor(count / 3) : 0) || (columns === count && faded))) break;
-    const cost = Math.ceil(count / columns) + faded;
-    if (cost < lowest) {
-      lowest = cost;
-      best = columns;
-    }
-  }
-  sheetLayouts.set(album, { width, columns: best });
-  return best;
+  const columns = countColumns(widths, room, gap);
+  sheetLayouts.set(album, { width, columns, room, gap, lines: widths });
+  return columns;
 }
 
 // The room a sheet's songs have, the gap between its columns and the width
@@ -823,8 +788,10 @@ function TrackLabel({ track }) {
  * how long and how often it has been played; then its songs, most listened
  * first, as a ledger in columns that read down. Each song stands on a ruled
  * line, and the line is drawn heavier for as far as its hours reach against
- * the record's favourite. Every column is the same width, so the lines can
- * be compared across the sheet, and every name keeps to its one line.
+ * the record's favourite. The columns are the same width unless a name needs
+ * more of the sheet (music-columns.mjs); every line is drawn against the
+ * same length either way, so the lines can be compared across the sheet,
+ * and every name keeps to its one line.
  */
 function TrackSheet({ album, columns, width, pinned }) {
   const tracks = songsOf(album);
@@ -837,13 +804,21 @@ function TrackSheet({ album, columns, width, pinned }) {
   const duplicate = count === 1 && tracks[0].label === recordLabel(album) && tracks[0].minutes === album.minutes;
   const { full, folds } = foldFor(count, columns, width);
   const limit = folds && !expanded ? full : count;
-  const stacks = [];
-  // Share the visible songs across the remaining columns, longest columns first.
-  for (let start = 0; start < limit;) {
-    const size = Math.ceil((limit - start) / (columns - stacks.length));
-    stacks.push({ start: start + 1, tracks: tracks.slice(start, start + size) });
-    start += size;
-  }
+  // Share the visible songs across the columns, longest columns first.
+  let from = 0;
+  const stacks = shareSongs(limit, columns).map((size) => ({ start: from + 1, tracks: tracks.slice(from, from += size) }));
+  // The columns are even unless a name needs more of the sheet; then each is
+  // given at least what its names need, and the sheet shares out the rest.
+  // Every line is still drawn against one length, so the lines can be
+  // compared across the sheet: the longest at which each fits its own
+  // column, which leaves the favourite's line heavy all the way wherever
+  // its column is no wider than the others need.
+  const set = sheetLayouts.get(album);
+  const { needs, widths } = set && stacks.length > 1
+    ? setColumns(stacks.map((stack) => set.lines.slice(stack.start - 1, stack.start - 1 + stack.tracks.length)), set.room, set.gap)
+    : {};
+  const measure = widths && Math.min(...stacks.flatMap((stack, index) =>
+    stack.tracks.map((track) => widths[index] / Math.max(track.minutes / mostMinutes, 0.001))));
 
   // Find the names longer than their lines, again whenever the lines change
   // width, and keep each one's fade to the edge it runs past as it scrolls.
@@ -927,7 +902,11 @@ function TrackSheet({ album, columns, width, pinned }) {
           className="music-track-list"
           role="group"
           aria-label="Songs, most listened first"
-          style={{ "--columns": stacks.length }}
+          style={{
+            "--columns": stacks.length,
+            "--measure": measure ? `${measure.toFixed(2)}px` : undefined,
+            gridTemplateColumns: needs?.map((need) => `minmax(${need.toFixed(2)}px, 1fr)`).join(" ")
+          }}
         >
           {stacks.map((stack) => (
             <ol key={stack.start} start={stack.start}>
