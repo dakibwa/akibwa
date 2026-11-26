@@ -243,14 +243,22 @@ open, against half a millisecond this way (measured 26 November 2026).
   bring them back.
 - The songs always fill the sheet's width; the shelf chooses how many columns (Dan,
   26 November: “can it not dynamically fill the bar so it utilises space the best”). It
-  measures each name and time against the room. Every name stands in full where it
-  can: one name in eight may run past its line and fade, never more. Of the ways that
-  leaves, it takes the fewest rows; then, for a folded record, the most songs shown;
-  then the widest columns. A column is never narrower than 132 px, and a name counts as
-  full only with 8 px to spare. A name too long for the whole sheet fades wherever it
-  stands, so it has no say. On a phone that keeps most records to one column; two
-  columns there cut a third of a record's names short. The layout adjusts when the
-  sheet changes width.
+  measures each name and time against the room. A name that does not fit its column
+  fades and rolls, as long names do everywhere (“we have it going across like this if
+  it doesn't fit”), so a long name does not keep a record to one column. One column
+  for Weezer beside two for Spiritualized, because Weezer's names are longer, was
+  turned down (“the two is preferable no?”); so was keeping all but one name in eight
+  whole, the rule that made it.
+  - Each way of setting the songs costs its rows and its faded names, a row for a
+    name. The cheapest is taken, and of two as cheap the wider columns. So three even
+    columns with every name whole beat five with one faded, and two columns beat one
+    long one.
+  - A column 200 px wide or more may fade up to a third of its names. A narrower one,
+    as two on a phone are, must hold every name, so a phone has two columns only for a
+    record of short names.
+  - A column is never narrower than 132 px, and in a wide column a name counts as whole
+    only with 8 px to spare. A name too long for the whole sheet fades wherever it
+    stands, so it has no say. The layout adjusts when the sheet changes width.
 - A record whose songs all fit on one line stands on one line, however many columns that
   takes (Dan, 25 November, of seven short names on two lines: “can't this fit on one line
   comfortably?”). On one line every name stands in full.
@@ -265,8 +273,11 @@ open, against half a millisecond this way (measured 26 November 2026).
   song carries its name to its end at a reading pace and leaving brings it back; a tap
   does the same. Names do not move on their own, and
   under reduced motion they move only by hand.
-- Fold a long record: one column shows ten songs above twelve, wider sheets six rows,
-  with a button for the rest. Shorten song names by dropping guest credits, remaster notes
+- Fold a long record on a laptop: one column shows ten songs above twelve, and wider
+  sheets six rows above nine, with a button for the rest. A record only a few rows
+  longer stands whole: a button for three songs hides more than it saves. A phone's
+  sheet, under 620 px, shows every song and has no button (Dan, 26 November: “don't
+  have the show more songs on mobile just have them all”). Shorten song names by dropping guest credits, remaster notes
   and composition attributions. Keep subtitles, and set a version note (demo, live, take)
   quietly after the name. Omit a lone song when the header already gives its title and time.
 - Show the shelf as soon as the HTML arrives (Dan, 25 November: “load times

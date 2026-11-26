@@ -735,30 +735,40 @@ function lineOf(track) {
   return { title, mark: note?.replace(/^[-–—]\s*/, "").replace(/^\((.*)\)$/, "$1"), amount, unit };
 }
 
-// How a record's songs fold: one column, as on a phone, shows ten songs
-// above twelve; wider, the sheet keeps six rows, or a seventh rather than a
-// button for a few songs. `rows` counts the button's as one.
-function foldFor(count, columns) {
+// How a record's songs fold. A phone's sheet shows them all (Dan, 26 November
+// 2026: "don't have the show more songs on mobile just have them all"). A
+// wider one folds a long record to six rows, or ten in a single column, with
+// a button for the rest; a record only a few rows longer than that stands
+// whole, since a button for three songs hides more than it saves.
+const PHONE = 620;
+function foldFor(count, columns, width) {
   const full = columns === 1 ? 10 : columns * 6;
-  const folds = count > full + (columns === 1 ? 2 : columns);
-  return { full, folds, rows: folds ? full / columns + 1 : Math.ceil(count / columns) };
+  return { full, folds: width >= PHONE && Math.ceil(count / columns) > (columns === 1 ? 12 : 9) };
 }
 
 /*
  * How many columns a record's songs stand in (Dan, 26 November 2026: "can it
  * not dynamically fill the bar so it utilises space the best"). The songs
  * always run the sheet's full width; the question is how many across.
- * - Every name stands in full where it can. One name in eight may run past
- *   its line and fade, never more: on a phone that keeps most records to one
- *   column, where two would cut a third of their names short.
- * - Of the ways that leaves, the one with the fewest rows; then, for a folded
- *   record, the one that shows the most songs; then the widest columns.
+ * - A name that does not fit its column fades and rolls, as long names do
+ *   everywhere ("we have it going across like this if it doesn't fit"), so a
+ *   long name does not keep a record to one column. One column for Weezer
+ *   beside two for Spiritualized, because Weezer's names are longer, was
+ *   turned down ("the two is preferable no?").
+ * - Each way of setting them costs its rows and its faded names, a row for
+ *   a name; the cheapest is taken, and of two as cheap the wider columns.
+ *   So three even columns with every name whole beat five with one faded,
+ *   and two columns beat one long one.
+ * - A column as wide as LINE_MEASURE or more may fade up to a third of its
+ *   names. A narrower one, as two on a phone are, must hold every name: a
+ *   phone has two columns only for a record of short names.
  * - A record on one row has every name in full.
  * A name too long for the whole sheet fades wherever it stands, so it has no
- * say. A column is never narrower than LINE_COLUMN, and a name counts as
- * full only with LINE_SLACK to spare.
+ * say. A column is never narrower than LINE_COLUMN, and in a wide column a
+ * name counts as whole only with LINE_SLACK to spare.
  */
 const LINE_COLUMN = 132;
+const LINE_MEASURE = 200;
 const LINE_SLACK = 8;
 const sheetLayouts = new WeakMap();
 function columnsFor(album, width, frame) {
@@ -770,19 +780,22 @@ function columnsFor(album, width, frame) {
   const { room, gap, widths } = songWidths(album, frame);
   const most = Math.min(count, Math.floor((room + gap) / (LINE_COLUMN + gap)));
   const lines = widths.filter(line => line + LINE_SLACK <= room);
-  const spare = Math.max(1, Math.floor(count / 8));
-  let best = { columns: 1, rows: Infinity, shown: 0 };
+  let best = 1;
+  let lowest = Infinity;
   for (let columns = 1; columns <= most; columns++) {
     const columnWidth = (room - (columns - 1) * gap) / columns;
-    const cut = lines.filter(line => line + LINE_SLACK > columnWidth).length;
-    // Narrower columns only cut more names short.
-    if (columns > 1 && (cut > spare || (columns === count && cut))) break;
-    const { full, folds, rows } = foldFor(count, columns);
-    const shown = folds ? full : count;
-    if (rows < best.rows || (rows === best.rows && shown > best.shown)) best = { columns, rows, shown };
+    const wide = columnWidth >= LINE_MEASURE;
+    const faded = lines.filter(line => line + (wide ? LINE_SLACK : 0) > columnWidth).length;
+    // Narrower columns only fade more names.
+    if (columns > 1 && (faded > (wide ? Math.floor(count / 3) : 0) || (columns === count && faded))) break;
+    const cost = Math.ceil(count / columns) + faded;
+    if (cost < lowest) {
+      lowest = cost;
+      best = columns;
+    }
   }
-  sheetLayouts.set(album, { width, columns: best.columns });
-  return best.columns;
+  sheetLayouts.set(album, { width, columns: best });
+  return best;
 }
 
 // The room a sheet's songs have, the gap between its columns and the width
@@ -834,7 +847,7 @@ function TrackLabel({ track }) {
  * the record's favourite. Every column is the same width, so the lines can
  * be compared across the sheet, and every name keeps to its one line.
  */
-function TrackSheet({ album, columns, pinned }) {
+function TrackSheet({ album, columns, width, pinned }) {
   const tracks = songsOf(album);
   const [expanded, setExpanded] = useState(false);
   const count = tracks.length;
@@ -843,7 +856,7 @@ function TrackSheet({ album, columns, pinned }) {
   const mostMinutes = tracks[0]?.minutes || 1;
   // A single's matching title and time are already in the header.
   const duplicate = count === 1 && tracks[0].label === recordLabel(album) && tracks[0].minutes === album.minutes;
-  const { full, folds } = foldFor(count, columns);
+  const { full, folds } = foldFor(count, columns, width);
   const limit = folds && !expanded ? full : count;
   const stacks = [];
   // Share the visible songs across the remaining columns, longest columns first.
@@ -972,7 +985,7 @@ function TrackSheet({ album, columns, pinned }) {
  * "get rid of the X the X is just clicking anywhere else"). One panel does
  * both, so pressing changes nothing the reader is looking at.
  */
-function AlbumTracks({ album, tile, pinned, above, columns, onClose }) {
+function AlbumTracks({ album, tile, pinned, above, columns, width, onClose }) {
   const panel = useRef(null);
   useLayoutEffect(() => {
     if (pinned) panel.current.focus({ preventScroll: true });
@@ -1008,7 +1021,7 @@ function AlbumTracks({ album, tile, pinned, above, columns, onClose }) {
       tabIndex={pinned ? -1 : undefined}
       aria-labelledby="music-tracks-title"
     >
-      <TrackSheet key={album.key} album={album} columns={columns} pinned={pinned} />
+      <TrackSheet key={album.key} album={album} columns={columns} width={width} pinned={pinned} />
     </section>
   );
 }
@@ -1193,7 +1206,7 @@ export function MusicRoom({ active }) {
     // songs and the fold's button.
     const count = record?.tracks.length ?? 0;
     const across = columnsFor(record, widthNow.current, map.current);
-    const { full, folds } = foldFor(count, across);
+    const { full, folds } = foldFor(count, across, widthNow.current);
     const rows = count < 2 ? 0 : Math.ceil((folds ? full : count) / across);
     // A narrow sheet's heading takes two lines.
     const needs = (widthNow.current < 900 ? 86 : 62) + (rows ? 8 + rows * 33 : 0) + (folds ? 44 : 0) + GAP + 12;
@@ -1460,8 +1473,8 @@ export function MusicRoom({ active }) {
   const shownTile = record ? shown.tile : undefined;
   const above = Boolean(record && shown.up);
   const tracks = useMemo(() => active && record ? (
-    <AlbumTracks album={record} tile={shownTile} pinned={pinned} above={above} columns={columns} onClose={close} />
-  ) : null, [active, record, shownTile, pinned, above, columns, close]);
+    <AlbumTracks album={record} tile={shownTile} pinned={pinned} above={above} columns={columns} width={width} onClose={close} />
+  ) : null, [active, record, shownTile, pinned, above, columns, width, close]);
 
   // The sheet's notch points at its sleeve.
   const place = useCallback(() => {
