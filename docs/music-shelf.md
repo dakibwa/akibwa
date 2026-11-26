@@ -42,12 +42,26 @@ The layout, merging and ordering code runs in the build checks against real reco
   - Genre is `kind` in code, one curated kind per artist. Each of the seven genres
     has sub-genres, 40 in all, one for each artist with a record on the shelf
     (Dan, 25 November: “can we break these further into sub genres too using astra?”).
-    A genre is one group under one heading: its kraft tab, its share of listening, and
-    its sub-genres as the words at the heading's far end, most listened first. It stands
+    A genre is one group under one heading: its kraft tab, its figures, and its
+    sub-genres as the words at the heading's far end, most listened first. It stands
     whole, most listened first. Pressing a sub-genre cuts the genre to that sub-genre's
-    records, and the heading then says how many there are and their hours; pressing it
-    again brings the whole genre back. The chosen word takes the bar's rust, and the
-    heading's rule turns rust beneath it. Another order puts every genre back whole.
+    records; pressing it again brings the whole genre back. Another order puts every
+    genre back whole.
+    The figures say the same three things of a genre and of a sub-genre: its records,
+    its share of the shelf's listening and its hours (Dan, 26 November: “you can also
+    have records here and also do % of listening for sub genres too”). A share under one
+    in a hundred reads “<1%”.
+    A cut turns as a new order does (Dan, 26 November: “do the same fade on the sub
+    genre buttons as when swappnig menu buttons so it's all consistent”). The word
+    answers at once. That genre's shelf and everything beneath it fade out over 150 ms,
+    take their new places unseen and lift in; the heading that was pressed stays as it
+    is. Sleeves that glided from their old places to their new ones on a cut were
+    replaced by this the same day; do not bring them back.
+    The chosen word takes the bar's rust, and the heading's rule turns rust beneath it.
+    That mark is one piece. It slides along the rule from one word to the next (Dan,
+    26 November: “can these not slide along rather than appear”), is drawn out from a
+    word's start when a genre is first cut, and is drawn back when it is made whole.
+    Where the words scroll, the chosen one is kept in sight.
     A sub-genre is named on its genre's heading and nowhere else. Until 26 November
     each stood over its own records under a smaller heading, and the genre's words went
     to the other six genres. Dan asked for the words to be the sub-genres (“can these
@@ -84,9 +98,9 @@ The layout, merging and ordering code runs in the build checks against real reco
   do not fly from their old places to their new ones on a new order, and nothing pops in
   on its own; do not bring that back. Pressing the order already chosen changes nothing.
   Reduced motion gets the new order at once.
-- A search, a change of width and a genre cut to a sub-genre still glide the sleeves to
-  their places; a heading on the screen moves with the sleeves under it, and one from
-  another screen fades in. Use only the headings an order needs. Search finds albums and
+- A search and a change of width still glide the sleeves to their places; a heading on
+  the screen moves with the sleeves under it, and one from another screen fades in.
+  Use only the headings an order needs. Search finds albums and
   singles together in one group, most listened first. Choosing an order clears search.
   The signature returns to hours, clears the search and scrolls to the top.
 - Keep one pinned row. Leave equal gaps between the signature, each sort option and
@@ -181,15 +195,20 @@ open, against half a millisecond this way (measured 26 November 2026).
   closes it. The shelf answers only a pointer that moves: scrolling leaves the open sheet
   alone, and a sleeve that slides under a resting pointer waits for it to move.
 - The open sheet can be used where it is: its long names glide and its fold opens.
-  Pressing the sleeve keeps the sheet open when the pointer moves on, and shows its
-  close button. Pressing the sleeve again, the close button or Escape lets it go. A tap
-  or the Enter key opens it the same way. Keep the scroll position.
+  Pressing the sleeve keeps the sheet open when the pointer moves on. Pressing the
+  sleeve again, pressing anywhere else or Escape lets it go. A tap or the Enter key
+  opens it the same way. Keep the scroll position. The sheet has no close button of
+  its own (Dan, 26 November: “get rid of the X the X is just clicking anywhere else”);
+  do not bring one back.
 - Keep the sleeve fixed in place and at the same size. Blend light into its artwork,
   sweeping one band at its own angle, speed and direction, with a soft corner gloss and
   slightly deeper colours.
 - Hovering or focusing a sleeve leaves it and its related covers at full brightness.
   All other covers fade darker. Include other
-  releases by the artist and their connected bands or collaborators. Pick up to four
+  releases by the artist and their connected bands or collaborators. Two joint credits
+  that share a name are connected: Carnage, by Nick Cave & Warren Ellis, lights Nick
+  Cave & The Bad Seeds (Dan, 26 November: “hovering over carnage doesnt show the other
+  nick cave records highlighted”). Pick up to four
   more sleeves by different artists, starting with those in view. Match their genre
   tags and use the shelf’s broader genres and release years to guide the choice.
   Clicking or tapping keeps the same contrast while the songs are open.
@@ -208,8 +227,6 @@ open, against half a millisecond this way (measured 26 November 2026).
   so everything is consistent”). A record's name or an artist too long for its room
   fades at the edge it runs past and rolls under the pointer or a tap, as a song's name
   does. The artist gives way before the name, and the figures never.
-- Under the pointer the figures stand on the songs' right edge. Pressing the sleeve
-  keeps the sheet open, and the figures draw aside for its close button.
 - Its songs follow, most listened first, as a ledger (Dan, 25 November: “there must be
   a better clean way of showing this information”). Songs read down columns of equal
   width across the full sheet. Divide the songs evenly, with the longer columns first.

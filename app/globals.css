@@ -561,6 +561,14 @@ html.signed .music-sign:focus-visible .music-mark-held {
   pointer-events: none;
   transition: opacity 150ms ease;
 }
+/* A genre cut to a sub-genre turns the same way from its own shelf down:
+   its heading, where the word was pressed, stays. */
+.music-group[data-cutting] > .music-shelf,
+.music-group[data-cutting] ~ .music-group {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease;
+}
 
 .music-group {
   display: grid;
@@ -745,25 +753,28 @@ html.signed .music-sign:focus-visible .music-mark-held {
    them there and again over their records: "can that not all just be the
    same interface"). Pressing one cuts the genre to it. The chosen word
    takes the bar's rust, and the heading's rule turns rust beneath it for as
-   long as the word is, as a song's line is drawn heavier for its hours. */
+   long as the word is, as a song's line is drawn heavier for its hours.
+   That mark is one piece: it slides along the rule from one word to the
+   next ("can these not slide along rather than appear"), is drawn out from
+   a word's start when a genre is first cut, and is drawn back when it is
+   made whole. music-room.jsx places it (GlidingShelf.placeMarks). */
 .music-index button[aria-pressed="true"] {
   color: var(--rust-deep);
 }
-.music-index button[aria-pressed]::before {
-  content: "";
+.music-index {
+  position: relative;
+}
+.music-index .music-index-mark {
   position: absolute;
-  z-index: 1;
-  inset: auto 0 -9px;
+  bottom: 0;
+  left: 0;
+  display: block;
+  width: 0;
   height: 3px;
   border-radius: 1.5px;
   background: var(--rust-deep);
-  opacity: 0;
-  transform: scaleX(0.4);
-  transition: opacity 180ms ease, transform 320ms var(--shelf-ease);
-}
-.music-index button[aria-pressed="true"]::before {
-  opacity: 1;
-  transform: none;
+  pointer-events: none;
+  transition: transform 380ms var(--shelf-ease), width 380ms var(--shelf-ease);
 }
 
 .music-none { margin: 4px 0 0; color: var(--ink-soft); font: 600 15px/1.4 var(--sans); }
@@ -1061,18 +1072,11 @@ html {
    the sheet as it was fades out over it. */
 .music-sheet {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 0px;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-areas:
-    "release close"
-    "list list"
-    "more more";
-  transition: grid-template-columns 240ms var(--shelf-ease);
-}
-/* A sheet kept open by a press makes room at the heading's end for its
-   close button: the figures there draw aside for it, and until then stand
-   on the songs' right edge. */
-.music-tracks[data-pinned="true"] .music-sheet {
-  grid-template-columns: minmax(0, 1fr) 26px;
+    "release"
+    "list"
+    "more";
 }
 
 /* Its heading runs the sheet's whole width (Dan, 26 November 2026, of the
@@ -1086,7 +1090,8 @@ html {
    under the pointer, as a song's does (`.music-roll`), who made it giving
    way before the record's name, and the figures never. A narrow sheet's
    heading is two lines for every record: the name, then who and the
-   figures, still end to end. */
+   figures, still end to end. The sheet has no close button (Dan, 26
+   November 2026: "get rid of the X the X is just clicking anywhere else"). */
 .music-release {
   grid-area: release;
   align-self: baseline;
@@ -1157,62 +1162,11 @@ html {
 
 @container (max-width: 899px) {
   .music-release {
-    grid-column: 1 / -1;
     flex-wrap: wrap;
   }
   .music-release h2 {
-    flex-basis: calc(100% - 30px);
-    margin-right: 30px;                  /* the close button stands at its end */
+    flex-basis: 100%;
   }
-}
-
-/* Only a sheet kept open by a press can be closed. */
-.music-tracks-close {
-  grid-area: close;
-  align-self: start;
-  justify-self: end;
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  margin: -1px -8px 0 0;                 /* its cross ends on the songs' right edge */
-  padding: 0;
-  border: 0;
-  border-radius: 999px;
-  background: none;
-  color: var(--ink-soft);
-  cursor: pointer;
-  opacity: 0;
-  transition: color 160ms ease, background-color 160ms ease, opacity 200ms ease;
-}
-.music-tracks:not([data-pinned="true"]) .music-tracks-close {
-  pointer-events: none;
-}
-.music-tracks[data-pinned="true"] .music-tracks-close {
-  opacity: 1;
-}
-/* A finger's room round it, 44px each way, kept inside the sheet's edge. */
-.music-tracks-close::after {
-  content: "";
-  position: absolute;
-  inset: -8px -3px -8px -13px;
-}
-.music-tracks-close svg {
-  width: 12px;
-  height: 12px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.6;
-  stroke-linecap: round;
-}
-.music-tracks-close:hover {
-  background: var(--paper);
-  color: var(--ink);
-}
-.music-tracks-close:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 0;
 }
 
 /* The songs: a ledger in columns of one width, read down each, most

@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import { fold, unpackRanking } from "../components/paper/music-ranking.mjs";
-import { indexItems, search } from "../components/paper/music-search.mjs";
+import { indexItems, relatedLookup, search } from "../components/paper/music-search.mjs";
 import { GAP, arrange, bounds, mergeShelf, rowsFor, sideFor, songTitle } from "../components/paper/music-shelf.mjs";
 
 /* Build-time contract for akibwa.com. From 16 November 2026 (Dan) the site is
@@ -255,6 +255,12 @@ if (musicKinds.subkinds) {
   if (search(songIndex, "sammy 70s")?.length) fail("a credited artist excluded by an era must not fall back to a different member's band");
   if (!search(songIndex, "dream job")?.some((song) => song.title === "Dream Job")) fail("song titles must remain searchable");
   if (!search(songIndex, "ambient")?.some((song) => song.artist === "Brian Eno")) fail("genres must remain searchable");
+  // Dan, 26 November 2026, of Carnage by Nick Cave & Warren Ellis: "doesnt
+  // show the other nick cave records highlighted".
+  const credit = (key, artist) => ({ key, title: key, artist });
+  const joint = indexItems([credit("carnage", "Nick Cave & Warren Ellis"), credit("ghosteen", "Nick Cave & the Bad Seeds"), credit("psalms", "Nick Cave"), credit("pink moon", "Nick Drake")], { meta: { artists: {} }, yearOf: () => null });
+  const lit = relatedLookup(joint.entries, null)("carnage", new Set());
+  if (!lit.has("ghosteen") || !lit.has("psalms") || lit.has("pink moon")) fail("two credits that share an artist must light each other's records, and no one else's");
 }
 
 // Old page paths are absent from the export. The standalone game is staged

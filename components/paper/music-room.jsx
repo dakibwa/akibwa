@@ -159,16 +159,44 @@ class GlidingShelf extends PureComponent {
     lists.forEach((others, at) => {
       if (!others) return;
       if (scrolled[at]) others.scrollLeft = scrolled[at];
-      // A chosen sub-genre stays in sight, clear of the fade at either edge.
-      const chosen = others.querySelector('[aria-pressed="true"]');
-      if (chosen && others.scrollWidth > others.clientWidth + 1) {
-        const word = chosen.getBoundingClientRect();
-        const room = others.getBoundingClientRect();
-        if (word.left < room.left + 28) others.scrollLeft -= room.left + 28 - word.left;
-        else if (word.right > room.right - 28) others.scrollLeft += word.right - room.right + 28;
-      }
       markMore(others);
     });
+    this.placeMarks();
+  };
+
+  /*
+   * The mark under a genre's chosen sub-genre, on its heading's rule. It
+   * slides along the rule from one word to the next (Dan, 26 November 2026:
+   * "can these not slide along rather than appear"). From nothing it is
+   * drawn out from its word's start, as a song's line is, and it is drawn
+   * back when the genre is made whole. The chosen word is kept in sight,
+   * clear of the fade at either edge of words that scroll.
+   */
+  placeMarks = () => {
+    const list = this.list.current;
+    if (!list) return;
+    for (const mark of list.querySelectorAll(".music-index-mark")) {
+      const others = mark.closest(".music-group-others");
+      const chosen = others.querySelector('[aria-pressed="true"]');
+      if (!chosen) {
+        mark.style.width = "0px";
+        continue;
+      }
+      if (!parseFloat(mark.style.width)) {
+        // Drawn from nothing: it starts at this word, without sliding there.
+        mark.style.transition = "none";
+        mark.style.transform = `translateX(${chosen.offsetLeft}px)`;
+        mark.getBoundingClientRect();
+        mark.style.transition = "";
+      }
+      mark.style.transform = `translateX(${chosen.offsetLeft}px)`;
+      mark.style.width = `${chosen.offsetWidth}px`;
+      if (others.scrollWidth <= others.clientWidth + 1) continue;
+      const word = chosen.getBoundingClientRect();
+      const room = others.getBoundingClientRect();
+      const by = word.left < room.left + 28 ? word.left - room.left - 28 : word.right > room.right - 28 ? word.right - room.right + 28 : 0;
+      if (by) others.scrollBy({ left: by, behavior: this.motion?.matches ? "instant" : "smooth" });
+    }
   };
   lineScrolled = (event) => {
     if (event.target.classList?.contains("music-group-others")) markMore(event.target);
@@ -208,10 +236,13 @@ class GlidingShelf extends PureComponent {
    * the new order in its place, unseen. Once the first screen's covers have
    * arrived, or after a moment if they are slow, its headings fade in and
    * its sleeves lift in as they do when the page opens: each row from its
-   * left, one row after another down the screen.
+   * left, one row after another down the screen. A genre cut to a sub-genre
+   * turns the same way, from its own shelf down (Dan, 26 November 2026: "do
+   * the same fade on the sub genre buttons as when swappnig menu buttons so
+   * it's all consistent").
    */
   turning = null;
-  turn = () => {
+  turn = (from = null) => {
     const list = this.list.current;
     const turning = (this.turning = {});
     this.stop();
@@ -219,14 +250,17 @@ class GlidingShelf extends PureComponent {
       const box = element.getBoundingClientRect();
       return box.bottom > 0 && box.top < window.innerHeight;
     };
+    // A genre cut to a sub-genre turns from that genre down (`from`): its
+    // own heading, which was pressed, stays as it is.
+    const turned = (element) => !from || Boolean(from.compareDocumentPosition(element) & (Node.DOCUMENT_POSITION_CONTAINED_BY | Node.DOCUMENT_POSITION_FOLLOWING));
     const reveal = () => {
       if (this.turning !== turning) return;
       this.turning = null;
       if (!this.motion.matches) {
         for (const heading of list.querySelectorAll(".music-group-top")) {
-          if (inView(heading)) heading.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 460, easing: "ease-out" });
+          if (inView(heading) && turned(heading) && !from?.contains(heading)) heading.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 460, easing: "ease-out" });
         }
-        const arriving = [...visibleTiles(list).values()];
+        const arriving = [...visibleTiles(list).values()].filter(({ tile }) => turned(tile));
         const rows = [...new Set(arriving.map(({ box }) => Math.round(box.top)))].sort((a, b) => a - b);
         for (const { tile, box } of arriving) {
           const delay = Math.min(rows.indexOf(Math.round(box.top)) * 50, 450) + (box.left / window.innerWidth) * 110;
@@ -333,9 +367,15 @@ class GlidingShelf extends PureComponent {
         }
       };
     }
-    // A new order does not glide: it turns the page (turn, below).
+    // A new order does not glide: it turns the page (turn, below), and so
+    // does a genre cut to a sub-genre, from its own shelf down.
     this.headings = null;
+    this.cutStood = null;
     if (!this.opened || !previous.measured || previous.arrangement === arrangement || this.motion.matches || this.props.veiled) return null;
+    if (this.props.cutting !== null) {
+      this.cutStood = this.list.current.querySelector(`#shelf-group-${this.props.cutting}`)?.getBoundingClientRect().top ?? null;
+      return null;
+    }
     // Where the headings on the screen stand, to carry them with their sleeves.
     this.headings = new Map();
     for (const heading of this.list.current.querySelectorAll(".music-group-top")) {
@@ -351,11 +391,25 @@ class GlidingShelf extends PureComponent {
     const changed = arrangement !== previous.arrangement;
     if (changed) tiles.arrange(this.list.current, arrangement);
     if (pinnedTile !== previous.pinnedTile || changed) tiles.select(pinnedTile, true);
+    // A sub-genre's word answers at once; its shelf follows.
+    if (this.props.chosen !== previous.chosen && !changed) this.placeMarks();
     if (!changed && measured === previous.measured) return;
     this.markLines();
     this.opening();
     this.watch();
     if (changed && this.props.veiled) this.turn();
+    else if (changed && this.props.cutting !== null && !this.motion.matches) {
+      const cut = this.list.current.querySelector(`#shelf-group-${this.props.cutting}`);
+      // A cut at the foot of the page leaves it shorter, and the browser
+      // brings the page down to meet it: the shelf glides there with it.
+      const carried = cut && this.cutStood !== null ? this.cutStood - cut.getBoundingClientRect().top : 0;
+      this.turn(cut);
+      if (Math.abs(carried) >= 1) {
+        const animation = this.list.current.animate([{ transform: `translateY(${carried}px)` }, { transform: "none" }], { duration: 300, easing: "cubic-bezier(0.16, 1, 0.3, 1)" });
+        this.carried.add(animation);
+        animation.onfinish = () => this.carried.delete(animation);
+      }
+    }
     if (!before) return;
     this.stop();
     // All destination reads precede the first write. A cover coming from
@@ -425,7 +479,7 @@ class GlidingShelf extends PureComponent {
   }
 
   render() {
-    const { order, arrangement, reference, measured, onOpen, onPoint, onCut, shownTile, above, tracks, tiles } = this.props;
+    const { order, arrangement, reference, measured, onOpen, onPoint, onCut, chosen, cutting, shownTile, above, tracks, tiles } = this.props;
     const firstRow = !measured && arrangement[0]?.rows[0];
     const first = firstRow?.entries?.[0]?.item;
     // The groups a heading can go to: every decade or year.
@@ -493,7 +547,7 @@ class GlidingShelf extends PureComponent {
           // plain group, so a screen reader's list of landmarks stays short.
           const Others = !cuts && stops[0]?.[0] === group ? "nav" : "div";
           return (
-            <section key={group.key} className="music-group" id={`shelf-group-${groupIndex}`} tabIndex={-1} aria-label={group.label || undefined}>
+            <section key={group.key} className="music-group" id={`shelf-group-${groupIndex}`} tabIndex={-1} aria-label={group.label || undefined} data-cutting={cutting === groupIndex || undefined}>
               {/* One line does all of a heading's work (Dan, 25 November
                   2026: "is the genre bar placed somewhere better that fit's
                   with the more minimalist theme?"): the group's tab and what
@@ -517,8 +571,12 @@ class GlidingShelf extends PureComponent {
                     {cuts?.length ? (
                       <div className="music-group-others" role="group" aria-label={`Show one kind of ${group.label}`}>
                         <ul className="music-index">
+                          {/* The chosen word's mark, which slides along the
+                              rule; it is set among the words so it keeps its
+                              place with them, and is not one of them. */}
+                          <li className="music-index-mark" role="presentation" aria-hidden="true" />
                           {cuts.map(part => (
-                            <li key={part}><button type="button" aria-pressed={group.cut === part} onClick={() => onCut(group.label, part)}>{part}</button></li>
+                            <li key={part}><button type="button" aria-pressed={(chosen?.[group.label] ?? null) === part} onClick={() => onCut(group.label, part, groupIndex)}>{part}</button></li>
                           ))}
                         </ul>
                       </div>
@@ -768,7 +826,7 @@ function TrackLabel({ track }) {
  * the record's favourite. Every column is the same width, so the lines can
  * be compared across the sheet, and every name keeps to its one line.
  */
-function TrackSheet({ album, columns, pinned, onClose }) {
+function TrackSheet({ album, columns, pinned }) {
   const tracks = songsOf(album);
   const [expanded, setExpanded] = useState(false);
   const count = tracks.length;
@@ -863,9 +921,6 @@ function TrackSheet({ album, columns, pinned, onClose }) {
           <span><b>{hours}</b> {hoursUnit}</span>
         </p>
       </header>
-      <button type="button" className="music-tracks-close" onClick={() => onClose()} aria-label="Close the track list" tabIndex={pinned ? undefined : -1}>
-        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 3.5 9 9m0-9-9 9" /></svg>
-      </button>
       {count > 0 && !duplicate && (
         <div
           id="record-songs"
@@ -904,8 +959,10 @@ function TrackSheet({ album, columns, pinned, onClose }) {
  * make room for it (Dan, 25 November 2026: "rather than it appearing over
  * can it push the albums below it down"). The pointer or the keyboard on a
  * sleeve opens it, and it goes again when they leave the shelf. A press
- * keeps it open until it is closed. One panel does both, so pressing changes
- * nothing the reader is looking at.
+ * keeps it open until the sleeve is pressed again, anything else is pressed
+ * or Escape is: it has no close button of its own (Dan, 26 November 2026:
+ * "get rid of the X the X is just clicking anywhere else"). One panel does
+ * both, so pressing changes nothing the reader is looking at.
  */
 function AlbumTracks({ album, tile, pinned, above, columns, onClose }) {
   const panel = useRef(null);
@@ -943,7 +1000,7 @@ function AlbumTracks({ album, tile, pinned, above, columns, onClose }) {
       tabIndex={pinned ? -1 : undefined}
       aria-labelledby="music-tracks-title"
     >
-      <TrackSheet key={album.key} album={album} columns={columns} pinned={pinned} onClose={onClose} />
+      <TrackSheet key={album.key} album={album} columns={columns} pinned={pinned} />
     </section>
   );
 }
@@ -1036,7 +1093,14 @@ export function MusicRoom({ active }) {
   // The two orders by date turn round when pressed again.
   const [reversed, setReversed] = useState({ released: false, year: false });
   // The sub-genre each genre has been cut to, by genre: none, to begin with.
+  // The word chosen answers at once (`chosen`); the shelf follows (`cuts`),
+  // turning from that genre down (`cutting`, its place among the groups).
   const [cuts, setCuts] = useState(null);
+  const [chosen, setChosen] = useState(null);
+  const [cutting, setCutting] = useState(null);
+  const chosenNow = useRef(null);
+  const cuttingNow = useRef(null);
+  const cutTimer = useRef(0);
   const [query, setQuery] = useState("");
   const filter = useDeferredValue(query.trim());
   // On a phone the search waits behind its mark and slides out over the
@@ -1195,10 +1259,13 @@ export function MusicRoom({ active }) {
   useEffect(() => () => {
     clearTimeout(turnTimer.current);
     clearTimeout(veilTimer.current);
+    clearTimeout(cutTimer.current);
   }, []);
   const onTurned = useCallback(() => {
     clearTimeout(veilTimer.current);
     setVeiled(false);
+    cuttingNow.current = null;
+    setCutting(null);
   }, []);
   // The shelf fades out for a jump, which lifts it in again where it lands.
   const onVeil = useCallback(() => {
@@ -1215,7 +1282,14 @@ export function MusicRoom({ active }) {
     const apply = () => {
       setQuery("");
       // Another order puts every genre back whole.
-      if (name !== pressedOrder) setCuts(null);
+      if (name !== pressedOrder) {
+        clearTimeout(cutTimer.current);
+        chosenNow.current = null;
+        cuttingNow.current = null;
+        setChosen(null);
+        setCutting(null);
+        setCuts(null);
+      }
       startTransition(() => setOrder(name));
       if (turn) startTransition(() => setReversed((last) => ({ ...last, [name]: !last[name] })));
     };
@@ -1263,12 +1337,33 @@ export function MusicRoom({ active }) {
   const arrangement = layouts(view, reversed[view] ?? false);
   /*
    * A genre's heading names its sub-genres, and pressing one cuts the genre
-   * to it: the sleeves that stay glide up together, the rest go, and the
-   * genres beneath close up. Pressing it again brings the whole genre back.
+   * to it; pressing it again brings the whole genre back. It turns as a new
+   * order does (Dan, 26 November 2026: "do the same fade on the sub genre
+   * buttons as when swappnig menu buttons so it's all consistent"): the word
+   * answers at once, and that genre's shelf and all beneath it fade out,
+   * take their new places unseen and lift in (GlidingShelf.turn). A reader
+   * who wants no motion gets the cut at once.
    */
-  const onCut = useCallback((genre, part) => {
+  const onCut = useCallback((genre, part, at) => {
     settle.current();
-    setCuts((last) => ({ ...last, [genre]: last?.[genre] === part ? null : part }));
+    const next = { ...chosenNow.current, [genre]: chosenNow.current?.[genre] === part ? null : part };
+    chosenNow.current = next;
+    setChosen(next);
+    clearTimeout(cutTimer.current);
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setCuts(next);
+      return;
+    }
+    // Two genres cut in one breath turn from the upper one down.
+    cuttingNow.current = cuttingNow.current === null ? at : Math.min(cuttingNow.current, at);
+    setCutting(cuttingNow.current);
+    cutTimer.current = setTimeout(() => setCuts(next), 150);
+    // Should the cut somehow never arrive, the shelf is not left unseen.
+    clearTimeout(veilTimer.current);
+    veilTimer.current = setTimeout(() => {
+      cuttingNow.current = null;
+      setCutting(null);
+    }, 1500);
   }, []);
 
   // Reuse the rows around the viewport as the pointer moves. Newly visible
@@ -1609,7 +1704,7 @@ export function MusicRoom({ active }) {
             <span className="music-group-figures">{entries.length ? `${entries.length} ${entries.length === 1 ? "record" : "records"} · ${listened(entries.reduce((sum, entry) => sum + entry.item.minutes, 0), "long")}` : "Nothing on the shelf"}</span>
           </div>
         )}
-        <GlidingShelf tracks={tracks} shownTile={shownTile} above={above} before={before} pinnedTile={open?.tile} arrangement={arrangement} measured={measured} order={view} tiles={tiles} reference={reference} onOpen={onOpen} onPoint={onPoint} onCut={onCut} resting={resting} veiled={veiled} onTurned={onTurned} onVeil={onVeil} />
+        <GlidingShelf tracks={tracks} shownTile={shownTile} above={above} before={before} pinnedTile={open?.tile} arrangement={arrangement} measured={measured} order={view} tiles={tiles} reference={reference} onOpen={onOpen} onPoint={onPoint} onCut={onCut} chosen={chosen} cutting={cutting} resting={resting} veiled={veiled} onTurned={onTurned} onVeil={onVeil} />
       </div>
     </div>
   );

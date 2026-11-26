@@ -196,14 +196,21 @@ export function arrange(order, entries, { years, kinds, reverse = false, cuts = 
       const place = own(entry) ?? [kinds.artists?.[entry.item.artist], kinds.subs?.[entry.item.artist]];
       return kinds.subkinds?.[place[0]]?.[place[1]] ?? null;
     };
-    const figure = (list, minutes) => `${list.length} ${list.length === 1 ? "record" : "records"} · ${listened(minutes, "long")}`;
+    // What a heading says of a genre or of a sub-genre, in the same words:
+    // its records, its share of all the shelf's listening and its hours
+    // (Dan, 26 November 2026: "you can also have records here and also do %
+    // of listening for sub genres too").
+    const figure = (list, minutes) => {
+      const share = (minutes / total) * 100;
+      return `${list.length} ${list.length === 1 ? "record" : "records"} · ${share >= 1 ? Math.round(share) : "<1"}% of listening · ${listened(minutes, "long")}`;
+    };
     const sum = (list) => list.reduce((total, entry) => total + entry.item.minutes, 0);
     // A genre is one group under one heading, and its sub-genres are the
     // words on that heading (Dan, 26 November 2026, of sub-genres named on
     // the heading and again over their own records beneath it: "can that not
     // all just be the same interface"). It stands whole, most listened
     // first, until one of them is chosen (`cuts`, by genre); then it holds
-    // that sub-genre's records and says how many there are.
+    // that sub-genre's records and says the same of them.
     return [...grouped(kindOf)]
       .map(([name, list]) => ({ name, list, minutes: sum(list) }))
       .sort((a, b) => b.minutes - a.minutes)
@@ -221,7 +228,7 @@ export function arrange(order, entries, { years, kinds, reverse = false, cuts = 
         return {
           key: name,
           label: name,
-          figures: cut ? figure(cut.entries, cut.minutes) : `${Math.round((minutes / total) * 100)}% of listening · ${listened(minutes, "long")}`,
+          figures: cut ? figure(cut.entries, cut.minutes) : figure(list, minutes),
           brief: listened(cut ? cut.minutes : minutes),
           entries: cut ? cut.entries : list,
           parts: named.map((part) => part.label),

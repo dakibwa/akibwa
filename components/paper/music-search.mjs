@@ -125,14 +125,19 @@ export function indexItems(items, { meta, yearOf, extraText = () => "" }) {
 }
 
 // Keep every direct artist connection. For discovery, pick up to four
-// other artists, starting with musically similar sleeves in view.
-function rankRelated(entries, source, kinds) {
+// other artists, starting with musically similar sleeves in view. Two joint
+// credits that share a name are connected too: Carnage, by Nick Cave & Warren
+// Ellis, belongs with Nick Cave & The Bad Seeds (Dan, 26 November 2026:
+// "hovering over carnage doesnt show the other nick cave records
+// highlighted"). `namesOn` gives the names on an entry's credit.
+function rankRelated(entries, source, kinds, namesOn) {
   const direct = [];
   const kind = kinds?.artists?.[source.item.artist];
   const similar = [];
+  const own = namesOn(source);
   for (const entry of entries) {
     if (entry === source) continue;
-    if (source.circle.includes(entry.artist) || entry.circle.includes(source.artist)) {
+    if (source.circle.includes(entry.artist) || entry.circle.includes(source.artist) || namesOn(entry).some((name) => own.includes(name))) {
       direct.push(entry.item.key);
       continue;
     }
@@ -158,12 +163,19 @@ function rankRelated(entries, source, kinds) {
 export function relatedLookup(entries, kinds) {
   const byKey = new Map(entries.map(entry => [entry.item.key, entry]));
   const recent = new Map();
+  // The names on each credit, worked out once when first asked for.
+  const named = new Map();
+  const namesOn = (entry) => {
+    let names = named.get(entry);
+    if (!names) named.set(entry, names = credits(entry.item.artist).map(fold).filter(Boolean));
+    return names;
+  };
   return (key, visible) => {
     const source = byKey.get(key);
     if (!source) return new Set();
     let ranked = recent.get(key);
     if (!ranked) {
-      ranked = rankRelated(entries, source, kinds);
+      ranked = rankRelated(entries, source, kinds, namesOn);
       if (recent.size >= 24) recent.delete(recent.keys().next().value);
       recent.set(key, ranked);
     }
