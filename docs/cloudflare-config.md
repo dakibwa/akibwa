@@ -116,9 +116,9 @@ configuration.
 robots, sitemap and a real 404 after Akibwa's export verification. It
 never rebuilds or edits the game. Its sitemap lists the front page and every
 page of the game's copy that names its own `features.games` address in a
-canonical link and carries no `noindex` (today `/`, `/legal` and `/press`;
-`stats.html` asks to stay out), so the Features repository decides which of its
-pages are searchable and a new page is listed with no change here. Akibwa's own
+canonical link and carries no `noindex`. The press page meets those criteria.
+The legal and stats pages carry `noindex`, so the sitemap skips them. The
+Features repository controls which game pages qualify. Akibwa's own
 sitemap is separate (`app/sitemap.js`) and still lists `/` alone.
 
 Change notices to search engines are left to Cloudflare. Dan chose the
