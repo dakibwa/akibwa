@@ -42,13 +42,15 @@ let pageOrder = 0, lastKeptOrder = 0, cacheWrite = Promise.resolve();
 
 self.addEventListener('install', event => {
   self.skipWaiting();
-  /* where the browser routes requests itself (Chrome's static routing), all
-     but a visit to a page go straight to the network without waking this
-     worker, so the account service never waits on it starting; elsewhere
-     the fetch handler below lets them pass */
+  /* Send game navigations to the build check before the browser can start
+     a parallel page download. Other requests can reach the account service
+     and assets without waking this worker. */
   const route = rules => { try { return Promise.resolve(event.addRoutes(rules)) } catch (error) { return Promise.reject(error) } };
   if (typeof event.addRoutes === 'function') event.waitUntil(
-    route([{ condition: { not: { requestMode: 'navigate' } }, source: 'network' }])
+    route([
+      { condition: { urlPattern: ROOT, requestMode: 'navigate', requestMethod: 'GET' }, source: 'fetch-event' },
+      { condition: { not: { requestMode: 'navigate' } }, source: 'network' },
+    ])
       .catch(() => route([{ condition: { urlPattern: new URLPattern({ pathname: '/features/*' }) }, source: 'network' }]))
       .catch(() => {}));
   event.waitUntil(keepFirstPage().catch(() => {}));
