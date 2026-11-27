@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'sha256-9cAbtC16SzqvZygKGXS6XdfU3MI5ZBuDIkT8HAAE/Aw=' 'sha256-SRR5GWTJ932Tb6A6byCtTK21NZiO7YgTaqEOHyQYsIw='; connect-src 'self'; img-src 'self'; font-src data:; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'sha256-9cAbtC16SzqvZygKGXS6XdfU3MI5ZBuDIkT8HAAE/Aw=' 'sha256-YXpN2SwkNjMZefAtuR4Ih3k0+Y2eQc4rCjAZFSSYBsc='; connect-src 'self'; img-src 'self'; font-src data:; base-uri 'none'; form-action 'none'">
 <meta name="robots" content="noindex, nofollow">
 <title>features · players</title>
 <link rel="icon" type="image/x-icon" sizes="32x32" href="favicon.ico?v=3ffa992228ee">
@@ -493,7 +493,6 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
       {key:'signopen',label:'opened the account card',n:period('play.signopen'),d:period('play.played'),of:'new players'},
       // the doors it was first opened by, the main three (worker/links.js, SIGN_DOORS)
       {key:'signfreeaccount',label:'opened it from keep your stamps · free account',n:period('play.signfreeaccount'),d:period('play.signopen'),of:'cards opened'},
-      {key:'signyesterday',label:'from play yesterday · free account',n:period('play.signyesterday'),d:period('play.signopen'),of:'cards opened'},
       {key:'signsettings',label:'from settings',n:period('play.signsettings'),d:period('play.signopen'),of:'cards opened'},
       {key:'signgo',label:'asked for a code or pressed google',n:period('play.signgo'),d:period('play.signopen'),of:'cards opened'},
       /* the ways back, each shown and each taken (index.html, showTell, remindMe and homeAsk).
@@ -516,8 +515,9 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
       {key:'homeyes',label:'pressed add to home screen',n:period('play.homeyes'),d:period('play.homeask'),of:'offers'},
       {key:'homeplay',label:'played from the home screen',n:period('play.homeplay'),d:period('play.active'),of:'player days'},
       {key:'collection',label:'opened the collection',n:period('play.collection'),d:period('play.active'),of:'player days'},
-      {key:'offer',label:'saw the unlock offer',n:period('play.offer'),d:period('play.played'),of:'new players'},
-      {key:'unlocked',label:'unlocked',n:period('play.unlocked'),d:period('play.offer'),of:'offers'},
+      /* the earlier days still to play, pressed from a finished day's card, once a device (27 Nov 2026,
+         when everything became free; the unlock offer and its unlocks, counted until then, are retired) */
+      {key:'moredays',label:'pressed more days to play',n:period('play.moredays'),d:period('play.firstday'),of:'first finished sets'},
     ];
     return {today,start,since,rows,period,daily,days,cohorts,cohortPlaces,cohortDepths,mean,complete:complete.length,retention,journey,boards,afterBoard,channels,hooks};
   }
@@ -574,10 +574,6 @@ caption{text-align:left;padding:0 0 8px;color:var(--ink-soft);font-size:12px}
       evidence:`${say(exit.moves)} first moves on board ${exit.board}, but ${say(exit.next)} on board ${exit.board+1} (${percent(exit.next,exit.moves)} of the count), ${period}. Aggregate counts do not identify who left or why.`,
       action:'Inspect both the board and its result-to-next-board transition. Test one clearer next action or a smoother difficulty step.',
       measure:'Next-board first moves / current-board first moves, alongside the share going six turns past perfect and finished sets. Compare complete days with similar traffic.'});
-    const offer=sum('play.offer'),pay=sum('play.pay');
-    if(offer>=20&&pay<=offer&&pay/offer<.15)insights.push({kind:'unlock',signal:'offer milestone counts',title:'the unlock offer',summary:`${say(pay)} / ${say(offer)} pressed unlock · ${percent(pay,offer)}`,
-      findings:[{figure:percent(pay,offer),reading:'of those shown the unlock offer pressed unlock',sample:`${say(pay)} of ${say(offer)}`,share:pay/offer,color:'touch'}],
-      evidence:`${say(pay)} unlock presses against ${say(offer)} offer views (${percent(pay,offer)}), ${period}. These are milestone counts, not a joined checkout funnel.`,action:'Test one clearer description or preview of what unlock adds, keeping the price and purchase flow stable.',measure:'Unlock presses / offer views, then successful unlocks. More presses without purchases are not an improvement.'});
     if(base<20)insights.push({kind:'learning',signal:'collecting evidence',title:'return baseline',summary:`${say(base)} completed day-1 observations · waiting for 20`,
       findings:[{figure:String(base),reading:'first days measured so far · 20 before returns are judged',sample:'day 1',share:base/20,color:'back'}],
       evidence:`${say(base)} devices have a completed day-1 observation in this date range. At least 20 are needed before this panel suggests a retention change; day 7 and day 30 need more elapsed time.`,action:'Keep the first tracked cohort as a rollout baseline. Record the date of each game change and compare later, completed cohorts before deciding it helped.',measure:'Day-1 and day-7 retention, with the eligible device count beside each rate.'});
